@@ -1,0 +1,80 @@
+
+.el-input--suffix .el-input__inner{
+  margin:0;
+  padding-right: 0;
+  height:30px;
+}
+.el-input__icon{
+  line-height:30px;
+}
+*{padding:0; margin:0;box-sizing: border-box;}
+ul{
+  list-style: none;
+}
+.flexPublic{
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.inputContainer{
+  width:100%;
+  height:40px;
+  position:relative;
+  border:0;
+}
+.inputContainer>input{
+  width:100%;
+  height:100%;
+  padding:0 10px;
+  border:1px solid #dcdfe6;
+  border-radius: 3px;
+  outline:0;
+}
+.inputContainer>input:focus{
+  border-color:#409eff;
+}
+.selectContainer{
+  border:1px solid #dcdfe6;
+  padding:0;
+  position: relative;
+  height:35px;
+  width:120px;
+  border-radius: 3px;
+  text-align: center;
+}
+.selectContainer>select{
+  border:0;
+  height:100%;
+  width:100%;
+  outline: none;
+  position:relative;
+  z-index: 2;
+  padding:0 5px;
+  background: none;
+  text-align: center;
+}
+.ml1{
+  margin-left: 10px;
+}
+.w-20{
+  width: 20%;
+}
+.w-25{
+  width:25%;
+}
+.w-33{
+  width:33.33%;
+}
+.w-50{
+  width:50%;
+}
+.w-100{
+  width:100%;
+}
+.m0{
+  margin:0 !important;
+}
+.p0{
+  padding:0  !important;
+}

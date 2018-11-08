@@ -30,7 +30,13 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
-            
+            // '/api':{//此处并非一定和url一致。
+            //     target:'http://10.0.20.46:8028/api/GCW',
+            //     changeOrigin:true,//允许跨域
+            //     pathRewrite:{
+            //       '^/api': '/'
+            //     }
+            // }
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

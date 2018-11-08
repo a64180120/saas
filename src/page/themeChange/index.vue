@@ -21,16 +21,16 @@
                 <div class="sys-article">
                     <h2><strong>主题创建</strong></h2>
                     <pre v-pre class="sys-pre"><code>
-# 复制基础变量文件 (src/assets/css/theme/default.scss)，重命名为 blue.scss 并修改内部变量
-# 在 src/assets/css 目录中创建新的主题入口文件 theme-blue.scss，并做如下引入
-# 如果该主题为深色主题，并且希望在导航中使用element-ui的深色主题，则在该主题文件名中必须包含dark字段，如theme-blue-dark.scss
+                    # 复制基础变量文件 (src/assets/css/theme/default.scss)，重命名为 blue.scss 并修改内部变量
+                    # 在 src/assets/css 目录中创建新的主题入口文件 theme-blue.scss，并做如下引入
+                    # 如果该主题为深色主题，并且希望在导航中使用element-ui的深色主题，则在该主题文件名中必须包含dark字段，如theme-blue-dark.scss
 
-// 第三方主题
-@import 'element-ui/lib/theme-default/index.css';
+                    // 第三方主题
+                    @import 'element-ui/lib/theme-default/index.css';
 
-// 项目主题
-@import './theme/default';
-@import 'base';
+                    // 项目主题
+                    @import './theme/default';
+                    @import 'base';
                     </code></pre>
                 </div>
                 <div class="sys-article">

@@ -7,10 +7,36 @@ import store from '../store'
 import router from '../router'
 import { Message } from 'element-ui'
 import Auth from '@/util/auth'
+import md5 from 'js-md5'
+let Base64 = require('js-base64').Base64;
 
 var getTokenLock = false,
     CancelToken = axios.CancelToken,
     requestList = []
+
+
+    var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
+        appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
+        url = "http://10.0.45.51:7758",
+        reqTimeStamp = Date.parse(new Date());
+    var sign = md5((url + reqTimeStamp + appKey + appSecret).toLowerCase());
+    var items = [sign, url, reqTimeStamp, appKey],
+        appinfo_Object = {
+            'DbName': 'NG0001',
+            'OrgId': '521180820000002',
+            'OrgName': '',
+            'OCode': '',
+            'UserId': '521180820000001',
+            'UserKey': '0001',
+            'UserName': '',
+            'TokenKey': '',
+            'AppKey': appKey,
+            'AppSecret': appSecret,
+            'DbServerName': '',
+            'SessionKey': '',
+            'UName': ''
+        },
+        appInfo=Base64.encode(JSON.stringify(appinfo_Object))
 
 /**
  * Token校验
@@ -59,10 +85,10 @@ function checkToken(cancel, callback){
  *              如果存在则取消该次请求，如果不存在则加入RequestList中，
  *              当请求完成后500ms时，清除RequestList中对应的该请求。
  */
-function stopRepeatRequest(url, c){
+function stopRepeatRequest(url, cancelfunction){
     for( let i = 0; i < requestList.length; i++){
         if(requestList[i] == url){
-            c()
+            cancelfunction()
             return
         }
     }
@@ -71,7 +97,7 @@ function stopRepeatRequest(url, c){
 
 // 超时设置
 const service = axios.create({
-    //baseURL: 'https://some-domain.com/api/',
+    //baseURL: 'http://10.0.20.46:8028/api/GCW/',
     // 请求超时时间
     timeout: 5000               
 });
@@ -84,19 +110,25 @@ const service = axios.create({
 service.interceptors.request.use(
     config => {
         let cancel
-        config.cancelToken = new CancelToken(function executor(c) {
-            cancel = c;
+        config.cancelToken = new CancelToken(function executor(req) {
+            cancel = req;
         })
+
+
 
         config.headers={
-            'Content-Type':'application/x-www-from-urlencoded'
+            'Content-Type':'application/x-www-from-urlencoded',
+            'Accept': "application/json; charset=utf-8",
+            'AppInfo': appInfo,
+            'Sign': items
         }
-
-        checkToken(cancel, function(){
-            Auth.setLoginStatus()
-            config.headers.Authorization = `${store.state.user.token}`
-        })
-        stopRepeatRequest(config.url, cancel)
+        //Token校验
+        // checkToken(cancel, function(){
+        //     Auth.setLoginStatus()
+        //     config.headers.Authorization = `${store.state.user.token}`
+        // })
+        //添加请求的url
+        //stopRepeatRequest(config.url, cancel)
         return config
     },
     err => {
@@ -108,15 +140,16 @@ service.interceptors.request.use(
 // 针对响应代码确认跳转到对应页面
 service.interceptors.response.use(
     response => {
-        for( let i = 0; i < requestList.length; i++){
-            if(requestList[i] == response.config.url){
-                // 注意，不能保证500ms必定执行，详情请了解JS的异步机制
-                setTimeout(function(){
-                    requestList.splice(i,1)
-                }, 500)
-                break
-            }
-        }
+        // for( let i = 0; i < requestList.length; i++){
+        //     //删除requestList里面请求的url
+        //     if(requestList[i] == response.config.url){
+        //         // 注意，不能保证500ms必定执行，详情请了解JS的异步机制
+        //         setTimeout(function(){
+        //             requestList.splice(i,1)
+        //         }, 500)
+        //         break
+        //     }
+        // }
         return Promise.resolve(response.data)
     },
     error => {

@@ -113,7 +113,7 @@ const staticRoute = [
         children: [
             {
                 path: '',
-                component: () => import(/* webpackChunkName: 'i18n' */ '../page/i18n')
+                component: () => import(/* webpackChunkName: 'i18n' */ '../page/example/table')
             }
         ]
     },
@@ -123,7 +123,8 @@ const staticRoute = [
         children: [
             {
                 path: '',
-                component: () => import(/* webpackChunkName: 'themeChange' */ '../page/themeChange')
+                component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/page/user/AdminUserList')
+                //component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/page/user/userList')
             }
         ]
     },
