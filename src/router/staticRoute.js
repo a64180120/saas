@@ -3,7 +3,7 @@ const Layout = () => import(/* webpackChunkName: 'index' */ '../page/layout')
 const staticRoute = [
     {
         path: '/',
-        redirect: '/login'
+        redirect: '/admin'
     },
     {
         path: '/error',
@@ -123,8 +123,22 @@ const staticRoute = [
         children: [
             {
                 path: '',
-                component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/page/user/AdminUserList')
-                //component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/page/user/userList')
+                component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/user/AdminUserList')
+                //component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/user/userList')
+            }
+        ]
+    },
+    {
+        path: '/admin',
+        component: () => import('../page/admin/login')
+    },
+    {
+        path: '/admin/User',
+        component: Layout,
+        children: [
+            {
+                path: '',
+                component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/user/AdminUserList')
             }
         ]
     },

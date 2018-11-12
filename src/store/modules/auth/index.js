@@ -1,13 +1,20 @@
 import Cookies from 'js-cookie'
 import axios from '@/util/ajax'
 import Auth from '@/util/auth'
-import global from '@/common/global'
+import global from '@/util/global'
 
+//状态
 const state = {
     token: '',
     navList: []
 }
 
+//计算获取取新数据
+const getters={
+
+}
+
+//操作state(同步)
 const mutations = {
     setNavList: (state, data) => {
         state.navList = data
@@ -25,15 +32,39 @@ const mutations = {
     }
 }
 
+//执行一些方法(异步)
 const actions = {
-    // 邮箱登录
-    loginByEmail({ commit }, userInfo) {
+    //admin管理员用户登录
+    adminloginByPhone({ commit }, userInfo) {
+        //debugger;
+        return new Promise((resolve) => {
+
+           var params=new URLSearchParams();
+           params.append('UserID',userInfo.UserID);
+           params.append('UserPwd',userInfo.UserPwd)
+
+            axios({
+                url: 'http://10.0.20.46:8028/api/GCW/SysAdminUser/PostLogin',
+                method: 'post',
+                data:params
+            }).then(res => {
+                // if(res.state){
+                //     commit('setToken', '123')
+                //     //commit('user/setName', res.name, { root: true })
+                // }
+                resolve(res)
+            })
+
+        });
+    },
+    // 业务用户登录
+    loginByPhone({ commit }, userInfo) {
         return new Promise((resolve) => {
             axios({
                 url: '/login',
                 method: 'post',
                 data: {
-                    ...userInfo
+                    ...userInfo    // ...这里的三个点叫做：扩展运算符
                 }
             }).then(res => {
                 if(res.login){
@@ -131,5 +162,6 @@ export default {
     namespaced: true,
     state,
     mutations,
-    actions
+    actions,
+    getters
 }

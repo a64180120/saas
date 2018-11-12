@@ -7,6 +7,7 @@ import store from '../store'
 import router from '../router'
 import { Message } from 'element-ui'
 import Auth from '@/util/auth'
+import global from '@/util/global'
 import md5 from 'js-md5'
 let Base64 = require('js-base64').Base64;
 
@@ -17,7 +18,7 @@ var getTokenLock = false,
 
     var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
         appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
-        url = "http://10.0.45.51:7758",
+        url = 'http://10.0.20.46:8028',
         reqTimeStamp = Date.parse(new Date());
     var sign = md5((url + reqTimeStamp + appKey + appSecret).toLowerCase());
     var items = [sign, url, reqTimeStamp, appKey],
@@ -36,7 +37,7 @@ var getTokenLock = false,
             'SessionKey': '',
             'UName': ''
         },
-        appInfo=Base64.encode(JSON.stringify(appinfo_Object))
+        appInfo=Base64.encode(JSON.stringify(appinfo_Object));
 
 /**
  * Token校验
@@ -104,7 +105,6 @@ const service = axios.create({
 
 // baseURL
 // axios.defaults.baseURL = 'https://api.github.com';
-
 // http request 请求拦截器
 // 每次请求都为http头增加Authorization字段，其内容为token
 service.interceptors.request.use(
@@ -117,7 +117,7 @@ service.interceptors.request.use(
 
 
         config.headers={
-            'Content-Type':'application/x-www-from-urlencoded',
+            'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
             'Accept': "application/json; charset=utf-8",
             'AppInfo': appInfo,
             'Sign': items

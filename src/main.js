@@ -11,14 +11,13 @@ import store from './store'
 import axios from './util/ajax'
 import i18n from './util/i18n'
 import App from './index'
-import global from './common/global'
 import 'babel-polyfill'
 import './components/install'
 import './plugins/install'
 
 // 注册组件到Vue
 Vue.prototype.$axios = axios
-//完整引入element-ui
+//完整引入element-ui 和 i18n语言
 Vue.use(ElementUI, {
     i18n: (key, value) => i18n.t(key, value)
 })
@@ -28,6 +27,5 @@ new Vue({
     axios,
     router,
     store,
-    global,
     render: h => h(App)
 }).$mount('#app')

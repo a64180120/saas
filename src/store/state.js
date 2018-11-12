@@ -8,7 +8,7 @@ export default {
     //折叠收起菜单
     isCollapse:false,
     // 当前系统主题  base
-    theme: ''
+    theme: '',
     // 通知框等需要自动消失的时间
-    // duration: 5000
+    duration: 3000
 }

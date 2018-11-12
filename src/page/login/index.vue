@@ -58,7 +58,9 @@ export default {
             sysMsg: ''
         }
     },
+     //计算属性
     computed: {
+       
         ...mapState({
             lang: state => state.lang,
             theme: state => state.theme
@@ -75,7 +77,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            login: 'auth/loginByEmail',
+            login: 'auth/loginByPhone',
             loadLang: 'loadLang'
         }),
         submitForm(formName){
