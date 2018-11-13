@@ -64,7 +64,7 @@
             console.log(item)
           },
           unionTab(url){
-            this.$router.push('/environment'+url);
+            this.$router.push('/orgin'+url);
             this.asideActive=url;
             sessionStorage.setItem("asideActive",url);//**防止刷新数据清空************* */
           }

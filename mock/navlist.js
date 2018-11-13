@@ -5,116 +5,194 @@ var data = [
         icon: 'el-icon-lx-home'
     },
     {
-        name: '系统组件',
+        name: '系统管理',
         icon: 'el-icon-lx-home',
         child: [
             {
-                name: '介绍',
-                path: '/components'
+                name: '组织管理',
+                path: '/admin/orgin'
             },
             {
-                name: '功能类',
-                child: [
-                    {
-                        path: '/components/permission',
-                        name: '详细鉴权'
-                    },
-                    {
-                        path: '/components/pageTable',
-                        name: '表格分页'
-                    }
-                ]
+                name: '角色管理',
+                path: '/admin/role'
             },
             {
-                name: '布局类',
-                child: [
-                    {
-                        path: '/components/pageTitle',
-                        name: '页面标题'
-                    },
-                    {
-                        path: '/components/pageSection',
-                        name: '子区域'
-                    },
-                    {
-                        path: '/components/pageSearch',
-                        name: '搜索条'
-                    },
-                    {
-                        path: '/components/pageToolbar',
-                        name: '工具条'
-                    },
-                    {
-                        path: '/components/pageTitle',
-                        name: '页面标题'
-                    },
-                    {
-                        path: '/components/pageSection',
-                        name: '子区域'
-                    },
-                    {
-                        path: '/components/pageSearch',
-                        name: '搜索条'
-                    },
-                    {
-                        path: '/components/pageToolbar',
-                        name: '工具条'
-                    }
-                ]
-            },
-            {
-                name: '辅助类',
-                child: [
-                    {
-                        path: '/components/pageNotes',
-                        name: '引用说明'
-                    }
-                ]
+                name: '用户管理',
+                path: '/admin/user'
             }
         ]
     },
     {
-        name: '完整示例',
+        name: '财务管理',
         icon: 'el-icon-lx-home',
         child: [
             {
-                path: '/example/table',
-                name: '列表页面',
-                permission: ['edit'],
-                child:[
-                    {
-                        path:'/example/table/union',
-                        name: '列表页面'
-                    },
-                    {
-                      path:'/example/table/basic',
-                      name: '列表页面'
-
-                    },
-                    {
-                      path:'/example/table/look',
-                      name: '列表页面'
-                    }
-                ]
+                name: '新增凭证',
+                path: '/finance/voucherAdd'
+               
             },
             {
-                path: '/example/charts',
-                name: '图表页面'
+                path: '/finance/voucherList',
+                name: '凭证管理'
+            }
+        ]
+    },
+    {
+        name: '账簿管理',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '科目余额',
+                path: '/accountbooks/subjectbalance'
+               
             },
             {
-                path: '/example/map',
-                name: '地图页面'
+                name: '总分账',
+                path: '/accountbooks/totalaccounts'
+            },
+            {
+                name: '明细账',
+                path: '/accountbooks/detailaccount'
+                
+            },
+            {
+                name: '多栏账',
+                path: '/accountbooks/multiaccount'
+            }
+        ]
+    },
+    {
+        name: '会计报表',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '资产负债表',
+                path: '/report/assets'
+               
+            },
+            {
+                name: '收入支出表',
+                path: '/report/expenses',
+                
+            },
+            {
+                name: '往来明细款项表',
+                path: '/report/intercourse'
+            }
+        ]
+    },
+    {
+        name: '结转处理',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '期末结转',
+                path: '/carrydown/end'
+               
+            },
+            {
+                name: '结账',
+                path: '/carrydown/checkout',
+                
+            }
+        ]
+    },
+    {
+        name: '预算管理',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '预算编制',
+                path: '/budget/plan'
+               
+            },
+            {
+                name: '预算执行',
+                path: '/budget/execute',
+                
+            }
+        ]
+    },
+    {
+        name: '预算管理',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '预算编制',
+                path: '/budget/setting'
+               
+            },
+            {
+                name: '预算执行',
+                path: '/budget/execute',
+                
+            }
+        ]
+    },
+    {
+        name: '基础设置',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '科目设置',
+                path: '/setting/subject'
+               
+            },
+            {
+                name: '科目期初',
+                path: '/setting/subjectstart',
+                
+            },
+            {
+                name: '辅助核算',
+                path: '/setting/auxiliary',
+                
+            },
+            {
+                name: '凭证模板',
+                path: '/setting/vouchertemp',
+                
+            },
+            {
+                name: '套打格式',
+                path: '/setting/print',
+                
+            },
+            {
+                name: '参数设置',
+                path: '/setting/config',
+                
+            }
+        ]
+    },
+    {
+        name: '数据直报',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '预算编制',
+                path: '/datareport/reporting'
+               
+            }
+        ]
+    },
+    {
+        name: '系统管理',
+        icon: 'el-icon-lx-home',
+        child: [
+            {
+                name: '工作账号管理',
+                path: '/system/account'
+            },
+            {
+                name: '组织账套管理',
+                path: '/system/organization'
             }
         ]
     },
     {
         path: '/i18n',
         name: '国际化',
-        icon: 'el-icon-lx-home'
-    },
-    {
-        path: '/theme',
-        name: '主题切换',
         icon: 'el-icon-lx-home'
     }
 ]

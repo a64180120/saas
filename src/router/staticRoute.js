@@ -1,209 +1,301 @@
-const Layout = () => import(/* webpackChunkName: 'index' */ '../page/layout')
+const Layout = () => import(/* webpackChunkName: 'index' */ "../page/layout");
 
 const staticRoute = [
     {
-        path: '/',
-        redirect: '/login'
+        path: "/",
+        redirect: "/login"
     },
     {
-        path: '/error',
-        component: () => import(/* webpackChunkName: 'error' */ '../page/error'),
+        path: "/login",
+        component: () => import("../page/login")
+    },
+    {
+        path: "/home",
+        component: Layout,
         children: [
             {
-                path: '401',
-                component: () => import(/* webpackChunkName: 'error' */ '../page/error/401')
-            },
-            {
-                path: '403',
-                component: () => import(/* webpackChunkName: 'error' */ '../page/error/403')
-            },
-            {
-                path: '404',
-                component: () => import(/* webpackChunkName: 'error' */ '../page/error/404')
-            },
-            {
-                path: '500',
-                component: () => import(/* webpackChunkName: 'error' */ '../page/error/500')
+                path: "",
+                component: () =>import("../page/home")
             }
         ]
     },
     {
-        path: '/login',
-        component: () => import(/* webpackChunkName: 'login' */ '../page/login')
-    },
-    {
-        path: '/home',
+        //系统管理
+        path: "/admin",
         component: Layout,
         children: [
             {
-                path: '',
-                component: () => import(/* webpackChunkName: 'home' */ '../page/home'),
-            }
-        ]
-    },
-    {
-        path: '/tabs',
-        component: Layout,
-        children: [
-            {
-                path: '',
-                component: () => import(/* webpackChunkName: 'home' */ '../page/message'),
-            }
-        ]
-    },
-    {
-        path: '/components',
-        component: Layout,
-        children: [
-            {
-                path: '',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components')
-            },
-            {
-                path: 'pageNotes',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components/assist/pageNotes')
-            },
-            {
-                path: 'permission',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components/function/permission')
-            },
-            {
-                path: 'pageTable',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components/function/pageTable')
-            },
-            {
-                path: 'pageSearch',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components/ui/pageSearch')
-            },
-            {
-                path: 'pageSection',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components/ui/pageSection')
-            },
-            {
-                path: 'pageTitle',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components/ui/pageTitle')
-            },
-            {
-                path: 'pageToolbar',
-                component: () => import(/* webpackChunkName: 'components' */ '../page/components/ui/pageToolbar')
-            },
-        ]
-    },
-    {
-        path: '/example',
-        component: Layout,
-        children: [
-            {
-                path: 'table',
-                //component: () => import(/* webpackChunkName: 'example' */ '../page/example/table')
-                component: () => import(/* webpackChunkName: 'example' */ '@/page/admin/environment/manage'),
-                redirect: '/admin/environment/basic',
-                children:[
-                  {
-                    path:'union',
-                    component:()=>import('@/page/admin/environment/union'),
-                },
-                {
-                  path:'basic',
-                  component:()=>import('@/page/admin/environment/basicUnion'),
-                },
-                {
-                  path:'look',
-                  component:()=>import('@/page/admin/environment/lookUnion'),
-                }
+                //组织管理
+                path: "orgin",
+                component: () => import("../page/admin/organize/manage"),
+                redirect: "/admin/orgin/union",            
+                children: [
+                    {
+                        path: "union",
+                        component: () => import("../page/admin/organize/union")
+                    },
+                    {
+                        path: "basic",
+                        component: () => import("../page/admin/organize/basicUnion")
+                    },
+                    {
+                        path: "look",
+                        component: () => import("../page/admin/organize/lookUnion")
+                    }
                 ]
             },
             {
-                path: 'charts',
-                component: () => import(/* webpackChunkName: 'example' */ '../page/example/charts')
+                //角色管理
+                path: "role",
+                component: () =>import("../page/admin/role") 
             },
             {
-                path: 'map',
-                component: () => import(/* webpackChunkName: 'example' */ '../page/example/map')
+                //用户管理
+                path: "user",
+                component: () =>import("../page/admin/user")
+            },
+            {
+                //系统登录页面
+                path: "login",
+                component: () => import("../page/admin/login")
             }
         ]
     },
     {
-        path: '/i18n',
+        //财务管理
+        path: "/finance",
         component: Layout,
         children: [
             {
-                path: '',
-                component: () => import(/* webpackChunkName: 'i18n' */ '../page/example/table')
+                //新增凭证
+                path: "voucherAdd",
+                component: () =>import( "../page/message")
+            },
+            {
+                //凭证管理
+                path: "voucherList",
+                component: () =>import("../page/message") 
             }
         ]
     },
     {
-        path: '/theme',
+        //账簿管理
+        path: "/accountbooks",
         component: Layout,
         children: [
             {
-                path: '',
-                component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/user/AdminUserList')
-                //component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/user/userList')
+                //科目余额
+                path: "subjectbalance",
+                component: () =>import( "../page/message")
+            },
+            {
+                //总分账
+                path: "totalaccounts",
+                component: () =>import("../page/message")
+            },
+            {
+                //明细账
+                path: "detailaccount",
+                component: () =>import("../page/message")
+            },
+            {
+                //多栏账
+                path: "multiaccount",
+                component: () =>import("../page/message")
             }
         ]
     },
     {
-        path: '/admin',
-        component: () => import('../page/admin/login')
-    },
-    {
-        path: '/admin/User',
+        //会计报表
+        path: "/report",
         component: Layout,
         children: [
             {
-                path: '',
-                component: () => import(/* webpackChunkName: 'themeChange' */ '../page/admin/user/AdminUserList')
+                //资产负债表
+                path: "assets",
+                component: () =>import( "../page/message")
+            },
+            {
+                //收入支出表
+                path: "expenses",
+                component: () =>import("../page/message")
+            },
+            {
+                //往来明细款项表
+                path: "intercourse",
+                component: () =>import("../page/message")
             }
         ]
     },
     {
-        path: '/admin/environment',
-        component: ()=>import('@/page/admin/environment/manage'),
-        redirect: '/admin/environment/basic',
-        children:[
-          {
-            path:'union',
-            component:()=>import('@/page/admin/environment/union'),
+        //会计报表
+        path: "/report",
+        component: Layout,
+        children: [
+            {
+                //资产负债表
+                path: "assets",
+                component: () =>import( "../page/message")
+            },
+            {
+                //收入支出表
+                path: "expenses",
+                component: () =>import("../page/message")
+            },
+            {
+                //往来明细款项表
+                path: "intercourse",
+                component: () =>import("../page/message")
+            }
+        ]
+    },
+    {
+        //结转处理
+        path: "/carrydown",
+        component: Layout,
+        children: [
+            {
+                //期末结转
+                path: "end",
+                component: () =>import( "../page/message")
+            },
+            {
+                //结账
+                path: "checkout",
+                component: () =>import("../page/message")
+            }
+        ]
+    },
+    {
+        //预算管理
+        path: "/budget",
+        component: Layout,
+        children: [
+            {
+                //预算编制
+                path: "plan",
+                component: () =>import( "../page/message")
+            },
+            {
+                //预算执行
+                path: "execute",
+                component: () =>import("../page/message")
+            }
+        ]
+    },
+    {
+        //基础设置
+        path: "/setting",
+        component: Layout,
+        children: [
+            {
+                //科目设置
+                path: "subject",
+                component: () =>import( "../page/message")
+            },
+            {
+                //科目期初
+                path: "subjectstart",
+                component: () =>import("../page/message")
+            },
+            {
+                //辅助核算
+                path: "auxiliary",
+                component: () =>import("../page/message")
+            },
+            {
+                //凭证模板
+                path: "vouchertemp",
+                component: () =>import("../page/message")
+            },
+            {
+                //套打格式
+                path: "print",
+                component: () =>import("../page/message")
+            },
+            {
+                //参数设置
+                path: "config",
+                component: () =>import("../page/message")
+            }
+        ]
+    },
+    {
+        //数据直报
+        path: "/datareport",
+        component: Layout,
+        children: [
+            {
+                //上报任务
+                path: "reporting",
+                component: () =>import( "../page/message")
+            }
+        ]
+    },
+    {
+        //系统管理
+        path: "/system",
+        component: Layout,
+        children: [
+            {
+                //工作账号管理
+                path: "account",
+                component: () =>import( "../page/message")
+            },
+            {
+                //组织账套管理
+                path: "organization",
+                component: () =>import( "../page/message")
+            }
+        ]
+    },
+    {
+        path: "/i18n",
+        component: Layout,
+        children: [
+            {
+                path: "",
+                component: () =>
+                    import(/* webpackChunkName: 'i18n' */ "../page/example/table")
+            }
+        ]
+    },
+    {
+        path: "/error",
+        component: () => import(/* webpackChunkName: 'error' */ "../page/error"),
+        meta:{
+            title:'错误页面',
+            icon:'el-icon-lx-home',
+            permission:[],
+            roles:['admin','kuaiji']
         },
-        {
-          path:'basic',
-          component:()=>import('@/page/admin/environment/basicUnion'),
-        },
-        {
-          path:'look',
-          component:()=>import('@/page/admin/environment/lookUnion'),
-        }
+        children: [
+            {
+                path: "401",
+                component: () =>
+                    import(/* webpackChunkName: 'error' */ "../page/error/401")
+            },
+            {
+                path: "403",
+                component: () =>
+                    import(/* webpackChunkName: 'error' */ "../page/error/403")
+            },
+            {
+                path: "404",
+                component: () =>
+                    import(/* webpackChunkName: 'error' */ "../page/error/404")
+            },
+            {
+                path: "500",
+                component: () =>
+                    import(/* webpackChunkName: 'error' */ "../page/error/500")
+            }
         ]
-      },
-      {
-        path: '/admin/environment/add',
-        component:()=>import('@/page/admin/environment/manageAdd'),
-      },
-      {
-        path: '/admin/environment/update',
-        component:()=>import('@/page/admin/environment/manageUpdate'),
-      },
-      {
-        path: '/admin/finance',
-        component:()=>import('@/page/finance/addVoucher'),
-      },
-      {
-        path: '/admin/role',
-        component:()=>import('@/page/admin/roleManage/role'),
-      },
-      {
-        path: '/admin/role/add',
-        component:()=>import('@/page/admin/roleManage/roleAdd'),
-      },
-
-
-
+    },
     {
-        path: '*',
-        redirect: '/error/404'
+        path: "*",
+        redirect: "/error/404"
     }
-]
+];
 
-export default staticRoute
+export default staticRoute;
