@@ -29,8 +29,8 @@
               <div @click="unionSearch" class="seacherBtn">搜索</div>
             </div>
             <ul class="flexPublic handle">
-               <router-link to="/environment/add"> <li>审核</li></router-link>
-              <router-link to="/environment/add"> <li>批量审核</li></router-link>
+               <router-link to="/organize/add"> <li>审核</li></router-link>
+              <router-link to="/organize/add"> <li>批量审核</li></router-link>
             </ul>
         </div>
         <div  v-show="examineTab" class="formData">

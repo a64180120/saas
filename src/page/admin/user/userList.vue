@@ -17,10 +17,10 @@
             <div  class="searcherBtn">搜索</div>
           </div>
           <ul class="flexPublic handle">
-            <router-link to="/environment/add"><li>添加</li></router-link>
-            <router-link to="/environment/add"><li>修改</li></router-link>
-            <router-link to="/environment/add"><li>密码重置</li></router-link>
-            <router-link to="/environment/add"><li>发送邀请码</li></router-link>
+            <router-link to="/organize/add"><li>添加</li></router-link>
+            <router-link to="/organize/add"><li>修改</li></router-link>
+            <router-link to="/organize/add"><li>密码重置</li></router-link>
+            <router-link to="/organize/add"><li>发送邀请码</li></router-link>
           </ul>
         </div>
         <div class="flexPublic manageContent p0">

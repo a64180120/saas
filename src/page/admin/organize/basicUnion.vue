@@ -34,11 +34,11 @@
                   <div @click="unionSearch" class="seacherBtn">搜索</div>
                 </div>
                 <ul class="flexPublic handle">
-                  <a @click.prevent="routerTo('/environment/add')"><li>新增</li></a>
-                  <a @click.prevent="routerTo('/environment/update')"><li>修改</li></a>
-                  <a @click.prevent="routerTo('/environment/add')"><li>备份</li></a>
-                  <a @click.prevent="routerTo('/environment/add')"><li>恢复</li></a>
-                  <a @click.prevent="routerTo('/environment/add')"><li>导入</li></a>
+                  <a @click.prevent="routerTo('/organize/add')"><li>新增</li></a>
+                  <a @click.prevent="routerTo('/organize/update')"><li>修改</li></a>
+                  <a @click.prevent="routerTo('/organize/add')"><li>备份</li></a>
+                  <a @click.prevent="routerTo('/organize/add')"><li>恢复</li></a>
+                  <a @click.prevent="routerTo('/organize/add')"><li>导入</li></a>
                 </ul>
               </div>
               <div class="formData">
@@ -211,7 +211,7 @@ export default {
         this.PhIdList=PhId;
       },
       routerTo(url){
-        if(url!='/environment/add'&&this.PhIdList.length==0){
+        if(url!='/organize/add'&&this.PhIdList.length==0){
           alert('请点击你要修改的组织')
           return;
         }else {

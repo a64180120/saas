@@ -16,10 +16,10 @@
           <div  class="searcherBtn">搜索</div>
         </div>
         <ul class="flexPublic handle">
-          <router-link to="/environment/add"><li>引入模板</li></router-link>
-          <router-link to="/environment/add"><li>保存为模板</li></router-link>
-          <router-link to="/environment/add"><li>保存并新增</li></router-link>
-          <router-link to="/environment/add"><li>保存</li></router-link>
+          <router-link to="/organize/add"><li>引入模板</li></router-link>
+          <router-link to="/organize/add"><li>保存为模板</li></router-link>
+          <router-link to="/organize/add"><li>保存并新增</li></router-link>
+          <router-link to="/organize/add"><li>保存</li></router-link>
         </ul>
       </div>
       <voucher></voucher>

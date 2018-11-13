@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import manage from '@/page/admin/environment/manage'
+import manage from '@/page/admin/organize/manage'
 export default {
     name: 'exampleTable',
     data() {
