@@ -3,6 +3,7 @@
         <app-title title="表格综合"></app-title>
         <app-notes>本页实际路径: src/page/example/table.vue   table根组件为ElementUI。table配置请查看官方文档，table分页请查看“系统组件-功能类-表格分页”</app-notes>
         <!-- 搜索 -->
+        
         <app-search>
             <el-form :inline="true" :model="searchForm">
                 <el-form-item>
@@ -24,12 +25,14 @@
                 </el-form-item>
             </el-form>
         </app-search>
-        <!-- 工具条 -->
+        <!--- 工具条 -->
+        
         <app-toolbar>
             <el-button type="primary">新增</el-button>
             <el-button type="primary" v-hasPermission="'edit'">修改</el-button>
         </app-toolbar>
         <!-- 表格体 -->
+        
         <table-mixin pagination paginationAlign="center">
             <el-table v-loading="tableData.loading" :data="tableData.body" border :default-sort="{prop: 'date', order: 'descending'}">
                 <el-table-column type="index" label="序号" width="64" align="center"></el-table-column>
@@ -42,10 +45,12 @@
                 </el-table-column>
             </el-table>
         </table-mixin>
+
     </div>
 </template>
 
 <script>
+import manage from '@/page/admin/environment/manage'
 export default {
     name: 'exampleTable',
     data() {
@@ -83,6 +88,9 @@ export default {
         search(){
             console.log(`欲提交的数据   日期:${this.searchForm.time}  下拉条件:${this.searchForm.type}  文本: ${this.searchForm.text}`)
         }
+    },
+    components:{
+        manage,
     }
 }
 </script>

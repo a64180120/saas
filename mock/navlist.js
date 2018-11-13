@@ -80,7 +80,22 @@ var data = [
             {
                 path: '/example/table',
                 name: '列表页面',
-                permission: ['edit']
+                permission: ['edit'],
+                child:[
+                    {
+                        path:'/example/table/union',
+                        name: '列表页面'
+                    },
+                    {
+                      path:'/example/table/basic',
+                      name: '列表页面'
+
+                    },
+                    {
+                      path:'/example/table/look',
+                      name: '列表页面'
+                    }
+                ]
             },
             {
                 path: '/example/charts',

@@ -3,7 +3,7 @@ const Layout = () => import(/* webpackChunkName: 'index' */ '../page/layout')
 const staticRoute = [
     {
         path: '/',
-        redirect: '/admin'
+        redirect: '/login'
     },
     {
         path: '/error',
@@ -86,7 +86,7 @@ const staticRoute = [
             {
                 path: 'pageToolbar',
                 component: () => import(/* webpackChunkName: 'components' */ '../page/components/ui/pageToolbar')
-            }
+            },
         ]
     },
     {
@@ -95,7 +95,23 @@ const staticRoute = [
         children: [
             {
                 path: 'table',
-                component: () => import(/* webpackChunkName: 'example' */ '../page/example/table')
+                //component: () => import(/* webpackChunkName: 'example' */ '../page/example/table')
+                component: () => import(/* webpackChunkName: 'example' */ '@/page/admin/environment/manage'),
+                redirect: '/admin/environment/basic',
+                children:[
+                  {
+                    path:'union',
+                    component:()=>import('@/page/admin/environment/union'),
+                },
+                {
+                  path:'basic',
+                  component:()=>import('@/page/admin/environment/basicUnion'),
+                },
+                {
+                  path:'look',
+                  component:()=>import('@/page/admin/environment/lookUnion'),
+                }
+                ]
             },
             {
                 path: 'charts',
@@ -142,6 +158,48 @@ const staticRoute = [
             }
         ]
     },
+    {
+        path: '/admin/environment',
+        component: ()=>import('@/page/admin/environment/manage'),
+        redirect: '/admin/environment/basic',
+        children:[
+          {
+            path:'union',
+            component:()=>import('@/page/admin/environment/union'),
+        },
+        {
+          path:'basic',
+          component:()=>import('@/page/admin/environment/basicUnion'),
+        },
+        {
+          path:'look',
+          component:()=>import('@/page/admin/environment/lookUnion'),
+        }
+        ]
+      },
+      {
+        path: '/admin/environment/add',
+        component:()=>import('@/page/admin/environment/manageAdd'),
+      },
+      {
+        path: '/admin/environment/update',
+        component:()=>import('@/page/admin/environment/manageUpdate'),
+      },
+      {
+        path: '/admin/finance',
+        component:()=>import('@/page/finance/addVoucher'),
+      },
+      {
+        path: '/admin/role',
+        component:()=>import('@/page/admin/roleManage/role'),
+      },
+      {
+        path: '/admin/role/add',
+        component:()=>import('@/page/admin/roleManage/roleAdd'),
+      },
+
+
+
     {
         path: '*',
         redirect: '/error/404'

@@ -41,8 +41,8 @@ NProgress.configure({ showSpinner: false });
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-    mode: 'hash',
-    //mode:'history',
+    //mode: 'hash',
+    mode:'history',
     routes: staticRoute
 })
 
@@ -63,7 +63,7 @@ router.beforeEach((to, from, next) => {
             next()
         } else {
             initRoute(router).then(() => {
-                let isPermission = false
+                let isPermission = true
                 console.log("进入权限判断")
                 permissionList.forEach((v) => {
                     // 判断跳转的页面是否在权限列表中
