@@ -67,11 +67,12 @@
                             UserID: this.loginForm.UserID,
                             UserPwd: this.loginForm.UserPwd
                         }).then(res => {
-                            if(res.login){
-                                this.$router.push('home') //跳转主页
-                            } else {
-                                this.sysMsg = res.message
-                            }
+                            this.$router.push('home') //跳转主页
+                            // if(res.login){
+                            //     this.$router.push('home') //跳转主页
+                            // } else {
+                            //     this.sysMsg = res.message
+                            // }
                         })
                     } else {
                         console.log('error submit!!');
