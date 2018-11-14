@@ -1,16 +1,5 @@
 <template>
     <div class="manage">
-    <!--    <header class="manageHead">
-            <div class="title">
-                <ul>
-                    <li>组织管理</li>
-                </ul>
-            </div>
-            <div class="pageHandle">
-                <span>页面操作</span>
-            </div>
-        </header>
-    -->    
         <section class="container">
             <aside class="asideNav">
               <ul>
@@ -64,7 +53,7 @@
             console.log(item)
           },
           unionTab(url){
-            this.$router.push('/orgin'+url);
+            this.$router.push('/admin/orgin'+url);
             this.asideActive=url;
             sessionStorage.setItem("asideActive",url);//**防止刷新数据清空************* */
           }
@@ -79,17 +68,10 @@
 </script>
 
 <style scoped>
-  *{padding:0; margin:0;box-sizing: border-box;}
-  ul{
-    list-style: none;
-  }
-  .flexPublic{
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;}
+
   .manage{
     min-width: 1024px;
+      height:100%;
   }
   .manageHead{
     background: #969ead;
@@ -155,6 +137,9 @@
   }
   .container{
     padding:3px;
+      width:100%;
+      height:100%;
+      overflow: hidden;
     display: flex;
     flex-flow:row nowrap;
     justify-content: start;
@@ -176,6 +161,7 @@
     width:20px;
     height:20px;
     line-height:20px;
+    text-align: center;
     background: red;
     color:#fff;
     border-radius: 50%;
@@ -184,11 +170,11 @@
     background:#ff9900;
     color:#fff;
     }
-    .manageContent{
-      width:100%;
-      text-align: left;
-      padding:8px 18px;
-      font-size:14px;
+.manageContent{
+  width:100%;
+  text-align: left;
+  padding:8px 18px;
+  font-size:14px;
   }
   .unionState>ul>li{
     margin-right:20px;

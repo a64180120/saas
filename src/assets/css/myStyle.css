@@ -1,204 +1,209 @@
 
 .el-input--suffix .el-input__inner{
-  margin:0;
-  padding-right: 0;
-  height:30px;
+    margin:0;
+    padding-right: 0;
+    height:30px;
 }
 .el-input__icon{
-  line-height:30px;
+    line-height:30px;
 }
 *{padding:0; margin:0;box-sizing: border-box;}
 ul{
-  list-style: none;
+    list-style: none;
 }
 .flexPublic{
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
 }
 .inputContainer{
-  width:100%;
-  height:40px;
-  position:relative;
-  border:0;
+    width:100%;
+    height:40px;
+    position:relative;
+    border:0;
 }
 .inputContainer>input{
-  width:100%;
-  height:100%;
-  padding:0 10px;
-  border:1px solid #dcdfe6;
-  border-radius: 3px;
-  outline:0;
+    width:100%;
+    height:100%;
+    padding:0 10px;
+    border:1px solid #dcdfe6;
+    border-radius: 3px;
+    outline:0;
 }
 .inputContainer>input:focus{
-  border-color:#409eff;
+    border-color:#409eff;
 }
 .selectContainer{
-  border:1px solid #dcdfe6;
-  padding:0;
-  position: relative;
-  height:35px;
-  width:120px;
-  border-radius: 3px;
-  text-align: center;
+    border:1px solid #dcdfe6;
+    padding:0;
+    position: relative;
+    height:35px;
+    width:120px;
+    border-radius: 3px;
+    text-align: center;
 }
 .selectContainer>select{
-  border:0;
-  height:100%;
-  width:100%;
-  outline: none;
-  position:relative;
-  z-index: 2;
-  padding:0 5px;
-  background: none;
-  text-align: center;
+    border:0;
+    height:100%;
+    width:100%;
+    outline: none;
+    position:relative;
+    z-index: 2;
+    padding:0 5px;
+    background: none;
+    text-align: center;
 }
 .manageContent{
-  width:100%;
-  text-align: left;
-  padding:8px 18px;
-  font-size:14px;
+    width:100%;
+    text-align: left;
+    padding:8px 10px;
+    font-size:14px;
 }
 .unionState>ul>li{
-  margin-right:20px;
-  width:33.33%;
+    margin-right:15px;
+    width:33.33%;
 }
 .unionState>ul>li>div:first-of-type{
-  width:60px;
-  font-size: 14px;
-  text-align: center;
+    width:60px;
+    font-size: 13px;
+    text-align: center;
 }
 
 .seacherValue{
-  border:1px solid #ddd;
-  border-radius: 10px 0 0 10px ;
-  overflow: hidden;
-  padding-left:10px;
+    border:1px solid #ddd;
+    border-radius: 10px 0 0 10px ;
+    overflow: hidden;
+    padding-left:10px;
 }
 .seacherValue>input{
-  width:200px;
-  height:30px;
-  outline: none;
-  margin:0;
-  font-size: 14px;
-  border:0;
+    min-width:100px;
+    height:30px;
+    outline: none;
+    margin:0;
+    font-size: 14px;
+    border:0;
 }
 .seacherBtn{
-  height:30px;
-  width:60px;
-  text-align: center;
-  line-height: 30px;
-  background:#509edc;
-  color:#fff;
-  cursor:pointer;
+    height:30px;
+    width:60px;
+    text-align: center;
+    line-height: 30px;
+    background:#509edc;
+    color:#fff;
+    cursor:pointer;
 }
 .unionState .handle>a>li{
-  border:1px solid #ff9900;
-  cursor:pointer;
-  border-radius: 3px;
-  text-align: center;
-  min-width:60px;
-  font-size:13px;
-  height:30px;
-  line-height: 30px;
-  margin-left:10px;
-  margin-right: 0;
+    border:1px solid #ff9900;
+    cursor:pointer;
+    border-radius: 3px;
+    text-align: center;
+    min-width:60px;
+    font-size:13px;
+    height:30px;
+    line-height: 30px;
+    margin-left:10px;
+    margin-right: 0;
 }
 .unionState .handle>a>li:hover{
-  background: #ff9900;
-  color:#fff;
+    background: #ff9900;
+    color:#fff;
 }
 
 .formData{
-  margin-top:10px;
+    margin-top:10px;
 }
 .formData>ul:first-child{
-  display:flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-  font-size:13px;
+    display:flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    font-size:13px;
 }
 .formData>ul:first-child{
-  background: #2780d1;
-  color:#fff;
+    background: #2780d1;
+    color:#fff;
 }
 .datepick{
-  font-size: 13px;
-  height:100%;
+    font-size: 13px;
+    height:100%;
 }
 .datepick .el-date-editor.el-input{
-  width:120px;
-  height:100%;
-  font-size: 12px;
-  padding-right:10px !important;
-  margin:0;
+    width:120px;
+    height:100%;
+    font-size: 12px;
+    padding-right:10px !important;
+    margin:0;
 }
 .userInfoCss{
-  background: #bbb;
+    background: #bbb;
 }
 .formDataPages{
-  margin-top: 10px;
-  padding:8px 20px;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
-  font-size: 13px;
+    margin-top: 10px;
+    padding:8px 20px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    font-size: 13px;
 }
 .formDataPages>div{
-  width:500px;
-  justify-content: flex-end;
+    width:500px;
+    justify-content: flex-end;
 }
 .formDataPages>div>div:nth-of-type(2){
-  width:50px;
-  height:25px;
-  margin:0 3px;
+    width:50px;
+    height:25px;
+    margin:0 3px;
 }
 .formDataPages>div>div:nth-of-type(3){
-  margin-right: 8px;
+    margin-right: 8px;
 }
 .pagesContainer>ul>li{
-  border:1px solid #ddd;
-  border-radius: 3px;
-  padding:3px 5px;
-  margin-right:3px;
-  cursor:pointer;
+    border:1px solid #ddd;
+    border-radius: 3px;
+    padding:3px 5px;
+    margin-right:3px;
+    cursor:pointer;
 }
 .pagesContainer>ul>li:hover{
-  background: #509edc;
-  color:#fff;
+    background: #509edc;
+    color:#fff;
 }
 .pagesContainer>ul>.pageActive:hover,.pageActive{
-  background: #2780d1;
-  color:#fff;
+    background: #2780d1;
+    color:#fff;
 }
 .pagesContainer>ul>.pageDisabled:hover,.pageDisabled{
-  background: #ddd;
-  color:#fff;
-  cursor:default;
+    background: #ddd;
+    color:#fff;
+    cursor:default;
 }
 .ml1{
-  margin-left: 10px;
+    margin-left: 10px;
 }
 .w-20{
-  width: 20%;
+    width: 20%;
 }
 .w-25{
-  width:25%;
+    width:25%;
 }
 .w-33{
-  width:33.33%;
+    width:33.33%;
 }
 .w-50{
-  width:50%;
+    width:50%;
 }
 .w-100{
-  width:100%;
+    width:100%;
 }
 .m0{
-  margin:0 !important;
+    margin:0 !important;
 }
 .p0{
-  padding:0  !important;
+    padding:0  !important;
+}
+.voucherHead .el-upload.el-upload--text{
+    width:80px;
+    height:32px;
+    border:0;
 }

@@ -28,7 +28,7 @@ const staticRoute = [
                 //组织管理
                 path: "orgin",
                 component: () => import("../page/admin/organize/manage"),
-                redirect: "/admin/orgin/union",            
+                redirect: "/admin/orgin/basic",
                 children: [
                     {
                         path: "union",
@@ -47,7 +47,7 @@ const staticRoute = [
             {
                 //角色管理
                 path: "role",
-                component: () =>import("../page/admin/role") 
+                component: () =>import("../page/admin/role")
             },
             {
                 //用户管理
@@ -69,12 +69,12 @@ const staticRoute = [
             {
                 //新增凭证
                 path: "voucherAdd",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/finance/addVoucher")
             },
             {
                 //凭证管理
                 path: "voucherList",
-                component: () =>import("../page/message") 
+                component: () =>import("../page/message")
             }
         ]
     },
@@ -191,7 +191,7 @@ const staticRoute = [
             {
                 //科目设置
                 path: "subject",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/basicSetting/subjectSetting/subjectSetting")
             },
             {
                 //科目期初
