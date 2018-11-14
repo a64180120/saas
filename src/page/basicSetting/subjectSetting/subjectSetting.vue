@@ -16,12 +16,12 @@
         <div @click="unionSearch" class="seacherBtn">搜索</div>
       </div>
       <ul class="flexPublic handle">
-        <a @click.prevent="routerTo('/finance/basic/subject/add')"><li>增加</li></a>
-        <a @click.prevent="routerTo('/environment/update')"><li>修改</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>删除</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>模板下载</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>导入</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>导出</li></a>
+        <a @click.prevent="routerTo('/add')"><li>增加</li></a>
+        <a @click.prevent="routerTo('/update')"><li>修改</li></a>
+        <a @click.prevent="routerTo('/add')"><li>删除</li></a>
+        <a @click.prevent="routerTo('/add')"><li>模板下载</li></a>
+        <a @click.prevent="routerTo('/add')"><li>导入</li></a>
+        <a @click.prevent="routerTo('/add')"><li>导出</li></a>
       </ul>
     </div>
     <div class="formData">
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+    import newadd from './newAdd'
     export default {
       data(){
         return {
@@ -129,11 +130,12 @@
           this.PhIdList=PhId;
         },
         routerTo(url){
-          if(url!='/finance/basic/subject/add'&&this.PhIdList.length==0){
+            var path='/setting/subject'
+          if(url!='/add'&&this.PhIdList.length==0){
             alert('请点击你要修改的组织')
             return;
           }else {
-            this.$router.push({path: url, query: {PhId: this.PhIdList}});
+            this.$router.push({path: path+url, query: {PhId: this.PhIdList}});
           }
         },
         ajaxMode(){
@@ -163,8 +165,6 @@
             })
             .catch(error=>{console.log(error)})
         }
-      },
-      created(){
       },
       created(){
         for(var i=0;i<this.userInfo.length;i++){

@@ -191,7 +191,13 @@ const staticRoute = [
             {
                 //科目设置
                 path: "subject",
-                component: () =>import( "../page/basicSetting/subjectSetting/subjectSetting")
+                component: () =>import( "../page/basicSetting/subjectSetting/subjectSetting"),
+                children:[
+                    {
+                        path: "add",
+                        component: () =>import( "../page/basicSetting/subjectSetting/newAdd")
+                    }
+                ]
             },
             {
                 //科目期初
