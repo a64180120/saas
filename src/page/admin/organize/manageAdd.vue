@@ -455,7 +455,7 @@
           var data = {
             uid: "0",
             orgid: "0",
-            infoData: JSON.stringify(page)
+            infoData: page
           };
           this.$axios.post('http://10.0.45.51:7758/api/GCW/SysOrganize/PostAdd',qs.stringify(data),config)
             .then(res=>{

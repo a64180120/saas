@@ -11,39 +11,44 @@
               <div class="flexPublic">
                 <div>401</div>
                 <div class="inputContainer">
-                    <input type="text" >
+                    <input type="text" v-model="KCode">
                 </div>
               </div>
           </li>
           <li>
             <div>科目名称</div>
             <div class="inputContainer">
-                <input placeholder="必填" type="text">
+                <input placeholder="必填" type="text" v-model="KName">
             </div>
           </li>
           <li>
             <div>科目类别</div>
             <div class="selectContainer">
-                <select>
-                    <option value="必填">必填</option>
+                <select v-model="KType">
+                    <option value="0">必填</option>
+                    <option value="资产">资产</option>
+                    <option value="负债">负债</option>
+                    <option value="净资产">净资产</option>
+                    <option value="收入">收入</option>
+                    <option value="支出">支出</option>
                 </select>
             </div>
           </li>
           <li>
             <div>余额方向</div>
             <div class="itemRadio">
-              <label for=""><input type="radio" name="line">借方</label>
-              <label for=""><input type="radio" name="line">贷方</label>
-              <label for=""><input type="radio" name="line">借/贷</label>
+              <label ><input type="radio" name="line" v-model="KBalanceType" value="借方" >借方</label>
+              <label><input type="radio" name="line" v-model="KBalanceType" value="贷方">贷方</label>
+              <label ><input type="radio" name="line"  v-model="KBalanceType" value="借/贷">借/贷</label>
             </div>
           </li>
           <li>
             <div>辅助核算</div>
             <div class="itemRadio">
-              <label for=""><input type="checkbox">部门</label>
-              <label for=""><input type="checkbox">项目</label>
-              <label for=""><input type="checkbox">往来个人</label>
-              <label for=""><input type="checkbox">往来单位</label>
+              <label ><input type="checkbox" v-model="check.part" value="部门">部门</label>
+              <label ><input type="checkbox" v-model="check.project" value="项目">项目</label>
+              <label><input type="checkbox"  v-model="check.person" value="个人">往来个人</label>
+              <label ><input type="checkbox" v-model="check.unit" value="单位">往来单位</label>
             </div>
           </li>
         </ul>
@@ -58,8 +63,20 @@
 <script>
     export default {
         name: "new-add",
+        data(){
+            return{
+                KCode:'',
+                KName:'',
+                KType:0,
+                KBalanceType:'',
+                check:{part:'',project:'',person:'',unit:''}
+            }
+        },
         methods:{
             newAdd(){
+                console.log(this.KCode,this.KName,this.KType,this.KBalanceType,this.check)
+                alert('success')
+                this.$router.push({path:'/setting/subject'});
             },
             addCancle(){
                this.$router.push({path:'/setting/subject'});
@@ -71,8 +88,6 @@
 <style lang="scss" scoped>
   .newAdd{
     width:100%;
-
-
     height:100%;
     position:absolute;
     z-index:10;
@@ -84,7 +99,7 @@
     overflow: hidden;
     position:absolute;
     left:35%;
-    top:250px;
+    top:20%;
     width:500px;
     .newAddTitle{
       background: #3e8cbc;

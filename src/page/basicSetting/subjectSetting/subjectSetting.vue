@@ -130,12 +130,11 @@
           this.PhIdList=PhId;
         },
         routerTo(url){
-            var path='/setting/subject'
           if(url!='/add'&&this.PhIdList.length==0){
             alert('请点击你要修改的组织')
             return;
           }else {
-            this.$router.push({path: path+url, query: {PhId: this.PhIdList}});
+            this.$router.push({path: '/setting/subject/add', query: {PhId: this.PhIdList}});
           }
         },
         ajaxMode(){

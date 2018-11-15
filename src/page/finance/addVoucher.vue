@@ -22,7 +22,7 @@
                 <a @click.prevent="addVoucher('keep')"><li>保存</li></a>
             </ul>
         </div>
-        <voucher :dataList="voucherDataList" ref="voucher"></voucher>
+        <voucher :dataList="false" ref="voucher"></voucher>
         <div class="newAddContainer">
             <div class="newAddTitle flexPublic">
                 <span>最新新增凭证</span>
@@ -67,13 +67,14 @@
 
 <script>
     import voucher from './voucher'
+    import qs from 'qs'
     export default {
         data(){return {
             val1:'',
             fileList:[],
             voucherDate:'',
             userState:0,
-            voucherDataList:['666'],
+            voucherDataList:{},
             userStateValues:[
                 {id:0,name:'全部'},{id:1,name:'2018-11'},{id:2,name:'2018-12'},{id:3,name:'2019-01'}
             ],
@@ -97,13 +98,33 @@
                         alert('baocunxinzeng');
                         break;
                     case 'keep':
-                        alert('baocun');
+                        this.voucherData();
+                        this.keepVoucher();
                         break;
                 }
             },
+            keepVoucher(){
+               var {config}=this.$ajax();
+               var data={
+                   uid:0,
+                   orgid:0,
+                   infoData:{
+                       Mst:this.voucherDataList,
+                       Attachements:[{}]
+                   }
+               }
+               this.$axios.post('http://10.0.15.3:8028/api/GCW/PVoucherMst/PostAdd',qs.stringify(data),config)
+                   .then(res=>{
+                       if(res.status=='success'){
+                           alert('保存成功!')
+                       }else{
+                           alert('保存失败,请重试!')
+                       }
+                   })
+                   .catch(err=>console.log(err))
+            },
             voucherData(){//voucher组件传值************
                 this.voucherDataList=this.$refs.voucher.voucherData();
-                console.log(this.voucherDataList);
             },
             newVoucherList(){//获取最新新增凭证列表*****************
 
@@ -121,6 +142,8 @@
 <style scoped>
     .addVoucher{
         width:100%;
+        height:100%;
+        overflow: scroll;
         text-align: left;
         padding:8px 18px;
         font-size:14px;
