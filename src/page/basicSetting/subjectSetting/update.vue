@@ -3,7 +3,7 @@
       <div class="newAddContent">
         <div class="newAddTitle flexPublic">
           <span>科目新增</span>
-          <span @click.stop="newAdd(false)"></span>
+          <span @click.stop="addCancle"></span>
         </div>
         <ul class="contentItem">
           <li>
@@ -53,8 +53,8 @@
           </li>
         </ul>
         <div class="itemBtnCon">
-          <div @click.stop="newAdd(true)">保存</div>
-          <div @click.stop="newAdd(false)">取消</div>
+          <div @click.stop="update(true)">保存</div>
+          <div @click.stop="update(false)">取消</div>
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@
 
 <script>
     export default {
-        name: "new-add",
+        name: "update",
         data(){
             return{
                 KCode:'',
@@ -73,7 +73,7 @@
             }
         },
         methods:{
-            newAdd(bool){
+            update(bool){
                 if(bool){
                     console.log(this.KCode,this.KName,this.KType,this.KBalanceType,this.check)
                     alert('success')

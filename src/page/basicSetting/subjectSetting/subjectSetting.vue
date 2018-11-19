@@ -16,12 +16,12 @@
         <div @click="unionSearch" class="seacherBtn">搜索</div>
       </div>
       <ul class="flexPublic handle">
-        <a @click.prevent="routerTo('/add')"><li>增加</li></a>
-        <a @click.prevent="routerTo('/update')"><li>修改</li></a>
-        <a @click.prevent="routerTo('/add')"><li>删除</li></a>
-        <a @click.prevent="routerTo('/add')"><li>模板下载</li></a>
-        <a @click.prevent="routerTo('/add')"><li>导入</li></a>
-        <a @click.prevent="routerTo('/add')"><li>导出</li></a>
+        <a @click.prevent="routerTo('add')"><li>增加</li></a>
+        <a @click.prevent="routerTo('update')"><li>修改</li></a>
+        <a @click.prevent="routerTo('delete')"><li>删除</li></a>
+        <a @click.prevent="routerTo('model')"><li>模板下载</li></a>
+        <a @click.prevent="routerTo('loadIn')"><li>导入</li></a>
+        <a @click.prevent="routerTo('loadOut')"><li>导出</li></a>
       </ul>
     </div>
     <div class="formData">
@@ -65,7 +65,7 @@
         </div>
       </div>
     </div>
-    <router-view></router-view>
+    <newadd v-show="setting.add"></newadd>
   </div>
 </template>
 
@@ -99,6 +99,7 @@
           pageCssActive:'',
           pagePreDisabled:'',
           pageNextDisabled:'',
+          setting:[{add:false},{update:false},{delete:false},{model:false},{loadIn:false},{loadOut:false}]
         }
       },
       methods:{
@@ -130,12 +131,7 @@
           this.PhIdList=PhId;
         },
         routerTo(url){
-          if(url!='/add'&&this.PhIdList.length==0){
-            alert('请点击你要修改的组织')
-            return;
-          }else {
-            this.$router.push({path: '/setting/subject/add', query: {PhId: this.PhIdList}});
-          }
+          this.setting[url]=true;
         },
         ajaxMode(){
           let {data,config}=this.$ajax();
@@ -171,6 +167,9 @@
         }
         this.ajaxMode();
       },
+        components:{
+          newadd,
+        }
     }
 </script>
 
