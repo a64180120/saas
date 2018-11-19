@@ -37,12 +37,71 @@ const mutations = {
             state.openedPageList = []
             state.cachedPageName = []
         }
+    },
+    delVisitedTagNav: (state, data) => {
+        for (let [i, v] of state.openedPageList.entries()) {
+          if (v.path === data.path) {
+            state.openedPageList.splice(i, 1)
+            break
+          }
+        }
+        if(state.cachePage){
+            let index = state.cachedPageName.indexOf(data.name)
+            if(index >= 0){
+                state.cachedPageName.splice(index, 1)
+            }
+        }
+    },
+    delOthersTagNav: (state, data) => {
+        for (let [i, v] of state.openedPageList.entries()) {
+          if (v.path === data.path) {
+            state.openedPageList = state.openedPageList.slice(i, i + 1)
+            break
+          }
+        }
+        if(state.cachePage){
+            for (let i of state.cachedPageName) {
+                if (i === data.name) {
+                    const index = state.cachedPageName.indexOf(i)
+                    state.cachedPageName = state.cachedPageName.slice(index, i + 1)
+                    break
+                }
+            }
+        }
+    },
+    delAllTagNav: (state) => {
+        state.openedPageList = []
+        state.cachedPageName = []
     }
 }
 
+const actions={
+    addVisitedViews({ commit }, view) {
+        commit('addTagNav', view)
+    },
+    delVisitedViews({ commit, state }, view) {
+        return new Promise((resolve) => {
+            commit('delVisitedTagNav', view)
+            resolve([...state.openedPageList])
+        })
+    },
+    delOthersViews({ commit, state }, view) {
+        return new Promise((resolve) => {
+            commit('delOthersTagNav', view)
+            resolve([...state.openedPageList])
+        })
+    },
+    delAllViews({ commit, state }) {
+        return new Promise((resolve) => {
+            commit('delAllTagNav')
+            resolve([...state.openedPageList])
+        })
+    }
+}
 
 export default {
     namespaced: true,
     state,
-    mutations
+    mutations,
+    actions
 }

@@ -10,15 +10,23 @@ var data = [
         child: [
             {
                 name: '组织管理',
-                path: '/admin/orgin'
+                path: '/admin/orgin',
+                permission:['add','edit']
             },
             {
                 name: '角色管理',
-                path: '/admin/role'
+                path: '/admin/role',
+                permission:['add','edit']
             },
             {
                 name: '用户管理',
-                path: '/admin/user'
+                path: '/admin/user',
+                permission:['add','edit']
+            },
+            {
+                name: '菜单管理',
+                path: '/admin/menu',
+                permission:['add','edit']
             }
         ]
     },

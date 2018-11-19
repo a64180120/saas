@@ -15,7 +15,8 @@ const staticRoute = [
         children: [
             {
                 path: "",
-                component: () =>import("../page/home")
+                component: () =>import("../page/home"),
+                meta:{ requireAuth:true,type:'page',isMenu:true }
             }
         ]
     },
@@ -27,32 +28,39 @@ const staticRoute = [
             {
                 //组织管理
                 path: "orgin",
-                component: () => import("../page/admin/organize/manage"),
-                redirect: "/admin/orgin/basic",
-                children: [
-                    {
-                        path: "union",
-                        component: () => import("../page/admin/organize/union")
-                    },
-                    {
-                        path: "basic",
-                        component: () => import("../page/admin/organize/basicUnion")
-                    },
-                    {
-                        path: "look",
-                        component: () => import("../page/admin/organize/lookUnion")
-                    }
-                ]
+                component: () => import("../page/admin/organize"),
+                //redirect: "/admin/orgin/union",
+                meta:{ requireAuth:true,type:'page',isMenu:true}
+            },
+            {
+                //组织管理 -新增
+                path: "orgin/add",
+                component: () => import("../page/admin/organize/manageAdd"),
+                meta:{ requireAuth:true,type:'button',name:'组织新增'}
+            },
+            {
+                //组织管理 -编辑
+                path: "orgin/edit",
+                component: () => import("../page/admin/organize/manageUpdate"),
+                meta:{ requireAuth:true,type:'button',name:'组织编辑'}
             },
             {
                 //角色管理
                 path: "role",
-                component: () =>import("../page/admin/role")
+                component: () =>import("../page/admin/role"),
+                meta:{ requireAuth:true ,isMenu:true}
             },
             {
                 //用户管理
                 path: "user",
-                component: () =>import("../page/admin/user")
+                component: () =>import("../page/admin/user"),
+                meta:{ requireAuth:true ,isMenu:true}
+            },
+            {
+                //菜单管理
+                path: "menu",
+                component: () =>import("../page/admin/menu"),
+                meta:{ requireAuth:true ,isMenu:true}
             },
             {
                 //系统登录页面
@@ -69,12 +77,14 @@ const staticRoute = [
             {
                 //新增凭证
                 path: "voucherAdd",
-                component: () =>import( "../page/finance/addVoucher")
+                component: () =>import( "../page/finance/addVoucher"),
+                meta:{ requireAuth:true,isMenu:true,type:'page'}
             },
             {
                 //凭证管理
                 path: "voucherList",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true,type:'page'}
             }
         ]
     },
@@ -86,22 +96,26 @@ const staticRoute = [
             {
                 //科目余额
                 path: "subjectbalance",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true,type:'page' }
             },
             {
                 //总分账
                 path: "totalaccounts",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true,type:'page' }
             },
             {
                 //明细账
                 path: "detailaccount",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true,type:'page' }
             },
             {
                 //多栏账
                 path: "multiaccount",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -113,17 +127,20 @@ const staticRoute = [
             {
                 //资产负债表
                 path: "assets",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //收入支出表
                 path: "expenses",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //往来明细款项表
                 path: "intercourse",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -135,17 +152,20 @@ const staticRoute = [
             {
                 //资产负债表
                 path: "assets",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //收入支出表
                 path: "expenses",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //往来明细款项表
                 path: "intercourse",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -157,12 +177,14 @@ const staticRoute = [
             {
                 //期末结转
                 path: "end",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //结账
                 path: "checkout",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -174,12 +196,14 @@ const staticRoute = [
             {
                 //预算编制
                 path: "plan",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //预算执行
                 path: "execute",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -191,32 +215,38 @@ const staticRoute = [
             {
                 //科目设置
                 path: "subject",
-                component: () =>import( "../page/basicSetting/subjectSetting/subjectSetting")
+                component: () =>import( "../page/basicSetting/subjectSetting/subjectSetting"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //科目期初
                 path: "subjectstart",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //辅助核算
                 path: "auxiliary",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //凭证模板
                 path: "vouchertemp",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //套打格式
                 path: "print",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //参数设置
                 path: "config",
-                component: () =>import("../page/message")
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -228,7 +258,8 @@ const staticRoute = [
             {
                 //上报任务
                 path: "reporting",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -240,12 +271,14 @@ const staticRoute = [
             {
                 //工作账号管理
                 path: "account",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //组织账套管理
                 path: "organization",
-                component: () =>import( "../page/message")
+                component: () =>import( "../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
     },
@@ -255,8 +288,7 @@ const staticRoute = [
         children: [
             {
                 path: "",
-                component: () =>
-                    import(/* webpackChunkName: 'i18n' */ "../page/example/table")
+                component: () =>import(/* webpackChunkName: 'i18n' */ "../page/example/table")
             }
         ]
     },

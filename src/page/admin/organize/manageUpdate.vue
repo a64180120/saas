@@ -116,7 +116,7 @@
   import md5 from 'js-md5'
   import qs from 'qs'
   export default {
-    name: "manage-add",
+    name: "manage-update",
     data() {
       return {
         PhId:'1',

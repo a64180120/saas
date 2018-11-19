@@ -93,6 +93,9 @@ const webpackConfig = merge(baseWebpackConfig, {
         }
     },
     plugins: [
+        new webpack.DefinePlugin({
+            'process.env': config.build.env   //require('../config/prod.env')
+        }),
         // extract css into its own file
         new MiniCssExtractPlugin({
             filename: utils.assetsPath('css/[name].[contenthash:7].css')

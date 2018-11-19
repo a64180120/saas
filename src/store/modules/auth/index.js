@@ -1,11 +1,12 @@
 import Cookies from 'js-cookie'
 import axios from '@/util/ajax'
 import Auth from '@/util/auth'
-import global from '@/util/global'
 
 //状态
 const state = {
     token: '',
+    appKey:'',
+    appSecret:'',
     navList: []
 }
 
@@ -28,7 +29,9 @@ const mutations = {
             Auth.removeToken()
             Auth.removeLoginStatus()
         }
-        state.token = data
+        state.token = data.token
+        state.appKey = data.appKey
+        state.appSecret = data.appSecret
     }
 }
 
@@ -44,7 +47,7 @@ const actions = {
            params.append('UserPwd',userInfo.UserPwd)
 
             axios({
-                url: 'http://10.0.20.46:8028/api/GCW/SysAdminUser/PostLogin',
+                url: '/SysAdminUser/PostLogin',
                 method: 'post',
                 data:params
             }).then(res => {
@@ -60,15 +63,25 @@ const actions = {
     // 业务用户登录
     loginByPhone({ commit }, userInfo) {
         return new Promise((resolve) => {
+
+            var params=new URLSearchParams();
+            params.append('uname',userInfo.name);
+            params.append('orgid',userInfo.orgid);
+            params.append('password',userInfo.password);
+
             axios({
-                url: '/login',
+                url: '/SysUser/PostLogin',
                 method: 'post',
-                data: {
-                    ...userInfo    // ...这里的三个点叫做：扩展运算符
-                }
+                data: params
             }).then(res => {
-                if(res.login){
-                    commit('setToken', res.token)
+                if(res.Status==="Success"){
+                    var object={ 
+                        token:res.Status.Data.Token,
+                        appKey:res.Status.Data.AppKey,
+                        appSecret:res.Status.Data.AppSecret,
+                    };
+
+                    commit('setToken', object)
                     commit('user/setName', res.name, { root: true })
                 }
                 resolve(res)

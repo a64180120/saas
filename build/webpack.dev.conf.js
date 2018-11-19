@@ -20,9 +20,9 @@ module.exports = merge(baseWebpackConfig, {
     devtool: '#cheap-module-eval-source-map',
     mode: "development",
     plugins: [
-        // new webpack.DefinePlugin({
-        //     'process.env': config.dev.env
-        // }),
+        new webpack.DefinePlugin({
+            'process.env': config.dev.env
+        }),
         // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),

@@ -139,10 +139,15 @@ export default {
     };
   },
   created() {
+    
+  },
+  mounted:function(){
     this.getData();
   },
-  computed: {},
-  components: {},
+  //计算
+  computed: {
+
+  },
   methods: {
     // 分页导航
     handleCurrentChange(val) {

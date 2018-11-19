@@ -48,7 +48,7 @@ var getTokenLock = false,
  *              跳转授权Token：过期时中断当前所有请求并跳转到对应页面获取Token。注意：跳转页面授权最佳实现应在授权页面点击触发
  */
 function checkToken(cancel, callback){
-    if(!Auth.hasToken()){
+    if(!Auth.getToken()){
         // 自动获取Token
         if(Auth.tokenTimeoutMethod == "getNewToken"){
             // 如果当前有请求正在获取Token
@@ -98,13 +98,13 @@ function stopRepeatRequest(url, cancelfunction){
 
 // 超时设置
 const service = axios.create({
-    //baseURL: 'http://10.0.20.46:8028/api/GCW/',
+    baseURL: 'http://10.0.45.51:8028/api/GCW',
     // 请求超时时间
     timeout: 5000               
 });
 
 // baseURL
-// axios.defaults.baseURL = 'https://api.github.com';
+// axios.defaults.baseURL = 'http://10.0.45.51:8028/api/GCW';
 // http request 请求拦截器
 // 每次请求都为http头增加Authorization字段，其内容为token
 service.interceptors.request.use(
@@ -114,8 +114,7 @@ service.interceptors.request.use(
             cancel = req;
         })
 
-
-
+        debugger;
         config.headers={
             'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
             'Accept': "application/json; charset=utf-8",
