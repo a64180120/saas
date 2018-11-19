@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { Message } from "element-ui";
-import Auth from "@/util/auth";
+import Auth from '@/util/auth'
 import store from "../store";
 import staticRoute from "./staticRoute";
 import whiteList from "./whiteList";
@@ -15,8 +15,9 @@ function initRoute(router) {
     return new Promise(resolve => {
         if (permissionList.length == 0) {
             console.log("没有权限数据，正在获取");
-            store.dispatch("auth/getNavList").then(() => {
-                store.dispatch("auth/getPermissionList").then(res => {
+            store.dispatch("user/getNavList").then(() => {
+                store.dispatch("user/getPermissionList").then(res => {
+                    debugger;
                     console.log("权限列表生成完毕");
                     permissionList = res;
                     res.forEach(function(v) {
@@ -52,7 +53,7 @@ router.beforeEach((to, from, next) => {
     NProgress.start();
 
     // 判断用户是否处于登录状态
-    if (Auth.isLogin()) {
+    if (Auth.getLoginStatus()) {
         // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
         // 这种情况出现在手动修改地址栏地址时
         if (to.path === "/login") {

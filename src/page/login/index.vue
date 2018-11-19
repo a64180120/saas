@@ -82,6 +82,11 @@ export default {
             theme: state => state.theme
         })
     },
+    created() {
+        // this.getToken().then((res) => {
+        //     console.log("已获取新token")
+        // })
+    },
     watch: {
         // "captcha.show"(val){
         //     this.loginRules.captcha[0].required = val
@@ -99,7 +104,7 @@ export default {
                 }).then(res => {
                     let resultData = JSON.parse(res);
                     if(resultData){
-                        if(resultData.Status==='Error'){
+                        if(resultData.Status==='error'){
                             this.$message(resultData.Message);
                             return;
                         }
@@ -113,11 +118,18 @@ export default {
         // 初始化错误信息。保证单独点击input时可以弹出正确的错误提示
         //this.setErrMsg()
     },
+    mounted(){
+        this.getToken().then((res) => {
+            //console.log("已获取新token:"+res);
+        })
+    },
     methods: {
         ...mapActions({
-            login: 'user/loginByPhone'
+            login: 'user/loginByPhone',
+            getToken:'user/getToken'
         }),
         submitForm(formName){
+
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.login({
@@ -125,7 +137,7 @@ export default {
                         password: this.loginForm.password,
                         orgid: this.loginForm.orgid
                     }).then(res => {
-                        if(res.Status==="Success"){
+                        if(res.Status==="success"){
                             this.$router.push('home') //跳转主页
                         } else {
                             this.sysMsg = res.message

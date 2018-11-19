@@ -40,7 +40,7 @@ export default {
   props: ["isCollapse"],
   computed: {
     ...mapState({
-      navList: state => state.auth.navList
+      navList: state => state.user.navList
     }),
     defActive() {
       return this.$route.path;

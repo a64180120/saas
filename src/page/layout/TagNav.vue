@@ -1,8 +1,11 @@
 <template>
     <div class="tag-nav">
         <scroll-bar ref="scrollBar">
-            <router-link ref="tag" class="tag-nav-item" :class="isActive(item) ? 'cur' : ''" v-for="(item, index) in tagNavList" 
-            :to="item.path" :key="index">
+            <router-link ref="tag" class="tag-nav-item" 
+            :class="isActive(item) ? 'cur' : ''" 
+            v-for="(item, index) in tagNavList" 
+            :to="item.path" 
+            :key="index">
                 {{item.title}}
                 <span class='el-icon-close' @click.prevent.stop="closeTheTag(item, index)"></span>
             </router-link>

@@ -58,7 +58,7 @@ function checkToken(cancel, callback){
                 }, 500)
             } else {
                 getTokenLock = true
-                store.dispatch("auth/getNewToken").then(() => {
+                store.dispatch("user/getNewToken").then(() => {
                     console.log("已获取新token")
                     callback()
                     getTokenLock = false
@@ -66,7 +66,7 @@ function checkToken(cancel, callback){
             }
         }
         // 跳转授权Token
-        if(Auth.tokenTimeoutMethod == "jumpAuthPage" && Auth.isLogin()){
+        if(Auth.tokenTimeoutMethod == "jumpAuthPage" && Auth.getLoginStatus()){
             if(router.currentRoute.path != '/auth'){
                 // BUG: 无法保证一定会中断所有请求
                 cancel()
@@ -98,7 +98,7 @@ function stopRepeatRequest(url, cancelfunction){
 
 // 超时设置
 const service = axios.create({
-    baseURL: 'http://10.0.45.51:8028/api/GCW',
+    baseURL: 'http://10.0.20.46:8028/api/GCW',
     // 请求超时时间
     timeout: 5000               
 });
@@ -114,7 +114,6 @@ service.interceptors.request.use(
             cancel = req;
         })
 
-        debugger;
         config.headers={
             'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
             'Accept': "application/json; charset=utf-8",

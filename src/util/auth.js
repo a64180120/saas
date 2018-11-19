@@ -33,7 +33,7 @@ const authToken = {
     },
 
     // 当前是否是登录状态
-    isLogin: function(){
+    getLoginStatus: function(){
         return Cookies.get(this.loginKey)
     },
 

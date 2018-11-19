@@ -26,35 +26,68 @@ const mutations = {
     setToken: (state, data) => {
         if(data){
             Auth.setToken(data)
-            Auth.setLoginStatus()
+            state.token = data.token
+            state.appKey = data.appKey
+            state.appSecret = data.appSecret
+            
         } else {
             Auth.removeToken()
-            Auth.removeLoginStatus()
+            
         }
-        state.token = data.token
-        state.appKey = data.appKey
-        state.appSecret = data.appSecret
+
     },
     setUserInfo: (state, data) => {
         if(data){
-            Auth.setUserInfoData(data);   
+            Auth.setUserInfoData(data);
+            Auth.setLoginStatus(); 
+            
+            state.userid = data.userInfo.PhId;
+            state.orgid = data.orgInfo.PhId;
+            
         }else{
-            Auth.removeUserInfoData()
+            Auth.removeUserInfoData();
+            Auth.removeLoginStatus();
         }   
-        state.userid = data.userInfo.PhId;
-        state.orgid = data.orgInfo.PhId;
+
     }
 }
 
 //执行一些方法(异步)
 const actions = {
+    // 获取Token
+    getToken({ commit, state },parameters) {
+        return new Promise((resolve, reject) => {
+            var params=new URLSearchParams();
+
+            axios({
+                url: '/SysUser/GetToken',
+                method: 'get',
+                data: params
+            }).then(res => {
+
+                let resultData = JSON.parse(res);
+
+                if(resultData.Status!=="error"){
+                    var object={ 
+                        token:resultData.Token,
+                        appKey:resultData.AppKey,
+                        appSecret:resultData.AppSecret,
+                    };
+                    //用户信息缓存
+                    commit('setToken', object)
+                }
+
+                resolve(res)
+            })
+        })
+    },
+    
     // 业务用户登录
     loginByPhone({ commit }, userInfo) {
         return new Promise((resolve) => {
 
-            debugger;
             var params=new URLSearchParams();
-            params.append('uname',userInfo.name);
+            params.append('uname_login',userInfo.name);
             params.append('orgid',userInfo.orgid);
             params.append('password',userInfo.password);
 
@@ -64,17 +97,10 @@ const actions = {
                 data: params
             }).then(res => {
                 let resultData = JSON.parse(res);
-                if(resultData.Status==="Success"){
-                    var object={ 
-                        token:resultData.Data.userInfo.Token,
-                        appKey:resultData.Data.userInfo.AppKey,
-                        appSecret:resultData.Data.userInfo.AppSecret,
-                    };
+                if(resultData.Status==="success"){
+
 
                     var user=resultData.Data;
-
-                    //登录
-                    commit('setToken', object)
                     //用户信息缓存
                     commit('setUserInfo', user)
                 }
@@ -152,15 +178,20 @@ const actions = {
     },
 
     // 获取该用户的菜单列表
-    getNavList({commit}){
+    getNavList({commit,state}){
         return new Promise((resolve) =>{
+            var params=new URLSearchParams()
+            params.append('uid',state.userid)
+            params.append('orgid',state.orgid)
+
             axios({
-                url: '/user/navlist',
-                methods: 'post',
-                data: {}
+                url: '/SysUser/GetSysMenuList',
+                methods: 'get',
+                data: params
             }).then((res) => {
-                commit("setNavList", res)
-                resolve(res)
+                let resultData = JSON.parse(res);
+                commit("setNavList", resultData)
+                resolve(resultData)
             })
         })
     },
