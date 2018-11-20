@@ -53,9 +53,9 @@
                     <li v-for="(item,index) of newAddList" :key="index">
                         <ul class="flexPublic">
                             <li>{{index+1}}</li>
-                            <li>记-{{item.id}}</li>
-                            <li :class="{newAddStateTrue:item.state,newAddStateFalse:!item.state}"></li>
-                            <li>{{item.date}}</li>
+                            <li>记-{{item.PNo}}</li>
+                            <li :class="{newAddStateTrue:item.Verify,newAddStateFalse:!item.Verify}"></li>
+                            <li>{{item.PDate?item.PDate.split('T')[0]:''}}</li>
                         </ul>
                     </li>
                 </ul>
@@ -71,9 +71,9 @@
     export default {
         data(){return {
             val1:'',
-            fileList:[],
-            voucherDate:'',
             userState:0,
+            pagesize:9,
+            pageindex:0,
             voucherDataList:{bool:false,data:''},
             userStateValues:[
                 {id:0,name:'全部'},{id:1,name:'2018-11'},{id:2,name:'2018-12'},{id:3,name:'2019-01'}
@@ -87,7 +87,8 @@
         }},
         created(){
             // this.newVoucherList();
-             this.getvoucher();console.log(22)
+            this.getvoucher();
+            this.getvoucherList();
         },
         methods:{
             addVoucher(str){
@@ -114,12 +115,13 @@
                    orgid:0,
                    infoData:this.voucherDataList.data
                }
-                console.log(data)
                this.$axios.post('http://10.0.15.3:8028/api/GCW/PVoucherMst/PostUpdate',qs.stringify(data),config)
                    .then(res=>{
                        res=JSON.parse(res);
+                       console.log(res)
                        if(res.Status=='success'){
                            alert('保存成功!')
+                           //this.$router.go(0);
                        }else{
                            alert('保存失败,请重试!')
                        }
@@ -140,12 +142,31 @@
                 this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucher',{params:data,headers:config.headers})
                     .then(res=>{
                         res=JSON.parse(res);
-                        console.log(res);
+                        console.log(res)
                         if(res.Status=='success'){
                             this.voucherDataList.data=res.Data[0];
                             this.voucherDataList.bool=true;
+                            console.log(this.voucherDataList.data)
                         }else{
                             console.log(res.Msg)
+                        }
+                    })
+                    .catch(err=>console.log(err))
+            },
+            getvoucherList(){
+                var {config}=this.$ajax();
+                var data={
+                    uid:'0001',
+                    orgid:52118082000000,
+                    pagesize:this.pagesize,
+                    pageindex:this.pageindex,
+                }
+                this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucherList',{params:data,headers:config.headers})
+                    .then(res=>{
+                        res=JSON.parse(res);
+                        this.newAddList=res.Record;
+                        if(this.newAddList.length<=0){
+                            alert('暂无新凭证');
                         }
                     })
                     .catch(err=>console.log(err))

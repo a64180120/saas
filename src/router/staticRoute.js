@@ -216,16 +216,15 @@ const staticRoute = [
                 //科目设置
                 path: "subject",
                 component: () =>import( "../page/basicSetting/subjectSetting/subjectSetting"),
-<<<<<<< HEAD
+
                 children:[
                     {
                         path: "add",
                         component: () =>import( "../page/basicSetting/subjectSetting/newAdd")
                     }
-                ]
-=======
+                ],
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
->>>>>>> 50a352d139a2b147eb17617f32875a476bbec1c5
+
             },
             {
                 //科目期初
@@ -236,7 +235,7 @@ const staticRoute = [
             {
                 //辅助核算
                 path: "auxiliary",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/basicSetting/auxiliary/auxiliary"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {

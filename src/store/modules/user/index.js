@@ -29,25 +29,24 @@ const mutations = {
             state.token = data.token
             state.appKey = data.appKey
             state.appSecret = data.appSecret
-            
         } else {
             Auth.removeToken()
-            
+
         }
 
     },
     setUserInfo: (state, data) => {
         if(data){
             Auth.setUserInfoData(data);
-            Auth.setLoginStatus(); 
-            
+            Auth.setLoginStatus();
+
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
-            
+
         }else{
             Auth.removeUserInfoData();
             Auth.removeLoginStatus();
-        }   
+        }
 
     }
 }
@@ -68,7 +67,7 @@ const actions = {
                 let resultData = JSON.parse(res);
 
                 if(resultData.Status!=="error"){
-                    var object={ 
+                    var object={
                         token:resultData.Token,
                         appKey:resultData.AppKey,
                         appSecret:resultData.AppSecret,
@@ -81,7 +80,7 @@ const actions = {
             })
         })
     },
-    
+
     // 业务用户登录
     loginByPhone({ commit }, userInfo) {
         return new Promise((resolve) => {

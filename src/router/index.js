@@ -17,7 +17,7 @@ function initRoute(router) {
             console.log("没有权限数据，正在获取");
             store.dispatch("user/getNavList").then(() => {
                 store.dispatch("user/getPermissionList").then(res => {
-                    debugger;
+                    //debugger;
                     console.log("权限列表生成完毕");
                     permissionList = res;
                     res.forEach(function(v) {

@@ -248,33 +248,32 @@
                     for( var info of this.voucherInfo){
                         if(info.PhId){
                             for(var dtl of  dtls){
-                                console.log(dtl.PhId,info.PhId)
                                 if(dtl.PhId==info.PhId){
                                     dtl.SubjectCode=info.SubjectCode;
                                     dtl.Abstract=info.Abstract;
                                     dtl.JSum=info.money.jiefang;
                                     dtl.DSum=info.money.daifang;
                                     dtl.PersistentState=2;
-                                    if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                    if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
                                         dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
                                         dtl.DtlAccounts[0].Abstract=info.Abstract;
                                         var item = info.DtlAccounts.assistItem;
                                         var account=dtl.DtlAccounts[0];
-                                        for(var j in item){
+                                        for(var j=1;j<=50;j++){
                                             var str='';
-                                            if(parseInt(j)+1<10){
-                                                str='S0'+(parseInt(j)+1);
+                                            if(parseInt(j)<10){
+                                                str='S0'+parseInt(j);
                                             }else{
                                                 str='S'+parseInt(j);
                                             }
-                                            account[str]=item[j]
+                                            account[str]=item[j-1]?item[j-1]:0;
                                         }
                                         dtl.DtlAccounts[0].PersistentState=2;
-                                    }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
+                                    }else if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length<=0){
                                         dtl.DtlAccounts[0].PersistentState=3;
-                                    }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                    }else if(!dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts=[{
                                         }];
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
@@ -284,21 +283,50 @@
                                         dtl.DtlAccounts[0].PersistentState=1;
                                         var item = info.DtlAccounts.assistItem;
                                         var account=dtl.DtlAccounts[0];
-                                        for(var j=0;j<50;j++){
+                                        for(var j=1;j<=50;j++){
                                             var str='';
-                                            if(parseInt(j)+1<10){
-                                                str='S0'+(parseInt(j)+1);
+                                            if(parseInt(j)<10){
+                                                str='S0'+parseInt(j);
                                             }else{
                                                 str='S'+parseInt(j);
                                             }
-                                            account[str]=item[j]?item[j]:0;
+                                            account[str]=item[j-1]?item[j-1]:0;
                                         }
                                     }
                                 }
                             }
                         }else{
                             if(info.SubjectCode){
-
+                                var newDtl={
+                                    Abstract:info.Abstract,
+                                    SubjectCode:info.SubjectCode,
+                                    JSum:info.money.jiefang,
+                                    DSum:info.money.daifang,
+                                    PersistentState:1
+                                }
+                                if(info.DtlAccounts.assistItem.length>0){
+                                    newDtl.DtlAccounts=[{}];
+                                    var dt=newDtl.DtlAccounts[0];
+                                    dt={
+                                        Abstract:info.Abstract,
+                                        SubjectCode:info.SubjectCode,
+                                        JSum:info.money.jiefang,
+                                        DSum:info.money.daifang,
+                                        PersistentState:1
+                                    }
+                                    var item = info.DtlAccounts.assistItem;
+                                    for(var j=1;j<=50;j++){
+                                        var str='';
+                                        if(parseInt(j)<10){
+                                            str='S0'+parseInt(j);
+                                        }else{
+                                            str='S'+parseInt(j);
+                                        }
+                                        dt[str]=item[j-1]?item[j-1]:0;
+                                    }
+                                    newDtl.DtlAccounts=dt;
+                                }
+                                dtls.push(newDtl);
                             }
                         }
                     }
@@ -322,15 +350,8 @@
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
-                    this.fatherData.ForeignKeys=null;
-                    this.fatherData.NgInsertDt=null;
-                    this.fatherData.NgUpdateDt=null;
-                    this.fatherData.Creator=null;
-                    this.fatherData.Editor=null;
-
                     this.fatherData.PersistentState=2;
-
-                    console.log(this.fatherData)
+                    console.log(this.fatherData,this.voucherInfo)
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -397,8 +418,7 @@
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
-                    console.log(this.fatherData,dtls[i])
-                    if(dtls[i].DtlAccounts) {
+                    if(dtls[i].DtlAccounts[0]) {
                         var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
                         this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
                         for (var j in Dtls) {
@@ -410,8 +430,8 @@
                             }
                         }
 
-                    }
-                }console.log(this.voucherInfo)
+                    }console.log(i)
+                }console.log(33)
             },
             assistClick(childMsg){//辅助项下拉框选择的辅助项目********************************
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem.push(childMsg.data);
