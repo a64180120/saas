@@ -140,9 +140,7 @@ export default {
                         if(res.Status==="success"){
                             this.$router.push('home') //跳转主页
                         } else {
-                            this.sysMsg = res.message
-                            // this.captcha.show = true
-                            // this.captcha.src = res.captcha
+                            this.sysMsg = res.Msg
                         }
                     })
                 } else {
