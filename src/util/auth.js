@@ -8,24 +8,33 @@ const authToken = {
     
     // 在Cookie中记录缓存的key
     loginKey: 'isLogin',
+    //用户缓存信息
+    userinfo:'user',
+    //token 缓存的key
+    TokenKey:'token',
 
-    // Token是否超时
-    hasToken: function(){
-        return Cookies.get('token')
-    },
-
-    // 当前是否是登录状态
-    isLogin: function(){
-        return Cookies.get(this.loginKey)
+    // 获取Token
+    getToken: function() {
+        return Cookies.get(this.TokenKey)
     },
 
     // 设置Token
     setToken: function(token){
         // TODO: 设置token，并填写有效期
         var maxAge = new Date(new Date().getTime() + 30 * 1000)
-        Cookies.set('token', token, {
+        Cookies.set(this.TokenKey, token, {
             expires: maxAge
         })
+    },
+
+    // 移除Token
+    removeToken: function(){
+        Cookies.remove(this.TokenKey)
+    },
+
+    // 当前是否是登录状态
+    getLoginStatus: function(){
+        return Cookies.get(this.loginKey)
     },
 
     // 设置登录状态
@@ -37,15 +46,28 @@ const authToken = {
             expires: maxAge
         })
     },
-
-    // 移除Token
-    removeToken: function(){
-        Cookies.remove('token')
-    },
-
     // 移除登录状态
     removeLoginStatus: function(){
         Cookies.remove(this.loginKey)
+    },
+
+    // 获取用户缓存信息
+    getUserInfoData: function() {
+        return Cookies.get(this.userinfo)
+    },
+
+    // 设置用户缓存信息
+    setUserInfoData: function(data){
+        var maxAge = new Date(new Date().getTime() + 30 * 60 * 1000)
+        Cookies.set(this.userinfo, data, {
+            expires: maxAge
+        })
+    },
+
+    // 移除用户缓存信息 和 移除登录状态
+    removeUserInfoData: function(){
+        Cookies.remove(this.userinfo);
+        Cookies.remove(this.loginKey);
     }
 }
 

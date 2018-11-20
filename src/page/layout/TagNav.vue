@@ -1,8 +1,11 @@
 <template>
     <div class="tag-nav">
         <scroll-bar ref="scrollBar">
-            <router-link ref="tag" class="tag-nav-item" :class="isActive(item) ? 'cur' : ''" v-for="(item, index) in tagNavList" 
-            :to="item.path" :key="index">
+            <router-link ref="tag" class="tag-nav-item" 
+            :class="isActive(item) ? 'cur' : ''" 
+            v-for="(item, index) in tagNavList" 
+            :to="item.path" 
+            :key="index">
                 {{item.title}}
                 <span class='el-icon-close' @click.prevent.stop="closeTheTag(item, index)"></span>
             </router-link>
@@ -29,7 +32,8 @@ import ScrollBar from "sysComponents/ScrollBar";
 export default {
   data() {
     return {
-      defaultPage: "/home"
+      defaultPage: "/home",
+      selectedTag: {}
     };
   },
   computed: {
@@ -91,6 +95,10 @@ export default {
         // 关闭全部标签
         // this.tagNavList = [];
         // this.$router.push('/');
+        this.$router.push(this.selectedTag.path)
+        this.$store.dispatch('delOthersViews', this.selectedTag).then(() => {
+          this.moveToCurrentTag()
+        })
     },  
     closeOther(){
         // 关闭其他标签

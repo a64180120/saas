@@ -19,6 +19,7 @@ let Base64 = require('js-base64').Base64
 
 
 import '@/assets/css/myStyle.css'//自定义样式*************************
+import '@/assets/css/font_li.css'
 
 Vue.prototype.$ajax=ajax
 // 注册组件到Vue

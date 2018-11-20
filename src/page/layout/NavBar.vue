@@ -40,21 +40,23 @@ export default {
   props: ["isCollapse"],
   computed: {
     ...mapState({
-      navList: state => state.auth.navList
+      navList: state => state.user.navList
     }),
     defActive() {
       return this.$route.path;
     },
     isDark() {
-      return this.$store.state.theme.indexOf("dark") >= 0 ? "dark" : "light";
+      return this.$store.state.theme;
     }
   },
   watch: {
     // 当通过TagNav来激活页面时也执行一次selectMenu
     $route() {
-      let path = this.$route.path;
-      let indexPath = this.$refs.navbar.items[path].indexPath;
-      this.selectMenu(path, indexPath);
+      if(this.$route.isMenu){
+        let path = this.$route.path;
+        let indexPath = this.$refs.navbar.items[path].indexPath;
+        this.selectMenu(path, indexPath);
+      }
     }
   },
   methods: {
