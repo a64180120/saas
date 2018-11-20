@@ -233,119 +233,93 @@
             this.initInfoCss();
         },
         mounted(){
-            this.initMoneyCss();
-            this.$forceUpdate();
+           this.initMoneyCss();
+           this.$forceUpdate();
         },
         methods:{
-            //voucher组件要返回数据的函数********************
-            voucherData() {
+            voucherData() {//voucher组件要返回数据的函数********************
                 if(this.jiefang!==this.daifang){
                     console.log(this.jiefang,this.daifang)
                     alert('借方金额不等于贷方金额,请查看');
                     return;
                 }else{
-                    var dtls = this.fatherData.Dtls;
-                    for( var info of this.voucherInfo){
-                        if(info.PhId){
-                            for(var dtl of  dtls){
-                                console.log(dtl.PhId,info.PhId)
-                                if(dtl.PhId==info.PhId){
-                                    dtl.SubjectCode=info.SubjectCode;
-                                    dtl.Abstract=info.Abstract;
-                                    dtl.JSum=info.money.jiefang;
-                                    dtl.DSum=info.money.daifang;
-                                    dtl.PersistentState=2;
-                                    if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
-                                        dtl.DtlAccounts[0].JSum=info.money.jiefang;
-                                        dtl.DtlAccounts[0].DSum=info.money.daifang;
-                                        dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
-                                        dtl.DtlAccounts[0].Abstract=info.Abstract;
-                                        var item = info.DtlAccounts.assistItem;
-                                        var account=dtl.DtlAccounts[0];
-                                        for(var j in item){
-                                            var str='';
-                                            if(parseInt(j)+1<10){
-                                                str='S0'+(parseInt(j)+1);
-                                            }else{
-                                                str='S'+parseInt(j);
-                                            }
-                                            account[str]=item[j]
-                                        }
-                                        dtl.DtlAccounts[0].PersistentState=2;
-                                    }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
-                                        dtl.DtlAccounts[0].PersistentState=3;
-                                    }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
-                                        dtl.DtlAccounts=[{
-                                        }];
-                                        dtl.DtlAccounts[0].JSum=info.money.jiefang;
-                                        dtl.DtlAccounts[0].DSum=info.money.daifang;
-                                        dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
-                                        dtl.DtlAccounts[0].Abstract=info.Abstract;
-                                        dtl.DtlAccounts[0].PersistentState=1;
-                                        var item = info.DtlAccounts.assistItem;
-                                        var account=dtl.DtlAccounts[0];
-                                        for(var j=0;j<50;j++){
-                                            var str='';
-                                            if(parseInt(j)+1<10){
-                                                str='S0'+(parseInt(j)+1);
-                                            }else{
-                                                str='S'+parseInt(j);
-                                            }
-                                            account[str]=item[j]?item[j]:0;
-                                        }
-                                    }
-                                }
+                    var Dtls=[];
+                    var info=this.voucherInfo;
+                    for( var i in info){
+                        if(info[i].SubjectCode){
+                            Dtls[Dtls.length]={
+                                PhId:info[i].PhId,
+                                PhidVouchermst:info[i].PhidVouchermst,
+                                SubjectCode: info[i].SubjectCode,
+                                Abstract: info[i]. Abstract,
+                                JSum: info[i].money.jiefang,
+                                DSum: info[i].money.daifang,
+                                Creator:info[i].Creator,
+                                Editor:info[i].Editor,
+                                CurOrgId:info[i].CurOrgId,
+                                NgInsertDt:info[i].NgInsertDt,
+                                NgUpdateDt:info[i].NgUpdateDt,
+                                NgRecordVer:info[i].NgRecordVer,
+                                DtlAccounts:[info[i].DtlAccounts.DtlAccounts]
                             }
-                        }else{
-                            if(info.SubjectCode){
+                            var item = info[i].DtlAccounts.assistItem;
 
+                            var account=Dtls[i].DtlAccounts[0];
+
+                            for(var j in item){
+                                var str='';
+                                if(parseInt(j)+1<10){
+                                    str='S0'+(parseInt(j)+1);
+                                }else{
+                                    str='S'+parseInt(j);
+                                }
+                                account[str]=item[j]
                             }
                         }
                     }
                     for(var del of this.deleteDtls){
-                        if(del.PhId){
-                            for(var dtl of  dtls){
-                                if(dtl.PhId==del.PhId){
-                                    dtl.PersistentState=3;
-                                    if(dtl.DtlAccounts){
-                                        dtl.DtlAccounts[0].PersistentState=3;
-                                    }
-                                }
-                            }
+                        Dtls[Dtls.length]={
+                            PhId:del.PhId,
+                            PersistentState:3,
+                            DtlAccounts:[{
+                                PhId:del.PhId,
+                                PersistentState:3
+                            }]
                         }
                     }
-                    this.fatherData.PhId=this.PhId;
-                    this.fatherData.PDate=this.PDate;
-                    this.fatherData.PAttachment=this.PAttachment;
-                    this.fatherData.PMakePerson=this.PMakePerson;
-                    this.fatherData.PFinancePerson=this. PFinancePerson;
-                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
-                    this.fatherData.PCashier=this.PCashier;
-                    this.fatherData.PAuditor=this.PAuditor;
-                    this.fatherData.ForeignKeys=null;
-                    this.fatherData.NgInsertDt=null;
-                    this.fatherData.NgUpdateDt=null;
-                    this.fatherData.Creator=null;
-                    this.fatherData.Editor=null;
-
-                    this.fatherData.PersistentState=2;
-
-                    console.log(this.fatherData)
                     return {
-                        Mst:this.fatherData,
+                        Mst:{
+                            PhId:this.PhId,
+                            PDate: this.PDate,
+                            PNo: this.PNo,
+                            PAttachment: this.PAttachment,
+                            PMakePerson: this.PMakePerson,
+                            PFinancePerson: this.PFinancePerson,
+                            PKeepingPerson: this.PKeepingPerson,
+                            PCashier: this.PCashier,
+                            PAuditor: this.PAuditor,
+                            PersistentState: this.PersistentState,
+                            Verify:this.Verify,
+                            Creator:this.Creator,
+                            Editor:this.Editor,
+                            CurOrgId:this.CurOrgId,
+                            NgInsertDt:this.NgInsertDt,
+                            NgUpdateDt:this.NgUpdateDt,
+                            NgRecordVer:this.NgRecordVer,
+                            Dtls:Dtls
+                        },
                         Attachements:this.fileList
                     }
                 }
             },
-            //添加删除行信息********************************
-            handleContent(bool,index){
+            handleContent(bool,index){ //添加删除行信息********************************
                 if(bool){
                     this.voucherInfo.push(this.initVoucherInfo());
                     this.addIcon[this.voucherInfo.length-1]={checked:false};
                     this.kemuSel[this.voucherInfo.length-1]={checked:false};
                     this.assistItem[this.voucherInfo.length-1]={checked:false};
                     this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['科目1','科目2','科目3','科目4','科目5']}
-                    this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
+                    this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['项目1','项目2','项目3','项目4','项目5']}
                 }else{
                     if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
                         this.deleteDtls.push(this.voucherInfo[index]);
@@ -357,8 +331,7 @@
             initVoucherInfo(){
                 return {moneyInput:{jiefang:false,daifang:false},SubjectCode:'',DtlAccounts:{assistItem:[]},Abstract:'',money:{jiefang:'',daifang:''}}
             },
-            //初始化信息样式***************
-            initInfoCss(){
+            initInfoCss(){  //初始化信息样式***************
                 for(var i in this.voucherInfo){
                     this.addIcon[i]={checked:false}
                     this.kemuSel[i]={checked:false}
@@ -369,12 +342,12 @@
                     }
                     this.assistItems[i]={
                         id:i,
-                        kemu:['222','333','44','555','666'] //总的辅助项列表
+                        kemu:['项目1-1','项目2-1','项目3','项目4','项目5'] //总的辅助项列表
                     }
                 }
             },
-            //获取父组件传参*********************************
-            getVoucherData(data){
+            getVoucherData(data){//获取父组件传参*********************************
+                console.log(data)
                 this.fatherData=data;
                 this.PhId=data.PhId;
                 this.PType=data.PType;
@@ -387,18 +360,33 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.Verify=data.Verify;
+                this.Creator=data.Creator;
+                this.Editor=data.Editor;
+                this.CurOrgId=data.CurOrgId;
+                this.NgInsertDt=data.NgInsertDt;
+                this.NgUpdateDt=data.NgUpdateDt;
+                this.NgRecordVer=data.NgRecordVer;
+                this.PersistentState=2;
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
                 for(var i in dtls){
                     this.voucherInfo[i]=this.initVoucherInfo();
                     this.voucherInfo[i].PhId=dtls[i].PhId;
-                    //this.voucherInfo[i].PhidVouchermst=dtls[i].PhidVouchermst;
+                    this.voucherInfo[i].PhidVouchermst=dtls[i].PhidVouchermst;
                     this.voucherInfo[i].SubjectCode=dtls[i].SubjectCode;
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
+                    this.voucherInfo[i].DtlsState=2;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
-                    console.log(this.fatherData,dtls[i])
+                    this.voucherInfo[i].Creator=dtls[i].Creator;
+                    this.voucherInfo[i].Editor=dtls[i].Editor;
+                    this.voucherInfo[i].CurOrgId=dtls[i].CurOrgId;
+                    this.voucherInfo[i].NgInsertDt=dtls[i].NgInsertDt;
+                    this.voucherInfo[i].NgUpdateDt=dtls[i].NgUpdateDt;
+                    this.voucherInfo[i].NgRecordVer=dtls[i].NgRecordVer;
                     if(dtls[i].DtlAccounts) {
+                        this.voucherInfo[i].DtlAccountsState=2;
                         var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
                         this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
                         for (var j in Dtls) {
@@ -409,14 +397,12 @@
                                 }
                             }
                         }
-
+                        console.log(this.voucherInfo)
                     }
-                }console.log(this.voucherInfo)
+                }
             },
             assistClick(childMsg){//辅助项下拉框选择的辅助项目********************************
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem.push(childMsg.data);
-                this.$forceUpdate();
-                console.log(this.voucherInfo[childMsg.id].DtlAccounts.assistItem)
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
@@ -828,7 +814,7 @@
         position:relative;
     }
     .kemu>div>ul>li.kemuCancle{
-        position:absolute;
+       position:absolute;
         width:20px;
         height:20px;
         right:10px;

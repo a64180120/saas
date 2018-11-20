@@ -74,7 +74,7 @@
             fileList:[],
             voucherDate:'',
             userState:0,
-            voucherDataList:{bool:true,data:''},
+            voucherDataList:{bool:false,data:''},
             userStateValues:[
                 {id:0,name:'全部'},{id:1,name:'2018-11'},{id:2,name:'2018-12'},{id:3,name:'2019-01'}
             ],
@@ -86,8 +86,8 @@
             ]
         }},
         created(){
-             this.newVoucherList();
-            // this.getvoucher();
+            // this.newVoucherList();
+             this.getvoucher();console.log(22)
         },
         methods:{
             addVoucher(str){
@@ -103,7 +103,7 @@
                         break;
                     case 'keep':
                         this.voucherData();
-                        //this.keepVoucher();
+                        this.keepVoucher();
                         break;
                 }
             },
@@ -114,9 +114,10 @@
                    orgid:0,
                    infoData:this.voucherDataList.data
                }
-               console.log(this.voucherDataList.data)
+                console.log(data)
                this.$axios.post('http://10.0.15.3:8028/api/GCW/PVoucherMst/PostUpdate',qs.stringify(data),config)
                    .then(res=>{
+                       res=JSON.parse(res);
                        if(res.Status=='success'){
                            alert('保存成功!')
                        }else{
@@ -134,15 +135,15 @@
                 var data={
                     uid:'0001',
                     orgid:52118082000000,
-                    id:379181114000001
+                    id:208181114000001
                 }
                 this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucher',{params:data,headers:config.headers})
                     .then(res=>{
                         res=JSON.parse(res);
+                        console.log(res);
                         if(res.Status=='success'){
-                            this.voucherDataList.data=res.Data;
+                            this.voucherDataList.data=res.Data[0];
                             this.voucherDataList.bool=true;
-                            console.log( this.voucherDataList,this.voucherDataList.length)
                         }else{
                             console.log(res.Msg)
                         }

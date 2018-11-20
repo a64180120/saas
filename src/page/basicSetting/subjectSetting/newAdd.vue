@@ -45,16 +45,16 @@
           <li>
             <div>辅助核算</div>
             <div class="itemRadio">
-              <label ><input type="checkbox" v-model="check.part" value="部门">部门</label>
-              <label ><input type="checkbox" v-model="check.project" value="项目">项目</label>
-              <label><input type="checkbox"  v-model="check.person" value="个人">往来个人</label>
-              <label ><input type="checkbox" v-model="check.unit" value="单位">往来单位</label>
+              <label ><input type="checkbox" v-model="KAmountCheck" value="部门">部门</label>
+              <label ><input type="checkbox" v-model="KAmountCheck" value="项目">项目</label>
+              <label><input type="checkbox"  v-model="KAmountCheck" value="个人">往来个人</label>
+              <label ><input type="checkbox" v-model="KAmountCheck" value="单位">往来单位</label>
             </div>
           </li>
         </ul>
         <div class="itemBtnCon">
-          <div @click.stop="newAdd(true)">保存</div>
-          <div @click.stop="newAdd(false)">取消</div>
+          <div @click.stop="newAdd(this.PhIdList.name)">保存</div>
+          <div @click.stop="newAdd()">取消</div>
         </div>
       </div>
     </div>
@@ -63,23 +63,39 @@
 <script>
     export default {
         name: "new-add",
+        props:{
+            PhIdList:{}
+        },
+        created(){
+            this.initMsg();
+            console.log(this.PhIdList.data)
+        },
         data(){
             return{
                 KCode:'',
                 KName:'',
                 KType:0,
                 KBalanceType:'',
-                check:{part:'',project:'',person:'',unit:''}
+                KAmountCheck:''
             }
         },
         methods:{
-            newAdd(bool){
-                if(bool){
+            newAdd(name){
+                if(name=='add'){
                     console.log(this.KCode,this.KName,this.KType,this.KBalanceType,this.check)
-                    alert('success')
+                    alert('add:success')
+                }else if(name=='update'){
+                    console.log(this.KCode,this.KName,this.KType,this.KBalanceType,this.check)
+                    alert('update:success')
                 }
-
-                this.$router.push({path:'/setting/subject'});
+                this.$emit('add-click',false);
+            },
+            initMsg(){
+                this.KCode= this.PhIdList.data[0].KCode;
+                this.KName= this.PhIdList.data[0].KName;
+                this.KType= this.PhIdList.data[0].KType;
+                this.KBalanceType= this.PhIdList.data[0].KBalanceType;
+                this.KAmountCheck= this.PhIdList.data[0].KAmountCheck;
             }
         }
     }
