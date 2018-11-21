@@ -494,29 +494,6 @@
     .newAddContent li{
         text-align: center;
     }
-    .newAddStateTrue:after{
-        content:"";
-        position:absolute;
-        width:8px;
-        height:18px;
-        border:1px solid #02a7e7;
-        border-width: 0 1px 1px 0;
-        transform: rotate(45deg);
-        top:-12px;
-        left:50%;
-    }
-    .newAddStateFalse:before,.newAddStateFalse:after{
-        content:"";
-        position: absolute;
-        width:18px;
-        height:1px;
-        background: #d8281d;
-        transform: rotate(45deg);
-        left:40px;
-        left:45%;
-    }
-    .newAddStateFalse:before{
-        transform: rotate(-45deg);
-    }
+
 
 </style>
