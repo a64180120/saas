@@ -227,10 +227,9 @@ export default {
           pageindex:this.pageIndex-1,
         }
 
-        this.$axios.get('http://10.0.20.46:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+        this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
           .then(res=>{
-            console.log(res);
-            var data=JSON.parse(res.data);
+            var data=JSON.parse(res);console.log(1)
             this.userInfo=data.Record;
             for(var i=0;i<this.userInfo.length;i++){
               this.userInfoCssList[i]={checked:false};

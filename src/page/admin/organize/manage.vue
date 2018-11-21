@@ -9,8 +9,8 @@
               </ul>
             </aside>
             <look v-if="asideActive=='look'"></look>
-            <basic v-if="asideActive=='union'"></basic>
-            <union v-if="asideActive=='basic'"></union>
+            <basic v-if="asideActive=='basic'"></basic>
+            <union v-if="asideActive=='union'"></union>
         </section>
     </div>
 </template>
