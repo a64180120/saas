@@ -183,7 +183,7 @@ export default {
               pagesize:this.pageSize,
               pageindex:this.pageIndex-1
             };
-            this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+            this.$axios.get('http://10.0.20.46:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
               .then(res=>{
                 var data=JSON.parse(res.data);
                 this.userInfo=data.Record;
@@ -199,6 +199,7 @@ export default {
                 }
                 this.pageCount=newArr;
               })
+                .catch(err=>{console.log(err)})
           }
         },
         created(){

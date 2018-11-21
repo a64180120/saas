@@ -227,9 +227,10 @@ export default {
           pageindex:this.pageIndex-1,
         }
 
-        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+        this.$axios.get('http://10.0.20.46:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
           .then(res=>{
-            var data=JSON.parse(res.data);console.log(data)
+            console.log(res);
+            var data=JSON.parse(res.data);
             this.userInfo=data.Record;
             for(var i=0;i<this.userInfo.length;i++){
               this.userInfoCssList[i]={checked:false};
@@ -243,6 +244,7 @@ export default {
             }
             this.pageCount=newArr;
           })
+            .catch(err=>{console.log(err)})
       }
     },
     created(){
