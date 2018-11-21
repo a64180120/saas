@@ -89,6 +89,49 @@ const staticRoute = [
         ]
     },
     {
+        //基础设置
+        path: "/setting",
+        component: Layout,
+        children: [
+            {
+                //科目设置
+                path: "subject",
+                component: () =>import( "../page/basicSetting/subjectSetting"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //科目期初
+                path: "subjectstart",
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //辅助核算
+                path: "auxiliary",
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //凭证模板
+                path: "vouchertemp",
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //套打格式
+                path: "print",
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //参数设置
+                path: "config",
+                component: () =>import("../page/message"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            }
+        ]
+    },
+    {
         //账簿管理
         path: "/accountbooks",
         component: Layout,
@@ -202,57 +245,6 @@ const staticRoute = [
             {
                 //预算执行
                 path: "execute",
-                component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            }
-        ]
-    },
-    {
-        //基础设置
-        path: "/setting",
-        component: Layout,
-        children: [
-            {
-                //科目设置
-                path: "subject",
-                component: () =>import( "../page/basicSetting/subjectSetting/subjectSetting"),
-
-                children:[
-                    {
-                        path: "add",
-                        component: () =>import( "../page/basicSetting/subjectSetting/newAdd")
-                    }
-                ],
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-
-            },
-            {
-                //科目期初
-                path: "subjectstart",
-                component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //辅助核算
-                path: "auxiliary",
-                component: () =>import("../page/basicSetting/auxiliary/auxiliary"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //凭证模板
-                path: "vouchertemp",
-                component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //套打格式
-                path: "print",
-                component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //参数设置
-                path: "config",
                 component: () =>import("../page/message"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }

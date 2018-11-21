@@ -97,8 +97,7 @@ const actions = {
             }).then(res => {
                 let resultData = JSON.parse(res);
                 if(resultData.Status==="success"){
-
-
+                    
                     var user=resultData.Data;
                     //用户信息缓存
                     commit('setUserInfo', user)

@@ -12,6 +12,12 @@
     overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;
+    .el-dialog__header{
+        background:$headerBgColor;  
+        .el-dialog__title{
+            color:#fff;
+        }
+    }
 }
 .sys-content{
     position: absolute;
