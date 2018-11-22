@@ -25,7 +25,7 @@ const ajaxMode = {
     var data = {
       uid: "0",
       orgid: "0",
-      infoData: JSON.stringify(page)
+      infoData: page
     };
     var config={
       headers: {

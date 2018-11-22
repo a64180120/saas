@@ -74,15 +74,24 @@
                 </li>
                 <li v-for="(item,index) of voucherInfo" :key="index">
                     <ul  class="flexPublic voucherContentItem">
-                        <li></li>
+                        <div v-show="addIcon[index].checked">
+                            <div @click="handleContent(true,index)" class="addIcon"></div>
+                            <div @click="handleContent(false,index)" class="deleteIcon"></div>
+                        </div>
+                        <li>
+                            <div class="inputContainer">
+                                <textarea v-model="item.Abstract" @focus="showAddIcon(index)" maxlength="50"></textarea>
+                            </div>
+                        </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
                             <div>
                                 <ul>
                                     <li class="flexPublic">
-                                        <span>{{item.kemu}}</span>
-                                        <span v-for="(assist,index) of item.assistItem" :key="index">-{{assist}}</span>
+                                        <span>{{item.SubjectCode}}</span>
+                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-辅助项{{assist}}</span>
                                     </li>
-                                    <li v-show="item.kemu"><span>余额:</span><span></span></li>
+                                    <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
+                                    <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle(index)"><i></i></li>
                                 </ul>
                             </div>
                             <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" :show="kemuSel[index].checked"
@@ -91,11 +100,11 @@
                                           :nodatatext="assistItemText" @item-click="assistClick"></searchSelect>
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
-                  <span v-show="item.moneyInput.jiefang" class="moneyValCon">
-                    <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
-                           onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                    <i class="inputCancle">X</i>
-                  </span>
+                            <span v-show="item.moneyInput.jiefang" class="moneyValCon">
+                                <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                                       onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
+                                <i class="inputCancle">X</i>
+                             </span>
                             <div></div>
                             <div></div>
                             <div></div>
@@ -109,11 +118,11 @@
                             <div></div>
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
-                  <span v-show="item.moneyInput.daifang" class="moneyValCon">
-                    <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
-                           onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                    <i class="inputCancle">X</i>
-                  </span>
+                            <span v-show="item.moneyInput.daifang" class="moneyValCon">
+                                <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
+                                       onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
+                                <i class="inputCancle">X</i>
+                            </span>
                             <div></div>
                             <div></div>
                             <div></div>
@@ -161,16 +170,15 @@
                         </li>
                     </ul>
                 </li>
-
             </ul>
         </div>
         <div class="voucherFoot">
-            <ul class="flexPublic">
-                <li>财务主管: <span>{{PFinancePerson}}</span> </li>
-                <li>记账: <span>{{PKeepingPerson}}</span></li>
-                <li>审核: <span>{{PAuditor}}</span></li>
-                <li>制单: <span>{{PMakePerson}}</span></li>
-                <li>出纳: <span>{{PCashier}}</span></li>
+            <ul class="flexPublic ">
+                <li><label>财务主管: <input type="text" v-model="PFinancePerson"> </label></li>
+                <li><label>记账:<input type="text" v-model="PKeepingPerson"> </label></li>
+                <li><label>审核: <input type="text" v-model="PAuditor"></label></li>
+                <li><label>制单: <input type="text" v-model="PMakePerson"></label></li>
+                <li><label>出纳:<input type="text" v-model="PCashier"> </label></li>
             </ul>
         </div>
     </div>
@@ -181,13 +189,12 @@
     export default {
         name: "voucher",
         props:{
-            'dataList':Array,
-        },
-        mounted(){
-            console.log('接受的值'+this.dataList)
+            'dataList':Object,
         },
         data(){return{
+            fatherData:'',
             fileList:[],
+            PhId:'',
             PDate:'',
             PNo:'0001',
             PAttachment:'1',
@@ -196,66 +203,308 @@
             PKeepingPerson:'李',
             PCashier:'吴',
             PAuditor:'周',
-            voucherInfo:[
-                {moneyInput:{jiefang:false,daifang:false},kemu:'',assistItem:[],Abstract:'',money:{jiefang:'',daifang:''}},
-                {moneyInput:{jiefang:false,daifang:false},kemu:'',assistItem:[],Abstract:'',money:{jiefang:'',daifang:''}},
-                {moneyInput:{jiefang:false,daifang:false},kemu:'',assistItem:[],Abstract:'',money:{jiefang:'',daifang:''}},
-                {moneyInput:{jiefang:false,daifang:false},kemu:'',assistItem:[],Abstract:'',money:{jiefang:'',daifang:''}}
-            ],
-            itemlists:[
-                {id:0,kemu:['科目1','科目2','科目3','科目4','科目5']},
-                {id:1,kemu:['科目1','科目2','科目3','科目4','科目5']},
-                {id:2,kemu:['科目1','科目2','科目3','科目4','科目5']},
-                {id:3,kemu:['科目1','科目2','科目3','科目4','科目5']}
-            ],
-            assistItems:[
-                {id:0,kemu:['项目1-1','项目2-1','项目3','项目4','项目5']},
-                {id:1,kemu:['项目1','项目2','项目3','项目4','项目5']},
-                {id:2,kemu:['项目1','项目2','项目3','项目4','项目5']},
-                {id:3,kemu:['项目1','项目2','项目3','项目4','项目5']}
-            ],
+            PType:'',
+            Verify:'',
+            jiefang:'',
+            daifang:'',
+            PersistentState:'1',
+            voucherInfo:[],//凭证内数据****************
+            deleteDtls:[],//删除行的数据************************
+            itemlists:[],//科目组件参数**************
+            assistItems:[],//辅助项组件参数*****************
             itemlistText:'输入科目',
             assistItemText:'输入辅助项',
             moneyInputMask:false,
-            kemuSel:[{checked:false},{checked:false},{checked:false},{checked:false}],
-            assistItem:[{checked:false},{checked:false},{checked:false},{checked:false}]
+            addIcon:[],//添加删除的按钮样式参数****************
+            kemuSel:[],//科目选择框显示隐藏样式参数************
+            assistItem:[]//辅助项显示隐藏样式参数********************
         }},
-        methods:{
-            voucherData(){
-                return [
-                    {fileList:this.fileList},
-                    {PDate:this.PDate},
-                    {PNo:this.PNo},
-                    {PAttachment:this.PAttachment},
-                    {PMakePerson:this.PMakePerson},
-                    {PFinancePerson:this.PFinancePerson},
-                    {PKeepingPerson:this.PKeepingPerson},
-                    {PCashier:this.PCashier},
-                    {PAuditor:this.PAuditor},
-                    {voucherInfo:this.voucherInfo}
+        created(){
+            if(!this.dataList.data.PhId){//没有传参时初始化页面
+                this.voucherInfo=[
+                    this.initVoucherInfo(),
+                    this.initVoucherInfo(),
+                    this.initVoucherInfo(),
+                    this.initVoucherInfo(),
                 ]
+            }else{
+                this.getVoucherData(this.dataList.data);
+            }
+            this.initInfoCss();
+        },
+        mounted(){
+            this.initMoneyCss();
+            this.$forceUpdate();
+        },
+        methods:{
+            //voucher组件要返回数据的函数********************
+            voucherData() {
+                if(this.jiefang!==this.daifang){
+                    console.log(this.jiefang,this.daifang)
+                    alert('借方金额不等于贷方金额,请查看');
+                    return;
+                }else{
+                    var dtls = this.fatherData.Dtls;
+                    for( var info of this.voucherInfo){
+                        if(info.PhId){
+                            for(var dtl of  dtls){
+                                if(dtl.PhId==info.PhId){
+                                    dtl.SubjectCode=info.SubjectCode;
+                                    dtl.Abstract=info.Abstract;
+                                    dtl.JSum=info.money.jiefang;
+                                    dtl.DSum=info.money.daifang;
+                                    dtl.PersistentState=2;
+                                    if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
+                                        dtl.DtlAccounts[0].JSum=info.money.jiefang;
+                                        dtl.DtlAccounts[0].DSum=info.money.daifang;
+                                        dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
+                                        dtl.DtlAccounts[0].Abstract=info.Abstract;
+                                        var item = info.DtlAccounts.assistItem;
+                                        var account=dtl.DtlAccounts[0];
+                                        for(var j=1;j<=50;j++){
+                                            var str='';
+                                            if(parseInt(j)<10){
+                                                str='S0'+parseInt(j);
+                                            }else{
+                                                str='S'+parseInt(j);
+                                            }
+                                            account[str]=item[j-1]?item[j-1]:0;
+                                        }
+                                        dtl.DtlAccounts[0].PersistentState=2;
+                                    }else if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length<=0){
+                                        dtl.DtlAccounts[0].PersistentState=3;
+                                    }else if(!dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
+                                        dtl.DtlAccounts=[{
+                                        }];
+                                        dtl.DtlAccounts[0].JSum=info.money.jiefang;
+                                        dtl.DtlAccounts[0].DSum=info.money.daifang;
+                                        dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
+                                        dtl.DtlAccounts[0].Abstract=info.Abstract;
+                                        dtl.DtlAccounts[0].PersistentState=1;
+                                        var item = info.DtlAccounts.assistItem;
+                                        var account=dtl.DtlAccounts[0];
+                                        for(var j=1;j<=50;j++){
+                                            var str='';
+                                            if(parseInt(j)<10){
+                                                str='S0'+parseInt(j);
+                                            }else{
+                                                str='S'+parseInt(j);
+                                            }
+                                            account[str]=item[j-1]?item[j-1]:0;
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                            if(info.SubjectCode){
+                                var newDtl={
+                                    Abstract:info.Abstract,
+                                    SubjectCode:info.SubjectCode,
+                                    JSum:info.money.jiefang,
+                                    DSum:info.money.daifang,
+                                    PersistentState:1
+                                }
+                                if(info.DtlAccounts.assistItem.length>0){
+                                    newDtl.DtlAccounts=[{}];
+                                    var dt=newDtl.DtlAccounts[0];
+                                    dt={
+                                        Abstract:info.Abstract,
+                                        SubjectCode:info.SubjectCode,
+                                        JSum:info.money.jiefang,
+                                        DSum:info.money.daifang,
+                                        PersistentState:1
+                                    }
+                                    var item = info.DtlAccounts.assistItem;
+                                    for(var j=1;j<=50;j++){
+                                        var str='';
+                                        if(parseInt(j)<10){
+                                            str='S0'+parseInt(j);
+                                        }else{
+                                            str='S'+parseInt(j);
+                                        }
+                                        dt[str]=item[j-1]?item[j-1]:0;
+                                    }
+                                    newDtl.DtlAccounts=dt;
+                                }
+                                dtls.push(newDtl);
+                            }
+                        }
+                    }
+                    for(var del of this.deleteDtls){
+                        if(del.PhId){
+                            for(var dtl of  dtls){
+                                if(dtl.PhId==del.PhId){
+                                    dtl.PersistentState=3;
+                                    if(dtl.DtlAccounts){
+                                        dtl.DtlAccounts[0].PersistentState=3;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    this.fatherData.PhId=this.PhId;
+                    this.fatherData.PDate=this.PDate;
+                    this.fatherData.PAttachment=this.PAttachment;
+                    this.fatherData.PMakePerson=this.PMakePerson;
+                    this.fatherData.PFinancePerson=this. PFinancePerson;
+                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
+                    this.fatherData.PCashier=this.PCashier;
+                    this.fatherData.PAuditor=this.PAuditor;
+                    this.fatherData.PersistentState=2;
+                    console.log(this.fatherData,this.voucherInfo)
+                    return {
+                        Mst:this.fatherData,
+                        Attachements:this.fileList
+                    }
+                }
+            },
+            //添加删除行信息********************************
+            handleContent(bool,index){
+                if(bool){
+                    this.voucherInfo.push(this.initVoucherInfo());
+                    this.addIcon[this.voucherInfo.length-1]={checked:false};
+                    this.kemuSel[this.voucherInfo.length-1]={checked:false};
+                    this.assistItem[this.voucherInfo.length-1]={checked:false};
+                    this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['科目1','科目2','科目3','科目4','科目5']}
+                    this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
+                }else{
+                    if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
+                        this.deleteDtls.push(this.voucherInfo[index]);
+                        this.voucherInfo.splice(index,1);
+                        this.initMoneyCss();
+                    }
+                }
+            },
+            initVoucherInfo(){
+                return {moneyInput:{jiefang:false,daifang:false},SubjectCode:'',DtlAccounts:{assistItem:[]},Abstract:'',money:{jiefang:'',daifang:''}}
+            },
+            //初始化信息样式***************
+            initInfoCss(){
+                for(var i in this.voucherInfo){
+                    this.addIcon[i]={checked:false}
+                    this.kemuSel[i]={checked:false}
+                    this.assistItem[i]={checked:false}
+                    this.itemlists[i]={
+                        id:i,
+                        kemu:['科目1','科目2','科目3','科目4','科目5']  //总的科目列表
+                    }
+                    this.assistItems[i]={
+                        id:i,
+                        kemu:['222','333','44','555','666'] //总的辅助项列表
+                    }
+                }
+            },
+            //获取父组件传参*********************************
+            getVoucherData(data){
+                this.fatherData=data;
+                this.PhId=data.PhId;
+                this.PType=data.PType;
+                this.PNo=data.PNo;
+                this.PDate=data.PDate;
+                this.PAttachment=data.PAttachment;
+                this.PMonth=data.PMonth;
+                this.PMakePerson=data.PMakePerson;
+                this.PFinancePerson=data.PFinancePerson;
+                this.PKeepingPerson=data.PKeepingPerson;
+                this.PCashier=data.PCashier;
+                this.PAuditor=data.PAuditor;
+                var dtls=data.Dtls;
+                var reg=/^S[0-5][0-9]$/;
+                for(var i in dtls){
+                    this.voucherInfo[i]=this.initVoucherInfo();
+                    this.voucherInfo[i].PhId=dtls[i].PhId;
+                    //this.voucherInfo[i].PhidVouchermst=dtls[i].PhidVouchermst;
+                    this.voucherInfo[i].SubjectCode=dtls[i].SubjectCode;
+                    this.voucherInfo[i].Abstract=dtls[i].Abstract;
+                    this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
+                    this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
+                    if(dtls[i].DtlAccounts[0]) {
+                        var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
+                        this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
+                        for (var j in Dtls) {
+                            if (reg.test(Dtls[j])) {
+                                var d=Dtls[j];
+                                if(dtls[i].DtlAccounts[0][d]!=0){
+                                    this.voucherInfo[i].DtlAccounts.assistItem.push(dtls[i].DtlAccounts[0][d])
+                                }
+                            }
+                        }
+
+                    }console.log(i)
+                }console.log(33)
             },
             assistClick(childMsg){//辅助项下拉框选择的辅助项目********************************
-                this.voucherInfo[childMsg.id].assistItem.push(childMsg.data);
+                this.voucherInfo[childMsg.id].DtlAccounts.assistItem.push(childMsg.data);
+                this.$forceUpdate();
+                console.log(this.voucherInfo[childMsg.id].DtlAccounts.assistItem)
             },
-            itemClick(childMsg){//科目下拉框选择的科目********************************
-                this.voucherInfo[childMsg.id].kemu=childMsg.data;
+            //科目下拉框选择的科目********************************
+            itemClick(childMsg){
+                this.voucherInfo[childMsg.id].SubjectCode=childMsg.data;
                 this.kemuSel[childMsg.id].checked=false;
+                this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.assistItem[childMsg.id].checked=true;
+                this.$forceUpdate();
             },
             handleKemuSel(index){//选择框显示********************
-                this.assistItem[index].checked=false;
+                for(var kemu in this.kemuSel){
+                    this.assistItem[kemu].checked=false;
+                    this.kemuSel[kemu].checked=false;
+                }
                 this.kemuSel[index].checked=true;
                 this.moneyInputMask=true;
             },
+            kemuCancle(index){
+                this.voucherInfo[index].DtlAccounts.assistItem=[];
+                this.voucherInfo[index].SubjectCode='';
+                this.$forceUpdate();
+            },
             inputBlur($event,item,value){//金额输入框键入*******************
+
+                if(!this.countJie||!this.countDai){
+                    this.countJie=0;
+                    this.countDai=0;
+                }else{
+                    this.countJie++;
+                    this.countDai++;
+                }
+                item.money[value]=parseFloat(item.money[value]);
                 var val=item.money[value];
                 var children = $event.target.parentNode.parentNode.children;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
             },
-            moneyTurn(val,children){
-                if(val) {
+            initMoneyCss(){  //金额输入框样式初始化***************
+                for(var i in this.voucherInfo){
+                    var li = document.querySelectorAll(".voucherContent>ul>li");
+                    var children1=li[i-0+1].children[0].children[3].children;
+                    this.moneyTurn(this.voucherInfo[i].money.jiefang,children1);
+                    var children2=li[i-0+1].children[0].children[4].children;
+                    this.moneyTurn(this.voucherInfo[i].money.daifang,children2);
+                    var sum = 0;
+                    for (var item of this.voucherInfo) {
+                        if (item.money.daifang) {
+                            sum += parseFloat(item.money.daifang);
+                        }
+                    }
+                    this.daifang=sum.toFixed(2);
+                    sum=0;
+                    for(var item of this.voucherInfo){
+                        if(item.money.jiefang){
+                            sum+=parseFloat(item.money.jiefang);
+                        }
+                    }
+                    this.jiefang=sum.toFixed(2);
+                    var jie=document.querySelector(".count>li:nth-child(2)");
+                    this.moneyTurn(this.jiefang,jie.children);
+                    var dai=document.querySelector(".count>li:nth-child(3)");
+                    this.moneyTurn(this.daifang,dai.children);
+                    this.$forceUpdate();
+
+                }
+            },
+            moneyTurn(val,children){  //金额输入框转文本样式***************
+                if(val&&val!=0) {
                     val = parseFloat(val).toFixed(2).split('.');
                     var num = val[0];
                     var float = val[1];
@@ -276,7 +525,7 @@
                 }
             },
             moneyInputShow(item,val){//金额输入框展示**********************
-                if(item.kemu){
+                if(item.SubjectCode){
                     item.moneyInput[val]=true;
                     this.moneyInputMask=true;
                 }else{
@@ -296,6 +545,13 @@
                 }
                 this.moneyInputMask=false;
             },
+            showAddIcon(index){//增删icon显示*************
+                for(var item of this.addIcon){
+                    item.checked=false;
+                }
+                this.addIcon[index].checked=true;
+                this.$forceUpdate();
+            },
             handleRemove(file, fileList) {//预留文件上传**************************
                 console.log(file, fileList);
             },
@@ -312,34 +568,43 @@
         computed:{
             countJie:{
                 get(){
+                },
+                set(){
                     var sum=0;
                     for(var item of this.voucherInfo){
                         if(item.money.jiefang){
                             sum+=parseFloat(item.money.jiefang);
                         }
                     }
-                    return sum.toFixed(2);
-                },
-            },
-            countDai(){
-                var sum=0;
-                for(var item of this.voucherInfo){
-                    if(item.money.daifang){
-                        sum+=parseFloat(item.money.daifang);
-                    }
+                    this.jiefang=sum.toFixed(2);
+                    return ;
                 }
-                return sum.toFixed(2);
+            },
+            countDai: {
+                get() {
+
+                },
+                set(){
+                    var sum = 0;
+                    for (var item of this.voucherInfo) {
+                        if (item.money.daifang) {
+                            sum += parseFloat(item.money.daifang);
+                        }
+                    }
+                    this.daifang=sum.toFixed(2);
+                    return ;
+                }
             }
         },
         watch:{
-            countJie(){
+            jiefang(){
                 var jie=document.querySelector(".count>li:nth-child(2)");
-                this.moneyTurn(this.countJie,jie.children);
+                this.moneyTurn(this.jiefang,jie.children);
             },
-            countDai(){
+            daifang(){
                 var dai=document.querySelector(".count>li:nth-child(3)");
-                this.moneyTurn(this.countDai,dai.children);
-            },
+                this.moneyTurn(this.daifang,dai.children);
+            }
         },
         components:{
             searchSelect,
@@ -377,8 +642,49 @@
     .voucherContent>ul>li:first-child{
         height:55px;
     }
+    .voucherContentItem>div:first-of-type{
+        width:25px;
+        height:100%;
+        position:absolute;
+        left:-25px;
+    }
+    .voucherContentItem .inputContainer{
+        height:100%;
+    }
+    .voucherContentItem .inputContainer>textarea{
+        width:100%;
+        height:100%;
+        border: 0;
+
+    }
+    .addIcon,.deleteIcon{
+        width:25px;
+        height:25px;
+        position:absolute;
+        left:0px;
+        cursor:pointer;
+    }
+    .addIcon{
+        top:2px;
+        background: url("../../assets/icon/addition.svg");
+        background-size:cover;
+    }
+    .addIcon:hover{
+        background: url("../../assets/icon/addition_fill.svg");
+        background-size:cover;
+    }
+    .deleteIcon{
+        bottom:2px;
+        background: url("../../assets/icon/delete.svg");
+        background-size:cover;
+    }
+    .deleteIcon:hover{
+        background: url("../../assets/icon/delete_fill.svg");
+        background-size:cover;
+    }
     .voucherContentItem,.voucherContent>ul>li{
         height:55px;
+        position:relative;
     }
     .voucherContent>ul>li:first-child>ul{
         height:55px;
@@ -416,7 +722,7 @@
     .voucherContentItem>li:first-of-type{
         border-left-color:#7a7a7a;
     }
-    div~.money{
+    .voucherContent>ul>li:first-of-type>ul>li>div~.money{
         border-top:1px solid #aaa;
     }
     .money{
@@ -474,6 +780,16 @@
     .voucherFoot>ul>li{
         width:20%;
         text-align: center;
+
+    }
+    .voucherFoot>ul>li>label{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .voucherFoot>ul>li>label>input{
+        width:100px;
+        border:1px solid #ccc;
     }
     .moneyValCon{
         position:absolute;
@@ -528,8 +844,39 @@
         font-size: 13px;
         line-height: 15px;
     }
-    .kemu>div>ul>li:last-of-type{
-
+    .kemu>div{
+        position:relative;
+    }
+    .kemu>div>ul>li.kemuCancle{
+        position:absolute;
+        width:20px;
+        height:20px;
+        right:10px;
+        top:15px;
+        cursor:pointer;
+    }
+    .kemu>div>ul>li.kemuCancle>i{
+        position: absolute;
+        width:100%;
+        height:100%;
+        border:1px solid red;
+        border-radius: 50%;
+    }
+    .kemu>div>ul>li.kemuCancle>i:before,
+    .kemu>div>ul>li.kemuCancle>i:after{
+        width:1px;
+        height:12px;
+        content:"";
+        position: absolute;
+        left:50%;
+        top:2.5px;
+        background: red;
+    }
+    .kemu>div>ul>li.kemuCancle>i:before{
+        transform: rotate(45deg);
+    }
+    .kemu>div>ul>li.kemuCancle>i:after{
+        transform: rotate(-45deg);
     }
 
 

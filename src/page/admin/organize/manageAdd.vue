@@ -393,7 +393,8 @@
               console.log(formData)
               formData.append('unionId', this.unionId);
               formData.append('file', this.file);
-              this.$axios.post("http://127.0.0.1:666/trip/planerec", this.unionId, config).then(console.log('finish'))
+              this.$axios.post("http://127.0.0.1:666/trip/planerec", this.unionId, config)
+                  .then(console.log('finish'))
             }else{
               alert('请输入工会名称和统一社会信用代码')
             }
@@ -455,7 +456,7 @@
           var data = {
             uid: "0",
             orgid: "0",
-            infoData: JSON.stringify(page)
+            infoData: page
           };
           this.$axios.post('http://10.0.45.51:7758/api/GCW/SysOrganize/PostAdd',qs.stringify(data),config)
             .then(res=>{

@@ -28,7 +28,7 @@ const staticRoute = [
             {
                 //组织管理
                 path: "orgin",
-                component: () => import("../page/admin/organize"),
+                component: () => import("../page/admin/organize/manage"),
                 //redirect: "/admin/orgin/union",
                 meta:{ requireAuth:true,type:'page',isMenu:true}
             },
@@ -108,7 +108,7 @@ const staticRoute = [
             {
                 //辅助核算
                 path: "auxiliary",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/basicSetting/auxiliary/auxiliary"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {

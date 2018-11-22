@@ -3,22 +3,27 @@
         <section class="container">
             <aside class="asideNav">
               <ul>
-                <li @click="unionTab('/basic','基层工会组织')" :class="{asideActive:asideActive=='/basic'}">基层工会组织</li>
-                <li @click="unionTab('/union','机关工会组织')" :class="{asideActive:asideActive=='/union'}">机关工会组织</li>
-                <li @click="unionTab('/look','待审核基层组织')" :class="{asideActive:asideActive=='/look'}"><i>4</i>待审核基层组织</li>
+                <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">基层工会组织</li>
+                <li @click="unionTab('union')" :class="{asideActive:asideActive=='union'}">机关工会组织</li>
+                <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i>4</i>待审核基层组织</li>
               </ul>
             </aside>
-              <router-view></router-view>
+            <look v-if="asideActive=='look'"></look>
+            <basic v-if="asideActive=='basic'"></basic>
+            <union v-if="asideActive=='union'"></union>
         </section>
     </div>
 </template>
 
 <script>
+    import union from './union'
+    import basic from './basicUnion'
+    import look from './lookUnion'
     export default {
         name: "manage",
         data(){
           return {
-            asideActive:'/basic',
+            asideActive:'basic',
             pickerOptions1: {
               disabledDate(time) {
                 return time.getTime() > Date.now();
@@ -52,12 +57,9 @@
           showdata(item){
             console.log(item)
           },
-          unionTab(url,name){
-            //debugger;
-            this.$route.meta.name=name;
-            this.$router.push({ path:'/admin/orgin'+ url});
-            this.asideActive=url;
-            sessionStorage.setItem("asideActive",url);//**防止刷新数据清空************* */
+          unionTab(name){
+            this.asideActive=name;
+            sessionStorage.setItem("asideActive",name);//**防止刷新数据清空************* */
           }
         },
       mounted(){
@@ -65,7 +67,12 @@
             this.asideActive=sessionStorage.getItem("asideActive");
           }
 
-      }
+      },
+        components:{
+            union,
+            basic,
+            look
+        }
     }
 </script>
 

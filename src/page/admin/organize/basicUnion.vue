@@ -34,11 +34,11 @@
                   <div @click="unionSearch" class="seacherBtn">搜索</div>
                 </div>
                 <ul class="flexPublic handle">
-                  <a @click.prevent="routerTo('/organize/add')"><li>新增</li></a>
-                  <a @click.prevent="routerTo('/organize/update')"><li>修改</li></a>
-                  <a @click.prevent="routerTo('/organize/add')"><li>备份</li></a>
-                  <a @click.prevent="routerTo('/organize/add')"><li>恢复</li></a>
-                  <a @click.prevent="routerTo('/organize/add')"><li>导入</li></a>
+                  <a @click.prevent="routerTo('/admin/orgin/add')"><li>新增</li></a>
+                  <a @click.prevent="routerTo('/admin/orgin/update')"><li>修改</li></a>
+                  <a @click.prevent="routerTo('/admin/orgin/add')"><li>备份</li></a>
+                  <a @click.prevent="routerTo('/admin/orgin/add')"><li>恢复</li></a>
+                  <a @click.prevent="routerTo('/admin/orgin/add')"><li>导入</li></a>
                 </ul>
               </div>
               <div class="formData">
@@ -211,7 +211,7 @@ export default {
         this.PhIdList=PhId;
       },
       routerTo(url){
-        if(url!='/organize/add'&&this.PhIdList.length==0){
+        if(url!='/admin/orgin/add'&&this.PhIdList.length==0){
           alert('请点击你要修改的组织')
           return;
         }else {
@@ -227,9 +227,9 @@ export default {
           pageindex:this.pageIndex-1,
         }
 
-        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+        this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
           .then(res=>{
-            var data=JSON.parse(res.data);console.log(data)
+            var data=JSON.parse(res);console.log(1)
             this.userInfo=data.Record;
             for(var i=0;i<this.userInfo.length;i++){
               this.userInfoCssList[i]={checked:false};
@@ -243,9 +243,11 @@ export default {
             }
             this.pageCount=newArr;
           })
+            .catch(err=>{console.log(err)})
       }
     },
     created(){
+
     },
     mounted(){
       this.ajaxMode();

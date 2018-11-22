@@ -97,9 +97,10 @@ function stopRepeatRequest(url, cancelfunction){
 
 // 超时设置
 const service = axios.create({
-    baseURL: 'http://10.0.20.46:8028/api/GCW',
+    // baseURL: 'http://10.0.20.46:8028/api/GCW',
+    baseURL:'http://10.0.45.51:8028/api/GCW',
     // 请求超时时间
-    timeout: 5000               
+    timeout: 5000
 });
 
 // baseURL
@@ -159,7 +160,7 @@ service.interceptors.response.use(
                     router.push('error/401');
                 case 403:
                     router.push('error/403');
-                default: 
+                default:
                     Message({
                         message: `服务器错误！错误代码：${error.response.status}`,
                         type: 'error'

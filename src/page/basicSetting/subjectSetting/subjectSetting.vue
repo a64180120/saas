@@ -16,12 +16,12 @@
         <div @click="unionSearch" class="seacherBtn">搜索</div>
       </div>
       <ul class="flexPublic handle">
-        <a @click.prevent="routerTo('/finance/basic/subject/add')"><li>增加</li></a>
-        <a @click.prevent="routerTo('/environment/update')"><li>修改</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>删除</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>模板下载</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>导入</li></a>
-        <a @click.prevent="routerTo('/environment/add')"><li>导出</li></a>
+        <a @click.prevent="routerTo('add')"><li>增加</li></a>
+        <a @click.prevent="routerTo('add')"><li>修改</li></a>
+        <a @click.prevent="routerTo('delete')"><li>删除</li></a>
+        <a @click.prevent="routerTo('model')"><li>模板下载</li></a>
+        <a @click.prevent="routerTo('loadIn')"><li>导入</li></a>
+        <a @click.prevent="routerTo('loadOut')"><li>导出</li></a>
       </ul>
     </div>
     <div class="formData">
@@ -34,7 +34,7 @@
         <li>辅助核算</li>
         <li>停用/启用</li>
       </ul>
-      <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item.PhId)" v-for="(item,index) of userInfo" :key="index">
+      <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item)" v-for="(item,index) of userInfo" :key="index">
         <li>{{index+1+(pageIndex-1)*pageSize}}</li>
         <li>{{item.KCode}}</li>
         <li>{{item.KName}}</li>
@@ -65,17 +65,18 @@
         </div>
       </div>
     </div>
-    <router-view></router-view>
+    <newadd v-if="setting.add||setting.update" @add-click="addFinish" :PhIdList="updateAdd"></newadd>
   </div>
 </template>
 
 <script>
+    import newadd from './newAdd'
     export default {
       data(){
         return {
           unionSearchValue:'',
           subjectName:'1',
-          PhIdList:'',
+          PhIdList:[],
           orgname:'',
           pageIndex:1,
           pageSize:'15',
@@ -98,6 +99,7 @@
           pageCssActive:'',
           pagePreDisabled:'',
           pageNextDisabled:'',
+          setting:{add:false,delete:false,model:false,loadIn:false,loadOut:false}
         }
       },
       methods:{
@@ -122,19 +124,21 @@
         pageSizeSelect(){
           this.ajaxMode();
         },
-        chooseOn(index,PhId){
+        chooseOn(index,item){
+          this.PhIdList=[];
           this.userInfoCssList.map((value) => {return value.checked=false})
           this.userInfoCssList[index].checked=true;
           this.$forceUpdate();
-          this.PhIdList=PhId;
+          this.PhIdList.push(item);
         },
+          addFinish(val){
+            this.setting.add=val;
+
+          },
         routerTo(url){
-          if(url!='/finance/basic/subject/add'&&this.PhIdList.length==0){
-            alert('请点击你要修改的组织')
-            return;
-          }else {
-            this.$router.push({path: url, query: {PhId: this.PhIdList}});
-          }
+            console.log(this.updateAdd);
+          this.setting[url]=true;
+          this.updateAdd.name=url;
         },
         ajaxMode(){
           let {data,config}=this.$ajax();
@@ -165,13 +169,23 @@
         }
       },
       created(){
-      },
-      created(){
         for(var i=0;i<this.userInfo.length;i++){
           this.userInfoCssList[i]={checked:false};
         }
         this.ajaxMode();
       },
+        computed:{
+            updateAdd(val){
+                val={
+                    name:'',
+                    data:this.PhIdList
+                }
+                return val;
+            }
+        },
+        components:{
+          newadd,
+        }
     }
 </script>
 

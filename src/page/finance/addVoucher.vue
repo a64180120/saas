@@ -22,7 +22,7 @@
                 <a @click.prevent="addVoucher('keep')"><li>保存</li></a>
             </ul>
         </div>
-        <voucher :dataList="voucherDataList" ref="voucher"></voucher>
+        <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
         <div class="newAddContainer">
             <div class="newAddTitle flexPublic">
                 <span>最新新增凭证</span>
@@ -53,9 +53,9 @@
                     <li v-for="(item,index) of newAddList" :key="index">
                         <ul class="flexPublic">
                             <li>{{index+1}}</li>
-                            <li>记-{{item.id}}</li>
-                            <li :class="{newAddStateTrue:item.state,newAddStateFalse:!item.state}"></li>
-                            <li>{{item.date}}</li>
+                            <li>记-{{item.PNo}}</li>
+                            <li :class="{newAddStateTrue:item.Verify,newAddStateFalse:!item.Verify}"></li>
+                            <li>{{item.PDate?item.PDate.split('T')[0]:''}}</li>
                         </ul>
                     </li>
                 </ul>
@@ -67,13 +67,14 @@
 
 <script>
     import voucher from './voucher'
+    import qs from 'qs'
     export default {
         data(){return {
             val1:'',
-            fileList:[],
-            voucherDate:'',
             userState:0,
-            voucherDataList:['666'],
+            pagesize:9,
+            pageindex:0,
+            voucherDataList:{bool:false,data:''},
             userStateValues:[
                 {id:0,name:'全部'},{id:1,name:'2018-11'},{id:2,name:'2018-12'},{id:3,name:'2019-01'}
             ],
@@ -84,6 +85,11 @@
                 {id:'0004',state:false,date:'2018-11-5'},
             ]
         }},
+        created(){
+            // this.newVoucherList();
+            this.getvoucher();
+            this.getvoucherList();
+        },
         methods:{
             addVoucher(str){
                 switch(str){
@@ -97,20 +103,274 @@
                         alert('baocunxinzeng');
                         break;
                     case 'keep':
-                        alert('baocun');
+                        this.voucherData();
+                        this.keepVoucher();
                         break;
                 }
             },
-            voucherData(){//voucher组件传值************
-                this.voucherDataList=this.$refs.voucher.voucherData();
-                console.log(this.voucherDataList);
+            keepVoucher(){
+               var {config}=this.$ajax();
+               var data={
+                   uid:0,
+                   orgid:0,
+                   infoData:this.voucherDataList.data
+               }
+               this.$axios.post('http://10.0.15.3:8028/api/GCW/PVoucherMst/PostUpdate',qs.stringify(data),config)
+                   .then(res=>{
+                       res=JSON.parse(res);
+                       console.log(res)
+                       if(res.Status=='success'){
+                           alert('保存成功!')
+                           //this.$router.go(0);
+                       }else{
+                           alert('保存失败,请重试!')
+                       }
+                   })
+                   .catch(err=>console.log(err))
+            },
+            voucherData(){//接收voucher组件传值************
+                this.voucherDataList.data=this.$refs.voucher.voucherData();
+                console.log( this.voucherDataList.data)
+            },
+            getvoucher(){
+                var {config}=this.$ajax();
+                var data={
+                    uid:'0001',
+                    orgid:52118082000000,
+                    id:208181114000001
+                }
+                this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucher',{params:data,headers:config.headers})
+                    .then(res=>{
+                        res=JSON.parse(res);
+                        console.log(res)
+                        if(res.Status=='success'){
+                            this.voucherDataList.data=res.Data[0];
+                            this.voucherDataList.bool=true;
+                            console.log(this.voucherDataList.data)
+                        }else{
+                            console.log(res.Msg)
+                        }
+                    })
+                    .catch(err=>console.log(err))
+            },
+            getvoucherList(){
+                var {config}=this.$ajax();
+                var data={
+                    uid:'0001',
+                    orgid:52118082000000,
+                    pagesize:this.pagesize,
+                    pageindex:this.pageindex,
+                }
+                this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucherList',{params:data,headers:config.headers})
+                    .then(res=>{
+                        res=JSON.parse(res);
+                        this.newAddList=res.Record;
+                        if(this.newAddList.length<=0){
+                            alert('暂无新凭证');
+                        }
+                    })
+                    .catch(err=>console.log(err))
             },
             newVoucherList(){//获取最新新增凭证列表*****************
-
+                var data={
+                    "PhId": "266181114000001",
+                    "PType": null,
+                    "PNo": "1111",
+                    "PDate": null,
+                    "PAttachment": 0,
+                    "PMonth": 12,
+                    "PSource": null,
+                    "PMakePerson": null,
+                    "PFinancePerson": null,
+                    "PKeepingPerson": null,
+                    "PCashier": null,
+                    "PAuditor": "0",
+                    "PAuditorName": null,
+                    "Verify": 0,
+                    "OrgId": "0",
+                    "OrgCode": null,
+                    "Uyear": null,
+                    "EnabledMark": 0,
+                    "DeleteMark": 0,
+                    "Description": "单元测试-636778027914703482",
+                    "CreatorName": null,
+                    "EditorName": null,
+                    "Dtls": [{
+                        "PhId": "266181114000001",
+                        "PhidVouchermst": "266181114000001",
+                        "SubjectCode": "1001",
+                        "Abstract": "单元测试-636778027914703482",
+                        "JSum": 110.00,
+                        "DSum": 0.00,
+                        "JForeignSum": 0.00,
+                        "DForeignSum": 0.00,
+                        "ExchangeRate": 0.00,
+                        "AmountS": 0.00,
+                        "AmountF": 0.00,
+                        "Price": 0.00,
+                        "SortCode": 1,
+                        "DeleteMark": 0,
+                        "Description": "借110",
+                        "PhidTransaction": "0",
+                        "DtlAccounts": null,
+                        "ForeignKeys": [{
+                            "PropertyName": "PhidVouchermst",
+                            "ColumnName": "phid_vouchermst",
+                            "IsPrimary": false,
+                            "PropertyType": 2,
+                            "Value": null,
+                            "Direction": 0
+                        }
+                        ],
+                        "BusinessPrimaryKeys": null,
+                        "PersistentState": 0,
+                        "NgRecordVer": 1,
+                        "NgInsertDt": "2018-11-14 14:33:43",
+                        "NgUpdateDt": "2018-11-14 14:33:43",
+                        "Creator": "521180820000001",
+                        "Editor": "521180820000001",
+                        "CurOrgId": "521180820000002",
+                        "_OldIdValue_": null,
+                        "PropertyBytes": null,
+                        "ExtendObjects": null
+                    }, {
+                        "PhId": "266181114000002",
+                        "PhidVouchermst": "266181114000001",
+                        "SubjectCode": "2001",
+                        "Abstract": "单元测试-636778027914703482",
+                        "JSum": 0.00,
+                        "DSum": 110.00,
+                        "JForeignSum": 0.00,
+                        "DForeignSum": 0.00,
+                        "ExchangeRate": 0.00,
+                        "AmountS": 0.00,
+                        "AmountF": 0.00,
+                        "Price": 0.00,
+                        "SortCode": 2,
+                        "DeleteMark": 0,
+                        "Description": "贷110",
+                        "PhidTransaction": "0",
+                        "DtlAccounts": [{
+                            "PhId": "266181114000001",
+                            "PhidVouchermst": "266181114000001",
+                            "PhidVoucherDel": "266181114000002",
+                            "JSum": 0.00,
+                            "DSum": 110.00,
+                            "JForeignSum": 0.00,
+                            "DForeignSum": 0.00,
+                            "AmountS": 0.00,
+                            "AmountF": 0.00,
+                            "Price": 0.00,
+                            "ExchangeRate": 0.00,
+                            "S01": "1",
+                            "S02": "2",
+                            "S03": "0",
+                            "S04": "0",
+                            "S05": "0",
+                            "S06": "0",
+                            "S07": "0",
+                            "S08": "0",
+                            "S09": "0",
+                            "S10": "0",
+                            "S11": "0",
+                            "S12": "0",
+                            "S13": "0",
+                            "S14": "0",
+                            "S15": "0",
+                            "S16": "0",
+                            "S17": "0",
+                            "S18": "0",
+                            "S19": "0",
+                            "S20": "0",
+                            "S21": "0",
+                            "S22": "0",
+                            "S23": "0",
+                            "S24": "0",
+                            "S25": "0",
+                            "S26": "0",
+                            "S27": "0",
+                            "S28": "0",
+                            "S29": "0",
+                            "S30": "0",
+                            "S31": "0",
+                            "S32": "0",
+                            "S33": "0",
+                            "S34": "0",
+                            "S35": "0",
+                            "S36": "0",
+                            "S37": "0",
+                            "S38": "0",
+                            "S39": "0",
+                            "S40": "0",
+                            "S41": "0",
+                            "S42": "0",
+                            "S43": "0",
+                            "S44": "0",
+                            "S45": "0",
+                            "S46": "0",
+                            "S47": "0",
+                            "S48": "0",
+                            "S49": "0",
+                            "S50": "0",
+                            "ForeignKeys": [{
+                                "PropertyName": "PhidVouchermst",
+                                "ColumnName": "phid_vouchermst",
+                                "IsPrimary": false,
+                                "PropertyType": 2,
+                                "Value": null,
+                                "Direction": 0
+                            }
+                            ],
+                            "BusinessPrimaryKeys": null,
+                            "PersistentState": 0,
+                            "NgRecordVer": 1,
+                            "NgInsertDt": "2018-11-14 14:33:44",
+                            "NgUpdateDt": "2018-11-14 14:33:44",
+                            "Creator": "521180820000001",
+                            "Editor": "521180820000001",
+                            "CurOrgId": "521180820000002",
+                            "_OldIdValue_": null,
+                            "PropertyBytes": null,
+                            "ExtendObjects": null
+                        }
+                        ],
+                        "ForeignKeys": [{
+                            "PropertyName": "PhidVouchermst",
+                            "ColumnName": "phid_vouchermst",
+                            "IsPrimary": false,
+                            "PropertyType": 2,
+                            "Value": null,
+                            "Direction": 0
+                        }
+                        ],
+                        "BusinessPrimaryKeys": null,
+                        "PersistentState": 0,
+                        "NgRecordVer": 1,
+                        "NgInsertDt": "2018-11-14 14:33:43",
+                        "NgUpdateDt": "2018-11-14 14:33:43",
+                        "Creator": "521180820000001",
+                        "Editor": "521180820000001",
+                        "CurOrgId": "521180820000002",
+                        "_OldIdValue_": null,
+                        "PropertyBytes": null,
+                        "ExtendObjects": null
+                    }
+                    ],
+                    "ForeignKeys": null,
+                    "BusinessPrimaryKeys": null,
+                    "PersistentState": 0,
+                    "NgRecordVer": 1,
+                    "NgInsertDt": "2018-11-14 14:33:43",
+                    "NgUpdateDt": "2018-11-14 14:33:43",
+                    "Creator": "521180820000001",
+                    "Editor": "521180820000001",
+                    "CurOrgId": "521180820000002",
+                    "_OldIdValue_": null,
+                    "PropertyBytes": null,
+                    "ExtendObjects": null
+                }
+                this.voucherDataList.data=data;
             }
-        },
-        mounted(){
-
         },
         components:{
             voucher,
@@ -121,6 +381,8 @@
 <style scoped>
     .addVoucher{
         width:100%;
+        height:100%;
+        overflow: scroll;
         text-align: left;
         padding:8px 18px;
         font-size:14px;
@@ -232,27 +494,6 @@
     .newAddContent li{
         text-align: center;
     }
-    .newAddStateTrue:after{
-        content:"";
-        position:absolute;
-        width:8px;
-        height:18px;
-        border:1px solid #02a7e7;
-        border-width: 0 1px 1px 0;
-        transform: rotate(45deg);
-        top:-12px;
-    }
-    .newAddStateFalse:before,.newAddStateFalse:after{
-        content:"";
-        position: absolute;
-        width:18px;
-        height:1px;
-        background: #d8281d;
-        transform: rotate(45deg);
-        left:40px;
-    }
-    .newAddStateFalse:before{
-        transform: rotate(-45deg);
-    }
+
 
 </style>
