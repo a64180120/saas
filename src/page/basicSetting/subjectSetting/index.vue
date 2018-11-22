@@ -61,23 +61,23 @@
         <!-- 编辑弹出框 -->
         <el-dialog :title="dialogState=='add'?'新增':'编辑'" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
-                <el-form-item label="科目编码：" prop="KCode">
+                <el-form-item label="科目编码：" prop="KCodeRule">
                     <el-input v-model="form.KCode"></el-input>
                 </el-form-item>
-                <el-form-item label="科目名称：" prop="KName">
+                <el-form-item label="科目名称：" prop="KNameRule">
                     <el-input v-model="form.KName"></el-input>
                 </el-form-item>
-                <el-form-item label="科目类别：" prop="KType">
+                <el-form-item label="科目类别：" prop="KTypeRule">
                     <el-select v-model="form.KType" placeholder="请选择">
                         <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="余额方向：" prop="KBalanceType">
+                <el-form-item label="余额方向：" prop="KBalanceTypeRule">
                         <el-radio-group v-model="form.KBalanceType">
                             <el-radio v-for="item in balanceType" :key="item.code" :label="item.code">{{item.name}}</el-radio>
                         </el-radio-group>
                 </el-form-item>
-                <el-form-item label="辅助核算：" prop="AuxiliaryType">
+                <el-form-item label="辅助核算：">
                     <el-checkbox-group v-model="form.AuxiliaryType">
                         <el-checkbox v-for="item in auxiliaryTypes" :label="item.PhId" :key="item.PhId">{{item.BaseName}}</el-checkbox>
                     </el-checkbox-group>
@@ -193,6 +193,7 @@ export default {
       s_word: "",
       dialogState: "add",
       editVisible: false,
+      singleSelection:[],
       subjectType:[
           {code:'1',name:'资产'},
           {code:'2',name:'负债'},
@@ -219,30 +220,32 @@ export default {
         AuxiliaryType: []
       },
       rules: {
-        KCode: [
+        KCodeRule: [
           { required: true, message: "请输入科目编码", trigger: "blur" }
         ],
-        KName: [
+        KNameRule: [
           { required: true, message: "请输入科目名称", trigger: "blur" }
         ],
-        KType: [
+        KTypeRule: [
           { required: true, message: "请选择科目类别", trigger: "change" }
         ],
-        KBalanceType: [
-          { required: true, message: "请选择余额方向", trigger: "change" }
+        KBalanceTypeRule: [
+          { required: true, message: '请选择余额方向', trigger: 'change' }
         ]
       }
     };
+  },
+  created() {
+
   },
   methods: {
     message(row) {
       this.$message.info(row.event);
     },
+    //列表点击事件
     handleClickRow(row) {
-      console.log(row);
-    },
-    handleCurrentChange(row) {
-      console.log(row);
+      //console.log(row);
+      this.singleSelection.push(row);
     },
     //搜索按钮
     search() {},
@@ -252,11 +255,44 @@ export default {
       this.editVisible = true;
     },
     //修改页面
-    Edit() {},
+    Edit() {
+        let object = this.singleSelection;
+        let id = object.length > 0 ? object[0].PhId : 0;
+        if (id != 0) {
+
+            this.dialogState = "edit";
+            this.editVisible = true;
+            this.singleSelection = [];
+        }else{
+            this.$message({
+                message: "请选中列表的其中一行",
+                type: "warning"
+            });
+        }
+    },
     //删除按钮
-    Delete() {},
+    Delete() {
+      let length = this.singleSelection.length;
+      if (length > 0) {
+        this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+            this.$message.success("删除成功");
+            this.singleSelection = [];
+        });
+      } else {
+        this.$message({
+          message: "请选中列表的其中一行",
+          type: "warning"
+        });
+      }
+    },
     //导入按钮
-    DownLoad() {},
+    DownLoad() {
+
+    },
     // 保存表单
     saveEdit(formName) {
       this.$refs[formName].validate(valid => {
@@ -267,6 +303,7 @@ export default {
           //隐藏弹出框
           this.editVisible = false;
           //清除form数据
+          this.$refs[formName].resetFields();
 
           this.$message.success(`修改成功`);
         } else {

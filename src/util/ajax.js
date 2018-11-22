@@ -7,7 +7,6 @@ import store from '../store'
 import router from '../router'
 import { Message } from 'element-ui'
 import Auth from '@/util/auth'
-import global from '@/util/global'
 import md5 from 'js-md5'
 let Base64 = require('js-base64').Base64;
 

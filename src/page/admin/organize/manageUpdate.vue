@@ -54,7 +54,7 @@
         <li>
           <div class="addFormItemTitle">隶属工会</div>
           <div class="selectContainer">
-            <select name="unionOwner"v-model="ParentName">
+            <select name="unionOwner" v-model="ParentName">
               <option v-for="item of ParentNameValues" :key="item.id" :value="item.id">{{item.name}}</option>
             </select>
           </div>
@@ -63,7 +63,7 @@
         <li>
           <div class="addFormItemTitle">会计制度</div>
           <div class="selectContainer">
-            <select name="unionOwner"v-model="AccountSystem">
+            <select name="unionOwner" v-model="AccountSystem">
               <option v-for="item of AccountSystemValues" :key="item.id" :value="item.id">{{item.name}}</option>
             </select>
           </div>

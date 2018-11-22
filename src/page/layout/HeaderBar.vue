@@ -131,7 +131,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      sysLogout: "auth/logout"
+      sysLogout: "user/logout"
     }),
     userOperation(command) {
         // 用户名下拉菜单选择事件
