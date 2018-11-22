@@ -271,13 +271,13 @@ const staticRoute = [
             {
                 //工作账号管理
                 path: "account",
-                component: () =>import( "../page/message"),
+                component: () =>import( "../page/system/user"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //组织账套管理
                 path: "organization",
-                component: () =>import( "../page/message"),
+                component: () =>import( "../page/system/Organize"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]

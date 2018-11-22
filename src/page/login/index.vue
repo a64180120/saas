@@ -71,7 +71,8 @@ export default {
                 show: false,
                 src: ''
             },
-            sysMsg: ''
+            sysMsg: '',
+            loading: false
         }
     },
      //计算属性
@@ -97,15 +98,23 @@ export default {
                 params.append('uname_login',this.loginForm.name);
                 params.append('password',this.loginForm.password);
 
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+
                 axios({
                     url: '/SysUser/PostOrgByUNameOrUPhone',
                     method: 'post',
                     data: params
                 }).then(res => {
                     let resultData = JSON.parse(res);
+                    loading.close();
                     if(resultData){
                         if(resultData.Status==='error'){
-                            this.$message(resultData.Message);
+                            this.$message.error(resultData.Msg);
                             return;
                         }
                         this.options=resultData.Record;
@@ -132,11 +141,17 @@ export default {
 
             this.$refs[formName].validate((valid) => {
                 if (valid) {
+                    const loading = this.$loading({
+                        lock: true,
+                        text: 'Loading',
+                        spinner: 'el-icon-loading'
+                    });
                     this.login({
                         name: this.loginForm.name,
                         password: this.loginForm.password,
                         orgid: this.loginForm.orgid
                     }).then(res => {
+                        loading.close();
                         if(res.Status==="success"){
                             this.$router.push('home') //跳转主页
                         } else {
