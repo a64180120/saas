@@ -104,17 +104,20 @@
                     uid: "0",//this.uid获取到store中的uid************
                     orgid: "547181121000001",//this.orgid获取到store中的orgid************
                 };
+                var vm=this;
                 this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data,headers:config.headers})
                     .then(res=>{
                         var data=JSON.parse(res);
                         this.userInfo=data.list;
                         this.navTab=data.type;
+                        console.log( this.navTab)
                         if(!this.navTab.id){
                             this.navActive=this.navTab[0];
                         }
                         for(var i=0;i<this.userInfo.length;i++){
                             this.userInfoCssList[i]={checked:false};
                         }
+
                     })
                     .catch(err=>console.log(err))
             },
@@ -142,21 +145,25 @@
             },
             addFinish(val){
                 this.handleNav=val;
+                this.ajaxMode();
+                this.initInfoCss();
             },
             deleteBase(){
                 var url='PVoucherAuxiliaryType/PostAddAuxiliary';
                 this.PhIdList.DeleteMark=1;
                 var data={
                     uid:0,
-                    orgid:0,
+                    orgid:547181121000001,
                     infoData:this.PhIdList
                 }
                 console.log(data)
                 var {config}=this.$ajax();
-                this.$axios.post('http://10.0.20.46:8028/api/GCW/'+url,qs.stringify(data),config)
+                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,qs.stringify(data),config)
                     .then(res=>{
                         res=JSON.parse(res)
                         if(res.Status=='success'){
+                            this.ajaxMode();
+                            this.initInfoCss();
                             alert('删除成功!')
                         }
                     })
