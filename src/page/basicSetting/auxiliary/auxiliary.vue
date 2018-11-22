@@ -16,7 +16,7 @@
             <div class="auxiliaryNav">
                 <p class="auxiliaryNavTitle">辅助类型</p>
                 <ul>
-                    <li @click.stop="navTabTurn(item.BaseName)" :class="{active:navActive==item.BaseName}" v-for="(item,index) of navTab" :key="index">{{item.BaseName}}</li>
+                    <li @click.stop="navTabTurn(item)" :class="{active:navActive.BaseName==item.BaseName}" v-for="(item,index) of navTab" :key="index">{{item.BaseName}}</li>
                 </ul>
             </div>
             <div class="formData auxiliaryContent">
@@ -27,39 +27,35 @@
                     <li>启用/停用</li>
                 </ul>
                 <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item)" v-for="(item,index) of userInfo" :key="index">
-                    <li>{{index+1+(pageIndex-1)*pageSize}}</li>
+                    <li>{{index+1}}</li>
                     <li>{{item.BaseCode}}</li>
                     <li>{{item.BaseName}}</li>
-                    <li><i :class="{newAddStateTrue:item.EnabledMark,newAddStateFalse:!item.EnabledMark}"></i></li>
+                    <li><i :class="{newAddStateTrue:!item.EnabledMark,newAddStateFalse:item.EnabledMark}"></i></li>
                 </ul>
             </div>
         </div>
         <auxiliary-type :datalists="JSON.stringify(navTab)" @type-click="addFinish" v-if="handleNav=='type'"></auxiliary-type>
-        <handle-update :PhIdList="{name:handleNav,data:PhIdList}" v-if="handleNav=='add'||handleNav=='update'" @add-click="addFinish"></handle-update>
+        <handle-update :PhIdList="{name:handleNav,data:PhIdList,type:navActive}" v-if="handleNav=='add'||handleNav=='update'" @add-click="addFinish"></handle-update>
     </div>
 </template>
 
 <script>
     import handleUpdate from './handleUpdate'
     import auxiliaryType from './auxiliaryType'
+    import { mapState, mapActions } from 'vuex'
+    import qs from 'qs'
     export default {
         data(){
             return {
                 unionSearchValue:'',
                 PhIdList:'',
-                pageIndex:1,
-                pageSize:'15',
-                pageCount:[],
                 userInfoCssList:[],
-                pageCssActive:'',
-                pagePreDisabled:'',
-                pageNextDisabled:'',
                 userInfo:[
                     {PhId:'111',BaseCode:'01',BaseName:'办公室',EnabledMark:0},
                     {PhId:'222',BaseCode:'03',BaseName:'财务科',EnabledMark:1},
                 ],
                 handleNav:'',
-                navActive:'部门',
+                navActive:{id:'',BaseName:'部门'},
                 navTab:[{PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
                     {PhId:112,BaseCode:'02',EnabledMark:1,BaseName:'往来单位'},
                     {PhId:113,BaseCode:'03',EnabledMark:0,BaseName:'往来个人'},
@@ -70,30 +66,10 @@
             unionSearch(){
                 alert('输入的是:'+this.unionSearchValue)
             },
-            newPage(val){//分页展示****************************************
-                console.log()
-                if(val=='next'){
-                    if(this.pageIndex%this.pageCount!=0&&this.pageIndex!=this.pageCount){
-                        this.pageIndex++;
-                    }
-                }else if(val=='pre'){
-                    if(this.pageIndex%this.pageCount!=1){
-                        this.pageIndex--;console.log(this.pageIndex)
-                    }
-                }else{
-                    this.pageIndex=val+1;
-                }
-                this.pageCssActive=this.pageIndex-1;
-                this.ajaxMode();
-            },
-            pageSizeSelect(){
-                this.ajaxMode();
-            },
             initInfoCss(){
                 for(var i in this.userInfo){
                     this.userInfoCssList[i]={checked:false};
                 }
-                this.navActive=this.navTab[0].BaseName
             },
             handlePage(val){
                 switch(val){
@@ -108,7 +84,7 @@
                         }
                         break;
                     case 'delete':
-                        alert('删除成功');
+                        this.deleteBase();
                         break;
                     case 'type':
                         this.handleNav='type';
@@ -125,45 +101,83 @@
                 let {data,config}=this.$ajax();
                 data.infoData=null;
                 data = {
-                    uid: "0",
-                    orgid: "0",
-                    pagesize:this.pageSize,
-                    pageindex:this.pageIndex-1
+                    uid: "0",//this.uid获取到store中的uid************
+                    orgid: "547181121000001",//this.orgid获取到store中的orgid************
                 };
-                this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data,headers:config.headers})
                     .then(res=>{
-                        var data=JSON.parse(res.data);
-                        this.userInfo=data.Record;
+                        var data=JSON.parse(res);
+                        this.userInfo=data.list;
+                        this.navTab=data.type;
+                        if(!this.navTab.id){
+                            this.navActive=this.navTab[0];
+                        }
                         for(var i=0;i<this.userInfo.length;i++){
                             this.userInfoCssList[i]={checked:false};
                         }
-                        this.pageIndex=data.index+1;
-                        this.pageSize=data.size;
-                        var newArr=[];
-                        var maxP=Math.ceil(data.totalRows/data.size)>10?10:Math.ceil(data.totalRows/data.size);
-                        for(var i=0;i<maxP;i++){
-                            newArr=i+1;
-                        }
-                        this.pageCount=newArr;
                     })
+                    .catch(err=>console.log(err))
             },
+
+            //切换辅助项分类**************************
             navTabTurn(item){
                 this.navActive=item;
+                let {data,config}=this.$ajax();
+                data.infoData=null;
+                data = {
+                    uid: "0",
+                    orgid: "547181121000001",
+                    typeId:this.navActive.PhId
+                };
+                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId',{params:data,headers:config.headers})
+                    .then(res=>{
+                        var data=JSON.parse(res);
+                        this.userInfo=data.list;
+                        this.navTab=data.type;
+                        for(var i=0;i<this.userInfo.length;i++){
+                            this.userInfoCssList[i]={checked:false};
+                        }
+                    })
+                    .catch(err=>console.log(err))
             },
             addFinish(val){
                 this.handleNav=val;
+            },
+            deleteBase(){
+                var url='PVoucherAuxiliaryType/PostAddAuxiliary';
+                this.PhIdList.DeleteMark=1;
+                var data={
+                    uid:0,
+                    orgid:0,
+                    infoData:this.PhIdList
+                }
+                console.log(data)
+                var {config}=this.$ajax();
+                this.$axios.post('http://10.0.20.46:8028/api/GCW/'+url,qs.stringify(data),config)
+                    .then(res=>{
+                        res=JSON.parse(res)
+                        if(res.Status=='success'){
+                            alert('删除成功!')
+                        }
+                    })
+                    .catch(err=>{console.log(err)})
             }
         },
         created(){
             this.initInfoCss();
         },
         mounted(){
-            //this.ajaxMode();
+            this.ajaxMode();
         },
         computed:{
             addupdate(){
                 return {name:'',data:this.PhIdList}
-            }
+            },
+            ...mapState({
+                orgid:state=>state.user.orgid,
+                uid:state=>state.user.userid,
+                user:state=>state.user
+            })
         },
         components:{
             handleUpdate,

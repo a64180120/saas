@@ -16,8 +16,8 @@
                 <li>
                     <div>是否启用</div>
                     <div class="itemRadio">
-                        <label ><input type="radio" name="line" v-model="formData.EnabledMark" value="1" >启用</label>
-                        <label><input type="radio" name="line" v-model="formData.EnabledMark" value="0">停用</label>
+                        <label ><input type="radio" name="line" v-model="formData.EnabledMark" value="0" >启用</label>
+                        <label><input type="radio" name="line" v-model="formData.EnabledMark" value="1">停用</label>
                     </div>
                 </li>
                 <li>
@@ -37,10 +37,10 @@
                     <li>{{item.BaseCode}}</li>
                     <li>{{item.BaseName}}</li>
                     <li>
-                        <i v-show="!updateCss[index].checked" :class="{newAddStateTrue:item.EnabledMark,newAddStateFalse:!item.EnabledMark}"></i>
+                        <i v-show="!updateCss[index].checked" :class="{newAddStateTrue:item.EnabledMark==0,newAddStateFalse:item.EnabledMark==1}"></i>
                         <div v-show="updateCss[index].checked">
-                            <label><input type="radio" :name="item.BaseName" v-model="item.EnabledMark" value="0">停用</label>
-                            <label><input type="radio" :name="item.BaseName" v-model="item.EnabledMark" value="1">启用</label>
+                            <label><input type="radio" :name="item.BaseName" v-model="item.EnabledMark" value=0>启用</label>
+                            <label><input type="radio" :name="item.BaseName" v-model="item.EnabledMark" value=1>停用</label>
                         </div>
                     </li>
                     <li><i @click.stop="deleteData(item,index)" v-show="deleteCss[index].checked"></i></li>
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+   import qs from 'qs'
   export default {
     name: "auxiliary-type",
       props:{
@@ -78,7 +79,25 @@
       methods:{
           newAdd(bool){
               if(bool){
-                  console.log(this.dataList);
+                  for(var del of this.deleteList){
+                      this.dataList.push(del);
+                  }
+                  var data={
+                      uid:0,
+                      orgid:547181121000001,
+                      infoData:this.dataList
+                  }
+                  var {config}=this.$ajax();
+                  console.log(data)
+                  this.$axios.post('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/PostAddAuxiliaryType',qs.stringify(data),config)
+                      .then(res=>{
+                          res=JSON.parse(res);
+                          console.log(res)
+                          if(res.Status=='success'){
+                              alert('保存成功!')
+                          }
+                      })
+                      .catch(err=>console.log(err))
               }
               this.$emit('type-click',false);
           },
@@ -92,7 +111,7 @@
               }
           },
           deleteData(item,index){
-            item.deleteMark=1;
+            item.DeleteMark=1;
             this.deleteList.push(item);
             this.dataList.splice(index,1);
             this.initCss();
@@ -115,7 +134,7 @@
                 }
             }
             this.$forceUpdate();
-          }
+          },
       }
   }
 </script>

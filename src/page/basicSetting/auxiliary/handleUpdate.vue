@@ -19,8 +19,8 @@
                 <li>
                     <div>辅助项状态</div>
                     <div class="itemRadio">
-                        <label ><input type="radio" name="line" v-model="formData.EnabledMark" value="1" >启用</label>
-                        <label><input type="radio" name="line" v-model="formData.EnabledMark" value="0">停用</label>
+                        <label ><input type="radio" name="line" v-model="formData.EnabledMark" value="0" >启用</label>
+                        <label><input type="radio" name="line" v-model="formData.EnabledMark" value="1">停用</label>
                     </div>
                 </li>
             </ul>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+    import qs from 'qs'
     export default {
         name: "new-add",
         props:{
@@ -43,6 +44,8 @@
         mounted(){
             if(this.PhIdList.name=='add'){
                 this.formData.BaseCode='001';//需要动态获取新增code*****
+                this.formData.EnabledMark=0;
+                this.formData.PhId='';
             }else{
                 this.formData=this.PhIdList.data;
             }
@@ -55,15 +58,33 @@
         },
         methods:{
             newAdd(name){
-                if(name=='add'){
-                    console.log(this.formData)
-                    alert('add:success')
-                }else if(name=='update'){
-                    console.log(this.formData)
-                    alert('update:success')
+                var url='PVoucherAuxiliaryType/PostAddAuxiliary';
+                console.log(this.PhIdList.type.PhId)
+                this.formData.PhidBaseType=this.PhIdList.type.PhId;
+                var data={
+                    uid:0,
+                    orgid:0,
+                    infoData:this.formData
                 }
+                console.log(data)
+                var {config}=this.$ajax();
+                this.$axios.post('http://10.0.20.46:8028/api/GCW/'+url,qs.stringify(data),config)
+                    .then(res=>{
+                        res=JSON.parse(res);
+                        console.log(res)
+                        if(res.Status=='success'){
+                            if(name=='add'){
+                                alert('add:success')
+                            }else if(name=='update'){
+                                alert('update:success')
+                            }
+                        }
+                    })
+                    .catch(err=>console.log(err))
                 this.$emit('add-click',false);
+
             },
+
         }
     }
 </script>

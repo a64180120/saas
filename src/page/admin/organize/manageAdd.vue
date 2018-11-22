@@ -393,7 +393,8 @@
               console.log(formData)
               formData.append('unionId', this.unionId);
               formData.append('file', this.file);
-              this.$axios.post("http://127.0.0.1:666/trip/planerec", this.unionId, config).then(console.log('finish'))
+              this.$axios.post("http://127.0.0.1:666/trip/planerec", this.unionId, config)
+                  .then(console.log('finish'))
             }else{
               alert('请输入工会名称和统一社会信用代码')
             }
