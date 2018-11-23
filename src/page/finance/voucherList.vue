@@ -1,0 +1,607 @@
+<template>
+  <div class="voucherList">
+      <div class="voucherNav">
+          <ul>
+              <li>新增</li>
+              <li>修改</li>
+              <li>删除</li>
+              <li>审核</li>
+              <li>反审核</li>
+              <li>复制</li>
+              <li>剪切</li>
+              <li>冲红</li>
+              <li>凭证重排</li>
+              <li>导入</li>
+              <li>导出</li>
+              <li>打印</li>
+          </ul>
+      </div>
+      <div class="voucherSelect">
+          <div>
+              <label>
+                  <div>账期:</div>
+                  <div class="block">
+                      <el-date-picker
+                          v-model="date1"
+                          type="date"
+                          placeholder="选择日期">
+                      </el-date-picker>
+                  </div>
+              </label>
+              <label >
+                  <div>至:</div>
+                  <div class="block">
+                      <el-date-picker
+                          v-model="date2"
+                          type="date"
+                          placeholder="选择日期">
+                      </el-date-picker>
+                  </div>
+              </label>
+          </div>
+          <div>
+              <label >合计金额: <div class="inputContainer"><input type="text"></div> </label>
+              <label >至:<div class="inputContainer"><input type="text"></div></label>
+          </div>
+          <div class="flexPublic searcherCon">
+              <div class="searcherValue"><input v-model="unionSearchValue" type="text" placeholder="科目/摘要/凭证号"></div>
+              <div  class="searcherBtn">搜索</div>
+              <div @click.stop="highGradeToggle(true)">高级</div>
+              <div v-show="highGradeCss" class="highGradeCss">
+                <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
+                <ul>
+                    <li>
+                        <div>科目名称</div>
+                        <div class="inputContainer"><input type="text"></div>
+                    </li>
+                    <li>
+                        <div>辅助核算</div>
+                        <div class="flexPublic">
+                            <div class="selectContainer"><select></select></div>
+                            <div class="inputContainer"><input type="text"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <div>合计金额</div>
+                        <div class="flexPublic">
+                            <div class="inputContainer"><input type="text"></div>
+                            <span>至</span>
+                            <div class="inputContainer"><input type="text"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <div>账期</div>
+                        <div class="flexPublic">
+                            <div class="block">
+                                <el-date-picker type="date" v-model="date3" placeholder="请选择日期">
+                                </el-date-picker>
+                            </div>
+                            <span>至</span>
+                            <div class="block">
+                                <el-date-picker type="date" v-model="date4" placeholder="请选择日期">
+                                </el-date-picker>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div>
+                    <div>重置</div>
+                    <div>搜索</div>
+                </div>
+              </div>
+          </div>
+
+      </div>
+      <section class="listContainer">
+        <ul class="listTitle">
+            <li>序号</li>
+            <li>摘要</li>
+            <li>科目</li>
+            <li>借方金额</li>
+            <li>贷方金额</li>
+        </ul>
+        <ul class="listContent" v-for="(item,index) of voucherList" :key="index">
+            <li>
+                <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
+                <ul>
+                    <li>
+                        <span>凭证日期 : {{item.PDate?item.PDate.replace("T"," "):''}}</span>
+                        <span>凭证字号 : 记-{{item.PNo}}</span>
+                        <span>附件数 : {{item.PAttachment}}</span>
+                        <span>制单人 : {{item.PMakePerson}}</span>
+                        <span>审核 : {{item.PAuditor}}</span>
+                    </li>
+                    <li v-for="(dtl,ind) of item.Dtls" :key="ind">
+                        <div>{{dtl.Abstract}}</div>
+                        <div>{{dtl.SubjectCode}}</div>
+                        <div>{{dtl.JSum}}</div>
+                        <div>{{dtl.DSum}}</div>
+                    </li>
+                    <li>
+                        <div>合计:{{'sum'|sum(item.Dtls)}}</div>
+                        <div>{{'jie'|sum(item.Dtls)}}</div>
+                        <div>{{'dai'|sum(item.Dtls)}}</div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+      </section>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "voucher-list",
+      mounted(){
+        this.getvoucherList();
+      },
+      data(){
+        return {
+            date1:'',
+            date2:'',
+            date3:'',
+            date4:'',
+            unionSearchValue:'',
+            pickerOptions: {
+                disabledDate(time) {
+                    return time.getTime() > Date.now();
+                },
+                shortcuts: [{
+                    text: '今天',
+                    onClick(picker) {
+                        picker.$emit('pick', new Date());
+                    }
+                }, {
+                    text: '昨天',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一周前',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', date);
+                    }
+                }]
+            },
+            voucherList:[],
+            highGradeCss:false,
+            pagesize:10,
+            pageindex:0,
+        }
+      },
+      methods:{
+          highGradeToggle(bool) {
+              this.highGradeCss = bool;
+          },
+          voucherDel(item){
+              this.$router.push({name:'voucherDel',params:{list:item}});
+          },
+          getvoucherList(){
+              var {config}=this.$ajax();
+              var data={
+                  uid:'0001',
+                  orgid:52118082000000,
+                  //pagesize:this.pagesize,
+                  //pageindex:this.pageindex,
+              }
+              this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucherList',{params:data,headers:config.headers})
+                  .then(res=>{
+                      res=JSON.parse(res);
+                      this.voucherList=res.Record;
+                      console.log(this.voucherList)
+                      if(this.voucherList.length<=0){
+                          alert('暂无新凭证');
+                      }
+                  })
+                  .catch(err=>console.log(err))
+          },
+      },
+      filters:{
+        sum(val,dtl){
+            var sum=0;
+            switch(val){
+                case 'jie':
+                    for(var d of dtl){
+                        if(d.JSum){
+                            sum+=parseFloat(d.JSum);
+                        }
+                    }
+                    sum=sum.toFixed(2);
+                    break;
+                case 'dai':
+                    for(var d of dtl){
+                        if(d.DSum){
+                            sum+=parseFloat(d.DSum);
+                        }
+                    }
+                    sum=sum.toFixed(2);
+                    break;
+                case 'sum':
+                    for(var d of dtl){
+                        if(d.JSum){
+                            sum+=parseFloat(d.JSum);
+                        }
+                    }
+                    sum=sum.toFixed(2);
+                    var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
+                    var arr2=['','拾','百','千','万','亿'];
+                    var str=sum.toString().split('.');
+                    var dot='元';
+                    var INTstr=str[0];
+                    var INT='';
+                    var bool=false;
+                    var zero='';
+                    if(parseInt(str[1])!=0){
+                        dot+=arr1[str[1][0]]+'角';
+                        if(str[1][1]!=0){
+                            dot+=arr1[str[1][1]]+'分'
+                        }
+                    }else{
+                        dot+='整'
+                    }
+                    for(var i=INTstr.length-1,j=0;i>=0; i--,j++){
+                        if(INTstr[i]!=0){
+                            bool=true;
+                        }
+                        if(j==4){
+                            INT=arr2[j]+INT;
+                        }else if(j==8){
+                            INT=arr2[5]+INT;
+                        }
+                        if(bool){
+                            if(INTstr[i]!=0){
+                                if(zero=='零'){
+                                    zero='';
+                                }
+                                if(j==4){
+                                    INT=arr1[INTstr[i]]+INT;
+                                    bool=false;
+                                }else if(j==8){
+                                    INT=arr1[INTstr[i]]+INT;
+                                }else{
+                                    INT=arr1[INTstr[i]]+arr2[j%4]+INT;
+                                    bool=false;
+                                }
+                            }else{
+                                if(zero==''){
+                                    INT='零'+INT;
+                                    zero='零';
+                                }
+                                if(j==4){
+                                    INT=arr2[j]+INT;
+                                    bool=false;
+                                }else if(j==8){
+                                    INT=arr2[5]+INT;
+                                    bool=false;
+                                }
+                            }
+                        }
+                    }
+                    sum=INT+dot;
+                    break;
+            }
+            return sum;
+
+        }
+      }
+  }
+</script>
+
+<style lang="scss" scoped>
+
+    .searcherCon{
+        width:40%;
+        min-width: 170px;
+        position:relative;
+        .highGradeCss{
+            position:absolute;
+            width:300px !important;
+            background: #fff;
+            z-index: 9;
+            top:40px;
+            border:1px solid #ccc;
+            >div{
+                width:100%;
+                &:first-of-type{
+                    height:33px;
+                    background:#3e8ebc;
+                    border-radius: 7px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    color:#fff;
+                    padding:0 10px;
+                }
+                &:last-of-type{
+                    border-top:1px solid #ccc;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height:40px;
+                    width:100%;
+                    padding:0 10px;
+                    >div{
+                        cursor:pointer;
+                        width:40%;
+                        height:30px;
+                        line-height: 30px;
+                        background: #509edc;
+                        text-align: center;
+                        margin-left: 10px;
+                        color:#fff;
+                        font-size: 15px;
+                        &:first-of-type{
+                            background: #667a80;
+                        }
+                    }
+                }
+                i.cancle{
+                    width:25px;
+                    height:25px;
+                    border-radius: 50%;
+                    background: #fff;
+                    position: relative;
+                    cursor:pointer;
+                    &::after,&::before{
+                        content:"";
+                        position: absolute;
+                        width:15px;
+                        height:1px;
+                        background: #3e8cbc;
+                        top:12px;
+                        left:5px;
+                    }
+                    &::after{
+                        transform: rotate(45deg);
+                    }
+                    &::before{
+                        transform: rotate(-45deg);
+                    }
+                }
+            }
+            >ul{
+                input,select{
+                    background: #fff;
+                }
+                background: #eee;
+                padding: 5px 10px ;
+                li{
+                    height:30px;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 5px;
+                    >div:first-of-type{
+                        width:25%;
+                    }
+                    >div:last-of-type{
+                        width:80%;
+                        .el-date-editor.el-input{
+                            width:90px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .searcherValue{
+        border:1px solid #ddd;
+        border-radius: 10px 0 0 10px ;
+        overflow: hidden;
+        padding-left:10px;
+    }
+    .searcherValue{
+        width:80%;
+    }
+    .searcherValue>input{
+        width:100%;
+        height:30px;
+        outline: none;
+        margin:0;
+        font-size: 14px;
+        border:0;
+    }
+    .searcherBtn{
+        height:30px;
+        width:20%;
+        text-align: center;
+        line-height: 30px;
+        background:#509edc;
+        color:#fff;
+        cursor:pointer;
+    }
+    .voucherList{
+        padding:10px;
+        min-width: 1024px;
+        height:800px;
+        overflow-y: auto;
+        .voucherNav>ul{
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 10px;
+            li{
+                border:1px solid #ff9900;
+                border-radius: 3px;
+                padding:2px 8px;
+                height:25px;
+                margin-left:10px;
+                cursor:pointer;
+                &:hover{
+                    background: #ff9900;
+                    color:#fff;
+                }
+            }
+        }
+        .voucherSelect{
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+            align-items: center;
+            >div{
+                display: flex;
+                justify-content: flex-start;
+                width:25%;
+                >label{
+                    display: flex;
+                    align-items: center;
+                    &:nth-of-type(2){
+                        margin-left:5px ;
+                        >div:first-of-type{
+                            width:30px;
+                        }
+                        >div.inputContainer{
+                            width:40px;
+                        }
+                    }
+                    div{
+                        text-align: center;
+                    }
+                }
+                >label>div:first-of-type{
+                    width:40px;
+                }
+                >label>div:nth-of-type(2)>div{
+                    width:100px;
+                }
+            }
+            >div:nth-of-type(2){
+                margin-left:100px;
+                width:25%;
+            }
+            >div.searcherCon{
+                width:50%;
+                display: flex;
+                justify-content: flex-end;
+                >div{
+                    width:auto;
+                    margin:0;
+                    &:first-of-type{
+                        min-width: 300px;
+                    }
+                    &:nth-of-type(2){
+                        width:40px;
+                    }
+                    &:nth-of-type(3){
+                        margin-left: 10px;
+                        cursor:pointer;
+                        background: #6aca25;
+                        height:30px;
+                        line-height: 30px;
+                        width:60px;
+                        color:#fff;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+        .listContainer{
+            padding:5px;
+            margin-top:10px;
+            padding-bottom: 20px;
+            ul.listTitle{
+                display: flex;
+                background: #2780d1;
+                color:#fff;
+                li{
+                    text-align: center;
+                    height:40px;
+                    line-height: 40px;
+                }
+                li:first-of-type{
+                    width:5%;
+                }
+                li:nth-of-type(2){
+                    width:31%;
+                }
+                li:nth-of-type(3){
+                    width:26%;
+                }
+                li:nth-of-type(4){
+                    width:19%;
+                }
+                li:nth-of-type(5){
+                    width:19%;
+                }
+            }
+            ul.listContent{
+                border-top:1px solid #ccc;
+                margin-bottom: 20px;
+                background: #fff;
+                >li {
+                    width:100%;
+                    height:100%;
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    > dl.listIndex{
+                        border:1px solid #ccc;
+                        border-top:0;
+                        height:100%;
+                        width:5%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position:absolute;
+                    }
+                    > ul {
+                        height:100%;
+                        width: 95%;
+                        margin-left:5%;
+                        >li{
+                            display: flex;
+                            justify-content: flex-start;
+                            height:30px;
+                            line-height: 30px;
+                            &:first-of-type{
+                                padding:0 10px;
+                                border:1px solid #ccc;
+                                border-top:0;
+                                border-left: 0;
+                                >span{
+                                    margin-right: 50px;
+                                }
+                            }
+                            >div{
+                                text-align: center;
+                                border:1px solid #ccc;
+                                border-top:0;
+                                border-left:0;
+                            }
+                            div:first-of-type{
+                                width:32%;
+                            }
+                            div:nth-of-type(2){
+                                width:28%;
+                            }
+                            div:nth-of-type(3){
+                                width:20%;
+                            }
+                            div:nth-of-type(4){
+                                width:20%;
+                            }
+                            &:last-of-type{
+                                >div{
+                                    text-align: center;
+                                    border:1px solid #ccc;
+                                    border-top:0;
+                                    border-left:0;
+                                    width:20%;
+                                    &:first-of-type{
+                                        width:60%;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+</style>

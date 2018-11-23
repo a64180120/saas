@@ -197,12 +197,12 @@
             PhId:'',
             PDate:'',
             PNo:'0001',
-            PAttachment:'1',
-            PMakePerson:'张',
+            PAttachment:'0',
+            PMakePerson:'',
             PFinancePerson:'王',
             PKeepingPerson:'李',
             PCashier:'吴',
-            PAuditor:'周',
+            PAuditor:'',
             PType:'',
             Verify:'',
             jiefang:'',
@@ -227,6 +227,10 @@
                     this.initVoucherInfo(),
                     this.initVoucherInfo(),
                 ]
+                this.fatherData={
+                    PhId:'',
+                    Dtls:[]
+                }
             }else{
                 this.getVoucherData(this.dataList.data);
             }
@@ -234,7 +238,6 @@
         },
         mounted(){
             this.initMoneyCss();
-            this.$forceUpdate();
         },
         methods:{
             //voucher组件要返回数据的函数********************
@@ -294,9 +297,8 @@
                                         }
                                     }
                                 }
-                            }
-                        }else{
-                            if(info.SubjectCode){
+                            } console.log(1,this.fatherData)
+                        }else if(info.SubjectCode){
                                 var newDtl={
                                     Abstract:info.Abstract,
                                     SubjectCode:info.SubjectCode,
@@ -305,9 +307,8 @@
                                     PersistentState:1
                                 }
                                 if(info.DtlAccounts.assistItem.length>0){
-                                    newDtl.DtlAccounts=[{}];
-                                    var dt=newDtl.DtlAccounts[0];
-                                    dt={
+                                    newDtl.DtlAccounts=[];
+                                    var dt={
                                         Abstract:info.Abstract,
                                         SubjectCode:info.SubjectCode,
                                         JSum:info.money.jiefang,
@@ -324,12 +325,13 @@
                                         }
                                         dt[str]=item[j-1]?item[j-1]:0;
                                     }
-                                    newDtl.DtlAccounts=dt;
+                                    newDtl.DtlAccounts[0]=dt;
                                 }
                                 dtls.push(newDtl);
+                            console.log(2,this.fatherData,dtls)
                             }
-                        }
                     }
+                    console.log(3,this.fatherData,this.voucherInfo)
                     for(var del of this.deleteDtls){
                         if(del.PhId){
                             for(var dtl of  dtls){
@@ -350,7 +352,11 @@
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
-                    this.fatherData.PersistentState=2;
+                    if(!this.PhId){
+                        this.fatherData.PersistentState=1;
+                    }else{
+                        this.fatherData.PersistentState=2;
+                    }
                     console.log(this.fatherData,this.voucherInfo)
                     return {
                         Mst:this.fatherData,
@@ -418,7 +424,7 @@
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
-                    if(dtls[i].DtlAccounts[0]) {
+                    if(dtls[i].DtlAccounts) {
                         var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
                         this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
                         for (var j in Dtls) {
@@ -430,8 +436,8 @@
                             }
                         }
 
-                    }console.log(i)
-                }console.log(33)
+                    }
+                }
             },
             assistClick(childMsg){//辅助项下拉框选择的辅助项目********************************
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem.push(childMsg.data);
@@ -499,9 +505,9 @@
                     this.moneyTurn(this.jiefang,jie.children);
                     var dai=document.querySelector(".count>li:nth-child(3)");
                     this.moneyTurn(this.daifang,dai.children);
-                    this.$forceUpdate();
-
                 }
+                this.$forceUpdate();
+
             },
             moneyTurn(val,children){  //金额输入框转文本样式***************
                 if(val&&val!=0) {

@@ -37,7 +37,7 @@ var data = [
             {
                 name: '新增凭证',
                 path: '/finance/voucherAdd'
-               
+
             },
             {
                 path: '/finance/voucherList',
@@ -52,7 +52,7 @@ var data = [
             {
                 name: '科目余额',
                 path: '/accountbooks/subjectbalance'
-               
+
             },
             {
                 name: '总分账',
@@ -61,7 +61,7 @@ var data = [
             {
                 name: '明细账',
                 path: '/accountbooks/detailaccount'
-                
+
             },
             {
                 name: '多栏账',
@@ -76,12 +76,12 @@ var data = [
             {
                 name: '资产负债表',
                 path: '/report/assets'
-               
+
             },
             {
                 name: '收入支出表',
                 path: '/report/expenses',
-                
+
             },
             {
                 name: '往来明细款项表',
@@ -96,12 +96,12 @@ var data = [
             {
                 name: '期末结转',
                 path: '/carrydown/end'
-               
+
             },
             {
                 name: '结账',
                 path: '/carrydown/checkout',
-                
+
             }
         ]
     },
@@ -112,12 +112,12 @@ var data = [
             {
                 name: '预算编制',
                 path: '/budget/plan'
-               
+
             },
             {
                 name: '预算执行',
                 path: '/budget/execute',
-                
+
             }
         ]
     },
@@ -128,12 +128,12 @@ var data = [
             {
                 name: '预算编制',
                 path: '/budget/setting'
-               
+
             },
             {
                 name: '预算执行',
                 path: '/budget/execute',
-                
+
             }
         ]
     },
@@ -144,32 +144,32 @@ var data = [
             {
                 name: '科目设置',
                 path: '/setting/subject'
-               
+
             },
             {
                 name: '科目期初',
                 path: '/setting/subjectstart',
-                
+
             },
             {
                 name: '辅助核算',
                 path: '/setting/auxiliary',
-                
+
             },
             {
                 name: '凭证模板',
                 path: '/setting/vouchertemp',
-                
+
             },
             {
                 name: '套打格式',
                 path: '/setting/print',
-                
+
             },
             {
                 name: '参数设置',
                 path: '/setting/config',
-                
+
             }
         ]
     },
@@ -180,7 +180,7 @@ var data = [
             {
                 name: '预算编制',
                 path: '/datareport/reporting'
-               
+
             }
         ]
     },

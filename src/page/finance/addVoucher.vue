@@ -74,20 +74,17 @@
             userState:0,
             pagesize:9,
             pageindex:0,
-            voucherDataList:{bool:false,data:''},
+            voucherDataList:{bool:true,data:''},
             userStateValues:[
                 {id:0,name:'全部'},{id:1,name:'2018-11'},{id:2,name:'2018-12'},{id:3,name:'2019-01'}
             ],
             newAddList:[
-                {id:'0001',state:true,date:'2018-11-5'},
-                {id:'0002',state:false,date:'2018-11-5'},
-                {id:'0003',state:true,date:'2018-11-5'},
-                {id:'0004',state:false,date:'2018-11-5'},
+
             ]
         }},
         created(){
             // this.newVoucherList();
-            this.getvoucher();
+            //this.getvoucher();
             this.getvoucherList();
         },
         methods:{
@@ -121,7 +118,14 @@
                        console.log(res)
                        if(res.Status=='success'){
                            alert('保存成功!')
-                           //this.$router.go(0);
+                           this.voucherDataList.bool=false;
+                           var vm=this;
+                           function delay(){
+                               vm.voucherDataList.bool=true
+                           }
+                           setTimeout(delay,10);
+
+
                        }else{
                            alert('保存失败,请重试!')
                        }
@@ -130,9 +134,8 @@
             },
             voucherData(){//接收voucher组件传值************
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
-                console.log( this.voucherDataList.data)
             },
-            getvoucher(){
+           /* getvoucher(){
                 var {config}=this.$ajax();
                 var data={
                     uid:'0001',
@@ -152,7 +155,7 @@
                         }
                     })
                     .catch(err=>console.log(err))
-            },
+            },*/
             getvoucherList(){
                 var {config}=this.$ajax();
                 var data={
@@ -171,206 +174,6 @@
                     })
                     .catch(err=>console.log(err))
             },
-            newVoucherList(){//获取最新新增凭证列表*****************
-                var data={
-                    "PhId": "266181114000001",
-                    "PType": null,
-                    "PNo": "1111",
-                    "PDate": null,
-                    "PAttachment": 0,
-                    "PMonth": 12,
-                    "PSource": null,
-                    "PMakePerson": null,
-                    "PFinancePerson": null,
-                    "PKeepingPerson": null,
-                    "PCashier": null,
-                    "PAuditor": "0",
-                    "PAuditorName": null,
-                    "Verify": 0,
-                    "OrgId": "0",
-                    "OrgCode": null,
-                    "Uyear": null,
-                    "EnabledMark": 0,
-                    "DeleteMark": 0,
-                    "Description": "单元测试-636778027914703482",
-                    "CreatorName": null,
-                    "EditorName": null,
-                    "Dtls": [{
-                        "PhId": "266181114000001",
-                        "PhidVouchermst": "266181114000001",
-                        "SubjectCode": "1001",
-                        "Abstract": "单元测试-636778027914703482",
-                        "JSum": 110.00,
-                        "DSum": 0.00,
-                        "JForeignSum": 0.00,
-                        "DForeignSum": 0.00,
-                        "ExchangeRate": 0.00,
-                        "AmountS": 0.00,
-                        "AmountF": 0.00,
-                        "Price": 0.00,
-                        "SortCode": 1,
-                        "DeleteMark": 0,
-                        "Description": "借110",
-                        "PhidTransaction": "0",
-                        "DtlAccounts": null,
-                        "ForeignKeys": [{
-                            "PropertyName": "PhidVouchermst",
-                            "ColumnName": "phid_vouchermst",
-                            "IsPrimary": false,
-                            "PropertyType": 2,
-                            "Value": null,
-                            "Direction": 0
-                        }
-                        ],
-                        "BusinessPrimaryKeys": null,
-                        "PersistentState": 0,
-                        "NgRecordVer": 1,
-                        "NgInsertDt": "2018-11-14 14:33:43",
-                        "NgUpdateDt": "2018-11-14 14:33:43",
-                        "Creator": "521180820000001",
-                        "Editor": "521180820000001",
-                        "CurOrgId": "521180820000002",
-                        "_OldIdValue_": null,
-                        "PropertyBytes": null,
-                        "ExtendObjects": null
-                    }, {
-                        "PhId": "266181114000002",
-                        "PhidVouchermst": "266181114000001",
-                        "SubjectCode": "2001",
-                        "Abstract": "单元测试-636778027914703482",
-                        "JSum": 0.00,
-                        "DSum": 110.00,
-                        "JForeignSum": 0.00,
-                        "DForeignSum": 0.00,
-                        "ExchangeRate": 0.00,
-                        "AmountS": 0.00,
-                        "AmountF": 0.00,
-                        "Price": 0.00,
-                        "SortCode": 2,
-                        "DeleteMark": 0,
-                        "Description": "贷110",
-                        "PhidTransaction": "0",
-                        "DtlAccounts": [{
-                            "PhId": "266181114000001",
-                            "PhidVouchermst": "266181114000001",
-                            "PhidVoucherDel": "266181114000002",
-                            "JSum": 0.00,
-                            "DSum": 110.00,
-                            "JForeignSum": 0.00,
-                            "DForeignSum": 0.00,
-                            "AmountS": 0.00,
-                            "AmountF": 0.00,
-                            "Price": 0.00,
-                            "ExchangeRate": 0.00,
-                            "S01": "1",
-                            "S02": "2",
-                            "S03": "0",
-                            "S04": "0",
-                            "S05": "0",
-                            "S06": "0",
-                            "S07": "0",
-                            "S08": "0",
-                            "S09": "0",
-                            "S10": "0",
-                            "S11": "0",
-                            "S12": "0",
-                            "S13": "0",
-                            "S14": "0",
-                            "S15": "0",
-                            "S16": "0",
-                            "S17": "0",
-                            "S18": "0",
-                            "S19": "0",
-                            "S20": "0",
-                            "S21": "0",
-                            "S22": "0",
-                            "S23": "0",
-                            "S24": "0",
-                            "S25": "0",
-                            "S26": "0",
-                            "S27": "0",
-                            "S28": "0",
-                            "S29": "0",
-                            "S30": "0",
-                            "S31": "0",
-                            "S32": "0",
-                            "S33": "0",
-                            "S34": "0",
-                            "S35": "0",
-                            "S36": "0",
-                            "S37": "0",
-                            "S38": "0",
-                            "S39": "0",
-                            "S40": "0",
-                            "S41": "0",
-                            "S42": "0",
-                            "S43": "0",
-                            "S44": "0",
-                            "S45": "0",
-                            "S46": "0",
-                            "S47": "0",
-                            "S48": "0",
-                            "S49": "0",
-                            "S50": "0",
-                            "ForeignKeys": [{
-                                "PropertyName": "PhidVouchermst",
-                                "ColumnName": "phid_vouchermst",
-                                "IsPrimary": false,
-                                "PropertyType": 2,
-                                "Value": null,
-                                "Direction": 0
-                            }
-                            ],
-                            "BusinessPrimaryKeys": null,
-                            "PersistentState": 0,
-                            "NgRecordVer": 1,
-                            "NgInsertDt": "2018-11-14 14:33:44",
-                            "NgUpdateDt": "2018-11-14 14:33:44",
-                            "Creator": "521180820000001",
-                            "Editor": "521180820000001",
-                            "CurOrgId": "521180820000002",
-                            "_OldIdValue_": null,
-                            "PropertyBytes": null,
-                            "ExtendObjects": null
-                        }
-                        ],
-                        "ForeignKeys": [{
-                            "PropertyName": "PhidVouchermst",
-                            "ColumnName": "phid_vouchermst",
-                            "IsPrimary": false,
-                            "PropertyType": 2,
-                            "Value": null,
-                            "Direction": 0
-                        }
-                        ],
-                        "BusinessPrimaryKeys": null,
-                        "PersistentState": 0,
-                        "NgRecordVer": 1,
-                        "NgInsertDt": "2018-11-14 14:33:43",
-                        "NgUpdateDt": "2018-11-14 14:33:43",
-                        "Creator": "521180820000001",
-                        "Editor": "521180820000001",
-                        "CurOrgId": "521180820000002",
-                        "_OldIdValue_": null,
-                        "PropertyBytes": null,
-                        "ExtendObjects": null
-                    }
-                    ],
-                    "ForeignKeys": null,
-                    "BusinessPrimaryKeys": null,
-                    "PersistentState": 0,
-                    "NgRecordVer": 1,
-                    "NgInsertDt": "2018-11-14 14:33:43",
-                    "NgUpdateDt": "2018-11-14 14:33:43",
-                    "Creator": "521180820000001",
-                    "Editor": "521180820000001",
-                    "CurOrgId": "521180820000002",
-                    "_OldIdValue_": null,
-                    "PropertyBytes": null,
-                    "ExtendObjects": null
-                }
-                this.voucherDataList.data=data;
-            }
         },
         components:{
             voucher,
