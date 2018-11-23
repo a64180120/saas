@@ -89,17 +89,20 @@
                   }
                   var {config}=this.$ajax();
                   console.log(data)
+                  var vm=this;
                   this.$axios.post('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/PostAddAuxiliaryType',qs.stringify(data),config)
                       .then(res=>{
-                          res=JSON.parse(res);
-                          console.log(res)
+                          res=JSON.parse(res);console.log(11)
                           if(res.Status=='success'){
+                              vm.$emit('type-click',false);
                               alert('保存成功!')
                           }
                       })
                       .catch(err=>console.log(err))
+              }else{
+                  this.$emit('type-click',false);
               }
-              this.$emit('type-click',false);
+
           },
           fastCreate(){
               if(this.dataList.length>=50){

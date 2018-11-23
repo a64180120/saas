@@ -58,21 +58,26 @@
         },
         methods:{
             newAdd(name){
+                if(!name){
+                    this.$emit('add-click',false);
+                    return;
+                }
                 var url='PVoucherAuxiliaryType/PostAddAuxiliary';
                 console.log(this.PhIdList.type.PhId)
                 this.formData.PhidBaseType=this.PhIdList.type.PhId;
                 var data={
                     uid:0,
-                    orgid:0,
+                    orgid:547181121000001,
                     infoData:this.formData
                 }
                 console.log(data)
                 var {config}=this.$ajax();
-                this.$axios.post('http://10.0.20.46:8028/api/GCW/'+url,qs.stringify(data),config)
-                    .then(res=>{
+                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,qs.stringify(data),config)
+                    .then(res=>{ console.log(res)
                         res=JSON.parse(res);
                         console.log(res)
                         if(res.Status=='success'){
+                            this.$emit('add-click',false);
                             if(name=='add'){
                                 alert('add:success')
                             }else if(name=='update'){
@@ -81,7 +86,7 @@
                         }
                     })
                     .catch(err=>console.log(err))
-                this.$emit('add-click',false);
+
 
             },
 
