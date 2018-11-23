@@ -4,17 +4,22 @@ import Auth from "@/util/auth";
 
 //状态
 const state = {
-    token: Auth.getToken(),
+    token: "",
     appKey: "",
     appSecret: "",
+    //用户ID
     userid: "",
+    //组织ID
     orgid: "",
-    navList: []
+    //左侧菜单权限
+    navList: [],
+    // 用户名
+    username: ''    
 };
 
 //计算获取取新数据
 const getters = {
-    
+
 };
 
 //操作state(同步)
@@ -40,6 +45,7 @@ const mutations = {
 
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
+            state.username=data.userInfo.RealName;
         } else {
             Auth.removeUserInfoData();
             Auth.removeLoginStatus();
@@ -122,10 +128,12 @@ const actions = {
 
     // 退出
     logout({ commit }) {
+
         return new Promise(resolve => {
+            //清除缓存
             commit("setToken", "");
             commit("setUserInfo", "");
-            commit("tagNav/delAllTagNav");
+            commit('tagNav/removeTagNav', '', {root: true})
             resolve();
         });
     },
@@ -135,21 +143,23 @@ const actions = {
     relogin({ dispatch, commit, state }) {
         return new Promise(resolve => {
             // 根据Token进行重新登录
-            let token = Auth.getToken(),
-                userName = "";
+            let tokenInfo = Auth.getToken(), userInfo = Auth.getUserInfoData();
 
             // 重新登录时校验Token是否存在，若不存在则获取
-            if (!token) {
+            if (!tokenInfo && !userInfo) {
                 dispatch("getNewToken").then(() => {
-                    commit("setToken", state.token);
+                    //commit("setToken", state.token);
                 });
+
+                dispatch("loginByPhone").then(() => {
+                    //commit("setToken", state.token);
+                });
+
             } else {
-                commit("setToken", token);
+                //设置用户 state ,重新加载用户缓存
+                commit("setToken", tokenInfo);
+                commit("setUserInfo", userInfo);
             }
-            // 刷新/关闭浏览器再进入时获取用户名
-            commit("user/setName", decodeURIComponent(userName), {
-                root: true
-            });
             resolve();
         });
     },
@@ -212,7 +222,7 @@ const actions = {
 export default {
     namespaced: true,
     state,
+    getters,
     mutations,
-    actions,
-    getters
+    actions
 };

@@ -69,7 +69,8 @@ const mutations = {
             }
         }
     },
-    delAllTagNav: (state) => {
+    //删除页面 TagNav缓存
+    delAllTagNav: (state,data) => {
         state.openedPageList = []
         state.cachedPageName = []
     }

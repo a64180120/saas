@@ -5,7 +5,7 @@
                 <el-header>
                     <div class="choose">
                         <ul class="flexPublic">
-                            <li>修改</li>
+                            <li @click="save">修改</li>
                             <li>备份</li>
                             <li>恢复</li>
                         </ul>
@@ -55,7 +55,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
+import UserInfo from "@/util/auth";
 
 export default {
     name: 'demo',
@@ -82,16 +83,23 @@ export default {
         }
     },
     mounted(){
-
+        console.log(this.$store.state.user);
     },
     computed:{
         ...mapState({
             userid: state => state.user.userid,
             orgid: state => state.user.orgid
-        }),
+        })
     },
     methods: {
+        save(){
+            var route=this.$route;
 
+            //移除TagNav
+            this.$store.commit("tagNav/removeTagNav", route);
+            //跳转路由
+            this.$router.push('/home');
+        }
     },
     //组件
     components: {
