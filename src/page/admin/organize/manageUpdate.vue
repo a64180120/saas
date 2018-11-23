@@ -251,11 +251,14 @@
             'ParentName':this.ParentName,
             'AccountSystem':this.AccountSystem,
           };
-         let {data,config}=this.$ajax(page);
-          console.log(data,config);
-          this.$axios.post("http://10.0.45.51:7758/api/GCW/SysOrganize/PostUpdate",qs.stringify(data),config)
+          var data = {
+            uid: "0",
+            orgid: "0",
+            infoData: page
+          };
+          this.$axios.post("http://10.0.45.51:7758/api/GCW/SysOrganize/PostUpdate",data)
             .then(res=>{
-              if(JSON.parse(res.data).Status=='success'){
+              if(res.Status=='success'){
                 this.$router.push({path:'/'})
               }
             })
@@ -267,26 +270,27 @@
       },
       init(){
         var PhIdList=this.$route.query.PhId;
-        var data=this.$ajax({PhId:PhIdList}).data;
-        var config=this.$ajax({PhId:PhIdList}).config;
-        data.id=JSON.parse(data.infoData).PhId;
-        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganize',{headers:config.headers,params:data})
+        var data={
+          PhId:PhIdList
+        };
+        //data.id=JSON.parse(data.infoData).PhId;
+        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganize',{params:data})
           .then(res=>{
-            var data=JSON.parse(res.data);
-            this.PhId=data.PhId;
-            this.EnterpriseCode=data.EnterpriseCode;
-            this.Address=data.Address;
-            this.MobilePhone=data.MobilePhone;
-            this.Telephone=data.Telephone;
-            this.Chairman=data.Chairman;
-            this.EnableTime=data.EnableTime;
-            this.ServiceStartTime=data.ServiceStartTime;
-            this.ServiceEndTime=data.ServiceEndTime;
-            this.ParentName=data.ParentName;
-            this.AccountSystem=data.AccountSystem;
-            this.address[0]=data.Province;//没用*******************
-            this.address[1]=data.City;//没用*******************
-            this.address[2]=data.County;//没用*******************
+
+            this.PhId=res.PhId;
+            this.EnterpriseCode=res.EnterpriseCode;
+            this.Address=res.Address;
+            this.MobilePhone=res.MobilePhone;
+            this.Telephone=res.Telephone;
+            this.Chairman=res.Chairman;
+            this.EnableTime=res.EnableTime;
+            this.ServiceStartTime=res.ServiceStartTime;
+            this.ServiceEndTime=res.ServiceEndTime;
+            this.ParentName=res.ParentName;
+            this.AccountSystem=res.AccountSystem;
+            this.address[0]=res.Province;//没用*******************
+            this.address[1]=res.City;//没用*******************
+            this.address[2]=res.County;//没用*******************
           })
       }
     },

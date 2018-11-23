@@ -390,7 +390,7 @@
                   'content-Type': 'multipart/form-data'
                 }
               }
-              console.log(formData)
+
               formData.append('unionId', this.unionId);
               formData.append('file', this.file);
               this.$axios.post("http://127.0.0.1:666/trip/planerec", this.unionId, config)
@@ -404,35 +404,7 @@
           this.file=$event.target.files[0];
         },
         ajaxMode(){
-          var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
-            appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
-            url = "http://10.0.45.51:7758",
-            reqTimeStamp = Date.parse(new Date());
-          var sign = md5((url + reqTimeStamp + appKey + appSecret).toLowerCase());
-          var items = [sign, url, reqTimeStamp, appKey];
-          var appinfo = {
-            'DbName': 'NG0001',
-            'OrgId': '521180820000002',
-            'OrgName': '',
-            'OCode': '',
-            'UserId': '521180820000001',
-            'UserKey': '0001',
-            'UserName': '',
-            'TokenKey': '',
-            'AppKey': appKey,
-            'AppSecret': appSecret,
-            'DbServerName': '',
-            'SessionKey': '',
-            'UName': ''
-          };
-          var config={
-            headers: {
-              'Accept': "application/json; charset=utf-8",
-              'AppInfo': Base64.encode(JSON.stringify(appinfo)),
-              //'Sign': JSON.stringify(items)
-              'Sign':items[0]+','+items[1]+','+items[2]+','+items[3]
-            },
-          }
+
           var page = {
             'Province':this.address[0],
             'City':this.address[1],
@@ -458,9 +430,9 @@
             orgid: "0",
             infoData: page
           };
-          this.$axios.post('http://10.0.45.51:7758/api/GCW/SysOrganize/PostAdd',qs.stringify(data),config)
+          this.$axios.post('http://10.0.45.51:7758/api/GCW/SysOrganize/PostAdd',data)
             .then(res=>{
-              if(JSON.parse(res.data).Status=='success'){
+              if(res.Status=='success'){
                 this.$router.push({path:'/'})
               }
             })

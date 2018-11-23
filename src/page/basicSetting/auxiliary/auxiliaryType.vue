@@ -82,17 +82,15 @@
                   for(var del of this.deleteList){
                       this.dataList.push(del);
                   }
-                  var data={
+                  let data={
                       uid:0,
                       orgid:547181121000001,
                       infoData:this.dataList
-                  }
-                  var {config}=this.$ajax();
-                  console.log(data)
+                  };
+
                   var vm=this;
-                  this.$axios.post('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/PostAddAuxiliaryType',qs.stringify(data),config)
+                  this.$axios.post('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/PostAddAuxiliaryType',data)
                       .then(res=>{
-                          res=JSON.parse(res);console.log(11)
                           if(res.Status=='success'){
                               vm.$emit('type-click',false);
                               alert('保存成功!')

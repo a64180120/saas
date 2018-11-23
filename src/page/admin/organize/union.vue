@@ -175,25 +175,25 @@ export default {
             }
           },
           ajaxMode(){
-            let {data,config}=this.$ajax();
-            data.infoData=null;
-            data = {
+
+            let data = {
               uid: "0",
               orgid: "0",
               pagesize:this.pageSize,
-              pageindex:this.pageIndex-1
+              pageindex:this.pageIndex-1,
+              infoData:null
             };
-            this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+            this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
               .then(res=>{
-                var data=JSON.parse(res);
-                this.userInfo=data.Record;
+
+                this.userInfo=res.Record;
                 for(var i=0;i<this.userInfo.length;i++){
                   this.userInfoCssList[i]={checked:false};
                 }
-                this.pageIndex=data.index+1;
-                this.pageSize=data.size;
+                this.pageIndex=res.index+1;
+                this.pageSize=res.size;
                 var newArr=[];
-                var maxP=Math.ceil(data.totalRows/data.size)>10?10:Math.ceil(data.totalRows/data.size);
+                var maxP=Math.ceil(res.totalRows/res.size)>10?10:Math.ceil(res.totalRows/res.size);
                 for(var i=0;i<maxP;i++){
                   newArr=i+1;
                 }

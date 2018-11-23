@@ -163,9 +163,9 @@ export default {
         }).then(
           res => {
             this.loading = false;
-            let resultData = JSON.parse(res);
-            this.tableData = resultData.Record;
-            this.totalCount = Number(resultData.totalRows);
+
+            this.tableData = res.Record;
+            this.totalCount = Number(res.totalRows);
           },
           error => {
             console.log(error);
@@ -183,8 +183,8 @@ export default {
         }).then(
           res => {
             this.loading = false;
-            let object = JSON.parse(res);
-            this.roledata = object.Record;
+
+            this.roledata = res.Record;
           },
           error => {
             console.log(error);
@@ -230,7 +230,6 @@ export default {
         //     }
         //   }).then(res => {
         //     //this.loading=false;
-        //     let resultData = JSON.parse(res);
 
         //     this.dialogState = "edit";
         //     this.editVisible = true;
@@ -266,7 +265,6 @@ export default {
                 }
               })
               .then(res => {
-                let resultData = JSON.parse(res);
 
                 this.tableData.splice(this.idx, 1);
 
@@ -342,7 +340,6 @@ export default {
             infoData: { Mst:userinfo,Relation:relations}
           })
           .then(res=>{
-              res=JSON.parse(res);
               console.log(res)
               if(res.Status=='success'){
                   alert('保存成功!')

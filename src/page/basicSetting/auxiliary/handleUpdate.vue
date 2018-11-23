@@ -70,11 +70,9 @@
                     orgid:547181121000001,
                     infoData:this.formData
                 }
-                console.log(data)
-                var {config}=this.$ajax();
-                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,qs.stringify(data),config)
+
+                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,data)
                     .then(res=>{ console.log(res)
-                        res=JSON.parse(res);
                         console.log(res)
                         if(res.Status=='success'){
                             this.$emit('add-click',false);

@@ -108,15 +108,14 @@ export default {
                         password:this.loginForm.password
                     }
                 }).then(res => {
-                    let resultData = JSON.parse(res);
                     loading.close();
-                    if(resultData){
-                        if(resultData.Status==='error'){
-                            this.$message.error(resultData.Msg);
+                    if(res){
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
                             return;
                         }
                         //获取组织信息，当前组织只有一个时，直接登录
-                        let orgData=resultData.Record;
+                        let orgData=res.Record;
                         if(orgData.length===1){
                             this.loginForm.orgid=orgData[0].PhId;
                             this.submitForm('loginForm');

@@ -159,8 +159,7 @@ export default {
         },
     methods:{
       unionSearch(){
-        var {data,config}=this.$ajax();
-        data={
+        var data={
           uid: "0",
           orgid: "0",
           pagesize:this.pageSize,
@@ -168,17 +167,18 @@ export default {
           parames:['OrgName*eq*'+this.unionSearchValue,'EnterpriseCode*eq*'+this.unionSearchValue],
           logics:['OrgName*eq*'+this.unionSearchValue+'%OR%EnterpriseCode*eq*'+this.unionSearchValue]
         }
-        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
           .then(res=>{
-            var data=JSON.parse(res.data);console.log(data)
-            this.userInfo=data.Record;
+
+            console.log(res)
+            this.userInfo=res.Record;
             for(var i=0;i<this.userInfo.length;i++){
               this.userInfoCssList[i]={checked:false};
             }
-            this.pageIndex=data.index+1;
-            this.pageSize=data.size;
+            this.pageIndex=res.index+1;
+            this.pageSize=res.size;
             var newArr=[];
-            var maxP=Math.ceil(data.totalRows/data.size)>10?10:Math.ceil(data.totalRows/data.size);
+            var maxP=Math.ceil(res.totalRows/daresta.size)>10?10:Math.ceil(res.totalRows/res.size);
             for(var i=0;i<maxP;i++){
               newArr=i+1;
             }
@@ -219,25 +219,25 @@ export default {
         }
       },
       ajaxMode(){
-        var {data,config}=this.$ajax();
-        data = {
+        let data = {
           uid: "0",
           orgid: "0",
           pagesize:this.pageSize,
           pageindex:this.pageIndex-1,
-        }
+        };
 
-        this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data,headers:config.headers})
+        this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
           .then(res=>{
-            var data=JSON.parse(res);console.log(1)
-            this.userInfo=data.Record;
+
+            console.log(1)
+            this.userInfo=res.Record;
             for(var i=0;i<this.userInfo.length;i++){
               this.userInfoCssList[i]={checked:false};
             }
-            this.pageIndex=data.index+1;
-            this.pageSize=data.size;
+            this.pageIndex=res.index+1;
+            this.pageSize=res.size;
             var newArr=[];
-            var maxP=Math.ceil(data.totalRows/data.size)>10?10:Math.ceil(data.totalRows/data.size);
+            var maxP=Math.ceil(res.totalRows/res.size)>10?10:Math.ceil(res.totalRows/res.size);
             for(var i=0;i<maxP;i++){
               newArr=i+1;
             }

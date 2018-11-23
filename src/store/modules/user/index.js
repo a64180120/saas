@@ -67,13 +67,11 @@ const actions = {
                     token: ''
                 }
             }).then(res => {
-                let resultData = JSON.parse(res);
-
-                if (resultData.Status !== "error") {
+                if (res.Status !== "error") {
                     var object = {
-                        token: resultData.Token,
-                        appKey: resultData.AppKey,
-                        appSecret: resultData.AppSecret
+                        token: res.Token,
+                        appKey: res.AppKey,
+                        appSecret: res.AppSecret
                     };
                     //用户信息缓存
                     commit("setToken", object);
@@ -97,13 +95,13 @@ const actions = {
                     password:userInfo.password
                 }
             }).then(res => {
-                let resultData = JSON.parse(res);
-                if (resultData.Status === "success") {
-                    var user = resultData.Data;
+
+                if (res.Status === "success") {
+                    var user = res.Data;
                     //用户信息缓存
                     commit("setUserInfo", user);
                 }
-                resolve(resultData);
+                resolve(res);
             });
         });
     },
@@ -192,9 +190,9 @@ const actions = {
                     orgid:state.orgid
                 }
             }).then(res => {
-                let resultData = JSON.parse(res);
-                commit("setNavList", resultData);
-                resolve(resultData);
+
+                commit("setNavList", res);
+                resolve(res);
             });
         });
     },

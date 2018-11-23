@@ -98,18 +98,18 @@
                 this.PhIdList=item;
             },
             ajaxMode(){
-                let {data,config}=this.$ajax();
-                data.infoData=null;
-                data = {
+                
+                let data = {
                     uid: "0",//this.uid获取到store中的uid************
                     orgid: "547181121000001",//this.orgid获取到store中的orgid************
+                    infoData:null
                 };
                 var vm=this;
-                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data,headers:config.headers})
+                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
                     .then(res=>{
-                        var data=JSON.parse(res);
-                        this.userInfo=data.list;
-                        this.navTab=data.type;
+ 
+                        this.userInfo=res.list;
+                        this.navTab=res.type;
                         console.log( this.navTab)
                         if(!this.navTab.id){
                             this.navActive=this.navTab[0];
@@ -125,18 +125,17 @@
             //切换辅助项分类**************************
             navTabTurn(item){
                 this.navActive=item;
-                let {data,config}=this.$ajax();
-                data.infoData=null;
-                data = {
+
+                let data = {
                     uid: "0",
                     orgid: "547181121000001",
-                    typeId:this.navActive.PhId
+                    typeId:this.navActive.PhId,
+                    infoData:null
                 };
-                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId',{params:data,headers:config.headers})
+                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId',{params:data})
                     .then(res=>{
-                        var data=JSON.parse(res);
-                        this.userInfo=data.list;
-                        this.navTab=data.type;
+                        this.userInfo=res.list;
+                        this.navTab=res.type;
                         for(var i=0;i<this.userInfo.length;i++){
                             this.userInfoCssList[i]={checked:false};
                         }
@@ -156,11 +155,9 @@
                     orgid:547181121000001,
                     infoData:this.PhIdList
                 }
-                console.log(data)
-                var {config}=this.$ajax();
-                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,qs.stringify(data),config)
+
+                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,data)
                     .then(res=>{
-                        res=JSON.parse(res)
                         if(res.Status=='success'){
                             this.ajaxMode();
                             this.initInfoCss();

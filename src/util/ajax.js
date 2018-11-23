@@ -5,7 +5,7 @@
 import axios from "axios";
 import store from "../store";
 import router from "../router";
-import { Message } from "element-ui";
+import { Message,MessageBox } from "element-ui";
 import Auth from "@/util/auth";
 import md5 from "js-md5";
 import qs from 'qs'
@@ -147,6 +147,7 @@ service.interceptors.request.use(
 // 针对响应代码确认跳转到对应页面
 service.interceptors.response.use(
     response => {
+        const res = response.data
         // for( let i = 0; i < requestList.length; i++){
         //     //删除requestList里面请求的url
         //     if(requestList[i] == response.config.url){
@@ -157,7 +158,8 @@ service.interceptors.response.use(
         //         break
         //     }
         // }
-        return Promise.resolve(response.data);
+
+        return Promise.resolve(JSON.parse(response.data));
     },
     error => {
         if (axios.isCancel(error)) {

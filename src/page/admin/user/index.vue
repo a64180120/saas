@@ -167,9 +167,9 @@ export default {
         }).then(
           res => {
             this.loading = false;
-            let resultData = JSON.parse(res);
-            this.tableData = resultData.Record;
-            this.totalCount = Number(resultData.totalRows);
+
+            this.tableData = res.Record;
+            this.totalCount = Number(res.totalRows);
           },
           error => {
             console.log(error);
@@ -214,7 +214,6 @@ export default {
         //     }
         //   }).then(res => {
         //     //this.loading=false;
-        //     let resultData = JSON.parse(res);
 
         //     this.dialogState = "edit";
         //     this.editVisible = true;
@@ -250,7 +249,6 @@ export default {
                 }
               })
               .then(res => {
-                let resultData = JSON.parse(res);
 
                 this.tableData.splice(this.idx, 1);
 
