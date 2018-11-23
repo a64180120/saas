@@ -47,11 +47,7 @@
                 </el-form-item>
                 <el-form-item label="角色：" prop="roles">
                     <el-checkbox-group v-model="form.roles">
-                        <el-checkbox label="1" class="el-checkbox-role">主席 <span>  权限详情</span></el-checkbox>
-                        <el-checkbox label="2" class="el-checkbox-role">财务主管</el-checkbox>
-                        <el-checkbox label="3" class="el-checkbox-role">会计</el-checkbox>
-                        <el-checkbox label="4" class="el-checkbox-role">统计员</el-checkbox>
-                        <el-checkbox label="5" class="el-checkbox-role">单位管理员</el-checkbox>
+                        <el-checkbox v-for="item of roledata" :key="item.PhId" :label="item.PhId" class="el-checkbox-role">{{item.Name}}</el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="账号状态：" prop="enabledMark">
@@ -82,6 +78,8 @@
     </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex'
+import Auth from "@/util/auth";
 
 export default {
   name: "AdminUserList",
@@ -98,6 +96,7 @@ export default {
       dialogState: "add",
       editVisible: false,
       is_search: false,
+      roledata:[],
       form: {
         realName: "",
         mobilePhone: "",
@@ -130,15 +129,20 @@ export default {
       }
     };
   },
+  //
   created() {
-    
+    //获取角色信息
+    this.getRoleData();
   },
   mounted:function(){
     this.getData();
   },
   //计算
   computed: {
-
+      ...mapState({
+          userid: state => state.user.userid,
+          orgid: state => state.user.orgid
+      })
   },
   methods: {
     // 分页导航
@@ -153,8 +157,8 @@ export default {
           params: {
             PageIndex: this.pageIndex - 1,
             PageSize: this.pageSize,
-            uid: "",
-            orgid: ""
+            uid: this.userid,
+            orgid: this.orgid
           }
         }).then(
           res => {
@@ -168,6 +172,25 @@ export default {
             this.loading = false;
           }
         );
+    },
+    //获取角色数据
+    getRoleData(){
+      this.$axios.get("/SysRole/GetSysRoleList", {
+          params: {
+            PageIndex: this.pageIndex - 1,
+            PageSize: 200,
+          }
+        }).then(
+          res => {
+            this.loading = false;
+            let object = JSON.parse(res);
+            this.roledata = object.Record;
+          },
+          error => {
+            console.log(error);
+            this.loading = false;
+          }
+      );
     },
     //搜索按钮
     search() {
@@ -283,10 +306,52 @@ export default {
         if (valid) {
           //this.$set(this.tableData, this.idx, this.form);
           //this.$message.success(`修改第 ${this.idx+1} 行成功`);
-          this.editVisible = false;
 
-          console.log(this.form);
-          this.$message.success(`修改成功`);
+          //var data=this.form;
+          let cookiesUser = Auth.getUserInfoData();
+
+          
+
+          // Added = 1, Modified = 2, Deleted = 3
+          var userinfo={
+            PersistentState:1,
+            Account:this.form.mobilePhone,
+            Password:'',
+            RealName:this.form.realName,
+            MobilePhone:this.form.mobilePhone,
+            
+          };
+
+          var relations=[];
+          var roles=this.form.roles;
+          for(let i=0; i<roles.length;i++){
+            relations.push({
+                PersistentState:1,
+                UserId:'',
+                UserAccount:this.form.mobilePhone,
+                OrgId:this.orgid,
+                OrgCode:'',
+                RoleId:roles[i],
+                RoleCode:''
+            })
+          };
+
+          this.$axios.post('/SysUser/PostAdd',{
+            uid:'',
+            orgid:this.orgid,
+            infoData: { Mst:userinfo,Relation:relations}
+          })
+          .then(res=>{
+              res=JSON.parse(res);
+              console.log(res)
+              if(res.Status=='success'){
+                  alert('保存成功!')
+              }else{
+                  alert('保存失败,请重试!')
+              }
+          })
+          .catch(err=>console.log(err))
+
         } else {
           console.log("error submit!!");
           return false;

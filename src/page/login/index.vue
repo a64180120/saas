@@ -92,9 +92,6 @@ export default {
     watch: {
         //监听password变化 ，(debounce)停留0.3s获取组织信息
         'loginForm.password': lodash.debounce(function(val){
-                var params=new URLSearchParams();
-                params.append('uname_login',this.loginForm.name);
-                params.append('password',this.loginForm.password);
 
                 const loading = this.$loading({
                     lock: true,
@@ -106,7 +103,10 @@ export default {
                 axios({
                     url: '/SysUser/PostOrgByUNameOrUPhone',
                     method: 'post',
-                    data: params
+                    data: {
+                        uname_login:this.loginForm.name,
+                        password:this.loginForm.password
+                    }
                 }).then(res => {
                     let resultData = JSON.parse(res);
                     loading.close();
@@ -120,7 +120,6 @@ export default {
                         if(orgData.length===1){
                             this.loginForm.orgid=orgData[0].PhId;
                             this.submitForm('loginForm');
-
                         }else{
                             this.isOrganize=true;
                             this.options=orgData;
@@ -132,11 +131,10 @@ export default {
     },
     beforeMount(){
         // 初始化错误信息。保证单独点击input时可以弹出正确的错误提示
-        //this.setErrMsg()
     },
     mounted(){
         this.getToken().then((res) => {
-            //console.log("已获取新token:"+res);
+           
         })
     },
     methods: {

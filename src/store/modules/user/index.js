@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import axios from "@/util/ajax";
 import Auth from "@/util/auth";
 
+
 //状态
 const state = {
     token: "",
@@ -58,12 +59,13 @@ const actions = {
     // 获取Token
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
-            var params = new URLSearchParams();
-
+            
             axios({
                 url: "/SysUser/GetToken",
                 method: "get",
-                data: params
+                params: {
+                    token: ''
+                }
             }).then(res => {
                 let resultData = JSON.parse(res);
 
@@ -85,15 +87,15 @@ const actions = {
     // 业务用户登录
     loginByPhone({ commit }, userInfo) {
         return new Promise(resolve => {
-            var params = new URLSearchParams();
-            params.append("uname_login", userInfo.name);
-            params.append("orgid", userInfo.orgid);
-            params.append("password", userInfo.password);
 
             axios({
                 url: "/SysUser/PostLogin",
                 method: "post",
-                data: params
+                data: {
+                    uname_login:userInfo.name,
+                    orgid:userInfo.orgid,
+                    password:userInfo.password
+                }
             }).then(res => {
                 let resultData = JSON.parse(res);
                 if (resultData.Status === "success") {
@@ -108,16 +110,15 @@ const actions = {
     // 获取用户信息
     GetInfo({ commit, state }) {
         return new Promise((resolve, reject) => {
-            var params = new URLSearchParams();
-            params.append("uid", state.userid);
-            params.append("orgid", state.orgid);
-
             axios({
                 url: "/SysUser/GetUserInfo",
                 method: "get",
-                data: params
+                params: {
+                    uid:state.userid,
+                    orgid:state.orgid
+                }
             }).then(res => {
-                if (res.Status === "Success") {
+                if (res.Status === "success") {
                     //用户信息缓存
                     commit("setUserInfo", res.Data);
                 }
@@ -183,14 +184,13 @@ const actions = {
     // 获取该用户的菜单列表
     getNavList({ commit, state }) {
         return new Promise(resolve => {
-            var params = new URLSearchParams();
-            params.append("uid", state.userid);
-            params.append("orgid", state.orgid);
-
             axios({
                 url: "/SysUser/GetSysMenuList",
                 methods: "get",
-                data: params
+                params: {
+                    uid:state.userid,
+                    orgid:state.orgid
+                }
             }).then(res => {
                 let resultData = JSON.parse(res);
                 commit("setNavList", resultData);
