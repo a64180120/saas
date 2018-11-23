@@ -2,7 +2,7 @@
     <div class="sys-login">
         <div class="login-area">
             <div class="logo">
-                <img src="static/img/logo.png" alt="">
+                <img src="@/assets/images/logo.png" alt="">
             </div>
             <div class="form-group">
                 <el-form :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px">
@@ -12,7 +12,7 @@
                     <el-form-item prop="password">
                         <el-input v-model="loginForm.password" type="password"  placeholder="密码"></el-input>
                     </el-form-item>
-                    <el-form-item prop="orgid">
+                    <el-form-item v-if="isOrganize" prop="orgid">
                         <el-select v-model="loginForm.orgid" filterable placeholder="请选择组织">
                             <el-option v-for="item in options"
                             :key="item.PhId"
@@ -72,7 +72,8 @@ export default {
                 src: ''
             },
             sysMsg: '',
-            loading: false
+            loading: false,
+            isOrganize:false
         }
     },
      //计算属性
@@ -89,9 +90,6 @@ export default {
         // })
     },
     watch: {
-        // "captcha.show"(val){
-        //     this.loginRules.captcha[0].required = val
-        // },
         //监听password变化 ，(debounce)停留0.3s获取组织信息
         'loginForm.password': lodash.debounce(function(val){
                 var params=new URLSearchParams();
@@ -100,7 +98,7 @@ export default {
 
                 const loading = this.$loading({
                     lock: true,
-                    text: 'Loading',
+                    text: '正在加载数据.....',
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
@@ -117,7 +115,16 @@ export default {
                             this.$message.error(resultData.Msg);
                             return;
                         }
-                        this.options=resultData.Record;
+                        //获取组织信息，当前组织只有一个时，直接登录
+                        let orgData=resultData.Record;
+                        if(orgData.length===1){
+                            this.loginForm.orgid=orgData[0].PhId;
+                            this.submitForm('loginForm');
+
+                        }else{
+                            this.isOrganize=true;
+                            this.options=orgData;
+                        }
                     }
                 })
 
@@ -143,7 +150,7 @@ export default {
                 if (valid) {
                     const loading = this.$loading({
                         lock: true,
-                        text: 'Loading',
+                        text: '正在登录.....',
                         spinner: 'el-icon-loading'
                     });
                     this.login({

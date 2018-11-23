@@ -13,18 +13,39 @@ const authToken = {
     //token 缓存的key
     TokenKey:'token',
 
+    getCookies:function(key){
+        let item=Cookies.get(key);
+        // 这点要判断是字符串还是对象
+        let result = /^[{\[].*[}\]]$/g.test(item)
+        if (result) {
+            return JSON.parse(item)
+        } else {
+            return item
+        }
+    },
+
+    setCookies:function(key,data){
+        var maxAge = new Date(new Date().getTime() + 60 * 60 * 1000)
+        
+        // 这点要判断是字符串还是对象
+        if (typeof data == "string") {
+            Cookies.set(key, data, { expires: maxAge })
+        } else {
+            let item = JSON.stringify(data)
+            Cookies.set(key, item, { expires: maxAge })
+        }
+    },
+
     // 获取Token
     getToken: function() {
-        return Cookies.get(this.TokenKey)
+
+        return this.getCookies(this.TokenKey)
     },
 
     // 设置Token
     setToken: function(token){
-        // TODO: 设置token，并填写有效期
-        var maxAge = new Date(new Date().getTime() + 30 * 1000)
-        Cookies.set(this.TokenKey, token, {
-            expires: maxAge
-        })
+
+        this.setCookies(this.TokenKey,token);
     },
 
     // 移除Token
@@ -34,17 +55,13 @@ const authToken = {
 
     // 当前是否是登录状态
     getLoginStatus: function(){
-        return Cookies.get(this.loginKey)
+        return this.getCookies(this.loginKey)
     },
 
     // 设置登录状态
     setLoginStatus: function(){
-        // TODO: 设置超时登录时间，在该时间范围内没有任何请求操作则自动删除
-        console.log("登录状态最长时间更新")
-        var maxAge = new Date(new Date().getTime() + 30 * 60 * 1000)
-        Cookies.set(this.loginKey, 'true', {
-            expires: maxAge
-        })
+
+        this.setCookies(this.loginKey,'true');
     },
     // 移除登录状态
     removeLoginStatus: function(){
@@ -53,15 +70,14 @@ const authToken = {
 
     // 获取用户缓存信息
     getUserInfoData: function() {
-        return Cookies.get(this.userinfo)
+
+        return this.getCookies(this.userinfo)
     },
 
     // 设置用户缓存信息
     setUserInfoData: function(data){
-        var maxAge = new Date(new Date().getTime() + 30 * 60 * 1000)
-        Cookies.set(this.userinfo, data, {
-            expires: maxAge
-        })
+
+        this.setCookies(this.userinfo,data);
     },
 
     // 移除用户缓存信息 和 移除登录状态
