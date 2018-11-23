@@ -83,8 +83,15 @@ const staticRoute = [
             {
                 //凭证管理
                 path: "voucherList",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/finance/voucherList"),
                 meta:{ requireAuth:true,isMenu:true,type:'page'}
+            },
+            {
+                //查看凭证
+                name:"voucherDel",
+                path: "voucherDel/:list",
+                component: () =>import("../page/finance/voucherDel"),
+                meta:{ requireAuth:true,type:'button',name:'查看凭证'}
             }
         ]
     },
