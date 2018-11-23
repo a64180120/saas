@@ -122,6 +122,7 @@ export default {
                             this.submitForm('loginForm');
 
                         }else{
+                            this.isOrganize=true;
                             this.options=orgData;
                         }
                     }
