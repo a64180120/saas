@@ -1,10 +1,8 @@
 // 免登陆的页面
 const whiteList = [
     '/login',
-    '/admin',
-    '/register',
-    '/notice',
-    '/maintenance',
+    '/adminlogin',
+    '/register'
 ]
 
 export default whiteList

@@ -38,7 +38,7 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="dialogState=='add'?'新增':'编辑'" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
+            <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right" v-loading.fullscreen.lock="loading">
                 <el-form-item label="用户姓名：" prop="realName">
                     <el-input v-model="form.realName"></el-input>
                 </el-form-item>
@@ -57,7 +57,7 @@
                             <el-radio label="2">永久停用</el-radio>
                         </el-radio-group>
                 </el-form-item>
-                <el-form-item label="历史关联账号：" v-if="dialogState=='add'?false:true">
+                <el-form-item label="历史账号：" v-if="dialogState=='add'?false:true">
                     <el-table
                         :data="form.historyAccount"
                         border
@@ -72,7 +72,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="saveEdit('form')">保 存</el-button>
-                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button @click="callof('form')">取 消</el-button>
             </span>
         </el-dialog>
     </div>
@@ -80,6 +80,8 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import Auth from "@/util/auth";
+import { SysUserAdd,SysUserList } from '@/api/user/userInfo'
+import { SysRoleList } from '@/api/role/roleInfo'
 
 export default {
   name: "AdminUserList",
@@ -98,15 +100,12 @@ export default {
       is_search: false,
       roledata:[],
       form: {
+        phid: "",
         realName: "",
         mobilePhone: "",
         roles: [],
         enabledMark: "0",
-        historyAccount:[
-            {RealName:'11',MobilePhone:'aa',Roles:'ss',EnabledMark:1},
-            {RealName:'22',MobilePhone:'bb',Roles:'bb',EnabledMark:0},
-            {RealName:'22',MobilePhone:'cc',Roles:'cc',EnabledMark:0}
-        ]
+        historyAccount:[]
       },
       rules: {
         realName: [
@@ -135,7 +134,7 @@ export default {
     this.getRoleData();
   },
   mounted:function(){
-    this.getData();
+    this.getData('');
   },
   //计算
   computed: {
@@ -148,59 +147,65 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.pageIndex = val;
-      this.getData();
+      this.getData('');
     },
-    // 获取数据
-    getData() {
+    /**
+     * 用户列表获取数据
+     * query:查询参数
+     *  */
+   async getData(query) {
+      var vm=this;
       this.loading = true;
-      this.$axios.get("/SysUser/GetSysUserList", {
-          params: {
-            PageIndex: this.pageIndex - 1,
-            PageSize: this.pageSize,
-            uid: this.userid,
-            orgid: this.orgid
-          }
-        }).then(
-          res => {
-            this.loading = false;
 
-            this.tableData = res.Record;
-            this.totalCount = Number(res.totalRows);
-          },
-          error => {
-            console.log(error);
-            this.loading = false;
-          }
-        );
+      SysUserList(vm,{
+          PageIndex: this.pageIndex - 1,
+          PageSize: this.pageSize,
+          uid: this.userid,
+          orgid: this.orgid,
+          queryfilter:query
+      }).then(res => {
+          this.loading = false;
+          this.tableData = res.Record;
+          this.totalCount = Number(res.totalRows);
+      }).catch(error =>{
+        console.log(error);
+        this.loading = false;
+        this.$message({
+            showClose: true,
+            message: '用户列表获取错误',
+            type: 'error'
+        })
+      })
     },
     //获取角色数据
-    getRoleData(){
-      this.$axios.get("/SysRole/GetSysRoleList", {
-          params: {
-            PageIndex: this.pageIndex - 1,
-            PageSize: 200,
-          }
-        }).then(
-          res => {
-            this.loading = false;
-
+    async getRoleData(){
+      var vm=this;
+      //获取200角色信息
+      SysRoleList(vm,{
+          PageIndex: this.pageIndex - 1,
+          PageSize: 200
+      }).then(res => {
+          if(res!=undefined){
             this.roledata = res.Record;
-          },
-          error => {
-            console.log(error);
-            this.loading = false;
           }
-      );
+      }).catch(error => {
+        console.log(error);
+        this.$message({
+            showClose: true,
+            message: '角色信息获取错误',
+            type: 'error'
+        });
+      });
     },
     //搜索按钮
     search() {
       this.is_search = true;
-    },
-    formatter(row, column) {
-      return row.address;
-    },
-    filterTag(value, row) {
-      return row.tag === value;
+      if(this.select_word!=''){
+        var queryfilter='{"[or-dictionary0]*dictionary*or": { "RealName*str*eq": "'+this.select_word+'", "MobilePhone*str*eq": "'+this.select_word+'" }}';
+        this.getData(queryfilter);
+      }else{
+        this.getData('');
+      }
     },
     handleEdit(index, row) {
       this.idx = index;
@@ -209,37 +214,33 @@ export default {
         name: item.name,
         date: item.date,
         address: item.address
-      };
+      };methods
       this.editVisible = true;
     },
     //新增
     Add() {
       this.dialogState = "add";
       this.editVisible = true;
+      this.$refs['form'].resetFields();
     },
     //修改
     Edit() {
       let object = this.singleSelection;
 
+      //debugger;
       let id = object.length > 0 ? object[0].PhId : 0;
       if (id != 0) {
-        //this.loading=true
-        // this.$axios.get("http://10.0.20.46:8028/api/GCW/SysUser/GetUser", {
-        //     params: {
-        //       id: id
-        //     }
-        //   }).then(res => {
-        //     //this.loading=false;
+          this.form.phid=object[0].PhId;
+          this.form.realName=object[0].RealName;
+          this.form.mobilePhone=object[0].MobilePhone;
+          this.form.roles=object[0].Roles||[];
+          this.form.enabledMark= String(object[0].EnabledMark);
 
-        //     this.dialogState = "edit";
-        //     this.editVisible = true;
-
-        //     this.singleSelection = [];
-        //   });
-
-            this.dialogState = "edit";
-            this.editVisible = true;
-            this.singleSelection = [];
+          //改变更新状态
+          this.dialogState = "edit";
+          this.editVisible = true;
+          //清空选中项
+          this.singleSelection = [];
 
       } else {
         this.$message({
@@ -247,6 +248,12 @@ export default {
           type: "warning"
         });
       }
+    },
+   //取消表单
+    callof(formName){
+        //隐藏弹出框
+        this.editVisible = false;
+        this.$refs[formName].resetFields();
     },
     //删除按钮
     Delete() {
@@ -286,7 +293,9 @@ export default {
       }
     },
     //密码重置
-    PageReset() {},
+    PageReset() {
+
+    },
     //账号移交
     Transfer() {
 
@@ -294,32 +303,35 @@ export default {
     //选择行
     handleClickRow(row) {
       this.singleSelection.push(row);
-
       console.log(row);
-      console.log(this.singleSelection);
+
     },
     // 保存
-    saveEdit(formName) {
+    async saveEdit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          //this.$set(this.tableData, this.idx, this.form);
-          //this.$message.success(`修改第 ${this.idx+1} 行成功`);
-
-          //var data=this.form;
+          //获取缓存 的用户 组织，角色基本信息
           let cookiesUser = Auth.getUserInfoData();
 
-          
+          console.log(cookiesUser);
+          /**
+           * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
+           * 新增数据信息
+           *  */ 
+          //var phid=this.form.phid;
 
-          // Added = 1, Modified = 2, Deleted = 3
           var userinfo={
             PersistentState:1,
             Account:this.form.mobilePhone,
-            Password:'',
             RealName:this.form.realName,
-            MobilePhone:this.form.mobilePhone,
-            
+            MobilePhone:this.form.mobilePhone
           };
 
+          if(this.dialogState==="edit"){
+            
+          }
+
+          //角色-组织-用户信息 实体信息组合
           var relations=[];
           var roles=this.form.roles;
           for(let i=0; i<roles.length;i++){
@@ -328,30 +340,40 @@ export default {
                 UserId:'',
                 UserAccount:this.form.mobilePhone,
                 OrgId:this.orgid,
-                OrgCode:'',
+                OrgCode:cookiesUser.orgInfo.EnCode,
                 RoleId:roles[i],
-                RoleCode:''
+                RoleCode:cookiesUser.roleInfo.EnCode
             })
           };
 
-          this.$axios.post('/SysUser/PostAdd',{
-            uid:'',
-            orgid:this.orgid,
-            infoData: { Mst:userinfo,Relation:relations}
-          })
-          .then(res=>{
-              console.log(res)
+          var vm=this;
+          this.loading = true;
+          //提交asiox
+          SysUserAdd(vm,{
+              uid:'',
+              orgid:this.orgid,
+              infoData: { Mst:userinfo,Relation:relations}
+          }).then(res => {
+              this.loading = false;
+              debugger;
               if(res.Status=='success'){
-                  alert('保存成功!')
-              }else{
-                  alert('保存失败,请重试!')
-              }
-          })
-          .catch(err=>console.log(err))
+                  this.$message.success('保存成功!');
+                  
+                  //设置状态，隐藏新增页面
+                  this.dialogState = "";
+                  this.editVisible = false;
 
-        } else {
-          console.log("error submit!!");
-          return false;
+                  //刷新列表
+                  this.getData('');
+              }else{
+                  this.$message.error('保存失败,请重试!');
+              }
+          }).catch(error =>{
+            console.log(error);
+            this.loading = false;
+            this.$message.error('用户列表获取错误');
+          })
+
         }
       });
     }
