@@ -1,0 +1,632 @@
+<template>
+  <div class="home">
+    <header>
+      <div class="loginContainer flexPublic">
+        <img src="@/assets/img/logo.png" alt="">
+        <div class="login">
+          <div><img src="@/assets/img/ren.png" alt=""><span> &nbsp;0571-88270588</span></div>
+          <div><img src="@/assets/img/d1.png" alt=""><span>登录</span><span>注册</span></div>
+          <div><img src="@/assets/img/fdj.png" alt=""></div>
+        </div>
+      </div>
+      <div class="carrouselContainer">
+        <div class="carrouselTitle">工会财务管理平台</div>
+        <el-carousel height="560px">
+          <el-carousel-item v-for="item in 4" :key="item">
+            <img src="@/assets/img/banner2.png" alt="">
+          </el-carousel-item>
+        </el-carousel>
+      </div>
+      <div class="headerBG"></div>
+    </header>
+    <nav>
+      <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('finance')"><img src="@/assets/img/cai.png" alt=""><span :class="{moveHide:nav=='finance'}">工会财务管理</span></div>
+      <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('info')"><img src="@/assets/img/shu.png" alt=""><span :class="{moveHide:nav=='info'}">数据直报平台</span></div>
+    </nav>
+    <section>
+      <div class="proInfoContainer">
+        <div class="proInfoTitle">
+          <span>更多</span>
+        </div>
+        <div class="flexPublic proInfoContent">
+          <div>
+            <div class="flexPublic">
+              <img src="@/assets/img/img1.png" alt="">
+              <div>
+                <h4>新版企业所得税</h4>
+                <p>陈大光于1956年出生于越南北部宁平省，拥
+                  有博士学位和教授职称。他于2006年越共十
+                  大进入越共中央委员会，2011年越共十一大
+                  进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+                  大进入越共中央委员会，2011年越共十一大
+                  进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+                  大进入越共中央委员会，2011年越共十一大
+                  进入越共中央政治局，同年当选国会代表进
+                  入越南第十三届国会。陈大光长期在越南内</p>
+              </div>
+            </div>
+            <p>陈大光于1956年出生于越南北部宁平省，拥
+              有博士学位和教授职称。他于2006年越共十
+              大进入越共中央委员会，2011年越共十一大
+              进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+              大进入越共中央委员会，2011年越共十一大
+              进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+              大进入越共中央委员会，2011年越共十一大
+              进入越共中央政治局，同年当选国会代表进
+              入越南第十三届国会。陈大光长期在越南内</p>
+          </div>
+          <ul>
+            <li  v-for="(item,index) of proInfoList" :key="index">
+              <span>{{item.info}}</span>
+              <span>{{item.date}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="proIdeas">
+        <img src="@/assets/img/c1.png" alt="">
+        <div></div>
+      </div>
+      <div class="rolesContainer">
+        <div class="roles">
+          <div>
+            <ul>
+              <li class="roleActive">全部</li>
+              <li>国家</li>
+              <li>省级</li>
+              <li>市级</li>
+            </ul>
+          </div>
+          <ul>
+            <li v-for="(item,index ) of roleInfo" :key="index">
+              <span>{{item.info}}</span>
+              <span>{{item.date}}</span>
+            </li>
+          </ul>
+          <p class="flexPublic"><img src="@/assets/img/j1.png" alt=""><span>换一批</span><span>更多</span></p>
+        </div>
+        <div class="unionHome">
+          <i></i>
+          <el-carousel indicator-position="none" height="400px" arrow="never">
+            <el-carousel-item v-for="item in 4" :key="item">
+              <img src="@/assets/img/n1.png" alt="">
+            </el-carousel-item>
+          </el-carousel>
+        </div>
+      </div>
+
+      <div class="ourInfo">
+        <div>
+          <ul>
+            <li>
+              <h1 style="font-size: 24px;">联系方式</h1>
+              <img src="@/assets/img/t1.png" class="t1" />
+            </li>
+            <li>
+              <img src="@/assets/img/d1.png" />
+              <p>0571-88270588</p>
+            </li>
+            <li>
+              <img src="@/assets/img/d2.png"  />
+              <p>2749634478</p>
+            </li>
+            <li>
+              <img src="@/assets/img/d3.png"  />
+              <p>0571-88290562</p>
+            </li>
+            <li>
+              <img src="@/assets/img/d4.png"  />
+              <p>www.gadta.com.cn</p>
+            </li>
+            <li>
+              <img src="@/assets/img/d5.png"  />
+              <p>www.gadta.com.cn</p>
+            </li>
+            <li>
+              <img  src="@/assets/img/d6.png" />
+              <p>杭州市拱墅区祥园路88号中国
+                （杭州）智慧信息产业园N座6F</p>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <ul class="inlineMsg">
+            <li>
+              <h1 style="font-size: 24px;">在线留言</h1>
+              <img src="@/assets/img/t1.png" class="t1" />
+            </li>
+            <li>
+              <p>姓名/单位</p>
+              <div class="inputContainer"><input type="text" class="input_box" /></div>
+            </li>
+            <li>
+              <p>联系方式</p>
+              <div class="inputContainer"><input type="text" class="input_box" /></div>
+            </li>
+            <li>
+              <p>需求描述</p>
+              <div class="inputContainer"><textarea  cols="30" rows="4"></textarea></div>
+            </li>
+            <li class="inlineBtn" >提交</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <div class="aboutContainer">
+        <div class="words">
+          <div >
+            <h1 >服务协议</h1>
+            <p>|</p>
+            <h1>运营范围</h1>
+          </div>
+          <div >
+            <h1>关于新中大科技</h1>
+
+            <h1>关于政云数据</h1>
+          </div>
+        </div>
+        <div class="pictrue">
+          <img src="@/assets/img/r1.png" class="g1" />
+          <img src="@/assets/img/r2.png" class="g1" />
+        </div>
+      </div>
+      <div>
+        <p>Copyrighe@ 1993-2018NEWGRADN.AII Rights Reserved</p>
+        <p>新中大科技有限公司  |  杭州政云数据技术有限公司  |  版权所有</p>
+        <p>浙ICP证05021872   浙公网安备   33010502000837号</p>
+      </div>
+    </footer>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "home",
+    data(){
+      return {
+        nav:'',
+        proInfoList:[
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'}
+        ],
+        roleInfo:[
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
+          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'}
+        ],
+      }
+    },
+    methods:{
+      navEnter(val){
+        console.log(111,this.nav)
+        this.nav=val;
+      },
+      navLeave(){
+        this.nav='';
+      }
+    }
+  }
+</script>
+
+<style lang="scss" scoped>
+  header{
+    padding:0 70px;
+    position:relative;
+    .headerBG{
+      position:absolute;
+      z-index: -1;
+      height:499px;
+      width:100%;
+      left:0;
+      top:105px;
+      background: #0183fd;
+    }
+  }
+
+  .loginContainer{
+  margin:0 auto;
+  width:1200px;
+  height:70px;
+  >img{
+    height:50px;
+  }
+  .login{
+    display: flex;
+    align-items: center;
+    color:#7fa409;
+    >div{
+      margin-left: 10px;
+      display: flex;
+      align-items: center;
+      &:first-of-type{
+        width:200px;
+      }
+      &:nth-of-type(2){
+        width:140px;
+        >span{
+          padding:0 8px;
+          &:first-of-type{
+            border-right:1px solid #7fa409;
+          }
+        }
+      }
+      &:nth-of-type(3){
+        width:70px;
+      }
+    }
+  }
+}
+  .carrouselContainer{
+    position: relative;
+    width:1200px;
+    height:626px;
+    margin:0 auto;
+    margin-top: 10px;
+    background: url("../../assets/img/q1.png");
+    .carrouselTitle{
+      position: absolute;
+      top:0;
+      width:100%;
+      height:85px;
+      z-index: 10;
+      background: rgba(0,0,0,0.5);
+      color: #FFF;
+      font-size: 50px;
+      text-align: center;
+      line-height: 85px;
+    }
+    .el-carousel__item img {
+      opacity: 0.75;
+      width:100%;
+      height:100%;
+      margin: 0;
+    }
+
+    .el-carousel__item:nth-child(2n) {
+      background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n+1) {
+      background-color: #d3dce6;
+    }
+  }
+  nav{
+    padding:0 70px;
+    position:relative;
+    margin:0 auto;
+    width:1200px;
+    display: flex;
+    align-items: center;
+    >div{
+      width:50%;
+      height:192px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .3s;
+      >span{
+        margin-left: 20px;
+        font-weight: 400;
+        font-size: 40px;
+        color: #7fa409;
+        transition: all .3s;
+        &.moveHide{
+           opacity: 0;
+           margin: -170px;
+        }
+      }
+    }
+  }
+  section{
+    position:relative;
+    width:1200px;
+    margin: 0 auto;
+    padding:0 0 0 70px;
+    .proInfoContainer{
+        width: 1132px;
+        height: 335px;
+        background: url(../../assets/img/q6.png);
+        margin: 50px auto 0;
+        background-size: 100%;
+        padding-left: 16px;
+        padding-right: 13px;
+        padding-top: 19px;
+        padding-bottom: 10px;
+      .proInfoTitle{
+        height:40px;
+        margin-top: 10px;
+        color:#2196f3;
+        text-align: right;
+        background: url("../../assets/img/b1-1.png") no-repeat;
+      }
+      .proInfoContent{
+        >div{
+          width:49%;
+          font-size: 13px;
+          color:#a0a0a0;
+          >div{
+            overflow: hidden;
+            height:175px;
+            >div{
+              >p{
+                height:150px;
+                overflow: hidden;
+                text-align: left;
+                line-height: 25px;
+              }
+            }
+
+          }
+          >p{
+            height:80px;
+            overflow: hidden;
+            text-align: left;
+            line-height: 25px;
+          }
+          h4{
+           color: #3ea0af;
+            font-size: 20px;
+            height:25px;
+            padding-top:3px;
+            margin:15px 0 3px;
+          }
+        }
+        >ul{
+          width:49%;
+          font-size: 14px;
+          margin-left:10px;
+          >li{
+            height:40px;
+            line-height: 40px;
+            padding:0 3px;
+            position:relative;
+            &:after{
+              position: absolute;
+              content:"";
+              left:-3px;
+              top:17px;
+              width:6px;
+              height:6px;
+              background: #333;
+              border-radius: 50%;
+            }
+            span:first-of-type{
+              width:460px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              float: left;
+            }
+            span:nth-of-type(2){
+              width:72px;
+              float:right;
+            }
+          }
+        }
+      }
+    }
+    .proIdeas{
+      height:200px;
+      width:100%;
+      margin-top:30px;
+      display: flex;
+      align-items: center;
+      background: url(../../assets/img/q6.png) -10px -8px;
+      >div{
+        width:950px;
+        height:130px;
+        margin-left:50px;
+        border:1px solid #CCC;
+      }
+    }
+    .rolesContainer{
+      width:100%;
+      height:443px;
+      margin-top:20px;
+      border:1px solid #dde;
+      border-radius: 3px;
+      padding:8px;
+      display: flex;
+      justify-content: space-between;
+      >div{
+        width:49%;
+      }
+      .roles{
+        padding-left:5px;
+        >div{
+          background: url(../../assets/img/b2.png) ;
+          height:33px;
+          line-height: 33px;
+          ul{
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            color:#fff;
+            li{
+              margin-right:40px;
+              font-size: 13px;
+              position:relative;
+              &.roleActive:after{
+                position:absolute;
+                content:"";
+                width:6px;
+                height:6px;
+                top:13px;
+                left:-8px;
+                background: #fff;
+                border-radius: 50%;
+              }
+            }
+          }
+        }
+        >ul{
+          width:100%;
+
+          font-size: 14px;
+          margin-left:10px;
+          >li{
+            height:40px;
+            line-height: 40px;
+            padding:0 8px 0 3px;
+            position:relative;
+            &:after{
+              position: absolute;
+              content:"";
+              left:-3px;
+              top:17px;
+              width:6px;
+              height:6px;
+              background: #333;
+              border-radius: 50%;
+              clear: both;
+            }
+            span:first-of-type{
+              width:450px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              float: left;
+            }
+            &:hover>span:first-of-type{
+              box-shadow: 0 3px 8px #888;
+              color:#3ea0af;
+              border-radius: 3px;
+            }
+            span:nth-of-type(2){
+              width:73px;
+              float:right;
+            }
+          }
+        }
+        >p{
+          float: right;
+          color:#2196f3;
+          width:130px;
+          margin:30px 20px 0 0 ;
+          >span{
+            position:relative;
+            padding:0 5px
+          }
+        }
+      }
+      .unionHome{
+        height:400px;
+        position:relative;
+        >i{
+          content:"";
+          position:absolute;
+          right:-9px;
+          top:-9px;
+          width:136px;
+          height:118px;
+          background: url("../../assets/img/g1.png");
+          z-index: 9;
+        }
+        .el-carousel__item img {
+          width:100%;
+          height:100%;
+          opacity: 0.75;
+        
+        }
+        .el-carousel__item:nth-child(2n) {
+          background-color: #99a9bf;
+        }
+
+        .el-carousel__item:nth-child(2n+1) {
+          background-color: #d3dce6;
+        }
+      }
+    }
+    .ourInfo{
+      width:100%;
+      height:360px;
+      background: #282828;
+      padding:19px 7px 10px 10px;
+      display: flex;
+      >div{
+        width:50%;
+        padding:5px;
+        >ul{
+          margin:0 auto;
+
+          li{
+            width:300px;
+            height:40px;
+            color:#fff;
+            margin-left: 145px;
+            display: flex;
+            align-items: center;
+            >img{
+              width:7%;
+              margin:0 9px 0 0;
+            }
+            >p{
+              margin:0;
+              text-align: left;
+              color:#fff;
+            }
+          }
+        }
+        .inlineMsg{
+          >li{
+            p{
+              width:80px;
+            }
+            div{
+              width:150px;
+              color:#333;
+              input{
+                height:30px;
+              }
+            }
+          }
+          li.inlineBtn{
+            width: 100px;
+            height: 31px;
+            background: #8ba42f;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            margin-top:80px;
+            margin-left:250px;
+          }
+        }
+      }
+    }
+  }
+  footer{
+    padding:0 70px;
+    background: #000;
+    height:300px;
+    margin-top:15px;
+    >div{
+      width:1200px;
+      margin:0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding:50px 0 10px;
+      &.aboutContainer>div{
+        width:50%;
+        &.words>div{
+          display: flex;
+          align-items: center;
+          >h1{
+            color:#fff;
+          }
+        }
+      }
+    }
+  }
+</style>
