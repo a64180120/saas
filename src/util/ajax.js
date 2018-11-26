@@ -101,8 +101,8 @@ function stopRepeatRequest(url, cancelfunction) {
 
 // 超时设置
 const service = axios.create({
-    baseURL: "http://10.0.20.46:8028/api/GCW",
-    //baseURL:'http://10.0.45.51:8028/api/GCW',
+    // baseURL: "http://10.0.20.46:8028/api/GCW",
+    baseURL:'http://10.0.45.46:8884/api/GCW',
     // 请求超时时间
     timeout: 5000
 });

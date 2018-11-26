@@ -2,7 +2,8 @@
 const whiteList = [
     '/login',
     '/adminlogin',
-    '/register'
+    '/register',
+    '/home'
 ]
 
 export default whiteList

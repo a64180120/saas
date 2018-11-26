@@ -3,7 +3,7 @@ const Layout = () => import(/* webpackChunkName: 'index' */ "../page/layout");
 const staticRoute = [
     {
         path: "/",
-        redirect: "/adminlogin"
+        redirect: "/home"
     },
     {
         path: "/login",
@@ -15,6 +15,10 @@ const staticRoute = [
         component: () => import("../page/admin/login")
     },
     {
+        path:'/home',
+        component: () =>import("../page/home/index"),
+    },
+    /*{
         path: "/home",
         component: Layout,
         children: [
@@ -24,7 +28,7 @@ const staticRoute = [
                 meta:{ requireAuth:true,type:'page',isMenu:true }
             }
         ]
-    },
+    },*/
     {
         //系统管理
         path: "/admin",
