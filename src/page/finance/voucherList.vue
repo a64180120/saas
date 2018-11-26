@@ -181,18 +181,15 @@
               this.$router.push({name:'voucherDel',params:{list:item}});
           },
           getvoucherList(){
-              var {config}=this.$ajax();
               var data={
                   uid:'0001',
                   orgid:52118082000000,
-                  //pagesize:this.pagesize,
-                  //pageindex:this.pageindex,
+                  pagesize:this.pagesize,
+                  pageindex:this.pageindex,
               }
-              this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucherList',{params:data,headers:config.headers})
+              this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucherList',{params:data})
                   .then(res=>{
-                      res=JSON.parse(res);
                       this.voucherList=res.Record;
-                      console.log(this.voucherList)
                       if(this.voucherList.length<=0){
                           alert('暂无新凭证');
                       }

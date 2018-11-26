@@ -3,32 +3,27 @@ const Layout = () => import(/* webpackChunkName: 'index' */ "../page/layout");
 const staticRoute = [
     {
         path: "/",
-        redirect: "/home"
+        redirect: "/index"
     },
     {
         path: "/login",
         component: () => import("../page/login")
     },
     {
-        //系统登录页面
-        path: "/adminlogin",
-        component: () => import("../page/admin/login")
+        path:'/index',
+        component: () =>import("../page/index"),
     },
     {
-        path:'/home',
-        component: () =>import("../page/home/index"),
-    },
-    /*{
         path: "/home",
         component: Layout,
         children: [
             {
                 path: "",
-                component: () =>import("../page/home"),
+                component: () =>import("../page/home/index"),
                 meta:{ requireAuth:true,type:'page',isMenu:true }
             }
         ]
-    },*/
+    },
     {
         //系统管理
         path: "/admin",
@@ -231,7 +226,7 @@ const staticRoute = [
             {
                 //期末结转
                 path: "end",
-                component: () =>import( "../page/message"),
+                component: () =>import( "../page/checkOut/end"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {

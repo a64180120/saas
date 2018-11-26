@@ -3,7 +3,7 @@
         <div class="unionState  flexPublic">
             <ul class="voucherDel handle">
             <router-link to="/finance/voucherAdd"><li>新增</li></router-link>
-            <a><li>删除</li></a>
+            <a @click="voucherDelete"><li>删除</li></a>
             <a><li>审核</li></a>
             <a><li>反审核</li></a>
             <a><li>复制</li></a>
@@ -122,6 +122,39 @@
                             //this.$router.go(0);
                         }else{
                             alert('保存失败,请重试!')
+                        }
+                    })
+                    .catch(err=>console.log(err))
+            },
+            voucherDelete(){
+                console.log(this.voucherDataList);
+                var data=this.voucherDataList.data;
+                if(data.PhId){
+                    data.PersistentState=3;
+                    if(data.Dtls.length>0){
+                        for(var dtl of data.Dtls){
+                            dtl.PersistentState=3;
+                            if(dtl.DtlAccounts){
+                                dtl.DtlAccounts[0].PersistentState=3;
+                            }
+                        }
+                    }
+                }else{
+                    alert('出错了!')
+                }
+                data= {
+                    "uid": "0",
+                    "orgid": "0",
+                    "id": data.PhId
+                }
+                this.$axios.post('/PVoucherMst/PostDelete',data)
+                    .then(res=>{
+                        console.log(res);
+                        if(res.Status=='success'){
+                            alert('删除成功!')
+                            var route=this.route;
+                            this.$store.commit("tagNav/removeTagNav", route);
+                            this.$router.push('/finance/voucherList')
                         }
                     })
                     .catch(err=>console.log(err))
