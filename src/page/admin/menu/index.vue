@@ -249,7 +249,6 @@
                 singleSelection: [], //选中行
                 state_mark: "", //菜单状态
                 select_word: "", //搜索字段
-                //dialogtitle: "新增",
                 expandAll: true,
                 dialogState: "add",
                 editVisible: false,
