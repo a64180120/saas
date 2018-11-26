@@ -12,9 +12,9 @@
                     </div>
                 </el-header>
                 <el-main>
-                     <!-- <h6 class="addTitle">基层组织账套管理</h6> -->
+                     <h3 class="addTitle">基层组织账套管理</h3>
                     <div class="container">
-                        <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="200px" label-position="right" size="mini">
+                        <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="200px" label-position="right" size="mini" v-loading.fullscreen.lock="loading">
                             <el-form-item label="工会名称：" prop="OrgName">
                                 <el-input v-model="orgForm.OrgName"></el-input>
                             </el-form-item>
@@ -48,12 +48,15 @@
                             </el-form-item>
                             <el-form-item label="使用期限：">
                                 <el-date-picker
-                                    v-model="orgForm.ServiceTime"
-                                    type="daterange"
-                                    range-separator="至"
-                                    start-placeholder="开始日期"
-                                    end-placeholder="结束日期"
-                                    :default-time="['00:00:00', '23:59:59']">
+                                    v-model="orgForm.ServiceStartTime"
+                                    type="date"
+                                    placeholder="选择开始日期">
+                                </el-date-picker>
+                                --
+                                <el-date-picker
+                                    v-model="orgForm.ServiceEndTime"
+                                    type="date"
+                                    placeholder="选择结束日期">
                                 </el-date-picker>
                             </el-form-item>
                         </el-form>
@@ -67,11 +70,13 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import UserInfo from "@/util/auth";
+import { SysOrgModel,SysOrgAdd } from '@/api/organize/orgInfo'
 
 export default {
     name: 'demo',
     data(){
         return {
+            loading: false,
             orgForm:{
                 OrgName:'新中大',
                 EnterpriseCode:'',
@@ -82,7 +87,6 @@ export default {
                 EnableTime:'',
                 Chairman:'',
                 Director:'',
-                ServiceTime:'',
                 ServiceStartTime:'',
                 ServiceEndTime:''
             },
@@ -109,6 +113,9 @@ export default {
     components: {
         
     },
+    created() {
+        this.getData();
+    },
     mounted(){
         console.log(this.$store.state.user);
     },
@@ -127,12 +134,56 @@ export default {
     },
     methods: {
         save(){
-            var route=this.$route;
+           var route=this.$route;
+           var vm=this;
+           this.loading = true;
+         
+          //提交asiox
+          SysOrgAdd(vm,{
+              otype:'edit',
+              uid:this.userid,
+              orgid:this.orgid,
+              infoData: this.orgForm
+          }).then(res => {
+              this.loading = false;
+              if(res.Status=='success'){              
+                //移除TagNav
+                this.$store.commit("tagNav/removeTagNav", route);
+                //跳转路由
+                this.$router.push('/home');
+              }else{
+                  this.$message.error('保存失败,请重试!');
+              }
+          }).catch(error =>{
+            console.log(error);
+            this.loading = false;
+            this.$message.error('保存组织错误');
+          })
+        },
+        getData(){
+            var vm=this;
+            this.loading = true;
 
-            //移除TagNav
-            this.$store.commit("tagNav/removeTagNav", route);
-            //跳转路由
-            this.$router.push('/home');
+            SysOrgModel(vm,{
+                id:547181121000001,
+                uid: this.userid,
+                orgid: this.orgid
+            }).then(res => {
+                this.loading = false;
+                if(res!=undefined){
+                    this.orgForm=res;
+                }else{
+                    this.$message.error("获取组织信息失败！");
+                }
+            }).catch(error =>{
+                console.log(error);
+                this.loading = false;
+                this.$message({
+                    showClose: true,
+                    message: '组织信息获取错误',
+                    type: 'error'
+                })
+            })
         }
     }
 }

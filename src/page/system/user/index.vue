@@ -80,12 +80,20 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import Auth from "@/util/auth";
-import { SysUserAdd,SysUserList } from '@/api/user/userInfo'
+import { SysUserAddUp,SysUserList,SysUserDelete } from '@/api/user/userInfo'
 import { SysRoleList } from '@/api/role/roleInfo'
+import { isvalidatemobile } from '@/util/validate'
 
 export default {
   name: "AdminUserList",
   data() {
+      const validatePhone = (rule, value, callback) => {
+          if (isvalidatemobile(value)[0]) {
+              callback(new Error(isvalidatemobile(value)[1]))
+          } else {
+              callback()
+          }
+      }
     return {
       loading: false,
       //table数据
@@ -100,7 +108,7 @@ export default {
       is_search: false,
       roledata:[],
       form: {
-        phid: "",
+        phid: 0,
         realName: "",
         mobilePhone: "",
         roles: [],
@@ -112,7 +120,7 @@ export default {
           { required: true, message: "请输入用户姓名", trigger: "blur" }
         ],
         mobilePhone: [
-          { required: true, message: "请输入手机号码", trigger: "blur" }
+          { required: true, message: "请输入手机号码", trigger: "blur",validator: validatePhone }
         ],
         roles: [
           {
@@ -125,7 +133,8 @@ export default {
         enabledMark: [
           { required: true, message: "请选择账号状态", trigger: "change" }
         ]
-      }
+      },
+      idx:''
     };
   },
   //
@@ -207,16 +216,6 @@ export default {
         this.getData('');
       }
     },
-    handleEdit(index, row) {
-      this.idx = index;
-      const item = this.tableData[index];
-      this.form = {
-        name: item.name,
-        date: item.date,
-        address: item.address
-      };methods
-      this.editVisible = true;
-    },
     //新增
     Add() {
       this.dialogState = "add";
@@ -257,34 +256,47 @@ export default {
     },
     //删除按钮
     Delete() {
-      let length = this.singleSelection.length;
+      let object = this.singleSelection;
+      let length = object.length;
       if (length > 0) {
         this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        })
-          .then(() => {
-            this.$axios
-              .get("http://10.0.20.46:8028/api/GCW/SysUser/PostDelete", {
-                params: {
-                  id: id
-                }
-              })
-              .then(res => {
+        }).then(() => {
 
-                this.tableData.splice(this.idx, 1);
-
-                this.$message.success("删除成功");
-                this.singleSelection = [];
-              });
+          var vm=this;
+          this.loading = true;
+         
+          //提交asiox
+          SysUserDelete(vm,{
+              id:object[0].PhId,
+              uid:this.userid,
+              orgid:this.orgid
+          }).then(res => {
+              this.loading = false;
+              if(res.Status=='success'){              
+                  //设置状态，隐藏新增页面
+                  this.$message.success("删除成功");
+                  this.singleSelection = [];
+                  
+                  //刷新列表
+                  this.getData('');
+              }else{
+                  this.$message.error('删除失败,请重试!');
+              }
+          }).catch(error =>{
+            console.log(error);
+            this.loading = false;
+            this.$message.error('删除错误');
           })
-          .catch(() => {
+
+        }).catch(() => {
             this.$message({
               type: "info",
               message: "已取消删除"
             });
-          });
+        });
       } else {
         this.$message({
           message: "请选中列表的其中一行",
@@ -304,10 +316,9 @@ export default {
     handleClickRow(row) {
       this.singleSelection.push(row);
       console.log(row);
-
     },
     // 保存
-    async saveEdit(formName) {
+    saveEdit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           //获取缓存 的用户 组织，角色基本信息
@@ -316,20 +327,15 @@ export default {
           console.log(cookiesUser);
           /**
            * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
-           * 新增数据信息
+           * 新增数据信息 编辑
            *  */ 
-          //var phid=this.form.phid;
-
           var userinfo={
-            PersistentState:1,
+            PhId:this.form.phid,
+            PersistentState:this.dialogState==='edit' ? 2 : 1,
             Account:this.form.mobilePhone,
             RealName:this.form.realName,
             MobilePhone:this.form.mobilePhone
           };
-
-          if(this.dialogState==="edit"){
-            
-          }
 
           //角色-组织-用户信息 实体信息组合
           var relations=[];
@@ -349,13 +355,13 @@ export default {
           var vm=this;
           this.loading = true;
           //提交asiox
-          SysUserAdd(vm,{
+          SysUserAddUp(vm,{
+              otype:this.dialogState,
               uid:'',
               orgid:this.orgid,
               infoData: { Mst:userinfo,Relation:relations}
           }).then(res => {
               this.loading = false;
-              debugger;
               if(res.Status=='success'){
                   this.$message.success('保存成功!');
                   
