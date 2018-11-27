@@ -78,7 +78,7 @@ export default {
     },
      //计算属性
     computed: {
-       
+
         ...mapState({
             lang: state => state.lang,
             theme: state => state.theme
@@ -133,7 +133,7 @@ export default {
     },
     mounted(){
         this.getToken().then((res) => {
-           
+
         })
     },
     methods: {

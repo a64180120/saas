@@ -158,7 +158,6 @@ service.interceptors.response.use(
         //         break
         //     }
         // }
-        
         return Promise.resolve(JSON.parse(response.data));
     },
     error => {

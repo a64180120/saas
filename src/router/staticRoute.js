@@ -10,9 +10,8 @@ const staticRoute = [
         component: () => import("../page/login")
     },
     {
-        //系统登录页面
-        path: "/adminlogin",
-        component: () => import("../page/admin/login")
+        path:'/index',
+        component: () =>import("../page/index"),
     },
     {
         path:'/index',
@@ -24,7 +23,7 @@ const staticRoute = [
         children: [
             {
                 path: "",
-                component: () =>import("../page/home/sysindex"),
+                component: () =>import("../page/home/index"),
                 meta:{ requireAuth:true,type:'page',isMenu:true }
             }
         ]
@@ -231,7 +230,7 @@ const staticRoute = [
             {
                 //期末结转
                 path: "end",
-                component: () =>import( "../page/message"),
+                component: () =>import( "../page/checkOut/end"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
