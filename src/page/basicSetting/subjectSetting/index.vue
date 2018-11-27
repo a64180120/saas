@@ -29,11 +29,11 @@
         border>
             <el-table-column label="科目类别" align="center">
                 <template slot-scope="scope">
-                     <span v-if="scope.row.KType==='1'">现金</span>
-                    <span v-else-if="scope.row.KType==='2'">银行</span>
-                    <span v-else-if="scope.row.KType==='3'">个人往来</span>
-                    <span v-else-if="scope.row.KType==='4'">单位往来</span>
-                    <span v-else-if="scope.row.KType==='5'">一般</span>
+                     <span v-if="scope.row.KType==='1'">资产</span>
+                    <span v-else-if="scope.row.KType==='2'">负债</span>
+                    <span v-else-if="scope.row.KType==='3'">净资产</span>
+                    <span v-else-if="scope.row.KType==='4'">收入</span>
+                    <span v-else-if="scope.row.KType==='5'">支出</span>
                     <span v-else>{{scope.row.KType}}</span>
                 </template>
             </el-table-column>
@@ -47,12 +47,12 @@
             </el-table-column>
             <el-table-column label="辅助核算">
                 <template slot-scope="scope">
-                    {{ scope.row.AuxiliaryType}}
+                    <span v-for="v in scope.row.AuxiliaryTypes" :key="v.PhId">{{v.BaseName}},</span>
                 </template>
             </el-table-column>
             <el-table-column label="停用/启用" align="center">
                 <template slot-scope="scope">
-                    <el-button v-if="scope.row.EnabledMark===1" type="success" icon="el-icon-check" size="mini" circle></el-button>
+                    <el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini" circle></el-button>
                     <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>
                 </template>
             </el-table-column>
@@ -61,10 +61,12 @@
         <!-- 编辑弹出框 -->
         <el-dialog :title="dialogState=='add'?'新增':'编辑'" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
-                <el-form-item label="科目编码：" prop="KCodeRule">
-                    <el-input v-model="form.KCode"></el-input>
+                <el-form-item label="科目编码：" prop="KCode">               
+                    <el-input v-model="form.KCode">
+                        <template v-if="parentKCode!==''" slot="prepend">{{parentKCode}}</template>
+                    </el-input>
                 </el-form-item>
-                <el-form-item label="科目名称：" prop="KNameRule">
+                <el-form-item label="科目名称：" prop="KName">
                     <el-input v-model="form.KName"></el-input>
                 </el-form-item>
                 <el-form-item label="科目类别：" prop="KTypeRule">
@@ -72,19 +74,19 @@
                         <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="余额方向：" prop="KBalanceTypeRule">
-                        <el-radio-group v-model="form.KBalanceType">
-                            <el-radio v-for="item in balanceType" :key="item.code" :label="item.code">{{item.name}}</el-radio>
-                        </el-radio-group>
+                <el-form-item label="余额方向：" prop="KBalanceType">
+                    <el-radio-group v-model="form.KBalanceType">
+                        <el-radio v-for="item in balanceType" :key="item.code" :label="item.code">{{item.name}}</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="辅助核算：">
                     <el-checkbox-group v-model="form.AuxiliaryType">
-                        <el-checkbox v-for="item in auxiliaryTypes" :label="item.PhId" :key="item.PhId">{{item.BaseName}}</el-checkbox>
+                        <el-checkbox v-for="item in  auxiliaryTypes" :label="item.PhId" :key="item.PhId">{{item.BaseName}}</el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="saveEdit('form')">保 存</el-button>
+                <el-button type="primary" @click="Save('form')">保 存</el-button>
                 <el-button @click="callof('form')">取 消</el-button>
             </span>
         </el-dialog>
@@ -93,7 +95,11 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import treeTable from "@/components/tree-table";
+import { SubjectAdd,SubjectUpdate,SubjectList,SubjectDelete } from '@/api/subject/subjectInfo'
+import { AuxiliaryTypeList } from '@/api/Auxiliary/typeInfo'
+import Auth from "@/util/auth";
 
 export default {
   name: "subjectList",
@@ -111,108 +117,31 @@ export default {
           value: "KName"
         }
       ],
-      data: [
-        {
-          PhId: 0,
-          KCode: "401",
-          KName: "会费收入",
-          KType: "1",
-          KBalanceType: "2",
-          AuxiliaryType: "往来单位，部门",
-          IsLast: 1,
-          EnabledMark: 1
-        },
-        {
-          PhId: 1,
-          KCode: "402",
-          KName: "拨缴经费收入",
-          KType: "1",
-          KBalanceType: "1",
-          AuxiliaryType: "",
-          IsLast: 1,
-          EnabledMark: 0
-        },
-        {
-          PhId: 2,
-          KCode: "403",
-          KName: "上级补助收入",
-          KType: "1",
-          KBalanceType: "3",
-          AuxiliaryType: "",
-          IsLast: 1,
-          EnabledMark: 1,
-          children: [
-            {
-              PhId: 3,
-              KCode: "40301",
-              KName: "回拨补助",
-              KType: "1",
-              KBalanceType: "1",
-              AuxiliaryType: "",
-              IsLast: 1,
-              EnabledMark: 1
-            },
-            {
-              PhId: 4,
-              KCode: "40302",
-              KName: "专项补助",
-              KType: "1",
-              KBalanceType: "1",
-              AuxiliaryType: "",
-              IsLast: 1,
-              EnabledMark: 1,
-              children: [
-                {
-                  PhId: 5,
-                  KCode: "4030201",
-                  KName: "帮扶补助",
-                  KType: "1",
-                  KBalanceType: "1",
-                  AuxiliaryType: "",
-                  IsLast: 1,
-                  EnabledMark: 1
-                },
-                {
-                  PhId: 6,
-                  KCode: "4030202",
-                  KName: "送温暖补助",
-                  KType: "1",
-                  KBalanceType: "1",
-                  AuxiliaryType: "",
-                  IsLast: 1,
-                  EnabledMark: 1
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      data: [],
       expandAll: true,
       loading: false,
+      is_search: false,
       s_type: "",
       s_word: "",
       dialogState: "add",
       editVisible: false,
+      parentKCode:'',
       singleSelection:[],
       subjectType:[
           {code:'1',name:'资产'},
           {code:'2',name:'负债'},
-          {code:'3',name:'所有者权益'},
-          {code:'4',name:'成本费用'},
-          {code:'5',name:'损益'},
+          {code:'3',name:'净资产'},
+          {code:'4',name:'收入'},
+          {code:'5',name:'支出'},
       ],
       balanceType:[
            {code:'1',name:'借方'},
            {code:'2',name:'贷方'},
            {code:'3',name:'两性'},
       ],
-      auxiliaryTypes:[
-          {PhId:'1',BaseCode:'001',BaseName:'部门'},
-          {PhId:'2',BaseCode:'002',BaseName:'项目'},
-          {PhId:'3',BaseCode:'003',BaseName:'往来个人'},
-          {PhId:'4',BaseCode:'004',BaseName:'往来单位'}
-      ],
+      auxiliaryTypes:[],
       form: {
+        PhId:0,
         KCode: "",
         KName: "",
         KType:"",
@@ -220,16 +149,16 @@ export default {
         AuxiliaryType: []
       },
       rules: {
-        KCodeRule: [
+        KCode: [
           { required: true, message: "请输入科目编码", trigger: "blur" }
         ],
-        KNameRule: [
+        KName: [
           { required: true, message: "请输入科目名称", trigger: "blur" }
         ],
-        KTypeRule: [
+        KType: [
           { required: true, message: "请选择科目类别", trigger: "change" }
         ],
-        KBalanceTypeRule: [
+        KBalanceType: [
           { required: true, message: '请选择余额方向', trigger: 'change' }
         ]
       }
@@ -238,31 +167,142 @@ export default {
   created() {
 
   },
+  mounted:function(){
+    //获取科目列表数据
+    this.getData('');
+    this.getAuxiliaryType('');
+  },
+  //计算
+  computed: {
+      ...mapState({
+          userid: state => state.user.userid,
+          orgid: state => state.user.orgid
+      })
+  },
   methods: {
-    message(row) {
-      this.$message.info(row.event);
+    async getData(query){
+      var vm=this;
+      this.loading = true;
+
+      //科目列表
+      SubjectList(vm,{
+          uid: this.userid,
+          orgid: this.orgid,
+          infoData:query
+      }).then(res => {
+          this.loading = false;
+          console.log(res);
+
+          if(res.Status==='error'){
+            this.$message.error(res.Msg);
+            return
+          }
+          this.data=res;
+
+      }).catch(error =>{
+        console.log(error);
+        this.loading = false;
+        this.$message({
+            showClose: true,
+            message: '科目列表获取错误',
+            type: 'error'
+        })
+      })
+
+    },
+    async getAuxiliaryType(query){
+        var vm=this;
+        //辅助项类别
+        AuxiliaryTypeList(vm,{
+            uid: this.userid,
+            orgid: this.orgid,
+            infoData:query
+        }).then(res => {
+            console.log(res);
+
+            if(res.Status==='error'){
+                this.$message.error("获取辅助项类别错误");
+                return
+            }
+            this.auxiliaryTypes=res.type;
+
+        }).catch(error =>{
+            console.log(error);
+            this.$message({
+                showClose: true,
+                message: '辅助项类别获取错误',
+                type: 'error'
+            })
+        })
     },
     //列表点击事件
-    handleClickRow(row) {
-      //console.log(row);
+    handleClickRow(row, event, Column) {
+      console.log(row);
+      this.singleSelection=[];
       this.singleSelection.push(row);
     },
     //搜索按钮
-    search() {},
+    search() {
+        this.is_search = true;
+        if(this.s_word =='' && this.s_type =='' ){
+            this.getData('');
+            this.is_search = false;
+        }else{
+            var queryfilter={
+                KCode:this.s_word,
+                KName:this.s_word,
+                KType:this.s_type
+            }
+
+            this.getData(queryfilter);
+            this.is_search = false;
+        }
+    },
     //新增页面
     Add() {
-      this.dialogState = "add";
-      this.editVisible = true;
+        let object = this.singleSelection;
+        let id = object.length > 0 ? object[0].PhId : 0;
+        if (id != 0) {
+
+            this.dialogState = "add";
+            this.editVisible = true;
+            this.$nextTick(() => {
+                this.$refs.form.resetFields();  //新增页面数据清空
+                this.form.KType='';
+                this.form.AuxiliaryType=[];
+            })
+            this.parentKCode=object[0].KCode
+
+        }else{
+            this.$message({
+                message: "请选中列表的其中一行",
+                type: "warning"
+            });
+        }
     },
     //修改页面
     Edit() {
         let object = this.singleSelection;
         let id = object.length > 0 ? object[0].PhId : 0;
         if (id != 0) {
+            this.parentKCode='';
+
+            this.form.PhId=object[0].PhId;
+            this.form.KCode=object[0].KCode;
+            this.form.KName=object[0].KName;
+            this.form.KType=object[0].KType;
+            this.form.KBalanceType=object[0].KBalanceType;
+
+            //辅助项类型信息
+            var typePhId=[];
+            for(let i=0;i<object[0].AuxiliaryTypes.length;i++) {
+                typePhId.push(object[0].AuxiliaryTypes[i].PhId);
+            }
+            this.form.AuxiliaryType=typePhId;
 
             this.dialogState = "edit";
             this.editVisible = true;
-            this.singleSelection = [];
+
         }else{
             this.$message({
                 message: "请选中列表的其中一行",
@@ -272,15 +312,37 @@ export default {
     },
     //删除按钮
     Delete() {
-      let length = this.singleSelection.length;
-      if (length > 0) {
+      let object = this.singleSelection;
+      if (object.length > 0) {
         this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-            this.$message.success("删除成功");
-            this.singleSelection = [];
+          var vm=this;
+          this.loading = true;
+         
+          //提交asiox
+          SubjectDelete(vm,{
+              id:object[0].PhId,
+              uid:this.userid,
+              orgid:this.orgid
+          }).then(res => {
+              this.loading = false;
+              if(res.Status=='success'){              
+                  //设置状态，隐藏新增页面
+                  this.$message.success("删除成功");
+                  this.singleSelection = [];  
+                  //刷新列表
+                  this.getData('');
+              }else{
+                  this.$message.error(res.Msg);
+              }
+          }).catch(error =>{
+            console.log(error);
+            this.loading = false;
+            this.$message.error('删除错误');
+          })
         });
       } else {
         this.$message({
@@ -293,31 +355,178 @@ export default {
     DownLoad() {
 
     },
-    // 保存表单
-    saveEdit(formName) {
+    // 保存表单 (新增，修改)
+    Save(formName){
       this.$refs[formName].validate(valid => {
         if (valid) {
-
           console.log(this.form);
+          if(this.dialogState==='edit'){
+              this.saveEdit(formName)
+          }else{
+              this.saveAdd(formName)
+          }
 
-          //隐藏弹出框
-          this.editVisible = false;
-          //清除form数据
-          this.$refs[formName].resetFields();
-
-          this.$message.success(`修改成功`);
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     },
+    //修改保存   
+    async saveEdit(formName) {
+           let selectSub = this.singleSelection;
+          //获取缓存 的用户 组织，角色基本信息
+          let cookiesUser = Auth.getUserInfoData();
+
+           /**
+           * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
+           * 新增科目
+           *  */ 
+          var subjectinfo={
+            PhId:this.form.PhId,
+            PersistentState:2,
+            KCode:this.form.KCode,
+            KName:this.form.KName,
+            KType:this.form.KType,
+            KBalanceType:this.form.KBalanceType,
+            NgRecordVer:selectSub[0].NgRecordVer
+            //OrgId:this.orgid,
+            //OrgCode:cookiesUser.orgInfo.EnCode
+          };
+
+          //辅助项类别 实体信息组合
+          var auxiliarytypeInfo=[];
+          var types=this.form.AuxiliaryType;
+          for(let i=0; i<types.length;i++){
+            
+            var typeModel=this.auxiliaryTypes.filter(v =>{
+                return v.PhId==types[i];
+            })
+            if(typeModel.length==1){
+                typeModel[0].PersistentState=1;
+                auxiliarytypeInfo.push(typeModel[0]);
+            }
+          };
+
+          var vm=this;
+          this.loading = true;
+          //提交asiox
+          SubjectUpdate(vm,{
+              otype:this.dialogState,
+              uid:this.userid,
+              orgid:this.orgid,
+              Subject: subjectinfo,
+              AuxiliaryTypeList:auxiliarytypeInfo
+          }).then(res => {
+                this.loading = false;
+                if(res.Status==='error'){
+                    this.$message.error(res.Msg);
+                    return
+                }
+                this.$message.success('保存成功!');
+                  
+                //设置状态，隐藏新增页面
+                this.dialogState = "";
+                //隐藏弹出框
+                this.editVisible = false;
+                //清除form数据
+                this.$refs[formName].resetFields();
+                //清空选中项
+                this.singleSelection=[];
+                //清空父级code值
+                this.parentKCode=''
+
+                //刷新列表
+                this.getData('');
+
+          }).catch(error =>{
+            console.log(error);
+            this.loading = false;
+            this.$message.error('保存科目错误');
+          })
+    },
+    //新增保存
+    async saveAdd(formName){
+          let selectSub = this.singleSelection;
+          //获取缓存 的用户 组织，角色基本信息
+          let cookiesUser = Auth.getUserInfoData();
+
+           /**
+           * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
+           * 新增科目
+           *  */ 
+          var subjectinfo={
+            PhId:this.form.PhId,
+            PersistentState:1,
+            KCode:this.parentKCode + this.form.KCode,
+            KName:this.form.KName,
+            KType:this.form.KType,
+            KBalanceType:this.form.KBalanceType,
+            Layers:selectSub[0].Layers+1,
+            OrgId:this.orgid,
+            OrgCode:cookiesUser.orgInfo.EnCode
+          };
+
+          //辅助项类别 实体信息组合
+          var auxiliarytypeInfo=[];
+          var types=this.form.AuxiliaryType;
+          for(let i=0; i<types.length;i++){
+            var typeModel=this.auxiliaryTypes.filter(v =>{
+                return v.PhId==types[i];
+            })
+            if(typeModel.length==1){
+                typeModel[0].PersistentState=1;
+                auxiliarytypeInfo.push(typeModel[0]);
+            }
+          };
+
+          var vm=this;
+          this.loading = true;
+          //提交asiox
+          SubjectAdd(vm,{
+              otype:this.dialogState,
+              uid:this.userid,
+              orgid:this.orgid,
+              Subject: subjectinfo,
+              AuxiliaryTypeList:auxiliarytypeInfo
+          }).then(res => {
+                this.loading = false;
+
+                if(res.Status==='error'){
+                    this.$message.error(res.Msg);
+                    return
+                }
+
+                this.$message.success('保存成功!');
+                  
+                //设置状态，隐藏新增页面
+                this.dialogState = "";
+                //隐藏弹出框
+                this.editVisible = false;
+                //清除form数据
+                this.$refs[formName].resetFields();
+                //清空选中项
+                this.singleSelection=[];
+                //清空父级code值
+                this.parentKCode=''
+
+                //刷新列表
+                this.getData('');
+
+          }).catch(error =>{
+            console.log(error);
+            this.loading = false;
+            this.$message.error('保存科目错误');
+          })
+    },
+
     //取消表单
     callof(formName){
         //隐藏弹出框
         this.editVisible = false;
         this.$refs[formName].resetFields();
-    }
+    },
+
   }
 };
 </script>

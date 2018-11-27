@@ -153,14 +153,13 @@
                     .catch(err=>console.log(err))
             },*/
             getvoucherList(){
-                var {config}=this.$ajax();
                 var data={
                     uid:'0001',
                     orgid:52118082000000,
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
                 }
-                this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucherList',{params:data})
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         this.newAddList=res.Record;
                         if(this.newAddList.length<=0){

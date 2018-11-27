@@ -212,8 +212,10 @@ export default {
       if(this.select_word!=''){
         var queryfilter='{"[or-dictionary0]*dictionary*or": { "RealName*str*eq": "'+this.select_word+'", "MobilePhone*str*eq": "'+this.select_word+'" }}';
         this.getData(queryfilter);
+        this.is_search = false;
       }else{
         this.getData('');
+        this.is_search = false;
       }
     },
     //新增

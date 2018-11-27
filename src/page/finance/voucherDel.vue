@@ -107,13 +107,12 @@
                 }
             },
             keepVoucher(){
-                var {config}=this.$ajax();
                 var data={
                     uid:0,
                     orgid:0,
                     infoData:this.voucherDataList.data
                 }
-                this.$axios.post('http://10.0.15.3:8028/api/GCW/PVoucherMst/PostUpdate',qs.stringify(data),config)
+                this.$axios.post('http://10.0.15.3:8028/api/GCW/PVoucherMst/PostUpdate',data)
                     .then(res=>{
                         res=JSON.parse(res);
                         console.log(res)
@@ -131,13 +130,12 @@
                 console.log( this.voucherDataList.data)
             },
            /* getvoucher(){
-                var {config}=this.$ajax();
                 var data={
                     uid:'0001',
                     orgid:52118082000000,
                     id:208181114000001
                 }
-                this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucher',{params:data,headers:config.headers})
+                this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
                     .then(res=>{
                         res=JSON.parse(res);
                         console.log(res)
@@ -152,14 +150,13 @@
                     .catch(err=>console.log(err))
             },
             getvoucherList(){
-                var {config}=this.$ajax();
                 var data={
                     uid:'0001',
                     orgid:52118082000000,
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
                 }
-                this.$axios.get('http://10.0.15.3:8028/api/GCW/PVoucherMst/GetVoucherList',{params:data,headers:config.headers})
+                this.$axios.get('/PVoucherMst/GetVoucherList',params:data)
                     .then(res=>{
                         res=JSON.parse(res);
                         this.newAddList=res.Record;
