@@ -25,8 +25,8 @@
                 </li>
             </ul>
             <div class="flexPublic">
-              <div class="seacherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
-              <div @click="unionSearch" class="seacherBtn">搜索</div>
+              <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
+              <div @click="unionSearch" class="searcherBtn">搜索</div>
             </div>
             <ul class="flexPublic handle">
                <router-link to="/organize/add"> <li>审核</li></router-link>

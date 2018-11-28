@@ -50,11 +50,11 @@
 
             </ul>
         </div>
-        <div class="newAddPage">
+        <div v-if="newAddToggle" class="newAddPage">
             <div>
                 <div class="newAddTitle flexPublic">
                     <span>新增期末结转</span>
-                    <span @click="newAdd"></span>
+                    <span @click="newAdd(false)"></span>
                 </div>
                 <div class="newAddContent">
                     <div class="newAddName flexPublic">
@@ -68,25 +68,25 @@
                                 转出设置
                             </div>
                             <div class="inputContainer">
-                                <input placeholder="请输入摘要" type="text">
+                                <input placeholder="请输入摘要" v-model="outAbstruct" type="text">
                             </div>
                             <div class="subjectContainer">
                                 <p><span>转出科目(多选)</span></p>
                                 <div class="subjectContent">
                                     <div>
                                         <p><span>未选</span></p>
-                                        <div class="inputContainer"><input placeholder="请输入科目名称或代码" type="text"></div>
+                                        <div class="inputContainer"><input v-model="outSearch" placeholder="请输入科目名称或代码" type="text"></div>
                                         <div>
                                             <ul>
-                                                <li class="subActive" v-for="(item,index) of subjects" :key="index">{{item.KCode}}</li>
+                                                <li class="subActive" :class="{subClick:outSubChooseCss[index].checked}" @click="subChoose('out',index,item)" v-for="(item,index) of outSearchValues" :key="index">{{item}}</li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="arrow">
                                         <ul>
                                             <li><img src="@/assets/icon/rightDouble.svg" alt=""></li>
-                                            <li><img src="@/assets/icon/rightArr.svg" alt=""></li>
-                                            <li><img src="@/assets/icon/leftArr.svg" alt=""></li>
+                                            <li @click="arrowHandle('out','add')" ><img src="@/assets/icon/rightArr.svg" alt=""></li>
+                                            <li @click="arrowHandle('out','minus')" ><img src="@/assets/icon/leftArr.svg" alt=""></li>
                                             <li><img src="@/assets/icon/leftDouble.svg" alt=""></li>
                                         </ul>
                                     </div>
@@ -94,7 +94,7 @@
                                         <p><span>已选</span></p>
                                         <div>
                                             <ul>
-                                                <li v-for="(item,index) of outChoosed" :key="index">{{item.KCode}}</li>
+                                                <li class="subActive" :class="{subClick:outSubChoosedCss[index].checked}" @click="subChoosed('out',index,item)" v-for="(item,index) of outChoosed" :key="index">{{item}}</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -107,25 +107,25 @@
                                 转入设置
                             </div>
                             <div class="inputContainer">
-                                <input placeholder="请输入摘要" type="text">
+                                <input placeholder="请输入摘要" v-model="inAbstruct" type="text">
                             </div>
                             <div class="subjectContainer">
                                 <p><span>转入科目(多选)</span></p>
                                 <div class="subjectContent">
                                     <div>
                                         <p><span>未选</span></p>
-                                        <div class="inputContainer"><input placeholder="请输入科目名称或代码" type="text"></div>
+                                        <div class="inputContainer"><input v-model="inSearch" placeholder="请输入科目名称或代码" type="text"></div>
                                         <div>
                                             <ul>
-                                                <li class="subActive" v-for="(item,index) of subjects" :key="index">{{item.KCode}}</li>
+                                                <li class="subActive" :class="{subClick:inSubChooseCss[index].checked}" @click="subChoose('in',index,item)" v-for="(item,index) of inSearchValues" :key="index">{{item}}</li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="arrow">
                                         <ul>
                                             <li><img src="@/assets/icon/rightDouble.svg" alt=""></li>
-                                            <li><img src="@/assets/icon/rightArr.svg" alt=""></li>
-                                            <li><img src="@/assets/icon/leftArr.svg" alt=""></li>
+                                            <li @click="arrowHandle('in','add')"><img src="@/assets/icon/rightArr.svg" alt=""></li>
+                                            <li @click="arrowHandle('in','minus')"><img src="@/assets/icon/leftArr.svg" alt=""></li>
                                             <li><img src="@/assets/icon/leftDouble.svg" alt=""></li>
                                         </ul>
                                     </div>
@@ -133,7 +133,7 @@
                                         <p><span>已选</span></p>
                                         <div>
                                             <ul>
-                                                <li v-for="(item,index) of inChoosed" :key="index">{{item.KCode}}</li>
+                                                <li class="subActive" :class="{subClick:inSubChoosedCss[index].checked}" @click="subChoosed('in',index,item)" v-for="(item,index) of inChoosed" :key="index">{{item}}</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -143,8 +143,8 @@
                     </div>
                 </div>
                 <div class="newAddCancle">
-                    <span>保存</span>
-                    <span>取消</span>
+                    <span @click="keepNewAdd">保存</span>
+                    <span @click="newAdd(false)">取消</span>
                 </div>
             </div>
         </div>
@@ -167,6 +167,12 @@
             choosed:[],
             outChoosed:[],
             inChoosed:[],
+            inAbstruct:'',
+            outAbstruct:'',
+            inSearch:'',
+            inSearchValues:[],
+            outSearch:'',
+            outSearchValues:[],
             dataList:[
                 {PhId:'11',date:'2019-09-13  16:32',money:'1000000.00'},
                 {PhId:'11',date:'2019-09-13  16:32',money:'1000000.00'},
@@ -203,18 +209,27 @@
                 }]
             },
             subjects:[
-                {KCode:'科目1'},
-                {KCode:'科目2'},
-                {KCode:'科目3'},
-                {KCode:'科目4'},
-                {KCode:'科目5'},
-                {KCode:'科目6'},
-                {KCode:'科目1-1'},
-                {KCode:'科目2-1'},
-                {KCode:'科目3-1'},
-                {KCode:'科目4-1'},
-                {KCode:'科目5-1'}
-            ]
+                '科目1',
+                '科目2',
+                '科目3',
+                '科目4',
+                '科目5',
+                '科目6',
+                '科目1-1',
+                '科目2-1',
+                '科目3-1',
+                '科目4-1',
+                '科目5-1'
+            ],
+            newAddToggle:false,
+            inSubChoose:[],
+            inSubChooseCss:[],
+            outSubChoose:[],
+            outSubChooseCss:[],
+            inSubChoosed:[],
+            inSubChoosedCss:[],
+            outSubChoosed:[],
+            outSubChoosedCss:[],
         }
       },
       methods:{
@@ -235,9 +250,156 @@
               for(var i in this.dataList){
                   this.carryOverCss[i]={checked:false}
               }
-          },
-          newAdd(){
 
+          },
+          keepNewAdd(){
+              if(!this.name){
+                  alert('请输入方案名称!')
+              }else{
+
+              }
+          },
+          newAdd(bool){
+              if(bool){
+                  for(var i in this.subjects){
+                      this.inSubChooseCss[i]={checked:false}
+                      this.outSubChooseCss[i]={checked:false}
+                  }
+                  this.inSearchValues=this.subjects;
+                  this.outSearchValues=this.subjects;
+                   this.newAddToggle=true;
+              }else{
+                  this.newAddToggle=false;
+              }
+          },
+          //未选*******************
+          subChoose(val,index,item){
+              var sub=[];
+              var cho=[];
+              if(val=='in'){
+                 sub=this.inSubChooseCss;
+                  cho=this.inSubChoose;
+              }else{
+                  sub=this.outSubChooseCss;
+                  cho=this.outSubChoose;
+              }
+              if( sub[index].checked){
+                  sub[index].checked=false;
+                  cho.splice(index,1);
+              }else{
+                  sub[index].checked=true;
+                  cho[index]=item;
+              }
+              this.$forceUpdate();
+          },
+          //已选**********************************
+          subChoosed(val,index,item){
+              var sub=[];
+              var cho=[];
+              if(val=='in'){
+                  sub=this.inSubChoosedCss;
+                  cho=this.inSubChoosed;
+              }else{
+                  sub=this.outSubChoosedCss;
+                  cho=this.outSubChoosed;
+              }
+              if( sub[index].checked){
+                  sub[index].checked=false;
+                  cho.splice(index,1);
+              }else{
+                  sub[index].checked=true;
+                  cho[index]=item;
+              }
+              this.$forceUpdate();
+          },
+          arrowHandle(val,type){
+              if(val=='out'){
+                  if(type=='add'){
+                      for(var su of this.outSubChoose){
+                        if(su){
+                            this.outChoosed.push(su);
+                        }
+                      }
+                      for(var i in this.outSubChoose){
+                          this.outSubChooseCss[i]={checked:false}
+                      }
+                      this.outSubChoose=[];
+                      this.$forceUpdate();
+                  }else if(type=='minus'){
+                      for(var i=this.outSubChoosed.length-1;i>=0;i--){
+                          if(this.outSubChoosed[i]){
+                              this.outChoosed.splice(i,1);
+                          }
+                      }
+                  }
+                  this.outSubChoosedCss=[];
+                  this.outSubChoosed=[];
+                  for(var i in this.outChoosed){
+                      this.outSubChoosedCss[i]={checked:false}
+                  }
+                  this.$forceUpdate();
+              }else{
+                  if(type=='add'){
+                      for(var su of this.inSubChoose){
+                          if(su){
+                              this.inChoosed.push(su);
+                          }
+                      }
+                      for(var i in this.inSubChoose){
+                          this.inSubChooseCss[i]={checked:false}
+                      }
+                      this.inSubChoose=[];
+                      this.$forceUpdate();
+                  }else if(type=='minus'){
+                      for(var i=this.inSubChoosed.length-1;i>=0;i--){
+                          if(this.inSubChoosed[i]){
+                              this.inChoosed.splice(i,1);
+                          }
+                      }
+                  }
+                  this.inSubChoosedCss=[];
+                  this.inSubChoosed=[];
+                  for(var i in this.inChoosed){
+                      this.inSubChoosedCss[i]={checked:false}
+                  }
+                  this.$forceUpdate();
+              }
+          },
+          fastSearch(val){
+              var value='';
+              var values=[];
+              if(val=='in'){
+                  value=this.inSearch;
+              }else{
+                  value=this.outSearch;
+              }
+              for(var i in this.subjects){
+
+                   if(this.subjects[i].indexOf(value)!=-1){ console.log(values)
+                       values.push(this.subjects[i]);
+                   }
+              }
+              if(val=='in'){
+                  this.inSearchValues=values;
+                  this.inSubChooseCss=[];
+                  for(var css of this.inSubChooseCss){
+                      css={checked:false}
+                  }
+              }else{
+                  this.outSearchValues=values;
+                  this.outSubChooseCss=[];
+                  for(var css of this.outSubChooseCss){
+                      css={checked:false}
+                  }
+              }
+          }
+      },
+      watch:{
+        inSearch(){
+            this.fastSearch('in');
+        },
+         outSearch(){
+              this.fastSearch('out');
           }
       }
   }
@@ -352,11 +514,13 @@
                 height:176px;
                 margin-bottom: 20px;
                 &.newAddCss{
+
                     >div:first-of-type{
                         background: #ff9900;
                         text-align: center;
                     }
                     >div:nth-of-type(2){
+
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -400,6 +564,7 @@
                     border:1px solid #ccc;
                     border-top: 0;
                     height:141px;
+                    cursor:pointer;
                 }
                 >.carry-over{
                     padding:20px;
@@ -500,6 +665,7 @@
                     margin-right: 20px;
                     background: #3e8cbc;
                     color:#fff;
+                    cursor:pointer;
                     &:hover{
                         background: #fff;
                         color:#333;
@@ -640,8 +806,12 @@
                     .subActive:hover{
                         background: #ccc;
                     }
-
-
+                    .subClick{
+                        background: #02a7e7;
+                    }
+                    .subClick:hover{
+                        background: #02a7e7;
+                    }
                 }
             }
 

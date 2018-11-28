@@ -132,7 +132,7 @@ const staticRoute = [
             {
                 //参数设置
                 path: "config",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/basicSetting/config/index"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
@@ -157,7 +157,7 @@ const staticRoute = [
             {
                 //明细账
                 path: "detailaccount",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/accountbooks/detailaccount/index"),
                 meta:{ requireAuth:true,isMenu:true,type:'page' }
             },
             {
@@ -176,44 +176,19 @@ const staticRoute = [
             {
                 //资产负债表
                 path: "assets",
-                component: () =>import( "../page/message"),
+                component: () =>import( "../page/report/assets"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //收入支出表
                 path: "expenses",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/report/expenses"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //往来明细款项表
                 path: "intercourse",
-                component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            }
-        ]
-    },
-    {
-        //会计报表
-        path: "/report",
-        component: Layout,
-        children: [
-            {
-                //资产负债表
-                path: "assets",
-                component: () =>import( "../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //收入支出表
-                path: "expenses",
-                component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //往来明细款项表
-                path: "intercourse",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/report/intercourse"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
@@ -232,7 +207,7 @@ const staticRoute = [
             {
                 //结账
                 path: "checkout",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/checkOut/checkOut"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
@@ -245,13 +220,13 @@ const staticRoute = [
             {
                 //预算编制
                 path: "plan",
-                component: () =>import( "../page/message"),
+                component: () =>import( "../page/budget/plan"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {
                 //预算执行
                 path: "execute",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/budget/execute"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             }
         ]
