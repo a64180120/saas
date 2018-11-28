@@ -14,6 +14,10 @@ const staticRoute = [
         component: () =>import("../page/index"),
     },
     {
+        path:'/index',
+        component: () =>import("../page/home/index"),
+    },
+    {
         path: "/home",
         component: Layout,
         children: [

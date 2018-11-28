@@ -97,21 +97,21 @@ export default {
         if (!Column || Column.type === 'selection' || Column.columnKey === 'operation' || Column.type === 'expand') {
           return
         }
-        const data = {
-          row: row,
-          event: event,
-          column: Column
-        };
-        this.$emit('onRowClick', data)
+        // const data = {
+        //   row: row,
+        //   event: event,
+        //   column: Column
+        // };
+        this.$emit('onRowClick', row, event, Column)
     },
     handleCurrentChange(currentRow, oldCurrentRow){
 
-        const data = {
-          currentRow: currentRow,
-          oldCurrentRow: oldCurrentRow
-        };
+        // const data = {
+        //   currentRow: currentRow,
+        //   oldCurrentRow: oldCurrentRow
+        // };
 
-      this.$emit('onCurrentChange', data)
+      this.$emit('onCurrentChange', currentRow, oldCurrentRow)
     }
   }
 }
