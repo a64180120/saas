@@ -1,29 +1,34 @@
 <template>
     <div class="addVoucher">
         <div class="unionState flexPublic">
-            <ul class="flexPublic">
-                <li class="flexPublic">
-                    <div>账期:</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.name}}</option>
-                        </select>
-                    </div>
-                </li>
-            </ul>
             <div class="flexPublic searcherCon">
                 <div class="searcherValue"><input type="text" placeholder="科目/摘要/凭证号"></div>
-                <div  class="searcherBtn">搜索</div>
+                <div  class="searcherBtn">凭证定位</div>
+                <ul class="fastGps">
+                    <li></li>
+                    <li></li>
+                    <li>更多凭证</li>
+                    <li>做下月账</li>
+                </ul>
             </div>
+
             <ul class="flexPublic handle">
-                <a @click.prevent="addVoucher('resolve')"><li>引入模板</li></a>
-                <a @click.prevent="addVoucher('keepModel')"><li>保存为模板</li></a>
-                <a @click.prevent="addVoucher('keepAdd')"><li>保存并新增</li></a>
+                <a>
+                    <li class="mode">
+                        模板
+                        <span>引用模板</span>
+                        <span>存为模板</span>
+                    </li>
+                </a>
+
                 <a @click.prevent="addVoucher('keep')"><li>保存</li></a>
+                <a @click.prevent="addVoucher('keepAdd')"><li>保存并新增</li></a>
+                <a @click.prevent="addVoucher('print')"><li>保存并打印</li></a>
+                <a @click.prevent="addVoucher('reset')"><li>凭证号重排</li></a>
             </ul>
         </div>
         <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
-        <div class="newAddContainer">
+       <!-- <div class="newAddContainer">
             <div class="newAddTitle flexPublic">
                 <span>最新新增凭证</span>
                 <a href="">进入凭证列表</a>
@@ -60,8 +65,8 @@
                     </li>
                 </ul>
             </div>
-        </div>
-
+        </div>-->
+        <div class="asideNav"></div>
     </div>
 </template>
 
@@ -175,13 +180,15 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .addVoucher{
         width:100%;
         height:100%;
         overflow: scroll;
         text-align: left;
         padding:8px 18px;
+        padding-right:60px;
+        margin-right:10px;
         font-size:14px;
     }
     .unionState>ul:first-of-type>li{
@@ -197,8 +204,51 @@
         text-align: center;
     }
     .searcherCon{
-        width:40%;
-        min-width: 170px;
+        width:50%;
+        min-width: 300px;
+        justify-content: flex-start;
+    }
+    .fastGps{
+        display: flex;
+        align-items: center;
+        width:290px;
+        >li{
+            margin-left: 5px;
+            padding:0 10px;
+            background:#509edc;
+            color:#fff;
+            height:30px;
+            width:100px;
+            line-height: 30px;
+            text-align: center;
+            cursor:pointer;
+            &:first-of-type,&:nth-of-type(2){
+                width:40px;
+                position:relative;
+                &:before{
+                    content:"";
+                    position: absolute;
+                    width:10px;
+                    height:10px;
+                    top:10px;
+                    left:15px;
+                    border:2px solid #ddd;
+                    border-width: 0 0 2px 2px ;
+                    -webkit-transform: rotate(45deg);
+                    -moz-transform: rotate(45deg);
+                    -ms-transform: rotate(45deg);
+                    -o-transform: rotate(45deg);
+                    transform: rotate(45deg);
+                }
+            }
+            &:nth-of-type(2):before{
+                border-width:2px 2px 0 0  ;
+                left:12px;
+            }
+            &:nth-of-type(4){
+                background: #6acccb;
+            }
+        }
     }
     .searcherValue{
         border:1px solid #ddd;
@@ -207,7 +257,7 @@
         padding-left:10px;
     }
     .searcherValue{
-        width:80%;
+        width:30%;
     }
     .searcherValue>input{
         width:100%;
@@ -245,9 +295,16 @@
         background: #ff9900;
         color:#fff;
     }
+    .asideNav{
+        width:55px;
+        position:absolute;
+        right:2px;
+        height:100%;
+        border: 1px solid #ccc;
+    }
 
 
-    /*凭证新增*********************************/
+  /*  !*凭证新增*********************************!
     .newAddTitle{
         background: #43c9d2;
         height:40px;
@@ -291,6 +348,6 @@
     .newAddContent li{
         text-align: center;
     }
-
+*/
 
 </style>
