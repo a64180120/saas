@@ -2,8 +2,8 @@
     <div class="manageContent">
         <div class="unionState flexPublic">
             <div class="flexPublic">
-                <div class="seacherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
-                <div @click="unionSearch" class="seacherBtn">搜索</div>
+                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
+                <div @click="unionSearch" class="searcherBtn">搜索</div>
             </div>
             <ul class="flexPublic handle">
                 <a @click.prevent="handlePage('add')"><li>新增</li></a>
@@ -98,7 +98,7 @@
                 this.PhIdList=item;
             },
             ajaxMode(){
-                
+
                 let data = {
                     uid: "0",//this.uid获取到store中的uid************
                     orgid: "547181121000001",//this.orgid获取到store中的orgid************
@@ -107,7 +107,7 @@
                 var vm=this;
                 this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
                     .then(res=>{
- 
+
                         this.userInfo=res.list;
                         this.navTab=res.type;
                         console.log( this.navTab)

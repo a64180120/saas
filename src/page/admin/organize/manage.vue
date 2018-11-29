@@ -82,68 +82,6 @@
     min-width: 1024px;
       height:100%;
   }
-  .manageHead{
-    background: #969ead;
-    text-align: left;
-    height:50px;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    color:#fff;
-    font-size: 15px;
-    margin-right:18px;
-  }
-  .pageHandle{
-    width:10%;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    position:relative;
-  }
-  .pageHandle>span{
-    position:relative;
-  }
-  .pageHandle>span:after{
-    content:"";
-    border:1px solid #fff;
-    border-width:0 1px 1px 0;
-    -moz-transform: rotate(45deg);
-    transform: rotate(45deg);
-    position:absolute;
-    right:-20px;
-    width:10px;
-    height:10px;
-  }
-  .title{
-    height:100%;
-    width:90%;
-    position:relative;
-  }
-  .title>ul{
-    padding:0 40px;
-    list-style: none;
-    height:100%;
-    margin:0;
-  }
-  .title>ul>li{
-    float:left;
-    height:93%;
-    margin:2px 0;
-    padding:0 10px;
-    line-height: 50px;
-    background: #fff;
-    color:#333;
-    font-size:14px;
-  }
-  .title>img{
-    height:40px;
-    position:absolute;
-    top:5px;
-  }
-  .title>img:last-of-type{
-    right:0;
-  }
   .container{
     padding:3px;
       width:100%;
@@ -179,45 +117,6 @@
     background:#ff9900;
     color:#fff;
     }
-.manageContent{
-  width:100%;
-  text-align: left;
-  padding:8px 18px;
-  font-size:14px;
-  }
-  .unionState>ul>li{
-    margin-right:20px;
-    width:33.33%;
-  }
-  .unionState>ul>li>div:first-of-type{
-    width:60px;
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .seacherValue{
-    border:1px solid #ddd;
-    border-radius: 10px 0 0 10px ;
-    overflow: hidden;
-    padding-left:10px;
-  }
-  .seacherValue>input{
-    width:139px;
-    height:30px;
-    outline: none;
-    margin:0;
-    font-size: 14px;
-    border:0;
-  }
-  .seacherBtn{
-    height:30px;
-    width:60px;
-    text-align: center;
-    line-height: 30px;
-    background:#509edc;
-    color:#fff;
-    cursor:pointer;
-  }
 
 
 </style>

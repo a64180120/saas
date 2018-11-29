@@ -30,8 +30,8 @@
                 </li>
             </ul>
             <div class="flexPublic">
-              <div class="seacherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
-              <div @click="unionSearch" class="seacherBtn">搜索</div>
+              <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
+              <div @click="unionSearch" class="searcherBtn">搜索</div>
             </div>
             <ul class="flexPublic handle">
               <a @click.prevent="routerTo('/admin/orgin/add')"><li>新增</li></a>
