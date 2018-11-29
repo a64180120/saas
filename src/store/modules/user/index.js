@@ -25,10 +25,16 @@ const getters = {
 
 //操作state(同步)
 const mutations = {
+    //菜单
     setNavList: (state, data) => {
-        state.navList = data;
+        if (data) {
+            state.navList = data;
+            Auth.setMenuStatus(data);
+        }else{
+            Auth.removeMenuStatus();
+        }
     },
-
+    //token
     setToken: (state, data) => {
         if (data) {
             Auth.setToken(data);
@@ -39,17 +45,17 @@ const mutations = {
             Auth.removeToken();
         }
     },
+    //用户信息 包括 userInfo orgInfo 
     setUserInfo: (state, data) => {
         if (data) {
+            data.isLogin=true;
             Auth.setUserInfoData(data);
-            Auth.setLoginStatus();
 
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
             state.username=data.userInfo.RealName;
         } else {
             Auth.removeUserInfoData();
-            Auth.removeLoginStatus();
         }
     }
 };
@@ -130,8 +136,9 @@ const actions = {
 
         return new Promise(resolve => {
             //清除缓存
-            commit("setToken", "");
-            commit("setUserInfo", "");
+            commit("setToken", "");  //token 
+            commit("setUserInfo", ""); //用户信息
+            commit('setNavList',''); //菜单
             commit('tagNav/removeTagNav', '', {root: true})
             resolve();
         });
@@ -142,22 +149,33 @@ const actions = {
     relogin({ dispatch, commit, state }) {
         return new Promise(resolve => {
             // 根据Token进行重新登录
-            let tokenInfo = Auth.getToken(), userInfo = Auth.getUserInfoData();
+            let tokenInfo = Auth.getToken(), 
+            userInfo = Auth.getUserInfoData(),
+            menuInfo = Auth.getMenuStatus();
 
             // 重新登录时校验Token是否存在，若不存在则获取
             if (!tokenInfo && !userInfo) {
+                //token
                 dispatch("getNewToken").then(() => {
                     //commit("setToken", state.token);
                 });
-
+                //用户
                 dispatch("loginByPhone").then(() => {
-                    //commit("setToken", state.token);
+
+                });
+
+                //菜单
+                dispatch("getNavList").then(() => {
+
                 });
 
             } else {
                 //设置用户 state ,重新加载用户缓存
                 commit("setToken", tokenInfo);
                 commit("setUserInfo", userInfo);
+                if(menuInfo){
+                    commit("setNavList", menuInfo);
+                }
             }
             resolve();
         });

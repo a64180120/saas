@@ -7,13 +7,15 @@ import Auth from '@/util/auth'
 import store from "../store";
 import staticRoute from "./staticRoute";
 import whiteList from "./whiteList";
+import Cookies from "js-cookie";
 
 //后台数据库获取的路由信息
 var permissionList = [];
 
-function initRoute(router) {
+function initRoute(router,menu) {
     return new Promise(resolve => {
-        if (permissionList.length == 0) {
+        permissionList=menu||[];
+        if (permissionList.length == 0) {   
             console.log("没有权限数据，正在获取");
             store.dispatch("user/getNavList").then(() => {
                 store.dispatch("user/getPermissionList").then(res => {
@@ -52,7 +54,10 @@ router.beforeEach((to, from, next) => {
     NProgress.start();
 
     // 判断用户是否处于登录状态
-    if (Auth.getLoginStatus()) {
+    let userinfo=Auth.getUserInfoData(),
+        menuInfo = Auth.getMenuStatus();
+
+    if (userinfo && userinfo.isLogin) {
         // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
         // 这种情况出现在手动修改地址栏地址时
         if (to.path === "/login") {
@@ -61,7 +66,7 @@ router.beforeEach((to, from, next) => {
             // 防止因重定向到error页面造成beforeEach死循环
             next();
         } else {
-            initRoute(router).then(() => {
+            initRoute(router,menuInfo).then(() => {
                 let isPermission = true;
                 // if (to.meta.requireAuth) {
                 //     if (to.meta.type == "page") {

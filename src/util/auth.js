@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import { setStore, getStore, removeStore } from '@/util/storage'
 
 const authToken = {
     // 当Token超时后采取何种策略
@@ -7,11 +8,13 @@ const authToken = {
     tokenTimeoutMethod: 'getNewToken',
     
     // 在Cookie中记录缓存的key
-    loginKey: 'isLogin',
+    //loginKey: 'isLogin',
     //用户缓存信息
     userinfo:'user',
     //token 缓存的key
     TokenKey:'token',
+    //菜单权限
+    menuKey:'menus',
 
     getCookies:function(key){
         let item=Cookies.get(key);
@@ -53,21 +56,6 @@ const authToken = {
         Cookies.remove(this.TokenKey)
     },
 
-    // 当前是否是登录状态
-    getLoginStatus: function(){
-        return this.getCookies(this.loginKey)
-    },
-
-    // 设置登录状态
-    setLoginStatus: function(){
-
-        this.setCookies(this.loginKey,'true');
-    },
-    // 移除登录状态
-    removeLoginStatus: function(){
-        Cookies.remove(this.loginKey)
-    },
-
     // 获取用户缓存信息
     getUserInfoData: function() {
 
@@ -84,6 +72,29 @@ const authToken = {
     removeUserInfoData: function(){
         Cookies.remove(this.userinfo);
         Cookies.remove(this.loginKey);
+    },
+
+    // 当前是菜单
+    getMenuStatus: function(){
+        //return this.getCookies(this.menuKey)
+        return  getStore({ name: this.menuKey })|| []
+    },
+
+    // 设置菜单缓存
+    setMenuStatus: function(data){
+        //this.setCookies(this.menuKey,data);
+        setStore({
+            name: this.menuKey,
+            content: data,
+            type: 'session'
+        })
+    },
+    // 移除菜单缓存
+    removeMenuStatus: function(){
+        //Cookies.remove(this.menuKey)
+        removeStore({
+            name: this.menuKey
+        })
     }
 }
 

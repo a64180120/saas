@@ -66,16 +66,13 @@ function checkToken(cancel, callback) {
             }
         }
         // 跳转授权Token
-        if (
-            Auth.tokenTimeoutMethod == "jumpAuthPage" &&
-            Auth.getLoginStatus()
-        ) {
-            if (router.currentRoute.path != "/auth") {
-                // BUG: 无法保证一定会中断所有请求
-                cancel();
-                router.push("/auth");
-            }
-        }
+        // if (Auth.tokenTimeoutMethod == "jumpAuthPage" &&Auth.getUserInfoData()) {
+        //     if (router.currentRoute.path != "/auth") {
+        //         // BUG: 无法保证一定会中断所有请求
+        //         cancel();
+        //         router.push("/auth");
+        //     }
+        // }
     } else {
         callback();
     }
