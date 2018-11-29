@@ -10,12 +10,12 @@ const staticRoute = [
         component: () => import("../page/login")
     },
     {
-        path:'/index',
+        path:'/indexfinance',
         component: () =>import("../page/finance/addVoucher"),
     },
     {
         path:'/index',
-        component: () =>import("../page/home/index"),
+        component: () =>import("../page/index"),
     },
     {
         path: "/home",

@@ -14,12 +14,26 @@ var permissionList = [];
 
 function initRoute(router,menu) {
     return new Promise(resolve => {
-        permissionList=menu||[];
-        if (permissionList.length == 0) {   
-            console.log("没有权限数据，正在获取");
-            store.dispatch("user/getNavList").then(() => {
-                store.dispatch("user/getPermissionList").then(res => {
-                    console.log("权限列表生成完毕");
+        
+        if (permissionList.length == 0) {
+            if(menu && menu.length==0){   
+                console.log("没有权限数据，正在获取");
+                store.dispatch("user/getNavList").then((navList) => {
+                    store.dispatch("user/getPermissionList",navList).then(res => {
+                        console.log("权限列表生成完毕");
+                        permissionList = res;
+                        res.forEach(function(v) {
+                            let routeItem = router.match(v.path);
+                            if (routeItem) {
+                                routeItem.meta.permission = v.permission? v.permission: [];
+                                routeItem.meta.name = v.name;
+                            }
+                        });
+                        resolve();
+                    });
+                });
+            }else{
+                store.dispatch("user/getPermissionList",menu).then(res => {
                     permissionList = res;
                     res.forEach(function(v) {
                         let routeItem = router.match(v.path);
@@ -29,8 +43,8 @@ function initRoute(router,menu) {
                         }
                     });
                     resolve();
-                });
-            });
+                }); 
+            }
         } else {
             console.log("已有权限数据");
             resolve();

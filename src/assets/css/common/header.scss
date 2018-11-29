@@ -11,6 +11,9 @@
         padding-left: 20px;
         color: $headerColor;
         font-size: $headerFontSize;
+        .a, a:link, a:active, a:visited{
+            color: $headerColor
+        }      
     }
     .userInfo {
         float: right;

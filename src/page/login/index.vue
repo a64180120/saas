@@ -25,7 +25,7 @@
                         <img :src="captcha.src" alt="">
                         <el-input v-model="loginForm.captcha" type="text" placeholder="验证码"></el-input>
                     </el-form-item> -->
-
+                    
                     <p class="textL width50" style="float:left;">注册</p>
                     <p class="textR width50" style="float:left;">忘记密码？</p>
 
