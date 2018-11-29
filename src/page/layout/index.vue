@@ -2,8 +2,8 @@
     <div class="wrapper">
         <template>
             <!-- v-once只渲染元素和组件一次 头部 -->
-            <header-bar v-on:collapseByValue="collapseChange" v-once>
-                <p slot="logo">工会sass云财务系统</p>
+            <header-bar v-on:collapseByValue="collapseChange" v-once> 
+                <p slot="logo" class="title"><router-link to="/index">工会sass云财务系统</router-link></p>
             </header-bar>
             <!-- 左侧菜单 -->
             <nav-bar :isCollapse="collapsevule"></nav-bar>
