@@ -33,6 +33,7 @@ function initRoute(router,menu) {
                     });
                 });
             }else{
+                console.log("缓存有菜单数据");
                 store.dispatch("user/getPermissionList",menu).then(res => {
                     permissionList = res;
                     res.forEach(function(v) {
