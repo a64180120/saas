@@ -51,9 +51,7 @@
                 {name:'凭证处理'},
                 {name:'凭证打印'}
             ],
-
         }
-
       },
       methods: {
           navTabTurn(item) {

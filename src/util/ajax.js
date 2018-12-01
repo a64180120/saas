@@ -7,37 +7,17 @@ import store from "../store";
 import router from "../router";
 import { Message,MessageBox } from "element-ui";
 import Auth from "@/util/auth";
-import md5 from "js-md5";
 import qs from 'qs'
+import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
-let Base64 = require("js-base64").Base64;
+
 
 var getTokenLock = false,
     CancelToken = axios.CancelToken,
     requestList = [];
 
-var appKey = "D31B7F91-3068-4A49-91EE-F3E13AE5C48C",
-    appSecret = "103CB639-840C-4E4F-8812-220ECE3C4E4D",
-    url = "http://10.0.20.46:8028",
-    reqTimeStamp = Date.parse(new Date());
-var sign = md5((url + reqTimeStamp + appKey + appSecret).toLowerCase());
-var items = [sign, url, reqTimeStamp, appKey],
-    appinfo_Object = {
-        DbName: "NG0001",
-        OrgId: "521180820000002",
-        OrgName: "",
-        OCode: "",
-        UserId: "521180820000001",
-        UserKey: "0001",
-        UserName: "",
-        TokenKey: "",
-        AppKey: appKey,
-        AppSecret: appSecret,
-        DbServerName: "",
-        SessionKey: "",
-        UName: ""
-    },
-    appInfo = Base64.encode(JSON.stringify(appinfo_Object));
+let baseheader=ajaxhttp.header;
+let base=ajaxhttp.base;
 
 /**
  * Token校验
@@ -97,12 +77,7 @@ function stopRepeatRequest(url, cancelfunction) {
 }
 
 // 超时设置
-const service = axios.create({
-    baseURL: "http://10.0.20.46:8028/api/GCW",
-    //baseURL:'http://10.0.45.46:8884/api/GCW',
-    // 请求超时时间
-    timeout: 5000
-});
+const service = axios.create(base);
 
 // baseURL
 // axios.defaults.baseURL = 'http://10.0.45.51:8028/api/GCW';
@@ -115,17 +90,16 @@ service.interceptors.request.use(
             cancel = req;
         });
 
+        let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
+        var new_header = Object.assign({},config_header, baseheader);  //合并对象
+
+        config.headers = new_header
+
         //POST传参序列化
         if (config.method === "post") {
             config.data = qs.stringify(config.data);
         }
 
-        config.headers = {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8 ",
-            Accept: "application/json; charset=utf-8",
-            AppInfo: appInfo,
-            Sign: items
-        };
         //Token校验
         // checkToken(cancel, function(){
         //     Auth.setLoginStatus()

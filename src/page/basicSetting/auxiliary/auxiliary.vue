@@ -43,7 +43,8 @@
     import handleUpdate from './handleUpdate'
     import auxiliaryType from './auxiliaryType'
     import { mapState, mapActions } from 'vuex'
-    import qs from 'qs'
+    import { dealAddString } from "@/util/validate";
+
     export default {
         data(){
             return {
@@ -54,17 +55,20 @@
                     {PhId:'111',BaseCode:'01',BaseName:'办公室',EnabledMark:0},
                     {PhId:'222',BaseCode:'03',BaseName:'财务科',EnabledMark:1},
                 ],
-                handleNav:'',
+                handleNav:'',    //类型 add update
+                
                 navActive:{id:'',BaseName:'部门'},
-                navTab:[{PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
+                navTab:[
+                    {PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
                     {PhId:112,BaseCode:'02',EnabledMark:1,BaseName:'往来单位'},
                     {PhId:113,BaseCode:'03',EnabledMark:0,BaseName:'往来个人'},
-                    {PhId:114,BaseCode:'04',EnabledMark:0,BaseName:'项目'}]
+                    {PhId:114,BaseCode:'04',EnabledMark:0,BaseName:'项目'}
+                ]
             }
         },
         methods:{
             unionSearch(){
-                alert('输入的是:'+this.unionSearchValue)
+                //alert('输入的是:'+this.unionSearchValue)
             },
             initInfoCss(){
                 for(var i in this.userInfo){
@@ -75,6 +79,15 @@
                 switch(val){
                     case 'add':
                         this.handleNav='add';
+
+                        var lastObject=this.userInfo[this.userInfo.length-1]||{BaseCode:'000'};
+
+                        this.PhIdList={
+                            PhId:'',
+                            BaseCode:dealAddString(lastObject.BaseCode),
+                            BaseName:'',
+                            EnabledMark:0
+                        }
                         break;
                     case 'update':
                         if(this.PhIdList.PhId){
@@ -100,17 +113,17 @@
             ajaxMode(){
 
                 let data = {
-                    uid: "0",//this.uid获取到store中的uid************
-                    orgid: "547181121000001",//this.orgid获取到store中的orgid************
+                    uid: this.uid,//this.uid获取到store中的uid************
+                    orgid: this.orgid,//this.orgid获取到store中的orgid************
                     infoData:null
                 };
                 var vm=this;
-                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
+                this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
                     .then(res=>{
 
                         this.userInfo=res.list;
                         this.navTab=res.type;
-                        console.log( this.navTab)
+                        //console.log( this.navTab)
                         if(!this.navTab.id){
                             this.navActive=this.navTab[0];
                         }
@@ -127,12 +140,12 @@
                 this.navActive=item;
 
                 let data = {
-                    uid: "0",
-                    orgid: "547181121000001",
+                    uid: this.uid,
+                    orgid: this.orgid,
                     typeId:this.navActive.PhId,
                     infoData:null
                 };
-                this.$axios.get('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId',{params:data})
+                this.$axios.get('/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId',{params:data})
                     .then(res=>{
                         this.userInfo=res.list;
                         this.navTab=res.type;
@@ -144,19 +157,19 @@
             },
             addFinish(val){
                 this.handleNav=val;
-                this.ajaxMode();
-                this.initInfoCss();
+                this.navTabTurn(this.navActive);
+                //this.initInfoCss();
             },
             deleteBase(){
-                var url='PVoucherAuxiliaryType/PostAddAuxiliary';
+                var url='/PVoucherAuxiliaryType/PostAddAuxiliary';
                 this.PhIdList.DeleteMark=1;
                 var data={
-                    uid:0,
-                    orgid:547181121000001,
+                    uid:this.uid,
+                    orgid:this.orgid,
                     infoData:this.PhIdList
                 }
 
-                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,data)
+                this.$axios.post(url,data)
                     .then(res=>{
                         if(res.Status=='success'){
                             this.ajaxMode();

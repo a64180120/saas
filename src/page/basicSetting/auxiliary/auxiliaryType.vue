@@ -57,7 +57,10 @@
 </template>
 
 <script>
-   import qs from 'qs'
+  import { mapState, mapActions } from 'vuex'
+  import Auth from "@/util/auth";
+  import { dealAddString } from "@/util/validate";
+
   export default {
     name: "auxiliary-type",
       props:{
@@ -69,12 +72,20 @@
       },
       data(){
         return {
-            formData:{BaseCode:'',BaseName:'',EnabledMark:0},
+            formData:{ BaseCode:'',BaseName:'',EnabledMark:0 },
             dataList:[],
             deleteList:[],
             updateCss:[],
             deleteCss:[]
         }
+      },
+      computed:{
+        ...mapState({
+            orgid:state=>state.user.orgid,
+            orgcode:state=>state.user.orgcode,
+            uid:state=>state.user.userid,
+            username:state=>state.user.username
+        })
       },
       methods:{
           newAdd(bool){
@@ -83,17 +94,18 @@
                       this.dataList.push(del);
                   }
                   let data={
-                      uid:0,
-                      orgid:547181121000001,
+                      uid:this.uid,
+                      orgid:this.orgid,
                       infoData:this.dataList
                   };
 
                   var vm=this;
-                  this.$axios.post('http://10.0.13.52:8083/api/GCW/PVoucherAuxiliaryType/PostAddAuxiliaryType',data)
+                  this.$axios.post('/PVoucherAuxiliaryType/PostAddAuxiliaryType',data)
                       .then(res=>{
                           if(res.Status=='success'){
                               vm.$emit('type-click',false);
-                              alert('保存成功!')
+                              //alert('保存成功!')
+                              this.$message.success("保存成功!");
                           }
                       })
                       .catch(err=>console.log(err))
@@ -103,13 +115,46 @@
 
           },
           fastCreate(){
-              if(this.dataList.length>=50){
-                  alert('辅助项数量已到上限!')
-              }else{
-                  this.dataList.unshift(this.formData);
-                  this.initCss();
-                  this.$forceUpdate();
-              }
+
+            if(this.dataList.length>=50){
+                alert('当前组织辅助项数量已到上限!')
+                return;
+            }
+            if(this.formData.BaseName===''){
+                this.$message.warning("请填写类型名称！");
+                return;
+            }
+
+            // 获取
+            //debugger;
+
+            var lastObject=this.dataList[this.dataList.length-1];
+          
+            var addData={
+                PhId:0,
+                Type:'',
+                BaseCode:dealAddString(lastObject.BaseCode),
+                BaseName:this.formData.BaseName,
+                GLS:dealAddString(lastObject.GLS),
+                OrgId:this.orgid,
+                OrgCode:this.orgcode,
+                IsSystem:0,
+                EnabledMark:this.formData.EnabledMark,
+                CreatorName:this.username,
+                EditorName:this.username
+            };
+
+
+            this.dataList.unshift(addData);
+
+            this.$nextTick(() => {
+                this.formData.BaseCode='';
+                this.formData.BaseName='';
+                this.formData.EnabledMark=0;
+            })
+            this.initCss();
+            this.$forceUpdate();
+              
           },
           deleteData(item,index){
             item.DeleteMark=1;

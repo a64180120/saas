@@ -81,3 +81,24 @@ export function SysOrgModel(object,param) {
     });
   });
 }
+
+/** 
+ * 说明: 上传附件
+ * object 当前对象 vue
+ * param 参数集合
+*/
+export function SysOrgUploadFile(object,param) {
+  return new Promise((resolve, reject) => {
+    object.$axios({
+      url: '/SysOrganize/PostUploadFile',
+      method: "post",
+      data: param
+    }).then(res => {
+        //正确
+        resolve(res);               
+    }).catch(error => {
+        //错误
+        reject(error);
+    });
+  });
+}

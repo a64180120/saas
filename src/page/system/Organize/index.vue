@@ -19,7 +19,17 @@
                                 <el-input v-model="orgForm.OrgName"></el-input>
                             </el-form-item>
                             <el-form-item label="统一社会信用代码：" prop="EnterpriseCode">
-                                <el-input v-model="orgForm.EnterpriseCode"></el-input>
+                                <el-input v-model="orgForm.EnterpriseCode" style="width: 80%;"></el-input>
+                                <el-upload
+                                    class="avatar-uploader"
+                                    action=""
+                                    :show-file-list="false"
+                                    :http-request='uploadFileMethod'
+                                    :on-success="handleAvatarSuccess"
+                                    :before-upload="beforeAvatarUpload">
+                                    <img v-if="orgForm.EnterpriseAttachment" :src="baseImgPath + orgForm.EnterpriseAttachment" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>
                             </el-form-item>
                             <el-form-item label="单位地址：">
                                 <el-input v-model="orgForm.Address"></el-input>
@@ -70,22 +80,27 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import UserInfo from "@/util/auth";
-import { SysOrgModel,SysOrgAdd } from '@/api/organize/orgInfo'
+import { SysOrgModel,SysOrgAdd,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
+import axios from "axios";
+import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
 export default {
     name: 'demo',
     data(){
         return {
+            baseImgPath:'http://10.0.20.46:8028/api/GCW',
             loading: false,
             orgForm:{
                 OrgName:'新中大',
                 EnterpriseCode:'',
+                EnterpriseAttachment:'',
                 Address:'',
                 TelePhone:'',
                 ParentName:'',
                 AccountSystem:'',
                 EnableTime:'',
                 Chairman:'',
+                ChairmanAttachment:'',
                 Director:'',
                 ServiceStartTime:'',
                 ServiceEndTime:''
@@ -184,6 +199,55 @@ export default {
                     type: 'error'
                 })
             })
+        },
+        handleAvatarSuccess(res, file) {
+            if (res.status == 1) {
+                this.orgForm.EnterpriseAttachment = URL.createObjectURL(file.raw);
+            }else{
+                this.$message.error('上传图片失败！');
+            }
+        },
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
+        beforeAvatarUpload(file) {
+            const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png');
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isRightType) {
+                this.$message.error('上传头像图片只能是 JPG,png 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isRightType && isLt2M;
+		},
+        uploadFileMethod(param) {
+            var vm=this;
+            let fileObject = param.file;
+            let formData = new FormData();
+            formData.append('id', 123456)
+            formData.append("file", fileObject);
+
+            let baseheader=ajaxhttp.header;
+            let base=ajaxhttp.base;
+
+            let config_header = { "Content-Type": "multipart/form-data" };
+
+            var new_header = Object.assign({},config_header, baseheader);
+
+            axios.create(base).post('/SysOrganize/PostUploadFile',formData,{ headers:new_header }).then(res => {
+                var response=JSON.parse(res.data);
+                if(response.Status=='success'){              
+                    //设置状态，隐藏新增页面
+                    this.$message.success("上传成功");
+                }else{
+                    this.$message.error(response.Msg);
+                }
+        　　}).catch((error) =>{
+                var error=JSON.parse(error.data);
+                this.$message.error(error.Msg);
+            });
         }
     }
 }
@@ -209,9 +273,32 @@ export default {
   color:#fff;
 }
   .addTitle{
-    font-size: 30px;
-    font-size: 30px;
+    font-size: 18px;
+    font-size: 18px;
     text-align: center;
     padding-bottom: 10px;
+  }
+    .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 18px;
+    color: #8c939d;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+  }
+  .avatar {
+    width: 80px;
+    height: 80px;
+    display: block;
   }
 </style>

@@ -3,7 +3,7 @@
         <div class="newAddContent">
             <div class="newAddTitle flexPublic">
                 <span>辅助选项{{handleName[PhIdList.name]}}</span>
-                <span @click.stop="newAdd()"></span>
+                <span @click.stop="cancle()"></span>
             </div>
             <ul class="contentItem">
                 <li>
@@ -26,14 +26,15 @@
             </ul>
             <div class="itemBtnCon">
                 <div @click.stop="newAdd(PhIdList.name)">保存</div>
-                <div @click.stop="newAdd()">取消</div>
+                <div @click.stop="cancle()">取消</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import qs from 'qs'
+    import { mapState, mapActions } from 'vuex'
+
     export default {
         name: "new-add",
         props:{
@@ -42,13 +43,13 @@
         created(){
         },
         mounted(){
-            if(this.PhIdList.name=='add'){
-                this.formData.BaseCode='001';//需要动态获取新增code*****
-                this.formData.EnabledMark=0;
-                this.formData.PhId='';
-            }else{
-                this.formData=this.PhIdList.data;
-            }
+            this.formData=this.PhIdList.data;
+        },
+        computed:{
+            ...mapState({
+                orgid:state=>state.user.orgid,
+                uid:state=>state.user.userid
+            })
         },
         data(){
             return{
@@ -58,28 +59,31 @@
         },
         methods:{
             newAdd(name){
-                if(!name){
-                    this.$emit('add-click',false);
-                    return;
+                if(this.formData.BaseName===''){
+                     this.$message.warning("请填写辅助项名称！");
+                      return;
                 }
-                var url='PVoucherAuxiliaryType/PostAddAuxiliary';
-                console.log(this.PhIdList.type.PhId)
+
+                var url='/PVoucherAuxiliaryType/PostAddAuxiliary';
+                //console.log(this.PhIdList.type.PhId)
                 this.formData.PhidBaseType=this.PhIdList.type.PhId;
                 var data={
-                    uid:0,
-                    orgid:547181121000001,
+                    uid:this.uid,
+                    orgid:this.orgid,
                     infoData:this.formData
                 }
 
-                this.$axios.post('http://10.0.13.52:8083/api/GCW/'+url,data)
+                this.$axios.post(url,data)
                     .then(res=>{ console.log(res)
-                        console.log(res)
+                        //console.log(res)
                         if(res.Status=='success'){
                             this.$emit('add-click',false);
                             if(name=='add'){
-                                alert('add:success')
+
+                                this.$message.success("新增成功!");
                             }else if(name=='update'){
-                                alert('update:success')
+
+                                this.$message.success("更新成功!");
                             }
                         }
                     })
@@ -87,7 +91,12 @@
 
 
             },
-
+            //取消
+            cancle(){
+                this.$emit('add-click',false);
+                this.formData=''
+                return;                
+            }
         }
     }
 </script>

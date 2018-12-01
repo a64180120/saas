@@ -112,7 +112,7 @@ const staticRoute = [
             {
                 //科目期初
                 path: "subjectstart",
-                component: () =>import("../page/message"),
+                component: () =>import("../page/basicSetting/subjectInit"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
             },
             {

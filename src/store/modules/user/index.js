@@ -12,6 +12,8 @@ const state = {
     userid: "",
     //组织ID
     orgid: "",
+    //组织代码
+    orgcode:'',
     //左侧菜单权限
     navList: [],
     // 用户名
@@ -53,6 +55,7 @@ const mutations = {
 
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
+            state.orgcode = data.orgInfo.EnCode;
             state.username=data.userInfo.RealName;
         } else {
             Auth.removeUserInfoData();

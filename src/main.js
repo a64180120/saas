@@ -18,8 +18,14 @@ import './plugins/install'
 import '@/assets/css/myStyle.css'//自定义样式*************************
 import '@/assets/css/font_li.css'  //阿里的图标样式
 
+// import http from './util/ajaxMode' //自定义ajax头部配置*****
+// let Base64 = require('js-base64').Base64
+// Vue.prototype.$http=http
+
+
 // 注册组件到Vue
 Vue.prototype.$axios = axios
+
 
 //完整引入element-ui 和 i18n语言
 Vue.use(ElementUI, {

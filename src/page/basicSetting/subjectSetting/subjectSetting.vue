@@ -71,6 +71,8 @@
 
 <script>
     import newadd from './newAdd'
+    import { mapState, mapActions } from 'vuex'
+    
     export default {
       data(){
         return {
@@ -149,7 +151,7 @@
             pageindex:this.pageIndex-1,
             infoData:null
           };
-          this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
+          this.$axios.get('/SysOrganize/GetSysOrganizeList',{params:data})
             .then(res=>{
 
               this.userInfo=res.Record;
@@ -174,18 +176,22 @@
         }
         this.ajaxMode();
       },
-        computed:{
-            updateAdd(val){
-                val={
-                    name:'',
-                    data:this.PhIdList
-                }
-                return val;
-            }
-        },
-        components:{
+      computed:{
+          updateAdd(val){
+              val={
+                  name:'',
+                  data:this.PhIdList
+              }
+              return val;
+          },
+          ...mapState({
+              orgid:state=>state.user.orgid,
+              uid:state=>state.user.userid
+          })
+      },
+      components:{
           newadd,
-        }
+      }
     }
 </script>
 

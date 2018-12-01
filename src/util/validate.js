@@ -72,3 +72,17 @@ export function isvalidatemobile(phone) {
   return list
 }
 
+/** 
+ * 让字符串或数字如何尾数能自动加1
+ */
+export function dealAddString(str){
+    return str.replace(/\d+$/,function(a){
+      var o="",
+          l=0,
+          i=l=a.length;
+      while(i){
+          o+="0";i--;
+      }
+      return (o+(parseInt(a)+1)).slice(l*-1);
+    })
+}

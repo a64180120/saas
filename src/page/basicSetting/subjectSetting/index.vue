@@ -8,7 +8,7 @@
                         <el-option label="全部" value=""></el-option>
                         <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
                     </el-select>
-                    <el-input v-model="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10"></el-input>
+                    <el-input v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10"></el-input>
                     <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
 
                     <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add">新增</el-button>
@@ -388,10 +388,9 @@ export default {
             KCode:this.form.KCode,
             KName:this.form.KName,
             KType:this.form.KType,
-            KBalanceType:this.form.KBalanceType,
-            NgRecordVer:selectSub[0].NgRecordVer
-            //OrgId:this.orgid,
-            //OrgCode:cookiesUser.orgInfo.EnCode
+            KBalanceType:this.form.KBalanceType
+            //IsSystem:selectSub[0].IsSystem,
+            //ParentId:selectSub[0].PhId
           };
 
           //辅助项类别 实体信息组合
@@ -430,7 +429,14 @@ export default {
                 //隐藏弹出框
                 this.editVisible = false;
                 //清除form数据
-                this.$refs[formName].resetFields();
+                //this.$refs[formName].resetFields();
+                this.form.PhId=0
+                this.form.KCode=''
+                this.form.KName=''
+                this.form.KType=''
+                this.form.KBalanceType='0'
+                this.form.AuxiliaryType=[]
+                
                 //清空选中项
                 this.singleSelection=[];
                 //清空父级code值
@@ -464,7 +470,8 @@ export default {
             KBalanceType:this.form.KBalanceType,
             Layers:selectSub[0].Layers+1,
             OrgId:this.orgid,
-            OrgCode:cookiesUser.orgInfo.EnCode
+            OrgCode:cookiesUser.orgInfo.EnCode,
+            ParentId:selectSub[0].PhId
           };
 
           //辅助项类别 实体信息组合
@@ -504,7 +511,13 @@ export default {
                 //隐藏弹出框
                 this.editVisible = false;
                 //清除form数据
-                this.$refs[formName].resetFields();
+                //this.$refs[formName].resetFields();
+                this.form.PhId=0
+                this.form.KCode=''
+                this.form.KName=''
+                this.form.KType=''
+                this.form.KBalanceType='0'
+                this.form.AuxiliaryType=[]
                 //清空选中项
                 this.singleSelection=[];
                 //清空父级code值
