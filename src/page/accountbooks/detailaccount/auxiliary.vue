@@ -30,33 +30,29 @@
             <div class="unionLists">
                 <div class="unionListsTitle">辅助类型 &nbsp;
                     <div class="selectContainer">
-                        <select v-model="part">
-                            <option>部门</option>
-                        </select>
+                        <el-select v-model="department" >
+                            <el-option v-for="item of auxiliaryType" :key="item.PhId" :label="item.BaseName"  :value="item.PhId"></el-option>
+                        </el-select>
                     </div>
                 </div>
                 <div class="unionListsContent">
-                    <ul>
-                        <li v-for="(sheng,index) of subjectLists" :key="index">
-                            <div @click="unionListOpen" :class="{moreList:subjectLists.length>1}">{{sheng.sheng}}</div>
-                            <ul>
-                                <li v-for="(shi,index2) of sheng.child" :key="index2">
-                                    <div @click="unionListOpen" :class="{moreList:shi.child.length>1}">{{shi.shi}}</div>
-                                    <ul>
-                                        <li v-for="(xian,index3) of shi.child" :key="index3">
-                                            <div @click="unionListOpen" :class="{moreList:xian.child.length>1}">{{xian.xian}}</div>
-                                            <ul>
-                                                <li v-for="(union,index4) of xian.child" :key="index4">{{union}}</li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                    <!-- <ul>
+                        <li v-for="(item,index) of auxiliaryLists" :key="index">
+                            <div @click="unionListOpen(item,$event)" :class="{moreList:auxiliaryLists.length>1}">{{item.BaseName}}</div>
                         </li>
-                    </ul>
+                    </ul> -->
+                    <el-tree
+                        class="tree"
+                        :data="auxiliaryLists"
+                        :props="defaultProps"
+                        default-expand-all
+                        node-key="PhId"
+                        @node-click="handleNodeClick"
+                        ref="auxiliaryTree">
+                    </el-tree>
                 </div>
             </div>
-            <div class="formData">
+            <div class="formData" > <!--v-loading.fullscreen.lock="loading"-->
                 <ul>
                     <li>凭证日期</li>
                     <li>凭证字号</li>
@@ -81,68 +77,140 @@
 </template>
 
 <script>
+    import { mapState, mapActions } from 'vuex'
+    import { AuxiliaryTypeListNo } from '@/api/Auxiliary/typeInfo'
+    import { AuxiliaryList } from '@/api/Auxiliary/auxInfo'
+    /**
+     * 辅助项科目明细表
+     */
     export default {
-        name: "user",
+        name: "auxiliaryAc",
         data(){
             return{
-
-                part:'',
+                loading: false,
+                department:'',
                 JD:['平','借','贷'],
-                subjectLists:[
-                    {
-                        sheng:"科目",
-                        child:[
-                            {
-                                shi:'101 库存现金',
-                                child:[
-                                    {
-                                        xian:'西湖区',
-                                        child:['政云工会','相符工会','666']
-                                    }
-                                ]
-                            },
-                            {
-                                shi:'141 库存物品',
-                                child:[]
-                            },
-                            {
-                                shi:'102 银行存款',
-                                child:[
-                                    {
-                                        xian:'西湖区',
-                                        child:['政云工会','相符工会','666']
-                                    }
-                                ]
-                            },
-                        ]
-                    }
+                auxiliaryType:[],
+                auxiliaryLists:[
+
                 ],
+                defaultProps: {
+                    children: 'children',
+                    label: 'BaseName'
+                },
                 userState:0,
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
                 dataInfo:[
                 ]
             }
         },
+        //计算属性
+        computed:{
+            ...mapState({
+                orgid:state=>state.user.orgid,
+                uid:state=>state.user.userid,
+                user:state=>state.user
+            })
+        },
+        watch: {
+            department(val) {
+                this.getAuxiliaryLists(val);
+            }
+        },
+        created(){
+            //获取辅助项类型
+            this.getAuxiliaryTypeLists();
+        },
         mounted(){
 
         },
         methods:{
-            getData() {
+            getData(param) {
+                var typeSelect=this.auxiliaryType.filter(item => item.PhId===this.department);
+
                 var data = {
-                    org: 0,
-                    orgid: 0,
+                    OrgIds: this.orgid,
                     Year: '2018',
-                    Del: "649181122000008",
-                    Type:'S01'
+                    Del: param.PhId,
+                    Type:typeSelect[0].GLS
                 }
-                this.$axios.get("http://10.0.45.51:8028/api/GCW/PVoucherMst/GetDetailAccountTAV",{params:data})
+                this.$axios.get("/PVoucherMst/GetDetailAccountTAV",{params:data})
                     .then(res=>{
+                        this.loading = false;
+                        
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
                         this.dataInfo=res.Record;
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{
+                        console.log(err)
+                        this.loading = false;
+                        this.$message({ showClose: true, message: '获取辅助项科目明细表错误!',type: 'error' })
+                    })
 
             },
-            unionListOpen($event){
+            //获取辅助项类型
+            getAuxiliaryTypeLists(){
+                var vm=this;
+                this.loading = true;
+                //辅助项类别
+                AuxiliaryTypeListNo(vm,{
+                    uid: this.uid,
+                    orgid: this.orgid
+                }).then(res => {
+                    this.loading = false;
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    
+                    let types=res.type;
+                    
+                    if(types.length>0){
+                        this.auxiliaryType=types;
+                        this.department=types[0].PhId
+                        this.getAuxiliaryLists(types[0].PhId);
+                    }
+
+                }).catch(error =>{
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({ showClose: true, message: '辅助项类型获取错误',type: 'error' })
+                })
+            },
+            /**
+             * 获取 辅助项详细明细
+             * typeid:辅助项类型主键
+             */
+            getAuxiliaryLists(typeid){
+                var vm=this;
+                this.loading = true;
+                //辅助项详细明细
+                AuxiliaryList(vm,{
+                    uid: this.uid,
+                    orgid: this.orgid,
+                    typeId:typeid
+                }).then(res => {
+                     this.loading = false;
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.auxiliaryLists=res.list;
+                    //加载数据
+                    if(res.list.length>0){
+                        this.getData(res.list[0])
+                    }
+
+                }).catch(error =>{
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({ showClose: true, message: '辅助项详细获取错误',type: 'error' })
+                })
+            },
+            unionListOpen(data,$event){
                 var e=$event.target;
                 if(e.className=="moreList"){
                     e.className="moreList moreListOpen";
@@ -152,6 +220,12 @@
                     e.className="moreList"
                     e.nextElementSibling.style.display='block';
                 }
+                console.log(data);
+            },
+            //辅助项选择
+            handleNodeClick(data){
+                //console.log(data);
+                this.getData(data);
             }
         }
     }

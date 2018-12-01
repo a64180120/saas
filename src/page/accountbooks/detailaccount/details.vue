@@ -28,29 +28,25 @@
             </div>
             <div class="flexPublic manageContent p0">
                 <div class="unionLists">
-                    <p class="unionListsTitle">科目列表</p>
+                    <div class="unionListsTitle">科目列表 &nbsp;
+                        <div >
+                            <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
+                        </div>
+                    </div>
                     <div class="unionListsContent">
-                        <ul>
-                            <li v-for="(sheng,index) of subjectLists" :key="index">
-                                <div @click="unionListOpen" :class="{moreList:subjectLists.length>1}">{{sheng.sheng}}</div>
-                                <ul>
-                                    <li v-for="(shi,index2) of sheng.child" :key="index2">
-                                        <div @click="unionListOpen" :class="{moreList:shi.child.length>1}">{{shi.shi}}</div>
-                                        <ul>
-                                            <li v-for="(xian,index3) of shi.child" :key="index3">
-                                                <div @click="unionListOpen" :class="{moreList:xian.child.length>1}">{{xian.xian}}</div>
-                                                <ul>
-                                                    <li v-for="(union,index4) of xian.child" :key="index4">{{union}}</li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                        <el-tree
+                            class="filter-tree"
+                            :data="subjectLists"
+                            :props="defaultProps"
+                            default-expand-all
+                            node-key="PhId"
+                            :filter-node-method="filterNode"
+                            @node-click="handleNodeClick"
+                            ref="subjectTree">
+                        </el-tree>
                     </div>
                 </div>
-                <div class="formData">
+                <div class="formData" > <!--v-loading.fullscreen.lock="loading"-->
                     <ul>
                         <li>凭证日期</li>
                         <li>凭证字号</li>
@@ -76,40 +72,25 @@
 
 <script>
     import {delList} from '../../../api/detailaccount/details.js'
+    import { mapState, mapActions } from 'vuex'
+    import { SubjectList } from '@/api/subject/subjectInfo'
+
+    /**
+     * 明细表
+     */
     export default {
-        name: "user",
+        name: "detailsAc",
         data() {
             return {
+                loading: false,
                 JD: ['平', '借', '贷'],
-                subjectLists: [
-                    {
-                        sheng: "科目",
-                        child: [
-                            {
-                                shi: '101 库存现金',
-                                child: [
-                                    {
-                                        xian: '西湖区',
-                                        child: ['政云工会', '相符工会', '666']
-                                    }
-                                ]
-                            },
-                            {
-                                shi: '141 库存物品',
-                                child: []
-                            },
-                            {
-                                shi: '102 银行存款',
-                                child: [
-                                    {
-                                        xian: '西湖区',
-                                        child: ['政云工会', '相符工会', '666']
-                                    }
-                                ]
-                            },
-                        ]
-                    }
-                ],
+                filterText:'',
+                subjectLists: [],
+                selectItem:'',
+                defaultProps: {
+                    children: 'children',
+                    label: 'KName'
+                },
                 userState: 0,
                 userStateValues: [{id: 0, uname: '全部'}, {id: 1, uname: '启用'}, {id: 2, uname: '停用'}, {
                     id: 3,
@@ -119,28 +100,84 @@
             }
         },
         created() {
-            this.getData();
+            
+            //获取科目属性列表
+            this.getSubjectData();
         },
         mounted() {
 
         },
+        watch: {
+            filterText(val) {
+                this.$refs.subjectTree.filter(val);
+            }
+        },
+        computed:{
+            ...mapState({
+                orgid:state=>state.user.orgid,
+                uid:state=>state.user.userid,
+                user:state=>state.user
+            })
+        },
         methods: {
-            getData() {
+            getData(param) {
                 var data = {
-                    org: 0,
-                    orgid: 0,
-                    Kcode: '999',
-                    Year: '2018',
-                }
-             /*   var vm = this;
-                console.log(this.$delList)
-                this.delList(vm, data)
-                    .then(res => console.log(res))*/
-                 this.$axios.get("http://10.0.45.51:8028/api/GCW/PVoucherMst/GetDetailAccount",{params:data})
+                    uid: this.uid,
+                    OrgIds: this.orgid,
+                    Kcode: param.KCode||'',
+                    Year: param.Uyear|| '',
+                };
+                //debugger;
+                this.loading = true;
+                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
+                        this.loading = false;
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
                         this.dataInfo=res.Record;
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{
+                        console.log(err)
+                        this.loading = false;
+                        this.$message({ showClose: true, message: err.Msg,type: 'error' })
+                    })
+
+
+            },
+            async getSubjectData(){
+                var vm=this;
+                this.loading = true;
+
+                //科目列表
+                SubjectList(vm,{
+                    uid: this.uid,
+                    orgid: this.orgid
+                }).then(res => {
+                    this.loading = false;
+                    //console.log(res);
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.subjectLists=res;
+
+                    if(res.length>0){
+                        //this.selectItem=res[0];
+                        //加载第一个科目的明细
+                        //this.getData(res[0]);
+                    }
+
+                }).catch(error =>{
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({
+                        showClose: true,
+                        message: '科目列表获取错误',
+                        type: 'error'
+                    })
+                })
 
             },
             unionListOpen($event) {
@@ -153,6 +190,17 @@
                     e.className = "moreList"
                     e.nextElementSibling.style.display = 'block';
                 }
+            },
+            //科目过滤
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.KName.indexOf(value) !== -1;
+            },
+            //科目选择
+            handleNodeClick(data){
+                //console.log(data);
+                //this.selectItem=data;
+                this.getData(data);
             }
         },
     }
@@ -232,6 +280,17 @@
     .unionLists~.formData{
         width:80%;
         align-self: flex-start;
+    }
+    .unionLists>div.unionListsTitle{
+        text-align: center;
+        background: #83c350;
+        height:50px;
+        color:#fff;
+        font-size: 15px;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .unionLists>p{
         text-align: center;

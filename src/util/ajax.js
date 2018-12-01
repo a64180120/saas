@@ -129,7 +129,13 @@ service.interceptors.response.use(
         //         break
         //     }
         // }
-        return Promise.resolve(JSON.parse(response.data));
+
+        let result = /^[{\[].*[}\]]$/g.test(res)
+        if (result) {
+            return Promise.resolve(JSON.parse(res));
+        } else {
+            return Promise.resolve(res);
+        }
     },
     error => {
         if (axios.isCancel(error)) {
@@ -149,7 +155,7 @@ service.interceptors.response.use(
                         type: "error"
                     });
             }
-            return Promise.reject(error.response.data);
+            return Promise.reject(JSON.parse(error.response.data));
         }
     }
 );
