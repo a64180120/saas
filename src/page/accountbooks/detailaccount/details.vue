@@ -127,7 +127,7 @@
                     Kcode: param.KCode||'',
                     Year: param.Uyear|| '',
                 };
-                //debugger;
+
                 this.loading = true;
                  this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
@@ -141,7 +141,7 @@
                     .catch(err=>{
                         console.log(err)
                         this.loading = false;
-                        this.$message({ showClose: true, message: err.Msg,type: 'error' })
+                        this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
                     })
 
 
