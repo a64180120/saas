@@ -3,7 +3,7 @@ let Base64 = require("js-base64").Base64;
 
 const ajaxMode = {
   //网站api的地址
-  url:"http://10.0.20.46:8028", 
+  url:"http://127.0.0.1:8028", 
   dbname:"NG0001",
 
   getAxiosConfig:function(){

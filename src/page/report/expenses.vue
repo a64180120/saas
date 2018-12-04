@@ -23,22 +23,26 @@
             </ul>
         </div>
         <div class="formData">
-            <ul>
-                <li>项目</li>
-                <li>年初数</li>
-                <li>期末数</li>
-            </ul>
             <ul class="formDataItems flexPublic">
                 <li>一、收入</li>
                 <li></li>
                 <li></li>
             </ul>
-            <ul v-for="(item,index) of inMoney" class="formDataList formDataItems flexPublic">
+            <!-- <ul v-for="item of inMoney" :key="item.code" class="formDataList formDataItems flexPublic">
                 <li>{{item.code}}</li>
                 <li>{{item.name}}</li>
                 <li></li>
                 <li></li>
-            </ul>
+            </ul> -->
+            <tree-table 
+                :data="inMoney" 
+                :expand-all="expandAll" 
+                :columns="columns" 
+                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                v-loading="loading"
+                highlight-current-row
+                border>
+            </tree-table>
             <ul class="formDataItems flexPublic">
                 <li class="align-center ">本期合计收入</li>
                 <li></li>
@@ -49,12 +53,21 @@
                 <li></li>
                 <li></li>
             </ul>
-            <ul v-for="(item,index) of inMoney" class="formDataList formDataItems flexPublic">
+            <!-- <ul v-for="(item) of inMoney" :key="item.code" class="formDataList formDataItems flexPublic">
                 <li>{{item.code}}</li>
                 <li>{{item.name}}</li>
                 <li></li>
                 <li></li>
-            </ul>
+            </ul> -->
+            <tree-table 
+                :data="outMoney" 
+                :expand-all="expandAll" 
+                :columns="columns" 
+                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                v-loading="loading"
+                highlight-current-row
+                border>
+            </tree-table>
             <ul class="formDataItems flexPublic">
                 <li class="align-center ">本期合计支出</li>
                 <li></li>
@@ -68,35 +81,96 @@
 </template>
 
 <script>
+    /**
+     * 收入支出表
+     */
+    import { IncomList,IncomListToExcel } from '@/api/voucher/reportInfo'
+    import { mapState, mapActions } from 'vuex'
+    import treeTable from "@/components/tree-table";
+
     export default {
-        name: "user",
+        name: "expensesRe",
         data(){
             return{
-                inMoney:[
-                    {code:401,name:'会费收入'},
-                    {code:402,name:'拨浇经费收入'},
-                    {code:40301,name:'上级补助收入'},
-                    {code:40401,name:'回拨补助'}
+                loading: false,
+                expandAll: true,
+                columns: [
+                    {
+                        text: "编码",
+                        value: "KCode",
+                        width: 200
+                    },
+                    {
+                        text: "名称",
+                        value: "KName"
+                    },
+                    {
+                        text: "本月数",
+                        value: "StartSum"
+                    },
+                    {
+                        text: "本年累计数",
+                        value: "EndSum"
+                    }
                 ],
-                outMoney:[
-                    {code:501,name:'职工活动支出'},
-                    {code:502,name:'职工教育费'},
-                    {code:60301,name:'文体活动费'},
-                    {code:60401,name:'回拨补助'}
-                ],
+                //收入
+                inMoney:[],
+                outMoney:[],
                 userState:0,
-                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
-                dataInfo:[
-                    {PhId:1,PDate:'2018-01-01',Abstract:'test1', PNo:'0001',JSum:'1111',DSum:'1111',JD:'1',money:'2222'},
-                    {PhId:1,PDate:'2018-02-01',Abstract:'test2', PNo:'0001',JSum:'333',DSum:'',JD:'2',money:'3333'},
-                    {PhId:1,PDate:'2018-03-01',Abstract:'test3', PNo:'0001',JSum:'',DSum:'333',JD:'0',money:'4444'}
-                ]
+                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}]
             }
+        },
+        components: { treeTable },
+        computed:{
+            ...mapState({
+                orgid:state=>state.user.orgid,
+                uid:state=>state.user.userid,
+                user:state=>state.user
+            })
+        },
+        created(){
+
         },
         mounted(){
 
+            this.getData();
         },
         methods:{
+            getData(){
+                //收入科目的数据
+                var data = {
+                    accountPeriod: '2018-11-03', //账期
+                    isContainUncheck: '1',      //是否包含未审核的凭证(1=包含，0=不包含)
+                };
+                var vm=this;
+                IncomList(vm,data).then(res => {
+                    this.loading = false;
+                    console.log(res);
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+
+                    var data=res.Data;
+                    this.inMoney=data.filter((value,key,arr) => {
+                        //1-资产,2-负债,3-净资产,4-收入,5-支出
+                        return value.KType==="4"
+                    })
+
+                    this.outMoney=data.filter((value,key,arr) => {
+                        //1-资产,2-负债,3-净资产,4-收入,5-支出
+                        return value.KType==="5"
+                    })
+
+                    //this.inMoney=res.Data;
+
+                }).catch(error =>{
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({ showClose: true,  message: '收入科目获取错误',  type: 'error' })
+                })
+
+            }
         }
     }
 </script>
@@ -123,7 +197,7 @@
     }
 
     .formData>ul:first-child>li:last-of-type{
-        border-right:1px solid #2780d1;
+        /* border-right:1px solid #2780d1; */
     }
 
     .formData>ul>li:first-child{
