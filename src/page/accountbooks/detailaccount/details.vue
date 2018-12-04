@@ -4,16 +4,15 @@
                 <ul class="flexPublic">
                     <li class="flexPublic">
                         <div>账期:</div>
-                        <div class="selectContainer">
-                            <select  v-model="userState">
-                                <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                            </select>
-                        </div>
-                        <div>至</div>
-                        <div class="selectContainer">
-                            <select  v-model="userState">
-                                <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                            </select>
+                        <div>
+                            <el-date-picker
+                                v-model="zwTime"
+                                type="daterange"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                value-format="yyyy-MM-dd">
+                            </el-date-picker>
                         </div>
                     </li>
                 </ul>
@@ -91,11 +90,11 @@
                     children: 'children',
                     label: 'KName'
                 },
-                userState: 0,
-                userStateValues: [{id: 0, uname: '全部'}, {id: 1, uname: '启用'}, {id: 2, uname: '停用'}, {
-                    id: 3,
-                    uname: '临时停用'
-                }],
+                zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
+                auxiliary:0,  //显示辅助项
+                pageSize: 40, //pageSize
+                pageIndex: 1, //pageIndex
+                totalCount: 0, //总页数
                 dataInfo: []
             }
         },
@@ -126,8 +125,10 @@
                     OrgIds: this.orgid,
                     Kcode: param.KCode||'',
                     Year: param.Uyear|| '',
+                    pagesize:this.pageSize,
+                    pageindex:this.pageIndex- 1
                 };
-                //debugger;
+
                 this.loading = true;
                  this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
@@ -137,11 +138,12 @@
                             return
                         }
                         this.dataInfo=res.Record;
+                        this.totalCount=res.totalRows;
                     })
                     .catch(err=>{
                         console.log(err)
                         this.loading = false;
-                        this.$message({ showClose: true, message: err.Msg,type: 'error' })
+                        this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
                     })
 
 
@@ -164,9 +166,9 @@
                     this.subjectLists=res;
 
                     if(res.length>0){
-                        //this.selectItem=res[0];
+                        this.selectItem=res[0];
                         //加载第一个科目的明细
-                        //this.getData(res[0]);
+                        this.getData(res[0]);
                     }
 
                 }).catch(error =>{
