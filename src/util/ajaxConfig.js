@@ -37,6 +37,7 @@ const ajaxMode = {
     };
 
     var headerconfig={
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         'Accept': "application/json; charset=utf-8",
         'AppInfo': appInfo,
         'Sign':items[0]+','+items[1]+','+items[2]+','+items[3]

@@ -4,36 +4,24 @@
             <ul class="flexPublic">
                 <li class="flexPublic">
                     <div>账期:</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                        </select>
-                    </div>
-                    <div>至</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                        </select>
+                    <div>
+                        <el-date-picker
+                            v-model="zwTime"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd">
+                        </el-date-picker>
                     </div>
                 </li>
             </ul>
             <ul class="flexPublic handle">
                 <a href=""><li>打印</li></a>
-                <a href=""><li>导出</li></a>
+                <el-button style='margin:0 0 20px 20px;' icon="document" @click="download" plain>导出</el-button>
             </ul>
         </div>
         <div class="formData">
-            <ul class="formDataItems flexPublic">
-                <li>一、收入</li>
-                <li></li>
-                <li></li>
-            </ul>
-            <!-- <ul v-for="item of inMoney" :key="item.code" class="formDataList formDataItems flexPublic">
-                <li>{{item.code}}</li>
-                <li>{{item.name}}</li>
-                <li></li>
-                <li></li>
-            </ul> -->
             <tree-table 
                 :data="inMoney" 
                 :expand-all="expandAll" 
@@ -43,39 +31,6 @@
                 highlight-current-row
                 border>
             </tree-table>
-            <ul class="formDataItems flexPublic">
-                <li class="align-center ">本期合计收入</li>
-                <li></li>
-                <li></li>
-            </ul>
-            <ul class="formDataItems flexPublic">
-                <li>二、支出</li>
-                <li></li>
-                <li></li>
-            </ul>
-            <!-- <ul v-for="(item) of inMoney" :key="item.code" class="formDataList formDataItems flexPublic">
-                <li>{{item.code}}</li>
-                <li>{{item.name}}</li>
-                <li></li>
-                <li></li>
-            </ul> -->
-            <tree-table 
-                :data="outMoney" 
-                :expand-all="expandAll" 
-                :columns="columns" 
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
-                v-loading="loading"
-                highlight-current-row
-                border>
-            </tree-table>
-            <ul class="formDataItems flexPublic">
-                <li class="align-center ">本期合计支出</li>
-                <li></li>
-                <li></li>
-            </ul>
-
-
-
         </div>
     </div>
 </template>
@@ -87,13 +42,16 @@
     import { IncomList,IncomListToExcel } from '@/api/voucher/reportInfo'
     import { mapState, mapActions } from 'vuex'
     import treeTable from "@/components/tree-table";
+    import treeSum from './totalAmount'
 
     export default {
         name: "expensesRe",
         data(){
             return{
+                downloadLoading:false,
                 loading: false,
                 expandAll: true,
+                zwTime:'',
                 columns: [
                     {
                         text: "编码",
@@ -115,7 +73,6 @@
                 ],
                 //收入
                 inMoney:[],
-                outMoney:[],
                 userState:0,
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}]
             }
@@ -152,17 +109,61 @@
                     }
 
                     var data=res.Data;
-                    this.inMoney=data.filter((value,key,arr) => {
+                    var indata=data.filter((value,key,arr) => {
                         //1-资产,2-负债,3-净资产,4-收入,5-支出
                         return value.KType==="4"
                     })
 
-                    this.outMoney=data.filter((value,key,arr) => {
+                    // indata[2].StartSum=12
+                    // indata[2].EndSum=21
+
+                    // indata[2].children[0].StartSum=22
+                    // indata[2].children[0].EndSum=33
+
+                    var indata_StartSum=0;
+                    var indata_EndSum=0;
+                    //var listArry=treeSum(indata);
+                    treeSum(indata).forEach(item =>{
+                        indata_StartSum +=item.StartSum;
+                        indata_EndSum +=item.EndSum
+                    })
+
+                    var outdata=data.filter((value,key,arr) => {
                         //1-资产,2-负债,3-净资产,4-收入,5-支出
                         return value.KType==="5"
                     })
 
-                    //this.inMoney=res.Data;
+                    var outdata_StartSum=0;
+                    var outdata_EndSum=0;
+                    //var listArry2=treeSum(outdata);
+                    treeSum(outdata).forEach(item =>{
+                        outdata_StartSum +=item.StartSum;
+                        outdata_EndSum +=item.EndSum
+                    })
+
+                    var newdata=new Array();
+
+                    this.inMoney=newdata.concat([{
+                        KCode:'一、收入',
+                        KName:'',
+                        StartSum:'',
+                        EndSum:''
+                    }],indata,[{
+                        KCode:'',
+                        KName:'本期合计收入',
+                        StartSum:indata_StartSum,
+                        EndSum:indata_EndSum
+                    }],[{
+                        KCode:'二、支出',
+                        KName:'',
+                        StartSum:'',
+                        EndSum:''
+                    }],outdata,[{
+                        KCode:'',
+                        KName:'本期合计支出',
+                        StartSum:outdata_StartSum,
+                        EndSum:outdata_EndSum
+                    }])
 
                 }).catch(error =>{
                     console.log(error);
@@ -170,6 +171,52 @@
                     this.$message({ showClose: true,  message: '收入科目获取错误',  type: 'error' })
                 })
 
+            },
+            download(){
+
+                //var data=this.inMoney
+                // let param = {'infoData':this.inMoney};
+
+                // this.$axios({
+                //     method:'post',
+                //     url:'/PVoucherMst/PostIncomAndExpenditureExcel',
+                //     data:param,
+                //     responseType:'blob'
+                // }) .then(res => {
+                //     console.log(res);
+                // }).catch(err => {
+                //     console.log(err)
+                // })
+
+                this.downloadLoading = true
+                import('@/vendor/Export2Excel').then(excel => {
+                    const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
+                    const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
+                    const list = this.list
+                    const data = this.formatJson(filterVal, list)
+                    excel.export_json_to_excel({
+                    header: tHeader,
+                    data,
+                    filename: this.filename,
+                    autoWidth: this.autoWidth
+                    })
+                    this.downloadLoading = false
+                })
+
+            },
+            // 下载文件
+            downloadFile (data) {
+                if (!data) {
+                    return
+                }
+                let url = window.URL.createObjectURL(new Blob([data]))
+                let link = document.createElement('a')
+                link.style.display = 'none'
+                link.href = url
+                link.setAttribute('download', 'excel.xlsx')
+                
+                document.body.appendChild(link)
+                link.click()
             }
         }
     }

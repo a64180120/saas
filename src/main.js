@@ -14,14 +14,10 @@ import App from './index'
 import 'babel-polyfill'
 import './components/install'
 import './plugins/install'
+import infiniteScroll from 'vue-infinite-scroll'
 
 import '@/assets/css/myStyle.css'//自定义样式*************************
 import '@/assets/css/font_li.css'  //阿里的图标样式
-
-// import http from './util/ajaxMode' //自定义ajax头部配置*****
-// let Base64 = require('js-base64').Base64
-// Vue.prototype.$http=http
-
 
 // 注册组件到Vue
 Vue.prototype.$axios = axios
@@ -31,6 +27,8 @@ Vue.prototype.$axios = axios
 Vue.use(ElementUI, {
     i18n: (key, value) => i18n.t(key, value)
 })
+//注册滚动加载插件
+Vue.use(infiniteScroll)
 
 new Vue({
     i18n,
