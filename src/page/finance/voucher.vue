@@ -174,11 +174,11 @@
         </div>
         <div class="voucherFoot">
             <ul class="flexPublic ">
-                <li><label>财务主管: <input type="text" v-model="PFinancePerson"> </label></li>
-                <li><label>记账:<input type="text" v-model="PKeepingPerson"> </label></li>
-                <li><label>审核: <input type="text" v-model="PAuditor"></label></li>
-                <li><label>制单: <input type="text" v-model="PMakePerson"></label></li>
-                <li><label>出纳:<input type="text" v-model="PCashier"> </label></li>
+                <li><label>财务主管: <span>{{PFinancePerson}}</span> </label></li>
+                <li><label>记账:<span>{{PKeepingPerson}}</span></label></li>
+                <li><label>审核: <span>{{PAuditor}}</span></label></li>
+                <li><label>制单: <span>{{PMakePerson}}</span></label></li>
+                <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
         </div>
     </div>
@@ -199,9 +199,9 @@
             PNo:'0001',
             PAttachment:'0',
             PMakePerson:'',
-            PFinancePerson:'王',
-            PKeepingPerson:'李',
-            PCashier:'吴',
+            PFinancePerson:'',
+            PKeepingPerson:'',
+            PCashier:'',
             PAuditor:'',
             PType:'',
             Verify:'',

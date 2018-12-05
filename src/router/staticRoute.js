@@ -15,7 +15,7 @@ const staticRoute = [
     },
     {
         path:'/index',
-        component: () =>import("../page/index"),
+        component: () =>import("../page/finance/addVoucher"),
     },
     {
         path: "/home",
