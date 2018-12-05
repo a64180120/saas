@@ -173,6 +173,8 @@
 
 <script>
     import * as axios from "axios";
+    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+    
     let balanceData=[];
     export default {
         name: "user",

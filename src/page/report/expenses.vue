@@ -18,7 +18,7 @@
             </ul>
             <ul class="flexPublic handle">
                 <a href=""><li>打印</li></a>
-                <el-button @click="download" plain>导出</el-button>
+                <el-button style='margin:0 0 20px 20px;' icon="document" @click="download" plain>导出</el-button>
             </ul>
         </div>
         <div class="formData">
@@ -48,6 +48,7 @@
         name: "expensesRe",
         data(){
             return{
+                downloadLoading:false,
                 loading: false,
                 expandAll: true,
                 zwTime:'',
@@ -174,17 +175,32 @@
             download(){
 
                 //var data=this.inMoney
-                let param = {'infoData':this.inMoney};
+                // let param = {'infoData':this.inMoney};
 
-                this.$axios({
-                    method:'post',
-                    url:'/PVoucherMst/PostIncomAndExpenditureExcel',
-                    data:param,
-                    responseType:'blob'
-                }) .then(res => {
-                    console.log(res);
-                }).catch(err => {
-                    console.log(err)
+                // this.$axios({
+                //     method:'post',
+                //     url:'/PVoucherMst/PostIncomAndExpenditureExcel',
+                //     data:param,
+                //     responseType:'blob'
+                // }) .then(res => {
+                //     console.log(res);
+                // }).catch(err => {
+                //     console.log(err)
+                // })
+
+                this.downloadLoading = true
+                import('@/vendor/Export2Excel').then(excel => {
+                    const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
+                    const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
+                    const list = this.list
+                    const data = this.formatJson(filterVal, list)
+                    excel.export_json_to_excel({
+                    header: tHeader,
+                    data,
+                    filename: this.filename,
+                    autoWidth: this.autoWidth
+                    })
+                    this.downloadLoading = false
                 })
 
             },
