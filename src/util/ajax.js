@@ -91,9 +91,9 @@ service.interceptors.request.use(
         });
 
         let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
-        var new_header = Object.assign({},config_header, baseheader);  //合并对象
+        let new_header = Object.assign({},config_header, baseheader);  //合并对象
 
-        config.headers = new_header
+        config.headers = new_header;
 
         //POST传参序列化
         if (config.method === "post") {
@@ -129,8 +129,7 @@ service.interceptors.response.use(
         //         break
         //     }
         // }
-
-        let result = /^[{\[].*[}\]]$/g.test(res)
+        let result = /^[{\[].*[}\]]$/g.test(res);
         if (result) {
             return Promise.resolve(JSON.parse(res));
         } else {
