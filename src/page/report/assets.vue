@@ -34,7 +34,7 @@
             </ul>
             <ul class="flexPublic handle">
                 <a href=""><li>打印</li></a>
-                <el-button @click="postBalanceSheetExcel"><li>导出</li></el-button >
+                <el-button style='margin:0 0 20px 20px;' type="primary" icon="document" @click="postBalanceSheetExcel" :loading="downloadLoading"><li>导出</li></el-button >
             </ul>
         </div>
         <div class="formData">
@@ -136,186 +136,6 @@
                     </ul>
                 </template>
             </template>
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>101</li>-->
-                <!--<li>库存现金</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>201</li>-->
-                <!--<li>应付工资(离退休费)</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>102</li>-->
-                <!--<li>银行存款</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>202</li>-->
-                <!--<li>应付地方(部门)津贴补贴</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>111</li>-->
-                <!--<li>零余额账户用款额度</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>203</li>-->
-                <!--<li>应付其他个人收入</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>112</li>-->
-                <!--<li>政府应返还额度</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>211</li>-->
-                <!--<li>借入款</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>121</li>-->
-                <!--<li>借出款</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>222</li>-->
-                <!--<li>应付上级经费</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>131</li>-->
-                <!--<li>应收上级经费</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>222</li>-->
-                <!--<li>应付下级经费</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>132</li>-->
-                <!--<li>应收下级经费</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>225</li>-->
-                <!--<li>其他应付款</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>135</li>-->
-                <!--<li>其他应收款</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>231</li>-->
-                <!--<li>代管经费</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>141</li>-->
-                <!--<li>库存物品</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li class="align-center">负债合计</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>151</li>-->
-                <!--<li>投资</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>161</li>-->
-                <!--<li>在建工程</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li class="align-center">三、净资产类</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li>162</li>-->
-                <!--<li>固定资产</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>301</li>-->
-                <!--<li>固定基金</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>302</li>-->
-                <!--<li>再见工程占用资金</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>311</li>-->
-                <!--<li>投资基金</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>321</li>-->
-                <!--<li>专用基金</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>322</li>-->
-                <!--<li>后备金</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li>331</li>-->
-                <!--<li>结余</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
-            <!--<ul class="formDataItems flexPublic">-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-                <!--<li class="align-center">净资产合计</li>-->
-                <!--<li></li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
             <ul class="formDataItems flexPublic">
                 <li></li>
                 <li></li>
@@ -336,16 +156,16 @@
                 <li>{{cashOutCounts+cashCounts}}</li>
                 <li></li>
             </ul>
-            <!--<ul class="formDataItems flexPublic bottomForm">-->
-                <!--<li>工会主席：</li>-->
-                <!--<li></li>-->
-                <!--<li>财务负责人：</li>-->
-                <!--<li></li>-->
-                <!--<li>复核：</li>-->
-                <!--<li></li>-->
-                <!--<li>制表：</li>-->
-                <!--<li></li>-->
-            <!--</ul>-->
+            <ul class="formDataItems flexPublic bottomForm">
+                <li>工会主席：</li>
+                <li></li>
+                <li>财务负责人：</li>
+                <li></li>
+                <li>复核：</li>
+                <li></li>
+                <li>制表：</li>
+                <li></li>
+            </ul>
 
         </div>
     </div>
@@ -360,6 +180,7 @@
         data(){
             return{
                 userState:0,
+                downloadLoading: false,
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
                 dataInfo:[
                     {PhId:1,PDate:'2018-01-01',Abstract:'test1', PNo:'0001',JSum:'1111',DSum:'1111',JD:'1',money:'2222'},
@@ -463,54 +284,67 @@
                 let baseheader=ajaxhttp.header;
                 let base=ajaxhttp.base;
 
-                let config_header = { 
-                    "Content-Type": "application/x-www-form-urlencoded; charset=utf-8;application/octet-stream",
-                    'AppInfo': baseheader.AppInfo,
-                    'Sign':baseheader.Sign
-                };
+                // this.downloadLoading = true
+                // import('@/vendor/Export2Excel').then(excel => {
+                //     const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
+                //     const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
+                //     const list = this.list
+                //     const data = this.formatJson(filterVal, list)
+                //     excel.export_json_to_excel({
+                //     header: tHeader,
+                //     data,
+                //     filename: this.filename,
+                //     autoWidth: this.autoWidth
+                //     })
+                //     this.downloadLoading = false
+                // })
 
-                //debugger;
+                //下载Excel
+				this.$axios({
+                    method:'get',
+                    url:'/PVoucherMst/GetBalanceSheetExcel',
+                    params:{
+                        accountPeriod:'2018-12-01',
+                        isContainUncheck:1
+                    }
+                }) .then(res => {
+                    window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
 
-                //var new_header = Object.assign({},config_header, baseheader);
+                }).catch(err => {
+                    console.log(err)
+                })
 
-                //location.href = "http://127.0.0.1:8028/api/Demo/GetExportData";
 
-                axios.create(base).get('http://127.0.0.1:8028/api/Demo/GetBalanceSheetExcelTo').then(res => {
-                    
-                    //debugger;
-                    
-                    // let fileName = res.headers['content-disposition'].split('=')[1];
-                    // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
-                    let fileName = '123.txt';
-                    let blob = new Blob([res.data],{type:'application/ms-excel'});
-                    let objectUrl = window.URL.createObjectURL(blob);
-                    let link = document.createElement('a');
-                    link.style.display = 'none';
-                    link.href=objectUrl;
-                    link.setAttribute('download', fileName);
-                    document.body.appendChild(link);
-                    link.click();
 
-                    URL.revokeObjectURL(link.href);
-                    document.body.removeChild(link);
-                    
-            　　}).catch((error) =>{
-                    console.log(error)
-                });
             },
             //下载文件
             downloadFile(data){
                 if (!data) {
                     return
                 }
-                let url = window.URL.createObjectURL(new Blob([data]))
-                let link = document.createElement('a')
-                link.style.display = 'none'
-                link.href = url
-                link.setAttribute('download', 'excel.xls')
+                // let url = window.URL.createObjectURL(new Blob([data]))
+                // let link = document.createElement('a')
+                // link.style.display = 'none'
+                // link.href = url
+                // link.setAttribute('download', 'excel.xls')
                 
-                document.body.appendChild(link)
-                link.click()
+                // document.body.appendChild(link)
+                // link.click()
+
+                // let fileName = res.headers['content-disposition'].split('=')[1];
+                // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
+                let fileName = '123.txt';
+                let blob = new Blob([data],{type:'application/ms-excel'});
+                let objectUrl = window.URL.createObjectURL(blob);
+                let link = document.createElement('a');
+                link.style.display = 'none';
+                link.href=objectUrl;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+
+                URL.revokeObjectURL(link.href);
+                document.body.removeChild(link);
             }
 
         }
