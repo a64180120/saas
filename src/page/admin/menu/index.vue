@@ -271,6 +271,7 @@
                 loading: false,
                 tableData: [], //table数据
                 tableDataButton:[],
+                qData: [],
                 // pageSize: 10, //pageSize
                 // pageIndex: 1, //pageIndex
                 // totalCount: 0, //总页数
@@ -376,8 +377,8 @@
                 console.log(row);
             },
             handleClickRow(row) {
-                console.log(row.row);
-                this.singleSelection.push(row.row);
+                console.log(row);
+                this.singleSelection.push(row);
 
                 console.log(this.singleSelection);
                 //alert(this.singleSelection);
@@ -396,8 +397,13 @@
                     res => {
                         this.loading = false;
                         console.log(res);
+                        if(res.length == 0) {
+                            this.tableData = res;
+                        }else{
+                            this.tableData = JSON.parse(res);
+                        }
                         //let resultData = JSON.parse(res);
-                        this.tableData = res;
+
                         console.log(this.tableData);
 
                     },
@@ -424,7 +430,11 @@
                     res => {
                         console.log(res);
                         this.loadingButton = false;
-                        this.tableDataButton = res;
+                        if(res.length == 0) {
+                            this.tableDataButton = res;
+                        }else{
+                            this.tableDataButton = JSON.parse(res);
+                        }
                         console.log(this.tableDataButton);
                         //this.totalCount = Number(resultData.totalRows);
 
@@ -454,7 +464,11 @@
                             this.loading = false;
                             console.log(res);
                             //let resultData = JSON.parse(res);
-                            this.tableData = res;
+                            if(res.length == 0) {
+                                this.tableData = res;
+                            }else{
+                                this.tableData = JSON.parse(res);
+                            }
                             console.log(this.tableData);
 
                         },
@@ -484,7 +498,11 @@
                             this.loadingButton = false;
                             console.log(res);
                             //let resultData = JSON.parse(res);
-                            this.tableDataButton = res;
+                            if(res.length == 0) {
+                                this.tableDataButton = res;
+                            }else{
+                                this.tableDataButton = JSON.parse(res);
+                            }
                             console.log(this.tableDataButton);
 
                         },
@@ -822,7 +840,7 @@
                             orgid: "0",
                             infoData: this.form
                         };
-                        console.log(this.dialogState);
+                        console.log(this.form);
                         if(this.dialogState == "add")
                         {
                             this.$axios
