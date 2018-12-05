@@ -172,9 +172,8 @@
 </template>
 
 <script>
-    import axios from "axios";
-    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
-
+    import * as axios from "axios";
+    let balanceData=[];
     export default {
         name: "user",
         data(){
@@ -195,8 +194,7 @@
                 cashOutCounts:0,
                 cashCounts:0,
                 date1:'',
-                proofType:'0',
-                balanceData:[]
+                proofType:'0'
             }
         },
         mounted(){
@@ -261,7 +259,7 @@
                        for(let l in cash){
                            cashCount+=cash[l].StartSum;
                         }
-                       this.balanceData=res.Data;
+                       balanceData=res.Data;
                        this.cashInData=cashIn;
                        this.cashOutData=cashOut;
                        this.cashData=cash;
