@@ -64,6 +64,16 @@
                         <li >{{JD[item.DType]}}</li>
                         <li>{{item.Balance}}</li>
                     </ul>
+                    <!--
+                        v-infinite-scroll:
+                        infinite-scroll-distance 指定滚动条距离底部多高时触发v-infinite-scroll指向的方法
+                        infinite-scroll-disabled 等于true时代表正在执行加载，这时禁用滚动触发
+                        infinite-scroll-listen-for-event 当vue实例触发事件时立即再次检查
+                        infinite-scroll-throttle-delay 两次检查之间的时间间隔(默认值= 200)
+                      -->
+                    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                        .....加载中
+                    </div>   
                 </div>
             </div>
         </div>
@@ -95,7 +105,9 @@
                 pageSize: 40, //pageSize
                 pageIndex: 1, //pageIndex
                 totalCount: 0, //总页数
-                dataInfo: []
+                busy:false,    //是否正在加载过程中
+                dataInfo: [],
+                selectSubject:''  //选择科目
             }
         },
         created() {
@@ -119,26 +131,39 @@
             })
         },
         methods: {
-            getData(param) {
+            getData(flag) {
                 var data = {
                     uid: this.uid,
                     OrgIds: this.orgid,
-                    Kcode: param.KCode||'',
-                    Year: param.Uyear|| '',
+                    Kcode: this.selectSubject.KCode||'',
+                    Year: this.selectSubject.Uyear|| '',
                     pagesize:this.pageSize,
                     pageindex:this.pageIndex- 1
                 };
 
                 this.loading = true;
-                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
+                this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
                         this.loading = false;
+                        console.log(res);
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
+                            this.dataInfo=[]
                             return
                         }
-                        this.dataInfo=res.Record;
-                        this.totalCount=res.totalRows;
+                        if(flag){//如果flag为true则表示分页	
+                            this.dataInfo=this.dataInfo.concat(res.Record);  //concat数组串联进行合并
+
+                            if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
+                                this.busy=true;
+                            }else{ 
+                                this.busy=false;
+                            }
+                        }else{
+                            //第一次进入页面 完全不需要数据拼接的
+                            this.dataInfo=res.Record;
+                            this.totalCount=res.totalRows;
+                        }
                     })
                     .catch(err=>{
                         console.log(err)
@@ -158,7 +183,7 @@
                     orgid: this.orgid
                 }).then(res => {
                     this.loading = false;
-                    //console.log(res);
+                    
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
@@ -182,17 +207,17 @@
                 })
 
             },
-            unionListOpen($event) {
-                var e = $event.target;
-                if (e.className == "moreList") {
-                    e.className = "moreList moreListOpen";
-                    e.nextElementSibling.style.display = 'none';
-                }
-                else if (e.className == "moreList moreListOpen") {
-                    e.className = "moreList"
-                    e.nextElementSibling.style.display = 'block';
-                }
-            },
+            // unionListOpen($event) {
+            //     var e = $event.target;
+            //     if (e.className == "moreList") {
+            //         e.className = "moreList moreListOpen";
+            //         e.nextElementSibling.style.display = 'none';
+            //     }
+            //     else if (e.className == "moreList moreListOpen") {
+            //         e.className = "moreList"
+            //         e.nextElementSibling.style.display = 'block';
+            //     }
+            // },
             //科目过滤
             filterNode(value, data) {
                 if (!value) return true;
@@ -200,10 +225,20 @@
             },
             //科目选择
             handleNodeClick(data){
-                //console.log(data);
-                //this.selectItem=data;
-                this.getData(data);
-            }
+                this.selectSubject=data;
+                this.getData();
+            },
+            //当属性滚动的时候  加载  滚动加载
+            loadMore(){
+                console.log(this.pageIndex);    	
+                this.busy=true  //将无限滚动给禁用
+                setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
+                    this.pageIndex++;  //滚动之后加载第二页
+                    if(this.pageIndex < this.totalCount){
+                        this.getData(true);
+                    }
+                }, 1000);	    	
+            } 
         },
     }
 </script>
