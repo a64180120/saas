@@ -4,18 +4,30 @@
             <ul class="flexPublic">
                 <li class="flexPublic">
                     <div>账期:</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                        </select>
-                    </div>
-                    <div>至</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                        </select>
+                    <div>
+                        <el-date-picker
+                            v-model="zwTime"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd">
+                        </el-date-picker>
                     </div>
                 </li>
+                 <li class="flexPublic">
+                     <div>其他过滤:</div>
+                     <div>
+                        <el-select v-model="otherState" placeholder="请选择">
+                            <el-option
+                                v-for="item in otherStateList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                     </div>
+                 </li>
             </ul>
             <div class="flexPublic searcherCon">
                 <div class="searcherValue"><input type="text" placeholder="组织编码/名称"></div>
@@ -98,10 +110,15 @@
                     children: 'children',
                     label: 'BaseName'
                 },
-                userState:0,
-                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
-                dataInfo:[
-                ]
+                zwTime:0,
+                otherState:0,
+                otherStateList:[
+                    {id:0,name:'全部'},
+                    {id:1,name:'启用'},
+                    {id:2,name:'停用'},
+                    {id:3,name:'临时停用'}
+                ],
+                dataInfo:[]
             }
         },
         //计算属性
@@ -134,12 +151,11 @@
                     Del: param.PhId,
                     Type:typeSelect[0].GLS
                 }
-                this.$axios.get("/PVoucherMst/GetDetailAccountTAV",{params:data})
+                this.$axios.get("/PVoucherMst/GetDetailAccountTAV",{ params:data })
                     .then(res=>{
                         this.loading = false;
-                        
                         if(res.Status==='error'){
-                            this.$message.error(res.Msg);
+                            this.$message({ showClose: true, message: res.Msg,type: 'error' })
                             return
                         }
                         this.dataInfo=res.Record;

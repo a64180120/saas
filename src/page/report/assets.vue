@@ -352,8 +352,9 @@
 </template>
 
 <script>
-    import * as axios from "axios";
-    let balanceData=[];
+    import axios from "axios";
+    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+
     export default {
         name: "user",
         data(){
@@ -373,7 +374,8 @@
                 cashOutCounts:0,
                 cashCounts:0,
                 date1:'',
-                proofType:'0'
+                proofType:'0',
+                balanceData:[]
             }
         },
         mounted(){
@@ -438,7 +440,7 @@
                        for(let l in cash){
                            cashCount+=cash[l].StartSum;
                         }
-                       balanceData=res.Data;
+                       this.balanceData=res.Data;
                        this.cashInData=cashIn;
                        this.cashOutData=cashOut;
                        this.cashData=cash;
@@ -456,53 +458,31 @@
             * 参数：Data--资产负债表数据的整个data
             * */
             postBalanceSheetExcel:function(){
-                let param = {'infoData':balanceData};
+                let param = {'infoData':this.balanceData};
 
-                /*let fileName = 'www.xls';
-                let blob = new Blob(['hello'],{type:'application/ms-excel;charset=UTF-8'});
-                let objectUrl = window.URL.createObjectURL(blob);
-                let link = document.createElement('a');
-                link.style.display = 'none';
-                link.href=objectUrl;
-                link.setAttribute('download', fileName);
-                document.body.appendChild(link);
-                link.click();
-                URL.revokeObjectURL(link.href);
-                document.body.removeChild(link);*/
+                let baseheader=ajaxhttp.header;
+                let base=ajaxhttp.base;
 
-               /*this.$axios.post('PVoucherMst/PostBalanceSheetExcel',param,{responseType:'blob'})
-                    .then(res => {
-                        //let fileName = res.headers['content-disposition'].split('=')[1];
-                        let fileName = 'www.xls';
-                        console.log(fileName);
-                        //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-                        let blob = new Blob([res],{type:'application/vnd.ms-excel'});
-                        console.log(blob);
-                        let objectUrl = window.URL.createObjectURL(blob);
-                        let link = document.createElement('a');
-                        link.style.display = 'none';
-                        link.href=objectUrl;
-                        link.setAttribute('download', fileName);
-                        document.body.appendChild(link);
-                        link.click();
+                let config_header = { 
+                    "Content-Type": "application/x-www-form-urlencoded; charset=utf-8;application/octet-stream",
+                    'AppInfo': baseheader.AppInfo,
+                    'Sign':baseheader.Sign
+                };
 
-                        URL.revokeObjectURL(link.href);
-                        document.body.removeChild(link);
-                    })
-                    .catch(err => console.log(err))
-            }*/
-            this.$axios({
-                method:'post',
-                url:'PVoucherMst/PostBalanceSheetExcel',
-                data:param,
-                responseType:'blob'
-            }) .then(res => {
-                    //let fileName = res.headers['content-disposition'].split('=')[1];
-                    let fileName = 'www.xls';
-                    console.log(fileName);
-                    //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-                    let blob = new Blob([res],{type:'application/ms-excel'});
-                    console.log(blob);
+                //debugger;
+
+                //var new_header = Object.assign({},config_header, baseheader);
+
+                //location.href = "http://127.0.0.1:8028/api/Demo/GetExportData";
+
+                axios.create(base).get('http://127.0.0.1:8028/api/Demo/GetBalanceSheetExcelTo').then(res => {
+                    
+                    //debugger;
+                    
+                    // let fileName = res.headers['content-disposition'].split('=')[1];
+                    // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
+                    let fileName = '123.txt';
+                    let blob = new Blob([res.data],{type:'application/ms-excel'});
                     let objectUrl = window.URL.createObjectURL(blob);
                     let link = document.createElement('a');
                     link.style.display = 'none';
@@ -513,8 +493,24 @@
 
                     URL.revokeObjectURL(link.href);
                     document.body.removeChild(link);
-                })
-                .catch(err => console.log(err))
+                    
+            　　}).catch((error) =>{
+                    console.log(error)
+                });
+            },
+            //下载文件
+            downloadFile(data){
+                if (!data) {
+                    return
+                }
+                let url = window.URL.createObjectURL(new Blob([data]))
+                let link = document.createElement('a')
+                link.style.display = 'none'
+                link.href = url
+                link.setAttribute('download', 'excel.xls')
+                
+                document.body.appendChild(link)
+                link.click()
             }
 
         }
