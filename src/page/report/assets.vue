@@ -457,66 +457,19 @@
             * */
             postBalanceSheetExcel:function(){
                 let param = {'infoData':balanceData};
-
-                /*let fileName = 'www.xls';
-                let blob = new Blob(['hello'],{type:'application/ms-excel;charset=UTF-8'});
-                let objectUrl = window.URL.createObjectURL(blob);
-                let link = document.createElement('a');
-                link.style.display = 'none';
-                link.href=objectUrl;
-                link.setAttribute('download', fileName);
-                document.body.appendChild(link);
-                link.click();
-                URL.revokeObjectURL(link.href);
-                document.body.removeChild(link);*/
-
-               /*this.$axios.post('PVoucherMst/PostBalanceSheetExcel',param,{responseType:'blob'})
-                    .then(res => {
-                        //let fileName = res.headers['content-disposition'].split('=')[1];
-                        let fileName = 'www.xls';
-                        console.log(fileName);
-                        //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-                        let blob = new Blob([res],{type:'application/vnd.ms-excel'});
-                        console.log(blob);
-                        let objectUrl = window.URL.createObjectURL(blob);
-                        let link = document.createElement('a');
-                        link.style.display = 'none';
-                        link.href=objectUrl;
-                        link.setAttribute('download', fileName);
-                        document.body.appendChild(link);
-                        link.click();
-
-                        URL.revokeObjectURL(link.href);
-                        document.body.removeChild(link);
-                    })
-                    .catch(err => console.log(err))
-            }*/
-            this.$axios({
+                this.$axios({
                 method:'post',
                 url:'PVoucherMst/PostBalanceSheetExcel',
                 data:param,
-                responseType:'blob'
-            }) .then(res => {
-                    //let fileName = res.headers['content-disposition'].split('=')[1];
+                responseType:'arrayBuffer'
+                }) .then(res => {
                     let fileName = 'www.xls';
-                    console.log(fileName);
-                    //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
                     let blob = new Blob([res],{type:'application/ms-excel'});
-                    console.log(blob);
                     let objectUrl = window.URL.createObjectURL(blob);
-                    let link = document.createElement('a');
-                    link.style.display = 'none';
-                    link.href=objectUrl;
-                    link.setAttribute('download', fileName);
-                    document.body.appendChild(link);
-                    link.click();
-
-                    URL.revokeObjectURL(link.href);
-                    document.body.removeChild(link);
+                    window.location.href=objectUrl;
                 })
-                .catch(err => console.log(err))
+                    .catch(err => console.log(err))
             }
-
         }
     }
 </script>
