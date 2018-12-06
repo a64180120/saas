@@ -18,7 +18,7 @@
             </ul>
             <ul class="flexPublic handle">
                 <a href=""><li>打印</li></a>
-                <el-button style='margin:0 0 20px 20px;' icon="document" @click="download" plain>导出</el-button>
+                <el-button style='margin:0 0 20px 20px;' icon="el-icon-lx-down" @click="download" plain>导出</el-button>
             </ul>
         </div>
         <div class="formData">
@@ -190,15 +190,15 @@
 
                 this.downloadLoading = true
                 import('@/vendor/Export2Excel').then(excel => {
-                    const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
-                    const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
-                    const list = this.list
+                    const tHeader = ['编码', '名称', '本月数', '本年累计数']
+                    const filterVal = ['KCode', 'KName', 'StartSum', 'EndSum']
+                    const list = treeSum(this.inMoney)
                     const data = this.formatJson(filterVal, list)
                     excel.export_json_to_excel({
                     header: tHeader,
                     data,
                     filename: this.filename,
-                    autoWidth: this.autoWidth
+                    autoWidth: true
                     })
                     this.downloadLoading = false
                 })
@@ -217,6 +217,15 @@
                 
                 document.body.appendChild(link)
                 link.click()
+            },
+            formatJson(filterVal, jsonData) {
+                return jsonData.map(v => filterVal.map(j => {
+                    if (j === 'timestamp') {
+                    return parseTime(v[j])
+                    } else {
+                    return v[j]
+                    }
+                }))
             }
         }
     }
