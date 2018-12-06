@@ -10,8 +10,9 @@ const Print =function(dom, options) {
   if ((typeof dom) === "string") {
     this.dom = document.querySelector(dom);
   } else {
-    this.isDOM(dom)
-    this.dom = this.isDOM(dom)?dom:dom.$el;
+    //this.isDOM(dom)
+    //this.dom = this.isDOM(dom)?dom:dom.$el;
+    this.dom = dom;
   }
 
   this.init();

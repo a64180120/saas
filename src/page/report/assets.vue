@@ -37,7 +37,7 @@
                 <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
             </ul>
         </div>
-        <div class="formData" id="form1" ref="printFrom">
+        <div class="formData" ref="printFrom">
             <ul>
                 <li></li>
                 <li>资产</li>
@@ -362,17 +362,7 @@
             },
              // 打印
             printContent(e){
-                // let subOutputRankPrint = this.$refs.printFrom;
-                // console.log(subOutputRankPrint.innerHTML);
-                // let newContent =subOutputRankPrint.innerHTML;
-                // let oldContent = document.body.innerHTML;
-                // document.body.innerHTML = newContent;
-                // window.print();
-                // window.location.reload();
-                // document.body.innerHTML = oldContent;
-                // return false;
-
-                this.$print(this.$ref.printFrom) // 使用
+                this.$print(this.$refs.printFrom) // 使用
             }
 
         }

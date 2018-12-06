@@ -1,6 +1,6 @@
 /* eslint-disable */
 require('script-loader!file-saver');  //保存文件用
-require('script-loader!@/vendor/Blob');  //转二进制用
+require('script-loader!@/plugins/Excel/Blob');  //转二进制用
 import XLSX from 'xlsx'                 //xlsx核心
 
 function generateArray(table) {

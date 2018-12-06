@@ -124,6 +124,9 @@ export default {
                             this.options=orgData;
                         }
                     }
+                }).catch(err => {
+                     loading.close();
+                     console.log(err)
                 })
 
         },500)
