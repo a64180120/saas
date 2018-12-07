@@ -45,7 +45,7 @@ const ajaxMode = {
         'Sign':items[0]+','+items[1]+','+items[2]+','+items[3]
     };
 
-    return {header:headerconfig,base:baseconfig};
+    return {header:headerconfig,base:baseconfig,url:url};
   }
 }
 
