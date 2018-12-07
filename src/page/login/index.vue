@@ -78,7 +78,6 @@ export default {
     },
      //计算属性
     computed: {
-
         ...mapState({
             lang: state => state.lang,
             theme: state => state.theme
@@ -164,6 +163,9 @@ export default {
                         } else {
                             this.sysMsg = res.Msg
                         }
+                    }).catch(error => {
+                        loading.close();
+                        console.log(error);
                     })
                 } else {
                     return false

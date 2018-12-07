@@ -20,6 +20,27 @@ export function SysOrgAdd(object,param) {
 }
 
 /** 
+ * 说明: 修改保存
+ * object 当前对象 vue
+ * param 参数集合
+*/
+export function SysOrgUpdate(object,param) {
+  return new Promise((resolve, reject) => {
+    object.$axios({
+      url: '/SysOrganize/PostUpdate',
+      method: "post",
+      data: param,
+    }).then(res => {
+        //正确
+        resolve(res);               
+    }).catch(error => {
+        //错误
+        reject(error);
+    });
+  });
+}
+
+/** 
  * 说明: 列表信息
  * object 当前对象 vue
  * param 参数集合
