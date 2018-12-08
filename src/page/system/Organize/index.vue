@@ -8,6 +8,7 @@
                             <li @click="save">修改</li>
                             <li @click="Backups">备份</li>
                             <li>恢复</li>
+                            <li @click="testFile">附件</li>
                         </ul>
                     </div>
                 </el-header>
@@ -83,8 +84,13 @@
                     </div>
                 </el-main>
             </el-container>
+            <!-- 附件弹出框 -->
+            <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
+                <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+            </el-dialog>
         </div>
     </div>
+
 </template>
 
 <script>
@@ -92,12 +98,27 @@ import { mapState, mapActions } from "vuex";
 import UserInfo from "@/util/auth";
 import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
 import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import pictureUpload from "@/components/upload";
 
 export default {
     name: 'demo',
     data(){
         return {
             loading: false,
+            fileVisible:false,
+            imglist:[
+                { 
+                    PhId:0,
+                    BTable:'gcw3_voucher_mst',
+                    BName:'aa.jpg',
+                    BType:'.jpg',
+                    BSize:'203',
+                    BFilebody:'',
+                    BUrlPath:'/UpLoadFiles/Voucher/2018-12-07/62ad64e635a3435d82b6cc1c770124f7.jpg',
+                    BRemark:'',
+                    RelPhid:''
+                },
+            ],
             orgForm:{
                 PhId:0,
                 OrgName:'',
@@ -135,7 +156,7 @@ export default {
     },
     //组件
     components: {
-        
+        pictureUpload
     },
     created() {
         this.getData();
@@ -290,6 +311,39 @@ export default {
                 console.log(error);
                 this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
             })
+        },
+
+        testFile(){
+            this.fileVisible=true;
+        },
+        removeimg(item,deleValue) {
+            this.imglist=item;
+            console.log(deleValue)
+
+            var param={
+                PhId:deleValue.phid,
+                BTable:'gcw3_voucher_mst',
+                BUrlPath:deleValue.imgPath
+            };
+
+            this.$axios({
+                url: '/PVoucherAttachment/PostDeleteFile',
+                method: "post",
+                data: param,
+            }).then(res => {
+               if(res.Status==="error"){
+                    this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                    return;
+                }
+
+            }).catch(error => {
+                console.log(error);
+                this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
+            });
+        },
+        uploadimg(item) {
+            //console.log(item)
+            this.imglist.push(item);
         }
     }
 }

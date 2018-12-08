@@ -38,6 +38,24 @@ const actions = {
             });
         });
     },
+    // 凭证上传附件
+    Voucherupload({ commit }, data) {
+        return new Promise((resolve, reject) => {
+            let baseheader=ajaxhttp.header;
+            let base=ajaxhttp.base;
+
+            let config_header = { "Content-Type": "multipart/form-data" };
+            var new_header = Object.assign({},config_header, baseheader);
+            axios.create(base).post('/PVoucherAttachment/PostUploadFile', data, { headers:new_header }).then(res => {
+                var response=JSON.parse(res.data);
+                resolve(response);
+
+        　　}).catch((error) =>{
+                //错误
+                reject(error);
+            });
+        });
+    },
     //下载附件
     download({ commit }, data){
         return new Promise((resolve, reject) => {
