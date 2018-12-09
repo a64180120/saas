@@ -2,7 +2,7 @@
     <div class="voucher">
         <div class="voucherHead">
             <ul class="flexPublic">
-                <li><span>凭证字号: 记-</span><span>{{PNo}}</span></li>
+                <li><span>凭证字号: </span><span>{{PNo}}</span></li>
                 <li>
                     <div class="block">
                         <span class="demonstration">凭证日期: </span>
@@ -87,18 +87,31 @@
                             <div>
                                 <ul>
                                     <li class="flexPublic">
-                                        <span>{{item.SubjectCode}}</span>
-                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-辅助项{{assist}}</span>
+                                        <span>{{item.SubjectCode}}{{item.SubjectName}}</span>
+                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.AuxiliaryName}}{{assist.BaseName}}</span>
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle(index)"><i></i></li>
                                 </ul>
                             </div>
-                            <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" :show="kemuSel[index].checked"
+                            <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
                                           :nodatatext="itemlistText" @item-click="itemClick"></searchSelect>
-                            <searchSelect :itemlists="assistItems[index]" :placeholder="assistItemText" :show="assistItem[index].checked"
-                                          :nodatatext="assistItemText" @item-click="assistClick"></searchSelect>
-                        </li>
+                            <div @click.stop="1" v-show="assistItem[index].checked" class="assistContainer">
+                                <ul>
+                                    <li v-for="(assist,index2) of assistList" :key="index2">
+                                        <div :title="assist.BaseName">{{assist.BaseName}}</div>
+                                        <div class="selectContainer">
+                                            <select  v-model="assistSels[index2].BaseCode">
+                                                <option :value="val.BaseCode" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
+                                            </select>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <p><span @click.stop="assistOk(true,item,index)">确认</span><span @click.stop="assistOk(false,item,index)">取消</span></p>
+                                <router-link to="/setting/auxiliary">添加辅助项</router-link>
+                            </div>
+                        </li><!--<searchSelect :itemlists="assistItems[index]" :placeholder="assistItemText" :show="assistItem[index].checked"
+                                          :nodatatext="assistItemText" @item-click="assistClick"></searchSelect>-->
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
                             <span v-show="item.moneyInput.jiefang" class="moneyValCon">
                                 <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
@@ -186,6 +199,7 @@
 
 <script>
     import searchSelect from './searchSelect'
+    import {mapState, mapActions} from 'vuex'
     export default {
         name: "voucher",
         props:{
@@ -196,7 +210,7 @@
             fileList:[],
             PhId:'',
             PDate:'',
-            PNo:'0001',
+            PNo:'',
             PAttachment:'0',
             PMakePerson:'',
             PFinancePerson:'',
@@ -211,17 +225,22 @@
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
-            assistItems:[],//辅助项组件参数*****************
+            assistList:[],//科目下辅助项列表******************
             itemlistText:'输入科目',
             assistItemText:'输入辅助项',
             moneyInputMask:false,
+            assistSels:[],//选中的辅助项列表************
+            subjectlist:[],//所有科目列表*****************
             addIcon:[],//添加删除的按钮样式参数****************
             kemuSel:[],//科目选择框显示隐藏样式参数************
-            assistItem:[]//辅助项显示隐藏样式参数********************
+            assistItem:[],//辅助项显示隐藏样式参数********************
         }},
         created(){
-            if(!this.dataList.data.PhId){//没有传参时初始化页面
+
+            if(!this.dataList.data.Mst){//没有传参时初始化页面
+                console.log(111)
                 this.voucherInfo=[
+                    this.initVoucherInfo(),
                     this.initVoucherInfo(),
                     this.initVoucherInfo(),
                     this.initVoucherInfo(),
@@ -232,72 +251,66 @@
                     Dtls:[]
                 }
             }else{
-                this.getVoucherData(this.dataList.data);
+                this.getVoucherData(this.dataList.data.Mst);
             }
             this.initInfoCss();
+            console.log(this.dataList,this.fatherData)
         },
         mounted(){
             this.initMoneyCss();
+            this.getSubject();
         },
         methods:{
             //voucher组件要返回数据的函数********************
             voucherData() {
                 if(this.jiefang!==this.daifang){
-                    console.log(this.jiefang,this.daifang)
                     alert('借方金额不等于贷方金额,请查看');
                     return;
                 }else{
                     var dtls = this.fatherData.Dtls;
+                    var account;
+                    var item;
                     for( var info of this.voucherInfo){
                         if(info.PhId){
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
                                     dtl.SubjectCode=info.SubjectCode;
+                                    dtl.SubjectName=info.SubjectName;
                                     dtl.Abstract=info.Abstract;
                                     dtl.JSum=info.money.jiefang;
                                     dtl.DSum=info.money.daifang;
                                     dtl.PersistentState=2;
-                                    if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
+                                    if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
                                         dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
+                                        dtl.DtlAccounts[0].SubjectName=info.SubjectName;
                                         dtl.DtlAccounts[0].Abstract=info.Abstract;
-                                        var item = info.DtlAccounts.assistItem;
-                                        var account=dtl.DtlAccounts[0];
-                                        for(var j=1;j<=50;j++){
-                                            var str='';
-                                            if(parseInt(j)<10){
-                                                str='S0'+parseInt(j);
-                                            }else{
-                                                str='S'+parseInt(j);
-                                            }
-                                            account[str]=item[j-1]?item[j-1]:0;
+                                        item = info.DtlAccounts.assistItem;
+                                        account=dtl.DtlAccounts[0];
+                                        for(var i of item){
+                                            account[i.GLS]=i.PhId;
                                         }
                                         dtl.DtlAccounts[0].PersistentState=2;
-                                    }else if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length<=0){
+                                    }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
                                         dtl.DtlAccounts[0].PersistentState=3;
-                                    }else if(!dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
+                                    }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts=[{
                                         }];
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
                                         dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
+                                        dtl.DtlAccounts[0].SubjectName=info.SubjectName;
                                         dtl.DtlAccounts[0].Abstract=info.Abstract;
                                         dtl.DtlAccounts[0].PersistentState=1;
-                                        var item = info.DtlAccounts.assistItem;
-                                        var account=dtl.DtlAccounts[0];
-                                        for(var j=1;j<=50;j++){
-                                            var str='';
-                                            if(parseInt(j)<10){
-                                                str='S0'+parseInt(j);
-                                            }else{
-                                                str='S'+parseInt(j);
-                                            }
-                                            account[str]=item[j-1]?item[j-1]:0;
+                                        item = info.DtlAccounts.assistItem;
+                                        account=dtl.DtlAccounts[0];
+                                        for(var i of item){
+                                            account[i.GLS]=i.PhId;
                                         }
                                     }
                                 }
-                            } console.log(1,this.fatherData)
+                            }
                         }else if(info.SubjectCode){
                                 var newDtl={
                                     Abstract:info.Abstract,
@@ -315,23 +328,15 @@
                                         DSum:info.money.daifang,
                                         PersistentState:1
                                     }
-                                    var item = info.DtlAccounts.assistItem;
-                                    for(var j=1;j<=50;j++){
-                                        var str='';
-                                        if(parseInt(j)<10){
-                                            str='S0'+parseInt(j);
-                                        }else{
-                                            str='S'+parseInt(j);
-                                        }
-                                        dt[str]=item[j-1]?item[j-1]:0;
+                                    item = info.DtlAccounts.assistItem;
+                                    for(var i of item){
+                                        dt[i.GLS]=i.PhId;
                                     }
                                     newDtl.DtlAccounts[0]=dt;
                                 }
                                 dtls.push(newDtl);
-                            console.log(2,this.fatherData,dtls)
                             }
                     }
-                    console.log(3,this.fatherData,this.voucherInfo)
                     for(var del of this.deleteDtls){
                         if(del.PhId){
                             for(var dtl of  dtls){
@@ -344,20 +349,24 @@
                             }
                         }
                     }
-                    this.fatherData.PhId=this.PhId;
-                    this.fatherData.PDate=this.PDate;
-                    this.fatherData.PAttachment=this.PAttachment;
-                    this.fatherData.PMakePerson=this.PMakePerson;
-                    this.fatherData.PFinancePerson=this. PFinancePerson;
-                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
-                    this.fatherData.PCashier=this.PCashier;
-                    this.fatherData.PAuditor=this.PAuditor;
                     if(!this.PhId){
+                        this.PType='记';
                         this.fatherData.PersistentState=1;
                     }else{
                         this.fatherData.PersistentState=2;
+                        this.fatherData.PhId=this.PhId;
                     }
-                    console.log(this.fatherData,this.voucherInfo)
+                        this.fatherData.PAttachment=this.PAttachment;
+                        this.fatherData.PMakePerson=this.PMakePerson;
+                        this.fatherData.PFinancePerson=this.PFinancePerson;
+                        this.fatherData.PKeepingPerson=this.PKeepingPerson;
+                        this.fatherData.PCashier=this.PCashier;
+                        this.fatherData.PAuditor=this.PAuditor;
+                    if(this.PDate){
+                        this.fatherData.UYear=this.PDate.getFullYear();
+                        this.fatherData.PMonth=this.PDate.getMonth()+1;
+                    }
+
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -371,8 +380,10 @@
                     this.addIcon[this.voucherInfo.length-1]={checked:false};
                     this.kemuSel[this.voucherInfo.length-1]={checked:false};
                     this.assistItem[this.voucherInfo.length-1]={checked:false};
-                    this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['科目1','科目2','科目3','科目4','科目5']}
+                    this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:this.subjectlist}
+/*
                     this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
+*/
                 }else{
                     if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
                         this.deleteDtls.push(this.voucherInfo[index]);
@@ -382,7 +393,7 @@
                 }
             },
             initVoucherInfo(){
-                return {moneyInput:{jiefang:false,daifang:false},SubjectCode:'',DtlAccounts:{assistItem:[]},Abstract:'',money:{jiefang:'',daifang:''}}
+                return {moneyInput:{jiefang:false,daifang:false},SubjectCode:'',SubjectName:'',DtlAccounts:{assistItem:[]},Abstract:'',money:{jiefang:'',daifang:''}}
             },
             //初始化信息样式***************
             initInfoCss(){
@@ -392,11 +403,7 @@
                     this.assistItem[i]={checked:false}
                     this.itemlists[i]={
                         id:i,
-                        kemu:['科目1','科目2','科目3','科目4','科目5']  //总的科目列表
-                    }
-                    this.assistItems[i]={
-                        id:i,
-                        kemu:['222','333','44','555','666'] //总的辅助项列表
+                        kemu:this.subjectlist  //总的科目列表
                     }
                 }
             },
@@ -419,53 +426,116 @@
                 for(var i in dtls){
                     this.voucherInfo[i]=this.initVoucherInfo();
                     this.voucherInfo[i].PhId=dtls[i].PhId;
-                    //this.voucherInfo[i].PhidVouchermst=dtls[i].PhidVouchermst;
+                    console.log(this.voucherInfo[i],data)
                     this.voucherInfo[i].SubjectCode=dtls[i].SubjectCode;
+                    this.voucherInfo[i].SubjectName=dtls[i].SubjectName;
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
-                    if(dtls[i].DtlAccounts) {
-                        var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
-                        this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
-                        for (var j in Dtls) {
-                            if (reg.test(Dtls[j])) {
-                                var d=Dtls[j];
-                                if(dtls[i].DtlAccounts[0][d]!=0){
-                                    this.voucherInfo[i].DtlAccounts.assistItem.push(dtls[i].DtlAccounts[0][d])
-                                }
-                            }
-                        }
+                     if(dtls[i].DtlAccounts){
+                         this.voucherInfo[i].DtlAccounts.assistItem=dtls[i].DtlAccounts[0].NameValueDtls;
+                     }
 
+                  /* if(dtls[i].DtlAccounts) {
+                         var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
+                         this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
+                         for (var j in Dtls) {
+                             if (reg.test(Dtls[j])) {
+                                 var d=Dtls[j];
+                                 if(dtls[i].DtlAccounts[0][d]!=0){
+                                     this.voucherInfo[i].DtlAccounts.assistItem.push(dtls[i].DtlAccounts[0][d])
+                                 }
+                             }
+                         }
+
+                     }*/
+                }
+                if(this.voucherInfo.length<5){
+                    var leng=5-this.voucherInfo.length;
+                    for(var k=0;k<leng;k++){
+                        this.voucherInfo.push(this.initVoucherInfo());
                     }
                 }
             },
-            assistClick(childMsg){//辅助项下拉框选择的辅助项目********************************
-                this.voucherInfo[childMsg.id].DtlAccounts.assistItem.push(childMsg.data);
-                this.$forceUpdate();
-                console.log(this.voucherInfo[childMsg.id].DtlAccounts.assistItem)
+            //获取科目列表******************
+            getSubject(){
+                const loading1=this.$loading();
+                var data={
+                    orgid:this.orgid,
+                }
+                this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
+                    .then(res=>{
+                        this.subjectlist=res;
+                        loading1.close();
+                        for(var i in this.voucherInfo){
+                            this.itemlists[i]={
+                                id:i,
+                                kemu:this.subjectlist  //总的科目列表
+                            }
+                        }
+
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
+            },
+            //ajax获取科目下的辅助项***************************
+            getAssist(val){
+                const loading1=this.$loading();
+              var data={
+                  id:val.data.PhId
+              }
+              this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
+                  .then(res=>{
+                      if(res.length>0){
+                          this.assistList=res;
+                          for(var a in this.assistList){
+                              this.assistSels[a]=this.assistList[a].Children[0];
+                          }
+                      }else{
+                          this.assistList=[]
+                      }
+                      if( this.assistList.length>0){
+                            this.assistItem[val.id].checked=true;
+                      }
+                      loading1.close();
+                  })
+                  .catch(err=>{console.log(err);loading1.close();})
+
+            },
+            //辅助项选择完成********************
+            assistOk(bool,item,index){
+                if(bool){
+                   item.DtlAccounts.assistItem=this.assistSels;
+                }else{
+                   item.SubjectCode='';
+                }
+                console.log(item.DtlAccounts.assistItem)
+                this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
-                this.voucherInfo[childMsg.id].SubjectCode=childMsg.data;
+                this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
-                this.assistItem[childMsg.id].checked=true;
+                this.getAssist(childMsg);
                 this.$forceUpdate();
             },
-            handleKemuSel(index){//选择框显示********************
+            //选择框显示********************
+            handleKemuSel(index){
                 for(var kemu in this.kemuSel){
                     this.assistItem[kemu].checked=false;
                     this.kemuSel[kemu].checked=false;
                 }
-                this.kemuSel[index].checked=true;
+                this.kemuSel[index]={checked:true};
                 this.moneyInputMask=true;
+                this.$forceUpdate();
             },
             kemuCancle(index){
                 this.voucherInfo[index].DtlAccounts.assistItem=[];
                 this.voucherInfo[index].SubjectCode='';
                 this.$forceUpdate();
             },
-            inputBlur($event,item,value){//金额输入框键入*******************
+            //金额输入框键入*******************
+            inputBlur($event,item,value){
 
                 if(!this.countJie||!this.countDai){
                     this.countJie=0;
@@ -538,7 +608,7 @@
                     alert('请先选择科目!')
                 }
             },
-            moneyInputHide($event){//输入框隐藏**********************
+            moneyInputHide(){//输入框隐藏**********************
                 for(var input of this.voucherInfo){
                     input.moneyInput.jiefang=false;
                     input.moneyInput.daifang=false;
@@ -600,7 +670,10 @@
                     this.daifang=sum.toFixed(2);
                     return ;
                 }
-            }
+            },
+            ...mapState({
+                orgid: state => state.user.orgid,
+            })
         },
         watch:{
             jiefang(){
@@ -635,7 +708,7 @@
         padding:0 3px;
     }
     .voucherContent{
-        margin-top:10px;
+        margin-top:20px;
         border-top:1px solid #aaa;
         position: relative;
     }
@@ -884,6 +957,55 @@
     .kemu>div>ul>li.kemuCancle>i:after{
         transform: rotate(-45deg);
     }
+    .kemu>.assistContainer{
+        background: #fff;
+        position:absolute;
+        height:auto;
+        border-top:1px solid #aaa;
+        z-index: 99;
+    }
+    .kemu>.assistContainer>ul{
+        padding:5px;
+    }
+    .kemu>.assistContainer>ul>li{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom:5px;
+    }
+    .kemu>.assistContainer>ul>li>div:first-of-type{
+        margin-right: 15px;
+        width:60px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .kemu>.assistContainer>a{
+        display: block;
+        height:30px;
+        line-height: 30px;
+        font-size: 16px;
+        width:100%;
+        background: #ccc;
+        border-bottom: 1px solid #aaa;
+    }
+    .kemu>.assistContainer>p{
+        height:30px;
+        line-height: 30px;
+        font-size: 14px;
+        width:100%;
+    }
+    .kemu>.assistContainer>p>span{
+        padding:3px 10px;
+        margin-left: 10px;
+        border: 1px solid #02a7e7;
+        border-radius: 3px;
+        cursor:pointer;
+    }
+    .kemu>.assistContainer>p>span:hover{
+        background: #02a7e7;
+        color:#fff;
 
+    }
 
 </style>

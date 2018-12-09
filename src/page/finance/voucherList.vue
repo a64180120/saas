@@ -105,22 +105,22 @@
                 <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
                 <ul>
                     <li>
-                        <span>凭证日期 : {{item.PDate?item.PDate.replace("T"," "):''}}</span>
-                        <span>凭证字号 : 记-{{item.PNo}}</span>
-                        <span>附件数 : {{item.PAttachment}}</span>
-                        <span>制单人 : {{item.PMakePerson}}</span>
-                        <span>审核 : {{item.PAuditor}}</span>
+                        <span>凭证日期 : {{item.Mst.PDate?item.Mst.PDate.replace("T"," "):''}}</span>
+                        <span>凭证字号 : {{item.Mst.PNo}}</span>
+                        <span>附件数 : {{item.Mst.PAttachment}}</span>
+                        <span>制单人 : {{item.Mst.PMakePerson}}</span>
+                        <span>审核 : {{item.Mst.PAuditor}}</span>
                     </li>
-                    <li v-for="(dtl,ind) of item.Dtls" :key="ind">
+                    <li v-for="(dtl,ind) of item.Mst.Dtls" :key="ind">
                         <div>{{dtl.Abstract}}</div>
                         <div>{{dtl.SubjectCode}}</div>
                         <div>{{dtl.JSum}}</div>
                         <div>{{dtl.DSum}}</div>
                     </li>
                     <li>
-                        <div>合计:{{'sum'|sum(item.Dtls)}}</div>
-                        <div>{{'jie'|sum(item.Dtls)}}</div>
-                        <div>{{'dai'|sum(item.Dtls)}}</div>
+                        <div>合计:{{'sum'|sum(item.Mst.Dtls)}}</div>
+                        <div>{{'jie'|sum(item.Mst.Dtls)}}</div>
+                        <div>{{'dai'|sum(item.Mst.Dtls)}}</div>
                     </li>
                 </ul>
             </li>
@@ -130,6 +130,7 @@
 </template>
 
 <script>
+    import {mapState, mapActions} from 'vuex'
   export default {
     name: "voucher-list",
       mounted(){
@@ -169,7 +170,7 @@
             },
             voucherList:[],
             highGradeCss:false,
-            pagesize:10,
+            pagesize:100,
             pageindex:0,
         }
       },
@@ -178,14 +179,28 @@
               this.highGradeCss = bool;
           },
           voucherDel(item){
-              this.$router.push({name:'voucherDel',params:{list:item}});
+              this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
           },
-          getvoucherList(){
+          /*getvoucher(){
               var data={
                   uid:'0001',
                   orgid:52118082000000,
+                  id:168181205000001
+              }
+              this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
+                  .then(res=>{
+
+                      console.log(res)
+
+                  })
+                  .catch(err=>console.log(err))
+          },*/
+          getvoucherList(){
+              var data={
+                  uid:this.uid,
+                  orgid:this.orgid,
                   pagesize:this.pagesize,
-                  pageindex:this.pageindex
+                  pageindex:this.pageindex,
               }
               this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                   .then(res=>{
@@ -197,6 +212,12 @@
                   })
                   .catch(err=>console.log(err))
           },
+      },
+      computed:{
+          ...mapState({
+              orgid: state => state.user.orgid,
+              uid: state => state.user.userid,
+          })
       },
       filters:{
         sum(val,dtl){
