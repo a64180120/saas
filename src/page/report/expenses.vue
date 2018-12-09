@@ -17,8 +17,8 @@
                 </li>
             </ul>
             <ul class="flexPublic handle">
-                <a href=""><li>打印</li></a>
-                <el-button style='margin:0 0 20px 20px;' icon="document" @click="download" plain>导出</el-button>
+                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</el-button >
+                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</el-button>
             </ul>
         </div>
         <div class="formData">
@@ -189,34 +189,62 @@
                 // })
 
                 this.downloadLoading = true
-                import('@/vendor/Export2Excel').then(excel => {
-                    const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
-                    const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
-                    const list = this.list
+                import('@/plugins/Excel/Export2Excel').then(excel => {
+                    const tHeader = ['编码', '名称', '本月数', '本年累计数']
+                    const filterVal = ['KCode', 'KName', 'StartSum', 'EndSum']
+                    const list = treeSum(this.inMoney)
                     const data = this.formatJson(filterVal, list)
                     excel.export_json_to_excel({
                     header: tHeader,
                     data,
                     filename: this.filename,
-                    autoWidth: this.autoWidth
+                    autoWidth: true
                     })
                     this.downloadLoading = false
                 })
 
+            },
+            //时间格式转换
+            formatJson(filterVal, jsonData) {
+                return jsonData.map(v => filterVal.map(j => {
+                    if (j === 'timestamp') {
+                        return parseTime(v[j])
+                    } else {
+                        return v[j]
+                    }
+                }))
             },
             // 下载文件
             downloadFile (data) {
                 if (!data) {
                     return
                 }
-                let url = window.URL.createObjectURL(new Blob([data]))
-                let link = document.createElement('a')
-                link.style.display = 'none'
-                link.href = url
-                link.setAttribute('download', 'excel.xlsx')
-                
-                document.body.appendChild(link)
-                link.click()
+                // let fileName = res.headers['content-disposition'].split('=')[1];
+                // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
+
+                let blob = new Blob([data],{type:'application/octet-stream'});
+                let filename = fileName || "filename.xls";
+
+                if (typeof window.navigator.msSaveBlob !== "undefined") {
+                    window.navigator.msSaveBlob(blob, filename);
+                } else {
+                    var blobURL = window.URL.createObjectURL(blob);
+                    var tempLink = document.createElement("a");
+                    tempLink.style.display = "none";
+                    tempLink.href = blobURL;
+                    tempLink.setAttribute("download", filename);
+                    if (typeof tempLink.download === "undefined") {
+                        tempLink.setAttribute("target", "_blank");
+                    }
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    window.URL.revokeObjectURL(blobURL);
+                }
+            },
+            //打印
+            printContent(){
+                this.$print(this.$refs.printFrom) // 使用
             }
         }
     }
