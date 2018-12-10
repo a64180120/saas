@@ -16,7 +16,7 @@ function initRoute(router,menu) {
     return new Promise(resolve => {
         
         if (permissionList.length == 0) {
-            if(menu && menu.length==0){   
+            if(menu.length==0){
                 console.log("没有权限数据，正在获取");
                 store.dispatch("user/getNavList").then((navList) => {
                     store.dispatch("user/getPermissionList",navList).then(res => {
