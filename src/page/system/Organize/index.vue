@@ -15,9 +15,9 @@
                 <el-main>
                      <h4 class="addTitle">基层组织账套管理</h4>
                     <div class="container">
-                        <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="200px" label-position="right" size="mini" v-loading.fullscreen.lock="loading">
+                        <el-form :model="orgForm" :rules="rules" ref="orgForm" class="orgform" label-width="200px" label-position="right" v-loading.fullscreen.lock="loading">
                             <el-form-item label="工会名称：" prop="OrgName">
-                                <el-input v-model="orgForm.OrgName"></el-input>
+                                <el-input v-model="orgForm.OrgName" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="统一社会信用代码：" prop="EnterpriseCode">
                                 <el-input v-model="orgForm.EnterpriseCode" class="pic-input"></el-input>
@@ -33,16 +33,16 @@
                                 </el-upload>
                             </el-form-item>
                             <el-form-item label="单位地址：">
-                                <el-input v-model="orgForm.Address"></el-input>
+                                <el-input v-model="orgForm.Address" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="联系电话：">
-                                <el-input v-model="orgForm.TelePhone"></el-input>
+                                <el-input v-model="orgForm.TelePhone" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="隶属工会：" prop="ParentName">
-                                <el-input v-model="orgForm.ParentName"></el-input>
+                                <el-input v-model="orgForm.ParentName" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="会计制度：">
-                                <el-input v-model="orgForm.AccountSystem"></el-input>
+                                <el-input v-model="orgForm.AccountSystem" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="启用日期：">
                                 <el-date-picker
@@ -65,7 +65,7 @@
                                 </el-upload>
                             </el-form-item>
                             <el-form-item label="经审会主任：" prop="Director">
-                                <el-input v-model="orgForm.Director"></el-input>
+                                <el-input v-model="orgForm.Director" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="使用期限：">
                                 <el-date-picker
@@ -201,7 +201,7 @@ export default {
                 //移除TagNav
                 this.$store.commit("tagNav/removeTagNav", route);
                 //跳转路由
-                this.$router.push('/home');
+                this.$router.push('/system/organization');
               }else{
                   this.$message.error('保存失败,请重试!');
               }
@@ -226,14 +226,6 @@ export default {
                     this.$message({ showClose: true, message: res.Msg, type: 'error'});
                     return;
                 }
-                //加载附件地址
-                // if(res.EnterpriseAttachment){
-                //     res.EnterpriseAttachment= this.picUrl + res.EnterpriseAttachment
-                // }
-
-                // if(res.ChairmanAttachment){
-                //     res.ChairmanAttachment= this.picUrl + res.ChairmanAttachment
-                // }
                 this.orgForm=res; 
 
             }).catch(error =>{
@@ -301,6 +293,7 @@ export default {
                     this.$message.error(res.Msg);
                     return
                 }
+
                 //回传的上传临时文件
                 if(res.Data[0]){
                     this.orgForm.ChairmanAttachment = res.Data[0];
@@ -382,8 +375,10 @@ export default {
 </style>
 <style>
 .avatar-uploader{
-    width: 20%;
-    float: left;
+    position: absolute;
+    z-index: 1;
+    right: 61px;
+    top: -20px;
 }
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
@@ -412,5 +407,12 @@ export default {
     width: 80px;
     height: 80px;
     display: block;
+}
+.orgform .el-form-item__label{
+    background: #00B8EE;
+}
+
+.orgform .el-form-item{
+    margin-bottom: 2px;
 }
 </style>
