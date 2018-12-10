@@ -3,7 +3,9 @@ let Base64 = require("js-base64").Base64;
 
 const ajaxMode = {
   //网站api的地址
-  url:"http://127.0.0.1:8028", 
+  url:"http://127.0.0.1:8028",
+  //url:"http://10.0.45.51:8028",
+  //url:"http://10.0.13.52:8028",
   dbname:"NG0001",
 
   getAxiosConfig:function(){
@@ -37,13 +39,13 @@ const ajaxMode = {
     };
 
     var headerconfig={
-        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         'Accept': "application/json; charset=utf-8",
         'AppInfo': appInfo,
         'Sign':items[0]+','+items[1]+','+items[2]+','+items[3]
     };
 
-    return {header:headerconfig,base:baseconfig};
+    return {header:headerconfig,base:baseconfig,url:url};
   }
 }
 

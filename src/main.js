@@ -18,6 +18,7 @@ import infiniteScroll from 'vue-infinite-scroll'
 
 import '@/assets/css/myStyle.css'//自定义样式*************************
 import '@/assets/css/font_li.css'  //阿里的图标样式
+import Print from '@/plugins/printJS/print'
 
 // 注册组件到Vue
 Vue.prototype.$axios = axios
@@ -29,6 +30,8 @@ Vue.use(ElementUI, {
 })
 //注册滚动加载插件
 Vue.use(infiniteScroll)
+// 注册打印
+Vue.use(Print) 
 
 new Vue({
     i18n,

@@ -33,11 +33,11 @@
                 </li>
             </ul>
             <ul class="flexPublic handle">
-                <a href=""><li>打印</li></a>
-                <el-button style='margin:0 0 20px 20px;' type="primary" icon="document" @click="postBalanceSheetExcel" :loading="downloadLoading"><li>导出</li></el-button >
+                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
             </ul>
         </div>
-        <div class="formData">
+        <div class="formData" ref="printFrom">
             <ul>
                 <li></li>
                 <li>资产</li>
@@ -174,7 +174,9 @@
 <script>
     import * as axios from "axios";
     import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
-    
+    import { getLodop } from '@/plugins/Lodop/LodopFuncs'
+
+
     let balanceData=[];
     export default {
         name: "user",
@@ -284,22 +286,8 @@
                 let baseheader=ajaxhttp.header;
                 let base=ajaxhttp.base;
 
-                // this.downloadLoading = true
-                // import('@/vendor/Export2Excel').then(excel => {
-                //     const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
-                //     const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
-                //     const list = this.list
-                //     const data = this.formatJson(filterVal, list)
-                //     excel.export_json_to_excel({
-                //     header: tHeader,
-                //     data,
-                //     filename: this.filename,
-                //     autoWidth: this.autoWidth
-                //     })
-                //     this.downloadLoading = false
-                // })
-
                 //下载Excel
+                this.downloadLoading = true
 				this.$axios({
                     method:'get',
                     url:'/PVoucherMst/GetBalanceSheetExcel',
@@ -309,42 +297,72 @@
                     }
                 }) .then(res => {
                     window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
-
+                    this.downloadLoading = false
                 }).catch(err => {
                     console.log(err)
                 })
 
+                //axios下载
+
+				// this.$axios({
+                //     method:'post',
+                //     url:'/File/PostBalanceSheetExcelTo',
+                //     data:param,
+                //     responseType: 'blob'
+                // }) .then(res => {
+                //     let filename = "poiImport.xlsx";
+                //     this.fileDownload(res.data, filename);
+                // })
+                // .catch(err => {
+                //     console.log(err)
+                // });
 
 
             },
             //下载文件
-            downloadFile(data){
+            fileDownload (data,fileName){
                 if (!data) {
                     return
                 }
-                // let url = window.URL.createObjectURL(new Blob([data]))
-                // let link = document.createElement('a')
-                // link.style.display = 'none'
-                // link.href = url
-                // link.setAttribute('download', 'excel.xls')
-                
-                // document.body.appendChild(link)
-                // link.click()
-
                 // let fileName = res.headers['content-disposition'].split('=')[1];
                 // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
-                let fileName = '123.txt';
-                let blob = new Blob([data],{type:'application/ms-excel'});
-                let objectUrl = window.URL.createObjectURL(blob);
-                let link = document.createElement('a');
-                link.style.display = 'none';
-                link.href=objectUrl;
-                link.setAttribute('download', fileName);
-                document.body.appendChild(link);
-                link.click();
 
-                URL.revokeObjectURL(link.href);
-                document.body.removeChild(link);
+                let blob = new Blob([data],{type:'application/octet-stream'});
+                let filename = fileName || "filename.xls";
+
+                if (typeof window.navigator.msSaveBlob !== "undefined") {
+                    window.navigator.msSaveBlob(blob, filename);
+                } else {
+                    var blobURL = window.URL.createObjectURL(blob);
+                    var tempLink = document.createElement("a");
+                    tempLink.style.display = "none";
+                    tempLink.href = blobURL;
+                    tempLink.setAttribute("download", filename);
+                    if (typeof tempLink.download === "undefined") {
+                        tempLink.setAttribute("target", "_blank");
+                    }
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    window.URL.revokeObjectURL(blobURL);
+                }
+            },
+            printLodop() {
+                const me = this
+                var html=this.$refs.printFrom.innerHTML;
+                let  LODOP = getLodop();
+                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句 
+                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+                LODOP.SET_PRINT_STYLE("Bold", 1);
+                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");  
+                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+                //LODOP.PRINT();
+                LODOP.PREVIEW();
+            },
+             // 打印
+            printContent(e){
+                this.$print(this.$refs.printFrom) // 使用
             }
 
         }
