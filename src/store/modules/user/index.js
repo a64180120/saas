@@ -204,7 +204,7 @@ const actions = {
     getNavList({ commit, state }) {
         return new Promise(resolve => {
             axios({
-                url: "/SysUser/GetSysMenuList",
+                url: "/SysMenu/GetMenuList",
                 methods: "get",
                 params: {
                     uid:state.userid,
