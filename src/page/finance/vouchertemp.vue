@@ -1,46 +1,55 @@
 <template>
     <div class="vouchertemp">
-        <div class="vouchertempCon">
-            <p class="title"><span>凭证模板</span><i></i></p>
+        <div v-if="tempCss=='list'" class="vouchertempCon">
+            <p class="title"><span>凭证模板</span><i @click.stop="finish"></i></p>
             <div class="flexPublic searcherCon">
-                <div class="searcherValue"><input v-model="unionSearchValue" type="text" placeholder="科目/摘要/凭证号"></div>
-                <div  class="searcherBtn">搜索</div>
+                <div class="searcherValue"><input v-model="searchVal" type="text" placeholder="模板名称"></div>
+                <div @click.stop="searchVoucher"  class="searcherBtn">搜索</div>
             </div>
             <div class="voucherList">
                 <ul>
-                    <li>
+                    <li @click.stop="tempHandle('add')">
                         <div>模板</div>
                         <div></div>
                     </li>
-                    <li>
+                    <li v-for="(item,index) of voucherList" :key="index">
                         <div class="flexPublic">
                             <div><img src="@/assets/icon/0a7856c2-a547-424e-940f-1039697ec329.svg" alt=""><span>付款</span></div>
                             <div>
-                                <img title="使用模板" src="@/assets/icon/4944c1f1-16a7-4be9-a1c2-2b48609a4c0d.svg" alt="">
-                                <img title="编辑" src="@/assets/icon/04f238df-7fa5-4cae-a1d8-eda3dfaef207.svg" alt="">
-                                <img title="删除" src="@/assets/icon/5b110879-948e-411b-b56e-bbfe20b992d5.svg" alt="">
+                                <img @click.stop="finish(item)" title="使用模板" src="@/assets/icon/eye.svg" alt="">
+                                <img @click.stop="tempHandle('update',item)" title="编辑" src="@/assets/icon/update.svg" alt="">
+                                <img @click.stop="tempHandle('delete',item)" title="删除" src="@/assets/icon/delete.svg" alt="">
                             </div>
                         </div>
-                        <div>
-
+                        <div class="tempContentCon">
+                            <div class="tempContent">
+                                <ul>
+                                    <li  v-for="(it1,index2) of item.Dtls"><span >{{index2==0?'借:':''}}</span><span v-if="it1.JSum">{{it1.SubjectCode}}{{it1.SubjectName}}</span></li>
+                                </ul>
+                                <ul>
+                                    <li  v-for="(it2,index3) of item.Dtls"><span >{{index3==0?'贷:':''}}</span><span v-if="it2.DSum">{{it2.SubjectCode}}{{it2.SubjectName}}</span></li>
+                                </ul>
+                            </div>
                         </div>
                     </li>
-                    <li>
-                        <div></div>
-                        <div></div>
-                    </li>
-                    <li>
-                        <div></div>
-                        <div></div>
-                    </li>
+
                 </ul>
             </div>
         </div>
-
+        <div v-if="tempCss=='add'||tempCss=='update'" class="vouchertempCon tempAdd">
+            <p class="title"><span v-if="tempCss=='add'">新建模板</span><span v-if="tempCss=='update'">修改模板</span><i @click="showList"></i></p>
+            <div class="flexPublic tempName">
+                <div v-if="tempCss=='add'" class="flexPublic"><span>模板名称</span><div class="inputContainer"><input type="text" placeholder="输入模板名称" v-model="TemName"></div></div>
+                <div v-if="tempCss=='update'" class="flexPublic"><span>模板名称</span><div class="inputContainer"><input type="text" disabled v-model="TemName"></div></div>
+                <div @click.stop="add()">保存模板</div>
+            </div>
+            <temp-vou :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></temp-vou>
+        </div>
     </div>
 </template>
 
 <script>
+    import tempVou from './tempVou'
     import {mapState, mapActions} from 'vuex'
     export default {
         name: "voucher-list",
@@ -49,31 +58,141 @@
         },
         data(){
             return {
-                unionSearchValue:'',
+                searchVal:'',
+                TemName:'',
+                voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
                 voucherList:[],
                 pagesize:10,
                 pageindex:0,
+                tempCss:'list'
             }
         },
         methods:{
             getvoucherList(){
                 var data={
-                    uid:'0001',
-                    orgid:521180820000002,
-                    id:349181206000002,
+                    uid:this.uid,
+                    orgid:this.orgid,
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
                 }
-                this.$axios.get('PVoucherTemplateMst/GetVoucherTemplate',{params:data})
+                this.$axios.get('PVoucherTemplateMst/GetVoucherTemplateList',{params:data})
                     .then(res=>{
-                        console.log(res)
-                        this.voucherList=res.Data;
+                        console.log(res.Record[0])
+                        this.voucherList=res.Record;
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
                         }
                     })
                     .catch(err=>console.log(err))
             },
+            //显示切换修改添加*****************
+            tempHandle(val,item){
+                if(!val){
+                    this.showList();
+                }else{
+                    switch(val){
+                        case 'add':
+                            this.voucherDataList.data={Mst:'',Attachements:[]}
+                            this.voucherDataList.bool=true;
+                            this.tempCss='add';
+                            break;
+                        case 'delete':
+                            this.delete(item);
+                            break;
+                        case 'update':
+                            this.voucherDataList.data.Mst=item;
+                            this.voucherDataList.bool=true;
+                            console.log(this.voucherDataList.data)
+                            this.tempCss='update';
+                            break;
+                    }
+                }
+            },
+            //添加修改******************
+            add(){
+                var url='add';
+                const loading=this.$loading();
+                this.voucherData();
+                if(this.voucherDataList.data.Mst.Dtls.length<=0){
+                    alert('请输入内容!')
+                    return;
+                }
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    infoData:this.voucherDataList.data
+                }
+                if(this.voucherDataList.data.Mst.PhId){
+                    url='update';
+                }
+                this.$axios.post('/PVoucherTemplateMst/Post'+url,data)
+                    .then(res=>{
+                        console.log(res)
+                        if(res.Status=='success'){
+                            this.$message('保存成功!')
+                            this.showList();
+                            /*继续添加
+                            this.voucherDataList.bool=false;
+                            var vm=this;
+                            function delay(){
+                                vm.voucherDataList.bool=true
+                            }
+                            setTimeout(delay,10);*/
+                        }else{
+                            this.$message('保存失败,请重试!')
+                        }
+                        loading.close();
+                    })
+                    .catch(err=>console.log(err))
+            },
+            //删除*********************
+            delete(item){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    id: item.PhId
+                }
+                console.log(data,this.voucherDataList.data)
+                this.$axios.post('PVoucherTemplateMst/PostDelete',data)
+                    .then(res=>{
+                        console.log(res)
+                        this.showList();
+                    })
+                    .catch(err=>console.log(err))
+            },
+            //给父组件传值*************
+            finish(item){
+                this.$emit('temp-click',item);
+            },
+            //凭证搜索**************************
+            searchVoucher(val){
+                const loading1=this.$loading();
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    queryfilter:{"SubjectCode*str*eq*1":this.searchVal,"SubjectName*str*eq*1":this.searchVal,"Abstract*str*eq*1":this.searchVal,"PNo*str*eq*1":this.searchVal}
+                }
+                this.$axios.get('PVoucherTemplateMst/GetVoucherTemplate',{params:data})
+                    .then(res=>{
+                        console.log(res)
+                        this.voucherList=res.Record;
+                        loading1.close();
+                        if(this.voucherList.length<=0){
+                            this.$message('无法找到该凭证!')
+                        }
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
+            },
+            //接收voucher组件传值************
+            voucherData(){
+                this.voucherDataList.data=this.$refs.voucher.voucherData();
+                console.log(this.voucherDataList.data)
+            },
+            showList(){
+               this.tempCss='list';
+               this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}}
+               this.getvoucherList();
+            }
         },
         computed:{
             ...mapState({
@@ -168,6 +287,9 @@
                 return sum;
 
             }
+        },
+        components:{
+            tempVou,
         }
     }
 </script>
@@ -303,6 +425,7 @@
     .vouchertemp{
         background: rgba(0,0,0,0.5);
         position: absolute;
+        z-index: 99;
         left:0;
         top:0;
         width:100%;
@@ -410,6 +533,50 @@
                     }
                 }
             }
+        }
+        .tempAdd{
+            .tempName{
+                margin:20px 0;
+                >div:first-of-type{
+                    padding:0 10px;
+                    width:300px;
+                    >span{
+                        width:100px;
+                    }
+                }
+                >div:nth-of-type(2){
+                    cursor: pointer;
+                    background: #3e8cbc;
+                    color:#fff;
+                    text-align: center;
+                    border:1px solid #3e8cbc;
+                    border-radius: 5px;
+                    height:30px;
+                    line-height: 30px;
+                    width:90px;
+                    &:hover{
+                        background: #fff;
+                        color:#333;
+                    }
+                }
+            }
+        }
+        .tempContentCon{
+            >.tempContent{
+                padding:10px;
+                >ul{
+                    >li{
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 5px;
+                        >span:first-of-type{
+                            width:20px;
+                            margin-right: 10px;
+                        }
+                    }
+                }
+            }
+
         }
     }
 

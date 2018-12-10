@@ -8,7 +8,7 @@
                     <li @click="getvoucher('pre')"></li>
                     <li @click="getvoucher('next')"></li>
                     <li  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
-                    <li v-if="!voucherDataList.data">做下月账</li>
+                    <li @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
             <ul class="flexPublic handle">
@@ -94,11 +94,13 @@
 
             </div>
         </div>
-        <voucher-temp v-if="modelListCss"></voucher-temp>
+        <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
+        <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
     </div>
 </template>
 
 <script>
+    import nextMonth from './nextMonthCheck'
     import voucher from './voucher'
     import {mapState, mapActions} from 'vuex'
     import voucherTemp from './vouchertemp'
@@ -122,15 +124,15 @@
             monthsSelCss:'kuaiji',
             mouseDown:false,
             mouseStartY:'',
-            keepNew:false,
             count:0,
             modelListCss:false,
             checkedEnd:'',
+            nextMonthCss:false
         }},
         created(){
             this.sideDate=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth();
             if(this.$route.query.list){
-                this.voucherDataList.data=this.$route.query.list,
+                this.voucherDataList.data.Mst=this.$route.query.list,
                 this.voucherDataList.bool=true;
             }
         },
@@ -155,7 +157,6 @@
                         }
                         break;
                     case 'keepAdd':
-                        this.keepNew=true;
                         this.voucherData();
                         if(this.voucherDataList.data.Mst){
                             Mst=this.voucherDataList.data.Mst;
@@ -169,7 +170,6 @@
                         }
                         break;
                     case 'modelList':
-                        console.log(111)
                         this.modelListCss=true;
                         break;
                     case 'keepModel':
@@ -186,21 +186,37 @@
                         this.voucherData();
                         this.audit(false);
                         break;
+                    case 'delete' :
+                        this.voucherData();
+                        this.delete();
+                        break;
                 }
             },
-            //保存新增凭证*******************
+            //保存凭证*******************
             keepVoucher(){
+                var url='Add';
                if(this.voucherDataList.data.Mst.Dtls.length<=0){
-                   alert('请输入内容!')
+                   this.$message('请输入内容!')
+                   return;
+               }
+               if(this.voucherDataList.data.Mst.PDate){
+                   this.voucherDataList.data.Mst.UYear=this.voucherDataList.data.Mst.PDate.getFullYear();
+                   this.voucherDataList.data.Mst.PMonth=this.voucherDataList.data.Mst.PDate.getMonth()+1;
+               }else{
+                   console.log(this.voucherDataList.data.Mst)
+                   this.$message('请输入凭证会计期!')
                    return;
                }
                var data={
                    uid:this.uid,
                    orgid:this.orgid,
+                   orgcode:this.orgcode,
                    infoData:this.voucherDataList.data
                }
-               console.log(data)
-               this.$axios.post('/PVoucherMst/PostUpdate',data)
+                if(this.voucherDataList.data.Mst.PhId){
+                   url='Update';
+                }
+               this.$axios.post('/PVoucherMst/Post'+url,data)
                    .then(res=>{
                        console.log(res)
                        if(res.Status=='success'){
@@ -218,16 +234,12 @@
                 function delay(){
                     vm.voucherDataList.bool=true
                 }
-                if(this.keepNew){
-                    setTimeout(delay,5);
-                    this.keepNew=false;
-                }
+                setTimeout(delay,5);
             },
             //保存模板**********************
             keepModel(){
-                console.log(this.voucherDataList.data)
                 if(this.voucherDataList.data.Mst.Dtls.length<=0){
-                    alert('请输入内容!')
+                    this.$message('请输入内容!')
                     return;
                 }
                 var data={
@@ -236,11 +248,10 @@
                     infoData:this.voucherDataList.data
                 }
                 console.log(data);
-                this.$axios.post('/api/GCW/PVoucherTemplateMst/PostAdd',data)
+                this.$axios.post('/PVoucherTemplateMst/PostAdd',data)
                     .then(res=>{
-                        console.log(res)
                         if(res.Status=='success'){
-                            alert('保存成功!')
+                            this.$message('保存成功!')
                             this.voucherDataList.bool=false;
                             var vm=this;
                             function delay(){
@@ -248,11 +259,12 @@
                             }
                             setTimeout(delay,10);
                         }else{
-                            alert('保存失败,请重试!')
+                            this.$message('保存失败,请重试!')
                         }
                     })
                     .catch(err=>console.log(err))
             },
+            //审核*****************
             audit(bool){
                 var data={
                     orgid:this.orgid,
@@ -284,12 +296,49 @@
                     })
                     .catch(err=>console.log(err))
             },
+            //删除***********************
+            delete(){
+                if(this.voucherDataList.data.Mst.Dtls.length<=0){
+                    alert('请输入内容!')
+                    return;
+                }
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    id:this.voucherDataList.data.Mst.PhId
+                }
+                console.log(data)
+                this.$axios.post('PVoucherMst/PostDelete',data)
+                    .then(res=>{
+                        console.log(res)
+                        if(res.Status=='success'){
+                            this.$message('删除成功!')
+                        }else{
+                            this.$message('删除失败,请重试!')
+                        }
+                    })
+                    .catch(err=>console.log(err))
+            },
             voucherData(){//接收voucher组件传值************
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
-                console.log(this.voucherDataList.data)
+            },
+            //接收temp组件传值***********************
+            tempClick(data){
+                console.log(111,data);
+                this.voucherDataList.data.Mst=data;
+                this.resetVoucher();
+                this.modelListCss=false;
+            },
+            //接收下月账传值******************
+            nextMonthHandle(data){
+                if(data===false){
+                    this.nextMonthCss=false;
+                }else{
+                    console.log(data)
+                }
             },
             //凭证搜索**************************
-            searchVoucher(val){
+            searchVoucher(){
                 const loading1=this.$loading();
                 var data={
                     uid:this.uid,
@@ -305,7 +354,6 @@
                         } else{
                             this.count=0;
                             this.voucherDataList.data=this.newAddList[this.count];
-                            this.keepNew=true;
                             this.resetVoucher();
                             console.log(this.voucherDataList.data)
                         }
@@ -483,6 +531,9 @@
                 this.checkVal=this.checkedTime;
                 this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                 this.yearSelCss=!this.yearSelCss;
+            },
+            nextMonthShow(){
+                this.nextMonthCss=true;
             }
         },
         computed:{
@@ -490,11 +541,13 @@
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
                 uname: state => state.user.username,
+                orgcode: state => state.user.orgcode
             })
         },
         components:{
             voucher,
-            voucherTemp
+            voucherTemp,
+            nextMonth
         }
     }
 </script>

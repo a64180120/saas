@@ -1,36 +1,5 @@
 <template>
     <div class="voucher">
-        <div class="voucherHead">
-            <ul class="flexPublic">
-                <li><span>凭证字号: </span><span>{{PNo}}</span></li>
-                <li>
-                    <div class="block">
-                        <span class="demonstration">凭证日期: </span>
-                        <el-date-picker
-                            v-model="PDate"
-                            type="date"
-                            placeholder="选择日期">
-                        </el-date-picker>
-                    </div>
-                </li>
-                <li class="flexPublic">
-                    <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
-                    <el-upload
-                        class="upload-demo flexPublic"
-                        action="https://jsonplaceholder.typicode.com/posts/"
-                        :on-preview="handlePreview"
-                        :on-remove="handleRemove"
-                        :before-remove="beforeRemove"
-                        multiple
-                        :limit="3"
-                        :on-exceed="handleExceed"
-                        :file-list="fileList">
-                        <el-button size="small" type="primary">点击上传</el-button>
-                        <div title="只能上传jpg/png文件，且不超过500kb" slot="tip" class="el-upload__tip"></div>
-                    </el-upload>
-                </li>
-            </ul>
-        </div>
         <div  class="voucherContent">
             <div @click.stop="moneyInputHide" v-show="moneyInputMask" class="moneyInputMask"></div>
             <ul>
@@ -87,7 +56,7 @@
                             <div>
                                 <ul>
                                     <li class="flexPublic">
-                                        <span>{{item.SubjectCode}}&nbsp;{{item.SubjectName}}</span>
+                                        <span>{{item.SubjectCode}}{{item.SubjectName}}</span>
                                         <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.AuxiliaryName}}{{assist.BaseName}}</span>
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
@@ -265,6 +234,7 @@
                     return;
                 }else{
                     var dtls = this.fatherData.Dtls;
+                    console.log(this.fatherData)
                     var account;
                     var item;
                     for( var info of this.voucherInfo){
@@ -277,7 +247,6 @@
                                     dtl.JSum=info.money.jiefang;
                                     dtl.DSum=info.money.daifang;
                                     dtl.PersistentState=2;
-                                    console.log(info.DtlAccounts)
                                     if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
@@ -314,7 +283,6 @@
                                 var newDtl={
                                     Abstract:info.Abstract,
                                     SubjectCode:info.SubjectCode,
-                                    SubjectName:info.SubjectName,
                                     JSum:info.money.jiefang,
                                     DSum:info.money.daifang,
                                     PersistentState:1
@@ -324,7 +292,6 @@
                                     var dt={
                                         Abstract:info.Abstract,
                                         SubjectCode:info.SubjectCode,
-                                        SubjectName:info.SubjectName,
                                         JSum:info.money.jiefang,
                                         DSum:info.money.daifang,
                                         PersistentState:1
@@ -352,7 +319,6 @@
                     }
                     if(!this.PhId){
                         this.fatherData.PType='记';
-                        this.fatherData.PDate=this.PDate;
                         this.fatherData.PersistentState=1;
                     }else{
                         this.fatherData.PersistentState=2;
@@ -364,7 +330,11 @@
                         this.fatherData.PKeepingPerson=this.PKeepingPerson;
                         this.fatherData.PCashier=this.PCashier;
                         this.fatherData.PAuditor=this.PAuditor;
-                    console.log(this.fatherData)
+                    if(this.PDate){
+                        this.fatherData.UYear=this.PDate.getFullYear();
+                        this.fatherData.PMonth=this.PDate.getMonth()+1;
+                    }
+
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -411,6 +381,7 @@
                 this.PhId=data.PhId;
                 this.PType=data.PType;
                 this.PNo=data.PNo;
+                this.PDate=data.PDate;
                 this.PAttachment=data.PAttachment;
                 this.PMonth=data.PMonth;
                 this.PMakePerson=data.PMakePerson;
@@ -503,15 +474,13 @@
                    item.DtlAccounts.assistItem=this.assistSels;
                 }else{
                    item.SubjectCode='';
-                    item.SubjectName='';
                 }
+                console.log(item.DtlAccounts.assistItem)
                 this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
-                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
-                console.log(  this.voucherInfo[childMsg.id])
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
@@ -530,7 +499,6 @@
             kemuCancle(index){
                 this.voucherInfo[index].DtlAccounts.assistItem=[];
                 this.voucherInfo[index].SubjectCode='';
-                this.voucherInfo[index].SubjectName='';
                 this.$forceUpdate();
             },
             //金额输入框键入*******************
@@ -551,7 +519,7 @@
             },
             initMoneyCss(){  //金额输入框样式初始化***************
                 for(var i in this.voucherInfo){
-                    var li = document.querySelectorAll(".voucherContent>ul>li");
+                    var li = document.querySelectorAll(".vouchertemp .voucherContent>ul>li");
                     var children1=li[i-0+1].children[0].children[3].children;
                     this.moneyTurn(this.voucherInfo[i].money.jiefang,children1);
                     var children2=li[i-0+1].children[0].children[4].children;
@@ -570,9 +538,9 @@
                         }
                     }
                     this.jiefang=sum.toFixed(2);
-                    var jie=document.querySelector(".count>li:nth-child(2)");
+                    var jie=document.querySelector(".vouchertemp .count>li:nth-child(2)");
                     this.moneyTurn(this.jiefang,jie.children);
-                    var dai=document.querySelector(".count>li:nth-child(3)");
+                    var dai=document.querySelector(".vouchertemp .count>li:nth-child(3)");
                     this.moneyTurn(this.daifang,dai.children);
                 }
                 this.$forceUpdate();
@@ -673,16 +641,15 @@
             },
             ...mapState({
                 orgid: state => state.user.orgid,
-                orgcode: state => state.user.orgcode
             })
         },
         watch:{
             jiefang(){
-                var jie=document.querySelector(".count>li:nth-child(2)");
+                var jie=document.querySelector(".vouchertemp .count>li:nth-child(2)");
                 this.moneyTurn(this.jiefang,jie.children);
             },
             daifang(){
-                var dai=document.querySelector(".count>li:nth-child(3)");
+                var dai=document.querySelector(".vouchertemp .count>li:nth-child(3)");
                 this.moneyTurn(this.daifang,dai.children);
             }
         },
@@ -699,15 +666,7 @@
         padding:8px 18px;
         font-size:18px;
     }
-    .fileCount{
-        display: inline-block;
-        text-align: right;
-        border:1px solid #999;
-        width:50px;
-        height:30px;
-        line-height: 30px;
-        padding:0 3px;
-    }
+
     .voucherContent{
         margin-top:20px;
         border-top:1px solid #aaa;

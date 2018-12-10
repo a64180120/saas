@@ -105,22 +105,22 @@
                 <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
                 <ul>
                     <li>
-                        <span>凭证日期 : {{item.Mst.PDate?item.Mst.PDate.replace("T"," "):''}}</span>
-                        <span>凭证字号 : {{item.Mst.PNo}}</span>
-                        <span>附件数 : {{item.Mst.PAttachment}}</span>
-                        <span>制单人 : {{item.Mst.PMakePerson}}</span>
-                        <span>审核 : {{item.Mst.PAuditor}}</span>
+                        <span>凭证日期 : {{item.PDate?item.PDate.replace("T"," "):''}}</span>
+                        <span>凭证字号 : {{item.PNo}}</span>
+                        <span>附件数 : {{item.PAttachment}}</span>
+                        <span>制单人 : {{item.PMakePerson}}</span>
+                        <span>审核 : {{item.PAuditor}}</span>
                     </li>
-                    <li v-for="(dtl,ind) of item.Mst.Dtls" :key="ind">
+                    <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                         <div>{{dtl.Abstract}}</div>
                         <div>{{dtl.SubjectCode}}</div>
                         <div>{{dtl.JSum}}</div>
                         <div>{{dtl.DSum}}</div>
                     </li>
                     <li>
-                        <div>合计:{{'sum'|sum(item.Mst.Dtls)}}</div>
-                        <div>{{'jie'|sum(item.Mst.Dtls)}}</div>
-                        <div>{{'dai'|sum(item.Mst.Dtls)}}</div>
+                        <div>合计:{{'sum' | sum(item.Dtls)}}</div>
+                        <div>{{'jie'|sum(item.Dtls)}}</div>
+                        <div>{{'dai'|sum(item.Dtls)}}</div>
                     </li>
                 </ul>
             </li>
@@ -204,8 +204,8 @@
               }
               this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                   .then(res=>{
-                      this.voucherList=res.Record;
-                      console.log(this.voucherList)
+                      console.log(res.Record)
+                      this.voucherList= res.Record
                       if(this.voucherList.length<=0){
                           alert('暂无新凭证');
                       }
@@ -222,6 +222,9 @@
       filters:{
         sum(val,dtl){
             var sum=0;
+            if(!dtl){
+                dtl=[]
+            }
             switch(val){
                 case 'jie':
                     for(var d of dtl){
