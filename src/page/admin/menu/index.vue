@@ -386,7 +386,7 @@
             },
             getData() {
                 this.loading = true;
-                this.$axios.get("http://10.0.45.46:8884/api/GCW/SysMenu/GetSysMenuList", {
+                this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenuList", {
                     params: {
                         PageIndex: "0",
                         PageSize: "20",
@@ -400,7 +400,7 @@
                         if(res.length == 0) {
                             this.tableData = res;
                         }else{
-                            this.tableData = JSON.parse(res);
+                            this.tableData = res;
                         }
                         //let resultData = JSON.parse(res);
 
@@ -417,7 +417,7 @@
             getDataButton(menuId) {
                 console.log(menuId);
                 this.loadingButton = true;
-                this.$axios.get("http://10.0.45.46:8884/api/GCW/SysMenu/GetSysMenuButtonList", {
+                this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenuButtonList", {
                     params: {
                         // PageIndex: this.pageIndex - 1,
                         // PageSize: this.pageSize,
@@ -433,7 +433,7 @@
                         if(res.length == 0) {
                             this.tableDataButton = res;
                         }else{
-                            this.tableDataButton = JSON.parse(res);
+                            this.tableDataButton = res;
                         }
                         console.log(this.tableDataButton);
                         //this.totalCount = Number(resultData.totalRows);
@@ -451,7 +451,7 @@
                 {
                     this.getData();
                 } else{
-                    this.$axios.get("http://10.0.45.46:8884/api/GCW/SysMenu/GetMenuNameList", {
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetMenuNameList", {
                         params: {
                             PageIndex: "0",
                             PageSize: "20",
@@ -467,7 +467,8 @@
                             if(res.length == 0) {
                                 this.tableData = res;
                             }else{
-                                this.tableData = JSON.parse(res);
+                                //this.tableData = JSON.parse(res);
+                                this.tableData = res;
                             }
                             console.log(this.tableData);
 
@@ -486,7 +487,7 @@
                 {
                     this.getDataButton(this.qMenuId);
                 } else{
-                    this.$axios.get("http://10.0.45.46:8884/api/GCW/SysMenu/GetMenuButtonNameList", {
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetMenuButtonNameList", {
                         params: {
                             uid: "8",
                             orgid: "0",
@@ -501,7 +502,7 @@
                             if(res.length == 0) {
                                 this.tableDataButton = res;
                             }else{
-                                this.tableDataButton = JSON.parse(res);
+                                this.tableDataButton = res;
                             }
                             console.log(this.tableDataButton);
 
@@ -557,7 +558,7 @@
                     this.qParentId = object[0].ParentId;
                     this.qParentName = object[0].Name;
                     // this.loading=true
-                    this.$axios.get("http://10.0.45.46:8884/api/GCW/SysMenu/GetSysMenu", {
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenu", {
                         params: {
                             uid: "0",
                             orgid: "0",
@@ -634,11 +635,15 @@
                     })
                         .then(() => {
                             this.$axios
-                                .post("http://10.0.45.46:8884/api/GCW/SysMenu/PostDelete", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostDelete", data)
                                 .then(res => {
                                     let resultData = res;
                                     this.tableData.splice(this.idx, 1);
-                                    this.$message.success("删除成功");
+                                    if(res.Status=='success'){
+                                        this.$message.success("删除成功");
+                                    }else{
+                                        this.$message.error('删除失败,请重试!');
+                                    }
                                     this.singleSelection = [];
                                     this.getData();
                                 });
@@ -703,7 +708,7 @@
                 if (id != 0) {
                     this.qParentButtonId = object[0].ParentId;
                     this.qParentButtonName = object[0].Name;
-                    this.$axios.get("http://10.0.45.46:8884/api/GCW/SysMenu/GetSysMenuButton", {
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenuButton", {
                         params: {
                             uid: "0",
                             orgid: "0",
@@ -768,11 +773,15 @@
                     })
                         .then(() => {
                             this.$axios
-                                .post("http://10.0.45.46:8884/api/GCW/SysMenu/PostDeleteMenuButton", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostDeleteMenuButton", data)
                                 .then(res => {
                                     let resultData = res;
                                     //this.tableData.splice(this.idx, 1);
-                                    this.$message.success("删除成功");
+                                    if(res.Status=='success'){
+                                        this.$message.success("删除成功");
+                                    }else{
+                                        this.$message.error('删除失败,请重试!');
+                                    }
                                     this.singleSelection = [];
                                     this.getDataButton(this.qMenuId);
                                 });
@@ -844,27 +853,35 @@
                         if(this.dialogState == "add")
                         {
                             this.$axios
-                                .post("http://10.0.45.46:8884/api/GCW/SysMenu/PostAdd", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostAdd", data)
                                 .then(res => {
                                     console.log(this.form);
                                     let resultData = res;
                                     this.tableData.splice(this.idx, 1);
                                     //清除form数据
                                     this.$refs[formName].resetFields();
-                                    this.$message.success("修改成功");
+                                    if(res.Status=='success'){
+                                        this.$message.success("新增成功");
+                                    }else{
+                                        this.$message.error('新增失败,请重试!');
+                                    }
                                     this.singleSelection = [];
                                     this.getData();
                                 });
                         }else {
                             this.$axios
-                                .post("http://10.0.45.46:8884/api/GCW/SysMenu/PostUpdate", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostUpdate", data)
                                 .then(res => {
                                     console.log(this.form);
                                     let resultData = res;
                                     this.tableData.splice(this.idx, 1);
                                     //清除form数据
                                     this.$refs[formName].resetFields();
-                                    this.$message.success("修改成功");
+                                    if(res.Status=='success'){
+                                        this.$message.success("修改成功");
+                                    }else{
+                                        this.$message.error('修改失败,请重试!');
+                                    }
                                     this.singleSelection = [];
                                     this.getData();
                                 });
@@ -922,27 +939,35 @@
                         if(this.dialogButton == "add")
                         {
                             this.$axios
-                                .post("http://10.0.45.46:8884/api/GCW/SysMenu/PostAddMenuButton", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostAddMenuButton", data)
                                 .then(res => {
                                     console.log(this.formButton);
                                     //let resultData = res;
                                     // this.tableData.splice(this.idx, 1);
                                     //清除form数据
                                     this.$refs[formName].resetFields();
-                                    this.$message.success("修改成功");
+                                    if(res.Status=='success'){
+                                        this.$message.success("新增成功");
+                                    }else{
+                                        this.$message.error('新增失败,请重试!');
+                                    }
                                     this.singleSelection = [];
                                     this.getDataButton(this.qMenuId);
                                 });
                         }else {
                             this.$axios
-                                .post("http://10.0.45.46:8884/api/GCW/SysMenu/PostUpdateMenuButton", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostUpdateMenuButton", data)
                                 .then(res => {
                                     console.log(this.formButton);
                                     // let resultData = res;
                                     // this.tableData.splice(this.idx, 1);
                                     //清除form数据
                                     this.$refs[formName].resetFields();
-                                    this.$message.success("修改成功");
+                                    if(res.Status=='success'){
+                                        this.$message.success("修改成功");
+                                    }else{
+                                        this.$message.error('修改失败,请重试!');
+                                    }
                                     this.singleSelection = [];
                                     this.getDataButton(this.qMenuId);
                                 });
