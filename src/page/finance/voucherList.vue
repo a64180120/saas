@@ -40,12 +40,12 @@
               </label>
           </div>
           <div>
-              <label >合计金额: <div class="inputContainer"><input type="text"></div> </label>
-              <label >至:<div class="inputContainer"><input type="text"></div></label>
+              <label >合计金额: <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
+              <label >至:<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
           </div>
           <div class="flexPublic searcherCon">
-              <div class="searcherValue"><input v-model="unionSearchValue" type="text" placeholder="科目/摘要/凭证号"></div>
-              <div  class="searcherBtn">搜索</div>
+              <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
+              <div @click="searchVoucher" class="searcherBtn">搜索</div>
               <div @click.stop="highGradeToggle(true)">高级</div>
               <div v-show="highGradeCss" class="highGradeCss">
                 <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
@@ -113,9 +113,9 @@
                     </li>
                     <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                         <div>{{dtl.Abstract}}</div>
-                        <div>{{dtl.SubjectCode}}</div>
-                        <div>{{dtl.JSum}}</div>
-                        <div>{{dtl.DSum}}</div>
+                        <div>{{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}</div>
+                        <div>{{dtl.JSum==0?'':dtl.JSum}}</div>
+                        <div>{{dtl.DSum==0?'':dtl.DSum}}</div>
                     </li>
                     <li>
                         <div>合计:{{'sum' | sum(item.Dtls)}}</div>
@@ -134,7 +134,12 @@
   export default {
     name: "voucher-list",
       mounted(){
-        this.getvoucherList();
+        if(this.$route.query.voucherList){
+            this.voucherList= this.$route.query.voucherList;
+        }else{
+            this.getvoucherList();
+        }
+
       },
       data(){
         return {
@@ -142,7 +147,10 @@
             date2:'',
             date3:'',
             date4:'',
-            unionSearchValue:'',
+            sum1:'',
+            sum2:'',
+            sideDate:2018-12,
+            searchVal:'',
             pickerOptions: {
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -195,16 +203,39 @@
                   })
                   .catch(err=>console.log(err))
           },*/
+          //凭证搜索**************************
+          searchVoucher(){
+              const loading1=this.$loading();
+              var data={
+                  uid:this.uid,
+                  orgid:this.orgid,
+                  sum1:this.sum1,
+                  sum2:this.sum2,
+                  keyword:this.searchValue,
+                  queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
+              }
+              this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                  .then(res=>{
+                      loading1.close();
+                      if(res.Record.length<=0){
+                          this.$message('无法找到该凭证!')
+                      } else{
+                          this.voucherList= res.Record;
+                      }
+                  })
+                  .catch(err=>{console.log(err);loading1.close();})
+          },
           getvoucherList(){
               var data={
                   uid:this.uid,
                   orgid:this.orgid,
                   pagesize:this.pagesize,
                   pageindex:this.pageindex,
+                  keyword:this.searchValue,
+                  queryfilter:{"OrgId*num*eq*1":this.orgid}
               }
               this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                   .then(res=>{
-                      console.log(res.Record)
                       this.voucherList= res.Record
                       if(this.voucherList.length<=0){
                           alert('暂无新凭证');

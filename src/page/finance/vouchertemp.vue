@@ -14,7 +14,7 @@
                     </li>
                     <li v-for="(item,index) of voucherList" :key="index">
                         <div class="flexPublic">
-                            <div><img src="@/assets/icon/0a7856c2-a547-424e-940f-1039697ec329.svg" alt=""><span>付款</span></div>
+                            <div><img src="@/assets/icon/0a7856c2-a547-424e-940f-1039697ec329.svg" alt=""><span>{{item.TemName}}</span></div>
                             <div>
                                 <img @click.stop="finish(item)" title="使用模板" src="@/assets/icon/eye.svg" alt="">
                                 <img @click.stop="tempHandle('update',item)" title="编辑" src="@/assets/icon/update.svg" alt="">
@@ -22,6 +22,12 @@
                             </div>
                         </div>
                         <div class="tempContentCon">
+                            <div class="tempBG">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
                             <div class="tempContent">
                                 <ul>
                                     <li  v-for="(it1,index2) of item.Dtls"><span >{{index2==0?'借:':''}}</span><span v-if="it1.JSum">{{it1.SubjectCode}}{{it1.SubjectName}}</span></li>
@@ -74,10 +80,11 @@
                     orgid:this.orgid,
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
+                    queryfilter:{"TemName*str*llike*1":this.searchValue}
                 }
                 this.$axios.get('PVoucherTemplateMst/GetVoucherTemplateList',{params:data})
                     .then(res=>{
-                        console.log(res.Record[0])
+                        console.log(res.Record)
                         this.voucherList=res.Record;
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
@@ -101,6 +108,7 @@
                             break;
                         case 'update':
                             this.voucherDataList.data.Mst=item;
+                            this.TemName=item.TemName;
                             this.voucherDataList.bool=true;
                             console.log(this.voucherDataList.data)
                             this.tempCss='update';
@@ -111,12 +119,12 @@
             //添加修改******************
             add(){
                 var url='add';
-                const loading=this.$loading();
                 this.voucherData();
                 if(this.voucherDataList.data.Mst.Dtls.length<=0){
                     alert('请输入内容!')
                     return;
                 }
+                this.voucherDataList.data.Mst.TemName=this.TemName;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -125,6 +133,7 @@
                 if(this.voucherDataList.data.Mst.PhId){
                     url='update';
                 }
+                const loading1=this.$loading();
                 this.$axios.post('/PVoucherTemplateMst/Post'+url,data)
                     .then(res=>{
                         console.log(res)
@@ -141,9 +150,9 @@
                         }else{
                             this.$message('保存失败,请重试!')
                         }
-                        loading.close();
+                        loading1.close();
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{console.log(err);loading1.close();})
             },
             //删除*********************
             delete(item){
@@ -562,8 +571,40 @@
             }
         }
         .tempContentCon{
+            position:relative;
+            >.tempBG{
+                position: absolute;
+                width:100%;
+                height:100%;
+                >div{
+                    border-bottom: 0.5px solid #bcdede;
+                    width:100%;
+                    height:25%;
+                    &:after{
+                        content:"";
+                        position: absolute;
+                        width:1px;
+                        height:140px;
+                        background: #bcdede;
+                        top:0;
+                    }
+                    &:first-of-type:after{
+                        left:30%;
+                    }
+                    &:nth-of-type(2):after{
+                        left:60%;
+                    }
+                    &:nth-of-type(3):after{
+                        left:80%;
+                    }
+                }
+            }
             >.tempContent{
-                padding:10px;
+                position: relative;
+                z-index: 9;
+                background: none;
+                padding:10px 10px 10px 20px;
+                overflow: auto;
                 >ul{
                     >li{
                         display: flex;

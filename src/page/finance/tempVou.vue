@@ -247,6 +247,7 @@
                                     dtl.JSum=info.money.jiefang;
                                     dtl.DSum=info.money.daifang;
                                     dtl.PersistentState=2;
+                                    console.log(dtl,info.DtlAccounts)
                                     if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
@@ -280,30 +281,32 @@
                             }
                         }
                         else if(info.SubjectCode){
-                                var newDtl={
+                            var newDtl={
+                                Abstract:info.Abstract,
+                                SubjectCode:info.SubjectCode,
+                                SubjectName:info.SubjectName,
+                                JSum:info.money.jiefang,
+                                DSum:info.money.daifang,
+                                PersistentState:1
+                            }
+                            if(info.DtlAccounts.assistItem.length>0){
+                                newDtl.DtlAccounts=[];
+                                var dt={
                                     Abstract:info.Abstract,
                                     SubjectCode:info.SubjectCode,
+                                    SubjectName:info.SubjectName,
                                     JSum:info.money.jiefang,
                                     DSum:info.money.daifang,
                                     PersistentState:1
                                 }
-                                if(info.DtlAccounts.assistItem.length>0){
-                                    newDtl.DtlAccounts=[];
-                                    var dt={
-                                        Abstract:info.Abstract,
-                                        SubjectCode:info.SubjectCode,
-                                        JSum:info.money.jiefang,
-                                        DSum:info.money.daifang,
-                                        PersistentState:1
-                                    }
-                                    item = info.DtlAccounts.assistItem;
-                                    for(var i of item){
-                                        dt[i.GLS]=i.PhId;
-                                    }
-                                    newDtl.DtlAccounts[0]=dt;
+                                item = info.DtlAccounts.assistItem;
+                                for(var i of item){
+                                    dt[i.GLS]=i.PhId;
                                 }
-                                dtls.push(newDtl);
+                                newDtl.DtlAccounts[0]=dt;
                             }
+                            dtls.push(newDtl);
+                        }
                     }
                     for(var del of this.deleteDtls){
                         if(del.PhId){
@@ -319,22 +322,20 @@
                     }
                     if(!this.PhId){
                         this.fatherData.PType='记';
+                        this.fatherData.PDate=this.PDate;
+                        this.fatherData.OrgId=this.orgid;
+                        this.fatherData.OrgCode=this.orgcode;
                         this.fatherData.PersistentState=1;
                     }else{
                         this.fatherData.PersistentState=2;
                         this.fatherData.PhId=this.PhId;
                     }
-                        this.fatherData.PAttachment=this.PAttachment;
-                        this.fatherData.PMakePerson=this.PMakePerson;
-                        this.fatherData.PFinancePerson=this.PFinancePerson;
-                        this.fatherData.PKeepingPerson=this.PKeepingPerson;
-                        this.fatherData.PCashier=this.PCashier;
-                        this.fatherData.PAuditor=this.PAuditor;
-                    if(this.PDate){
-                        this.fatherData.UYear=this.PDate.getFullYear();
-                        this.fatherData.PMonth=this.PDate.getMonth()+1;
-                    }
-
+                    this.fatherData.PAttachment=this.PAttachment;
+                    this.fatherData.PMakePerson=this.PMakePerson;
+                    this.fatherData.PFinancePerson=this.PFinancePerson;
+                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
+                    this.fatherData.PCashier=this.PCashier;
+                    this.fatherData.PAuditor=this.PAuditor;
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -349,9 +350,9 @@
                     this.kemuSel[this.voucherInfo.length-1]={checked:false};
                     this.assistItem[this.voucherInfo.length-1]={checked:false};
                     this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:this.subjectlist}
-/*
-                    this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
-*/
+                    /*
+                                        this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
+                    */
                 }else{
                     if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
                         this.deleteDtls.push(this.voucherInfo[index]);
@@ -381,7 +382,6 @@
                 this.PhId=data.PhId;
                 this.PType=data.PType;
                 this.PNo=data.PNo;
-                this.PDate=data.PDate;
                 this.PAttachment=data.PAttachment;
                 this.PMonth=data.PMonth;
                 this.PMakePerson=data.PMakePerson;
@@ -389,6 +389,8 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.PDate=data.PDate;
+                console.log(this.PDate)
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
                 for(var i in dtls){
@@ -399,23 +401,9 @@
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
-                     if(dtls[i].DtlAccounts){
-                         this.voucherInfo[i].DtlAccounts.assistItem=dtls[i].DtlAccounts[0].NameValueDtls;
-                     }
-
-                  /* if(dtls[i].DtlAccounts) {
-                         var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
-                         this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
-                         for (var j in Dtls) {
-                             if (reg.test(Dtls[j])) {
-                                 var d=Dtls[j];
-                                 if(dtls[i].DtlAccounts[0][d]!=0){
-                                     this.voucherInfo[i].DtlAccounts.assistItem.push(dtls[i].DtlAccounts[0][d])
-                                 }
-                             }
-                         }
-
-                     }*/
+                    if(dtls[i].DtlAccounts&&dtls[i].DtlAccounts[0].NameValueDtls){
+                        this.voucherInfo[i].DtlAccounts.assistItem=dtls[i].DtlAccounts[0].NameValueDtls;
+                    }
                 }
                 if(this.voucherInfo.length<5){
                     var leng=5-this.voucherInfo.length;
@@ -429,6 +417,7 @@
                 const loading1=this.$loading();
                 var data={
                     orgid:this.orgid,
+                    Ryear:(new Date).getFullYear()
                 }
                 this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
                     .then(res=>{
@@ -447,40 +436,41 @@
             //ajax获取科目下的辅助项***************************
             getAssist(val){
                 const loading1=this.$loading();
-              var data={
-                  id:val.data.PhId
-              }
-              this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
-                  .then(res=>{
-                      if(res.length>0){
-                          this.assistList=res;
-                          for(var a in this.assistList){
-                              this.assistSels[a]=this.assistList[a].Children[0];
-                          }
-                      }else{
-                          this.assistList=[]
-                      }
-                      if( this.assistList.length>0){
+                var data={
+                    id:val.data.PhId
+                }
+                this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
+                    .then(res=>{
+                        if(res.length>0){
+                            this.assistList=res;
+                            for(var a in this.assistList){
+                                this.assistSels[a]=this.assistList[a].Children[0];
+                            }
+                        }else{
+                            this.assistList=[]
+                        }
+                        if( this.assistList.length>0){
                             this.assistItem[val.id].checked=true;
-                      }
-                      loading1.close();
-                  })
-                  .catch(err=>{console.log(err);loading1.close();})
+                        }
+                        loading1.close();
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
 
             },
             //辅助项选择完成********************
             assistOk(bool,item,index){
                 if(bool){
-                   item.DtlAccounts.assistItem=this.assistSels;
+                    item.DtlAccounts.assistItem=this.assistSels;
                 }else{
-                   item.SubjectCode='';
+                    item.SubjectCode='';
+                    item.SubjectName='';
                 }
-                console.log(item.DtlAccounts.assistItem)
                 this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
+                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
@@ -499,6 +489,7 @@
             kemuCancle(index){
                 this.voucherInfo[index].DtlAccounts.assistItem=[];
                 this.voucherInfo[index].SubjectCode='';
+                this.voucherInfo[index].SubjectName='';
                 this.$forceUpdate();
             },
             //金额输入框键入*******************
@@ -641,6 +632,7 @@
             },
             ...mapState({
                 orgid: state => state.user.orgid,
+                orgcode: state => state.user.orgcode
             })
         },
         watch:{

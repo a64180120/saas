@@ -33,6 +33,7 @@
         </div>
         <div  class="voucherContent">
             <div @click.stop="moneyInputHide" v-show="moneyInputMask" class="moneyInputMask"></div>
+            <div @click.stop="assitItemHide" v-show="assistItemMask" class="assitItemMask"></div>
             <ul>
                 <li>
                     <ul class="flexPublic voucherContentItem">
@@ -110,14 +111,18 @@
                                 <p><span @click.stop="assistOk(true,item,index)">确认</span><span @click.stop="assistOk(false,item,index)">取消</span></p>
                                 <router-link to="/setting/auxiliary">添加辅助项</router-link>
                             </div>
-                        </li><!--<searchSelect :itemlists="assistItems[index]" :placeholder="assistItemText" :show="assistItem[index].checked"
-                                          :nodatatext="assistItemText" @item-click="assistClick"></searchSelect>-->
-                        <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
-                            <span v-show="item.moneyInput.jiefang" class="moneyValCon">
-                                <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                        </li>
+                        <li @click="moneyInputShow(item,'jiefang',$event)" class="flexPublic money">
+                            <span :class="{showInput:item.moneyInput.jiefang}" class="moneyValCon">
+                                <input id="sss" type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i class="inputCancle">X</i>
                              </span>
+
+                             <!--   <input class="moneyValCon"  type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                                       onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
+                                <i class="inputCancle"></i>-->
+
                             <div></div>
                             <div></div>
                             <div></div>
@@ -131,7 +136,7 @@
                             <div></div>
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
-                            <span v-show="item.moneyInput.daifang" class="moneyValCon">
+                            <span :class="{showInput:item.moneyInput.daifang}" class="moneyValCon">
                                 <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i class="inputCancle">X</i>
@@ -206,7 +211,7 @@
             'dataList':Object,
         },
         data(){return{
-            fatherData:'',
+            fatherData:{},
             fileList:[],
             PhId:'',
             PDate:'',
@@ -229,6 +234,7 @@
             itemlistText:'输入科目',
             assistItemText:'输入辅助项',
             moneyInputMask:false,
+            assistItemMask:false,
             assistSels:[],//选中的辅助项列表************
             subjectlist:[],//所有科目列表*****************
             addIcon:[],//添加删除的按钮样式参数****************
@@ -265,6 +271,7 @@
                     return;
                 }else{
                     var dtls = this.fatherData.Dtls;
+                    console.log(this.fatherData)
                     var account;
                     var item;
                     for( var info of this.voucherInfo){
@@ -277,7 +284,6 @@
                                     dtl.JSum=info.money.jiefang;
                                     dtl.DSum=info.money.daifang;
                                     dtl.PersistentState=2;
-                                    console.log(info.DtlAccounts)
                                     if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
@@ -353,18 +359,19 @@
                     if(!this.PhId){
                         this.fatherData.PType='记';
                         this.fatherData.PDate=this.PDate;
+                        this.fatherData.OrgId=this.orgid;
+                        this.fatherData.OrgCode=this.orgcode;
                         this.fatherData.PersistentState=1;
                     }else{
                         this.fatherData.PersistentState=2;
                         this.fatherData.PhId=this.PhId;
                     }
-                        this.fatherData.PAttachment=this.PAttachment;
-                        this.fatherData.PMakePerson=this.PMakePerson;
-                        this.fatherData.PFinancePerson=this.PFinancePerson;
-                        this.fatherData.PKeepingPerson=this.PKeepingPerson;
-                        this.fatherData.PCashier=this.PCashier;
-                        this.fatherData.PAuditor=this.PAuditor;
-                    console.log(this.fatherData)
+                    this.fatherData.PAttachment=this.PAttachment;
+                    this.fatherData.PMakePerson=this.PMakePerson;
+                    this.fatherData.PFinancePerson=this.PFinancePerson;
+                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
+                    this.fatherData.PCashier=this.PCashier;
+                    this.fatherData.PAuditor=this.PAuditor;
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -373,20 +380,22 @@
             },
             //添加删除行信息********************************
             handleContent(bool,index){
+                console.log(bool,index)
                 if(bool){
                     this.voucherInfo.push(this.initVoucherInfo());
                     this.addIcon[this.voucherInfo.length-1]={checked:false};
                     this.kemuSel[this.voucherInfo.length-1]={checked:false};
                     this.assistItem[this.voucherInfo.length-1]={checked:false};
                     this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:this.subjectlist}
-/*
-                    this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
-*/
                 }else{
-                    if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
+
+                    if(this.voucherInfo[index].PhId){
                         this.deleteDtls.push(this.voucherInfo[index]);
+                    }
+                    if(this.voucherInfo.length>1){
                         this.voucherInfo.splice(index,1);
                         this.initMoneyCss();
+                        console.log(this.voucherInfo,this.deleteDtls)
                     }
                 }
             },
@@ -418,6 +427,7 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.PDate=data.PDate;
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
                 for(var i in dtls){
@@ -428,23 +438,9 @@
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
-                     if(dtls[i].DtlAccounts){
+                    if(dtls[i].DtlAccounts&&dtls[i].DtlAccounts[0].NameValueDtls){
                          this.voucherInfo[i].DtlAccounts.assistItem=dtls[i].DtlAccounts[0].NameValueDtls;
                      }
-
-                  /* if(dtls[i].DtlAccounts) {
-                         var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
-                         this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
-                         for (var j in Dtls) {
-                             if (reg.test(Dtls[j])) {
-                                 var d=Dtls[j];
-                                 if(dtls[i].DtlAccounts[0][d]!=0){
-                                     this.voucherInfo[i].DtlAccounts.assistItem.push(dtls[i].DtlAccounts[0][d])
-                                 }
-                             }
-                         }
-
-                     }*/
                 }
                 if(this.voucherInfo.length<5){
                     var leng=5-this.voucherInfo.length;
@@ -458,6 +454,7 @@
                 const loading1=this.$loading();
                 var data={
                     orgid:this.orgid,
+                    Ryear:(new Date).getFullYear()
                 }
                 this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
                     .then(res=>{
@@ -483,14 +480,13 @@
                   .then(res=>{
                       if(res.length>0){
                           this.assistList=res;
+                          this.assistItem[val.id].checked=true;
+                          this.assistItemMask=true;//开启辅助项遮罩层****************
                           for(var a in this.assistList){
                               this.assistSels[a]=this.assistList[a].Children[0];
                           }
                       }else{
                           this.assistList=[]
-                      }
-                      if( this.assistList.length>0){
-                            this.assistItem[val.id].checked=true;
                       }
                       loading1.close();
                   })
@@ -505,13 +501,13 @@
                    item.SubjectCode='';
                     item.SubjectName='';
                 }
+                this.assistItemMask=false;//关掉遮罩层**********
                 this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
-                console.log(  this.voucherInfo[childMsg.id])
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
@@ -535,7 +531,7 @@
             },
             //金额输入框键入*******************
             inputBlur($event,item,value){
-
+                console.log(11)
                 if(!this.countJie||!this.countDai){
                     this.countJie=0;
                     this.countDai=0;
@@ -546,6 +542,7 @@
                 item.money[value]=parseFloat(item.money[value]);
                 var val=item.money[value];
                 var children = $event.target.parentNode.parentNode.children;
+                this.moneyInputHide();
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
             },
@@ -600,12 +597,12 @@
                     }
                 }
             },
-            moneyInputShow(item,val){//金额输入框展示**********************
+            moneyInputShow(item,val,$event){//金额输入框展示**********************
                 if(item.SubjectCode){
                     item.moneyInput[val]=true;
                     this.moneyInputMask=true;
                 }else{
-                    alert('请先选择科目!')
+                    this.$message('请先选择科目!')
                 }
             },
             moneyInputHide(){//输入框隐藏**********************
@@ -620,6 +617,9 @@
                     assist.checked=false;
                 }
                 this.moneyInputMask=false;
+            },
+            assitItemHide(){
+                this.$message("请选择辅助项!")
             },
             showAddIcon(index){//增删icon显示*************
                 for(var item of this.addIcon){
@@ -718,6 +718,12 @@
         height:100%;
         position: absolute;
         z-index:2;
+    }
+    .assitItemMask{
+        width:100%;
+        height:100%;
+        position: absolute;
+        z-index:6;
     }
     .voucherContent>ul>li:first-child{
         height:55px;
@@ -871,34 +877,38 @@
         width:100px;
         border:1px solid #ccc;
     }
-    .moneyValCon{
-        position:absolute;
-        width:100%;
-        height:100%;
-        background:#fff;
-        outline:1px solid #fff;
-        padding:0 30px 0 5px;
-        z-index: 5;
+     .moneyValCon{
+          position:absolute;
+          width:100%;
+          height:100%;
+          background:#fff;
+          outline:1px solid #fff;
+          padding:0 30px 0 5px;
+          z-index: 5;
+         opacity: 0;
+      }
+    .showInput{
+        opacity: 1;
     }
-    .moneyValCon>input{
-        width:100%;
-        height:90%;
-        border:0;
-        outline: 0;
-        font-size: 20px;
-    }
-    .inputCancle{
-        border:1px solid red;
-        width:25px;
-        height:25px;
-        line-height: 25px;
-        color:red;
-        border-radius: 50%;
-        font-style: normal;
-        position: absolute;
-        right:2.5px;
-        top:15px;
-    }
+      .moneyValCon>input{
+          width:100%;
+          height:90%;
+          border:0;
+          outline: 0;
+          font-size: 20px;
+      }
+      .inputCancle{
+          border:1px solid red;
+          width:25px;
+          height:25px;
+          line-height: 25px;
+          color:red;
+          border-radius: 50%;
+          font-style: normal;
+          position: absolute;
+          right:2.5px;
+          top:15px;
+      }
     .kemu>.inputContainer>input{
         border:0;
     }
