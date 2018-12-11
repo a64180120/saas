@@ -245,7 +245,7 @@ export default {
     search() {
       this.is_search = true;
       if(this.select_word!=''){
-        var queryfilter='{"[or-dictionary0]*dictionary*or": { "RealName*str*eq": "'+this.select_word+'", "MobilePhone*str*eq": "'+this.select_word+'" }}';
+        var queryfilter='{"[or-dictionary0]*dictionary*or": { "CType*str*eq": "'+this.select_word+'", "MobilePhone*str*eq": "'+this.select_word+'" }}';
         
         console.log(queryfilter);
         this.getData(queryfilter);
