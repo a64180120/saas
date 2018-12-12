@@ -1,24 +1,21 @@
-// 生产环境中注释掉以下语句
-import 'sysStatic/css/theme-default.scss'
-import '../mock/index.js'
-
 
 import Vue from "vue"
+import App from './index'
 import ElementUI from 'element-ui'
-import '../static/css/icon.css';
-import router from './router'
+import '@/assets/css/theme-default.scss'
+import '@/assets/css/icon/iconfont.css'
+import '@/assets/css/myStyle.css'//自定义样式*************************
 import store from './store'
 import axios from './util/ajax'
+import router from './router'
 import i18n from './util/i18n'
-import App from './index'
 import 'babel-polyfill'
 import './components/install'
 import './plugins/install'
 import infiniteScroll from 'vue-infinite-scroll'
-
-import '@/assets/css/myStyle.css'//自定义样式*************************
-import '@/assets/css/font_li.css'  //阿里的图标样式
 import Print from '@/plugins/printJS/print'
+
+import '../static/css/icon.css';  //阿里的图标样式
 
 // 注册组件到Vue
 Vue.prototype.$axios = axios

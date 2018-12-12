@@ -17,7 +17,7 @@ const extendLoaders = {
 module.exports = {
     loaders: merge(cssLoaders, extendLoaders),
     transformToRequire: {
-        video: 'src',
+        video: ['src', 'poster'],
         source: 'src',
         img: 'src',
         image: 'xlink:href'
