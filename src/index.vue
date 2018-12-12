@@ -34,4 +34,5 @@ export default {
 </script>
 <style>
     @import "../static/css/main.css";
+    /* @import '../src/assets/css/icon/iconfont.css'; */
 </style>

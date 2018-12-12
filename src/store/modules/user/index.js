@@ -76,24 +76,33 @@ const actions = {
                     token: ''
                 }
             }).then(res => {
-                if (res.Status !== "error") {
-                    var object = {
-                        token: res.Token,
-                        appKey: res.AppKey,
-                        appSecret: res.AppSecret
-                    };
-                    //用户信息缓存
-                    commit("setToken", object);
+                
+                if(res){
+                    if (res.Status !== "error") {
+                        var object = {
+                            token: res.Token,
+                            appKey: res.AppKey,
+                            appSecret: res.AppSecret
+                        };
+                        //用户信息缓存
+                        commit("setToken", object);
+                    }
+                    
+                }else{
+                    alert('网络不通,请检查服务接口！.....')
                 }
-
                 resolve(res);
+                
+            }).catch(error =>{
+                console.log(error)
+                reject(error)
             });
         });
     },
 
     // 业务用户登录
     loginByPhone({ commit }, userInfo) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
 
             axios({
                 url: "/SysUser/PostLogin",
@@ -111,6 +120,9 @@ const actions = {
                     commit("setUserInfo", user);
                 }
                 resolve(res);
+            }).catch(error =>{
+                console.log(error)
+                reject(error)
             });
         });
     },
@@ -130,6 +142,9 @@ const actions = {
                     commit("setUserInfo", res.Data);
                 }
                 resolve(res);
+            }).catch(error =>{
+                console.log(error)
+                reject(error)
             });
         });
     },
@@ -186,7 +201,7 @@ const actions = {
 
     // 获取新Token
     getNewToken({ commit, state }) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             axios({
                 url: "/SysUser/GetToken",
                 method: "get",
@@ -196,13 +211,16 @@ const actions = {
             }).then(res => {
                 commit("setToken", res.token);
                 resolve();
+            }).catch(error =>{
+                console.log(error)
+                reject(error)
             });
         });
     },
 
     // 获取该用户的菜单列表
     getNavList({ commit, state }) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             axios({
                 url: "/SysMenu/GetMenuList",
                 methods: "get",
@@ -214,6 +232,9 @@ const actions = {
 
                 commit("setNavList", res);
                 resolve(res);
+            }).catch(error =>{
+                console.log(error)
+                reject(error)
             });
         });
     },

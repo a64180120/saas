@@ -58,8 +58,8 @@ NProgress.configure({ showSpinner: false });
 Vue.use(VueRouter);
 
 const router = new VueRouter({
-    //mode: 'hash',
-    mode: "history",
+    mode: 'hash',
+    //mode: "history",
     routes: staticRoute
 });
 
