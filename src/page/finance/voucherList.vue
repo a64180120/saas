@@ -18,30 +18,8 @@
       </div>
       <div class="voucherSelect">
           <div>
-              <label>
-                  <div>账期:</div>
-                  <div class="block">
-                      <el-date-picker
-                          v-model="date1"
-                          type="date"
-                          placeholder="选择日期">
-                      </el-date-picker>
-                  </div>
-              </label>
-              <label >
-                  <div>至:</div>
-                  <div class="block">
-                      <el-date-picker
-                          v-model="date2"
-                          type="date"
-                          placeholder="选择日期">
-                      </el-date-picker>
-                  </div>
-              </label>
-          </div>
-          <div>
-              <label >合计金额: <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
-              <label >至:<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
+              <label >合计金额(元):&nbsp; <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
+              <label >至:&nbsp;<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
           </div>
           <div class="flexPublic searcherCon">
               <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
@@ -493,22 +471,23 @@
         .voucherSelect{
             display: flex;
             flex-flow: row nowrap;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             >div{
                 display: flex;
                 justify-content: flex-start;
                 width:25%;
+                min-width: 280px;
                 >label{
                     display: flex;
                     align-items: center;
                     &:nth-of-type(2){
                         margin-left:5px ;
                         >div:first-of-type{
-                            width:30px;
+                            width:60px;
                         }
                         >div.inputContainer{
-                            width:40px;
+                            width:70px;
                         }
                     }
                     div{
@@ -516,7 +495,7 @@
                     }
                 }
                 >label>div:first-of-type{
-                    width:40px;
+                    width:70px;
                 }
                 >label>div:nth-of-type(2)>div{
                     width:100px;
@@ -553,6 +532,7 @@
             }
         }
         .listContainer{
+            overflow-y: auto;
             padding:5px;
             margin-top:10px;
             padding-bottom: 20px;

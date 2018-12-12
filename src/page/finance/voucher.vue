@@ -118,11 +118,6 @@
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i class="inputCancle">X</i>
                              </span>
-
-                             <!--   <input class="moneyValCon"  type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
-                                       onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                                <i class="inputCancle"></i>-->
-
                             <div></div>
                             <div></div>
                             <div></div>
