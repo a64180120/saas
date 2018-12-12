@@ -188,6 +188,7 @@
 
 <script>
     import * as axios from "axios";
+
     import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import { mapState, mapGetters } from "vuex";
@@ -241,10 +242,31 @@
                         this.changeBtn.title='保存';
                         this.changeBtn.disable=false;
                     }else{
+                        this.saveChange();
                         this.changeBtn.title='编辑';
                         this.changeBtn.disable=true;
                     }
                 }
+            },
+            /*
+            * 修改保存
+            * */
+            saveChange:function(){
+                console.log('11111');
+                console.log(this.orgcode);
+                this.$axios.post(
+                    'PSubjectBudget/PostSave',
+                    {
+                        "uid": this.userid,
+                        "orgid": this.orgid,
+                        "infodata": this.budgetList
+                    }
+                ).then(function(res){
+                    alert(res.Msg);
+                }).catch(function(err){
+                    console.log(err);
+                })
+
             },
             /*
             * 监听数据输入
@@ -354,18 +376,21 @@
                     let code_first=[],//存放一级科目
                         code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
-                    this.budgetList=res.Record;
+
                     //循环遍历，得到一级子目录一级对应的预算数
                     //计算上年决算数对应的本年合计收入，以及本年支出合计
                     // 得到  本年收入合计,本年支出合计，本年结余，上年结余，收回投资，本年投资，本年提取后备金，期末滚存结余  对应数组用于计算
 
                     for(var i in res.Record){
+                        res.Record[i].OrgId=this.orgid;
+                        res.Record[i].OrgCod=this.orgcode;
+                        res.Record[i].Uyear=this.getParamTime(this.date1).substring(0,4);
                         if(res.Record[i].k_name == 'BNSRHJ'){
                             alert('BNSRHJ');
                         }
                         if(res.Record[i].Layers=='0'){
                             code_first.push(res.Record[i]);//一级科目
-                            code_firstCount[res.Record[i].SubjectCode]=res.Record[i].FinalaccountsTotal;//本年一级科目调整后预算数
+                            code_firstCount[res.Record[i].SubjectCode]=res.Record[i].FinalaccountsTotal-res.Record[i].BudgetTotal;//本年一级科目调整后预算数
                         }
                         //计算上年决算数对应的本年合计收入，以及本年支出合计
                         // 得到  本年收入合计,本年支出合计，本年结余，上年结余，收回投资，本年投资，本年提取后备金，期末滚存结余  对应下标用于计算
@@ -380,6 +405,7 @@
                             specialSubIndex[res.Record[i].SubjectCode]=i;
                         }
                     }
+                    this.budgetList=res.Record;
                     this.code_first = code_first;
                     this.code_firstCount = code_firstCount;
                     this.specialSubIndex = specialSubIndex;
@@ -498,7 +524,7 @@
         margin-bottom: 50px;
     }
     .formData>ul>li{
-        border-right:1px solid #fff;
+        border-right:1px solid #ebeef5;;
         height:50px;
         line-height:50px;
         text-align: center;
@@ -528,7 +554,8 @@
     }
 
     .formDataItems{
-        border-bottom:1px solid #ddd;
+        border-bottom:1px solid #ebeef5;
+        background: white;
     }
     .formData>ul.formDataItems>li{
         border-right:1px solid #ddd;

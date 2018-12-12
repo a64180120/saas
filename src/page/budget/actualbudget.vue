@@ -211,6 +211,7 @@
 <script>
     import * as axios from "axios";
     import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+    import { mapState, mapGetters } from "vuex";
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
 
@@ -267,6 +268,7 @@
                         this.changeBtn.title='保存';
                         this.changeBtn.disable=false;
                     }else{
+                        this.saveChange();
                         this.changeBtn.title='编辑';
                         this.changeBtn.disable=true;
                     }
@@ -300,6 +302,23 @@
                 }
                 this.infoStyle=val;
             },
+            /*
+             *时间处理方法
+             *  */
+            getParamTime(param){
+                let nowtime ='';
+                if(param==null||param==undefined||param==''){
+                    nowtime = new Date();
+                }else{
+                    nowtime = new Date(param);
+                }
+                let year=nowtime.getFullYear();
+                let month=nowtime.getMonth()+1;
+                month<10?month='0'+month:month;
+                let day=nowtime.getDate();
+                day<10?day='0'+day:day;
+                return param=year+'-'+month+'-'+day;
+            },
             getEndYear:function(){
                 let data={
                     "uid": this.userid,
@@ -312,10 +331,11 @@
                     'PSubjectBudget/GetEndYear',
                     {params:data}
                 ).then(res=>{
-                    console.log(res);
-                    this.budgetList=res.Record;
                     let dataInfo=[];
                     for(var i in res.Record){
+                        res.Record[i].OrgId=this.orgid;
+                        res.Record[i].OrgCod=this.orgcode;
+                        res.Record[i].Uyear=this.getParamTime(this.date1).substring(0,4);
                         console.log(res.Record[i].ApprovedBudgetTotal==0);
                         if(res.Record[i].ApprovedBudgetTotal==0||res.Record[i].ApprovedBudgetTotal==''||res.Record[i].ApprovedBudgetTotal==null){
                             let anwser=Math.floor(Math.random()*100)
@@ -328,15 +348,35 @@
 
                         }
                     }
+                    this.budgetList=res.Record;
                     this.dataInfo=dataInfo;
                     this.getInfoStyle();
                     for(let j in this.dataInfo){
                         this.timer(j,0,this.dataInfo[j].zhixing)
                     }
-
                 }).catch(res=>{
                     console.log(res);
                 })
+            },
+            /*
+            * 修改保存
+            * */
+            saveChange:function(){
+                console.log('11111');
+                console.log(this.orgcode);
+                this.$axios.post(
+                    'PSubjectBudget/PostSave',
+                    {
+                        "uid": this.userid,
+                        "orgid": this.orgid,
+                        "infodata": this.budgetList
+                    }
+                ).then(function(res){
+                    alert(res.Msg);
+                }).catch(function(err){
+                    console.log(err);
+                })
+
             },
             timer(index,str,data){
                 let that=this;
@@ -461,7 +501,7 @@
         margin-bottom: 50px;
     }
     .formData>ul>li{
-        border-right:1px solid #fff;
+        border-right:1px solid #ebeef5;;
         height:50px;
         line-height:50px;
         text-align: center;
@@ -491,7 +531,8 @@
     }
 
     .formDataItems{
-        border-bottom:1px solid #ddd;
+        border-bottom:1px solid #ebeef5;
+        background: white;
     }
     .formData>ul.formDataItems>li{
         border-right:1px solid #ddd;

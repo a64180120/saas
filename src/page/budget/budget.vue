@@ -214,7 +214,8 @@
             ...mapState({
                 userid: state => state.user.userid,
                 orgid: state => state.user.orgid,
-                OrgIds:state => state.user.OrgIds
+                OrgIds:state => state.user.OrgIds,
+                orgcode:state => state.user.orgcode
             }),
         },
         mounted(){
@@ -235,6 +236,7 @@
                         this.changeBtn.title='保存';
                         this.changeBtn.disable=false;
                     }else{
+                        this.saveChange();
                         this.changeBtn.title='编辑';
                         this.changeBtn.disable=true;
                     }
@@ -250,9 +252,12 @@
                 let in_value = parseFloat(val.target.value);//input数据转数字
                 if(!isNaN(in_value)){
                     if(code=='BNSHTZ'){
+
                         this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value
+                        this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                     }else if(code=='BNTZ'){
                         this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+parseFloat(this.budgetList[index].BudgetTotal)-in_value
+                        this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                     }
                     else{
                         //本年投资输入
@@ -264,24 +269,30 @@
                                 //确定修改的对应一级科目，进行计算，先减去该科目的原数据，在加上修改后的数据，得到对应一级科目的总和
                                 this.code_firstCount[codeSub]=parseFloat(this.code_firstCount[codeSub])-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
                                 this.budgetList[i].BudgetTotal=this.code_firstCount[codeSub];
+                                this.budgetList[i].FinalaccountsTotal=this.budgetList[i].BudgetTotal;
                                 //判断修改的数据是在收入合计之前还是在支出合计之前
                                 if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
                                     //收入合计更改
                                     this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                    this.budgetList[this.specialSubIndex['BNSRHJ']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal;
                                     this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                    this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                                 }else{
                                     //支出合计更改
                                     this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                    this.budgetList[this.specialSubIndex['BNZCHJ']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
                                     this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+parseFloat(this.budgetList[index].BudgetTotal)-in_value;
+                                    this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                                 }
                                 //计算本年结余
                                 this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
-
+                                this.budgetList[this.specialSubIndex['BNJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal;
                             }
                         }
                     }
                     //修改该科目在总list中的数据
                     this.budgetList[index].BudgetTotal=in_value;
+                    this.budgetList[index].FinalaccountsTotal=this.budgetList[index].BudgetTotal
                 }
             },
             /*
@@ -309,14 +320,17 @@
                     'PSubjectBudget/GetBeginYear',
                     {params:data}
                 ).then(res=>{
+                    console.log(res.Record);
                     let  code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
-                    this.budgetList=res.Record;
                     //循环遍历，得到一级子目录一级对应的预算数
                     //计算上年决算数对应的本年合计收入，以及本年支出合计
                     // 得到  本年收入合计,本年支出合计，本年结余，上年结余，收回投资，本年投资，本年提取后备金，期末滚存结余  对应数组用于计算
 
                     for(var i in res.Record){
+                        res.Record[i].OrgId=this.orgid;
+                        res.Record[i].OrgCod=this.orgcode;
+                        res.Record[i].Uyear=this.getParamTime(this.date1).substring(0,4);
                         if(res.Record[i].k_name == 'BNSRHJ'){
                             alert('BNSRHJ');
                         }
@@ -336,6 +350,8 @@
                             specialSubIndex[res.Record[i].SubjectCode]=i;
                         }
                     }
+                    this.budgetList=res.Record;
+                    console.log(this.budgetList[0].k_name);
                     this.code_firstCount = code_firstCount;
                     this.specialSubIndex = specialSubIndex;
                 }).catch(res=>{
@@ -346,11 +362,17 @@
             * 修改保存
             * */
             saveChange:function(){
+                console.log('11111');
+                console.log(this.orgcode);
               this.$axios.post(
-                  'PSubjectBudget/ PostSave',
-                  this.budgetList
+                  'PSubjectBudget/PostSave',
+                  {
+                      "uid": this.userid,
+                      "orgid": this.orgid,
+                      "infodata": this.budgetList
+                  }
               ).then(function(res){
-                  console.log(res);
+                  alert(res.Msg);
               }).catch(function(err){
                   console.log(err);
               })
@@ -483,7 +505,7 @@
         margin-bottom: 50px;
     }
     .formData>ul>li{
-        border-right:1px solid #fff;
+        border-right:1px solid #ebeef5;;
         height:50px;
         line-height:50px;
         text-align: center;
@@ -508,7 +530,8 @@
     }
 
     .formDataItems{
-        border-bottom:1px solid #ddd;
+        border-bottom:1px solid #ebeef5;
+        background: white;
     }
     .formData>ul.formDataItems>li{
         border-right:1px solid #ddd;
