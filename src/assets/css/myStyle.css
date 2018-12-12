@@ -237,8 +237,6 @@ ul{
 .newAddStateFalse:before{
     transform: rotate(-45deg);
 }
-<<<<<<< HEAD
-=======
 .btn{
     cursor: pointer;
     background: #3e8cbc;
@@ -264,4 +262,3 @@ ul{
 .content{
     padding-bottom: 50px;
 }
->>>>>>> 5f0d5d31845b84e641b9de79668dae95293d12db
