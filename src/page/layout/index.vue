@@ -8,12 +8,6 @@
             <!-- 左侧菜单 -->
             <nav-bar :isCollapse="collapsevule"></nav-bar>
         </template>
-        <!-- <div class="sys-content">
-            <tag-nav></tag-nav>
-            <keep-alive :include="tagNavList">
-                <router-view></router-view>
-            </keep-alive>
-        </div> -->
         <div class="content-box" :class="{'content-collapse':collapsevule}">
             <tag-nav></tag-nav>
             <div class="content">

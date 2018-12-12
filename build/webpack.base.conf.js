@@ -12,7 +12,6 @@ function resolve(dir) {
 
 module.exports = {
     entry: {
-        //app: './src/main.js'
         app:['babel-polyfill','./src/main.js']
     },
     output: {
@@ -27,9 +26,9 @@ module.exports = {
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
             '@': resolve('src'),
+            'static': path.resolve(__dirname, '../static'),
             'sysStatic': resolve('src/assets'),
-            'sysComponents': resolve('src/components'),
-            'sysPage': resolve('src/page')
+            'sysComponents': resolve('src/components')
         }
     },
     module: {
@@ -56,7 +55,7 @@ module.exports = {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
                 loader: 'url-loader',
                 options: {
-                    limit: 10000,
+                    limit: 50000,
                     name(file){
                         return utils.keepAssetsPath({
                             // 打包后文件名
@@ -73,7 +72,7 @@ module.exports = {
                 test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
                 loader: 'url-loader',
                 options: {
-                    limit: 10000,
+                    limit: 80000,
                     name: utils.assetsPath('media/[name].[hash:7].[ext]')
                 }
             },
@@ -81,11 +80,23 @@ module.exports = {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 loader: 'url-loader',
                 options: {
-                    limit: 10000,
+                    limit: 80000,
                     name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
                 }
             }
         ]
+    },
+    node: {
+        // prevent webpack from injecting useless setImmediate polyfill because Vue
+        // source contains it (although only uses it if it's native).
+        setImmediate: false,
+        // prevent webpack from injecting mocks to Node native modules
+        // that does not make sense for the client
+        dgram: 'empty',
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty',
+        child_process: 'empty'
     },
     plugins: [
         new VueLoaderPlugin(),

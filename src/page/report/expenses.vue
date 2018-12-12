@@ -1,20 +1,21 @@
 <template>
     <div class="manageContent">
+        <div class="reportBox">
         <div class="unionState flexPublic">
             <ul class="flexPublic">
-                <li class="flexPublic">
-                    <div>账期:</div>
-                    <div>
-                        <el-date-picker
-                            v-model="zwTime"
-                            type="daterange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            value-format="yyyy-MM-dd">
-                        </el-date-picker>
-                    </div>
-                </li>
+                <!--<li class="flexPublic">-->
+                    <!--<div>账期:</div>-->
+                    <!--<div>-->
+                        <!--<el-date-picker-->
+                            <!--v-model="zwTime"-->
+                            <!--type="daterange"-->
+                            <!--range-separator="至"-->
+                            <!--start-placeholder="开始日期"-->
+                            <!--end-placeholder="结束日期"-->
+                            <!--value-format="yyyy-MM-dd">-->
+                        <!--</el-date-picker>-->
+                    <!--</div>-->
+                <!--</li>-->
             </ul>
             <ul class="flexPublic handle">
                 <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</el-button >
@@ -22,17 +23,22 @@
             </ul>
         </div>
         <div class="formData">
-            <tree-table 
-                :data="inMoney" 
-                :expand-all="expandAll" 
-                :columns="columns" 
+            <tree-table
+                :data="inMoney"
+                :expand-all="expandAll"
+                :columns="columns"
                 :header-cell-style="{background:'#2780d1',color:'#fff'}"
                 v-loading="loading"
                 highlight-current-row
                 border>
             </tree-table>
         </div>
+        </div>
+        <div class="timeSelectBox">
+            <time-select-bar @item-click="dateChoose"></time-select-bar>
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -43,7 +49,7 @@
     import { mapState, mapActions } from 'vuex'
     import treeTable from "@/components/tree-table";
     import treeSum from './totalAmount'
-
+    import TimeSelectBar from "../../components/TimeSelectBar/index";
     export default {
         name: "expensesRe",
         data(){
@@ -74,10 +80,12 @@
                 //收入
                 inMoney:[],
                 userState:0,
-                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}]
+                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
+                proofType:'1',
+                date1:''
             }
         },
-        components: { treeTable },
+        components: { treeTable,TimeSelectBar },
         computed:{
             ...mapState({
                 orgid:state=>state.user.orgid,
@@ -89,15 +97,37 @@
 
         },
         mounted(){
-
-            this.getData();
+            this.getData(this.date1,this.proofType);
         },
         methods:{
-            getData(){
+            dateChoose:function(val){
+                console.log(val);
+                let time=val.choosedYear+'-'+ val.choosedMonth;
+                this.getData(time,this.proofType);
+            },
+            /*
+            *时间处理方法
+            *  */
+            getParamTime(param){
+                let nowtime ='';
+                if(param==null||param==undefined||param==''){
+                    nowtime = new Date();
+                }else{
+                    nowtime = new Date(param);
+                }
+                let year=nowtime.getFullYear();
+                let month=nowtime.getMonth()+1;
+                month<10?month='0'+month:month;
+                let day=nowtime.getDate();
+                day<10?day='0'+day:day;
+                return param=year+'-'+month+'-'+day;
+            },
+            getData:function(param,proofType){
+                param = this.getParamTime(param);
                 //收入科目的数据
                 var data = {
-                    accountPeriod: '2018-11-03', //账期
-                    isContainUncheck: '1',      //是否包含未审核的凭证(1=包含，0=不包含)
+                    accountPeriod: param, //账期
+                    isContainUncheck: proofType,      //是否包含未审核的凭证(1=包含，0=不包含)
                 };
                 var vm=this;
                 IncomList(vm,data).then(res => {
@@ -251,6 +281,16 @@
 </script>
 
 <style scoped>
+    .reportBox{
+        margin-right: 60px;
+    }
+    .timeSelectBox{
+        position: fixed;
+        right: 0;
+        top: 100px;
+        bottom:0;
+        width: 60px;
+    }
     .unionState>ul>li{
         width:100%;
     }
