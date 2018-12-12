@@ -46,7 +46,7 @@ export default {
     this.addTagNav();
   },
   watch: {
-    $route() {
+    $route(newValue, oldValue) {
       this.addTagNav();
       this.scrollToCurTag();
     }
@@ -90,22 +90,27 @@ export default {
     },
     handleTags(command){
         command === 'other' ? this.closeOther() : this.closeAll();
-    },      
+    }, 
+    // 关闭全部标签     
     closeAll(){
-        // 关闭全部标签
         // this.tagNavList = [];
         // this.$router.push('/');
         this.$router.push(this.selectedTag.path)
         this.$store.dispatch('delOthersViews', this.selectedTag).then(() => {
-          this.moveToCurrentTag()
+          //this.moveToCurrentTag()
         })
-    },  
+    },
+    // 关闭其他标签  
     closeOther(){
         // 关闭其他标签
-        // const curItem = this.tagsList.filter(item => {
-        //     return item.path === this.$route.fullPath;
-        // })
-        // this.tagNavList = curItem;
+        const curItem = this.tagsList.filter(item => {
+            return item.path === this.$route.fullPath;
+        })
+        this.tagNavList = curItem;
+        this.$store.dispatch('delOthersViews', curItem).then(() => {
+          //this.moveToCurrentTag()
+        })
+
     }
   },
   components: { ScrollBar }
