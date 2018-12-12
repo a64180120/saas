@@ -2,6 +2,7 @@
     <div class="voucher">
         <div  class="voucherContent">
             <div @click.stop="moneyInputHide" v-show="moneyInputMask" class="moneyInputMask"></div>
+
             <ul>
                 <li>
                     <ul class="flexPublic voucherContentItem">
@@ -57,21 +58,21 @@
                                 <ul>
                                     <li class="flexPublic">
                                         <span>{{item.SubjectCode}}{{item.SubjectName}}</span>
-                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.AuxiliaryName}}{{assist.BaseName}}</span>
+                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.BaseName}}</span>
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle(index)"><i></i></li>
                                 </ul>
                             </div>
                             <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
-                                          :nodatatext="itemlistText" @item-click="itemClick"></searchSelect>
+                                          :nodatatext="itemText" @item-click="itemClick"></searchSelect>
                             <div @click.stop="1" v-show="assistItem[index].checked" class="assistContainer">
                                 <ul>
                                     <li v-for="(assist,index2) of assistList" :key="index2">
                                         <div :title="assist.BaseName">{{assist.BaseName}}</div>
                                         <div class="selectContainer">
-                                            <select  v-model="assistSels[index2].BaseCode">
-                                                <option :value="val.BaseCode" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
+                                            <select  v-model="assistSels[index2]">
+                                                <option :value="val" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
                                             </select>
                                         </div>
                                     </li>
@@ -82,7 +83,7 @@
                         </li><!--<searchSelect :itemlists="assistItems[index]" :placeholder="assistItemText" :show="assistItem[index].checked"
                                           :nodatatext="assistItemText" @item-click="assistClick"></searchSelect>-->
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
-                            <span v-show="item.moneyInput.jiefang" class="moneyValCon">
+                            <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
                                 <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i class="inputCancle">X</i>
@@ -100,7 +101,7 @@
                             <div></div>
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
-                            <span v-show="item.moneyInput.daifang" class="moneyValCon">
+                            <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
                                 <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i class="inputCancle">X</i>
@@ -203,6 +204,8 @@
             addIcon:[],//添加删除的按钮样式参数****************
             kemuSel:[],//科目选择框显示隐藏样式参数************
             assistItem:[],//辅助项显示隐藏样式参数********************
+            assistItemMask:false,
+            assistCheck:true
         }},
         created(){
             if(!this.dataList.data.Mst){//没有传参时初始化页面
@@ -376,6 +379,17 @@
                     }
                 }
             },
+            initInfoCss(){
+                for(var i in this.voucherInfo){
+                    this.addIcon[i]={checked:false}
+                    this.kemuSel[i]={checked:false}
+                    this.assistItem[i]={checked:false}
+                    this.itemlists[i]={
+                        id:i,
+                        kemu:this.subjectlist  //总的科目列表
+                    }
+                }
+            },
             //获取父组件传参*********************************
             getVoucherData(data){
                 this.fatherData=data;
@@ -390,7 +404,6 @@
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
                 this.PDate=data.PDate;
-                console.log(this.PDate)
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
                 for(var i in dtls){
@@ -429,7 +442,6 @@
                                 kemu:this.subjectlist  //总的科目列表
                             }
                         }
-
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
@@ -443,14 +455,14 @@
                     .then(res=>{
                         if(res.length>0){
                             this.assistList=res;
+                            this.assistItem[val.id].checked=true;
+                            this.assistItemMask=true;
+                            this.assistCheck=true;
                             for(var a in this.assistList){
                                 this.assistSels[a]=this.assistList[a].Children[0];
                             }
                         }else{
                             this.assistList=[]
-                        }
-                        if( this.assistList.length>0){
-                            this.assistItem[val.id].checked=true;
                         }
                         loading1.close();
                     })
@@ -461,10 +473,13 @@
             assistOk(bool,item,index){
                 if(bool){
                     item.DtlAccounts.assistItem=this.assistSels;
+                    console.log(this.assistSels)
                 }else{
                     item.SubjectCode='';
                     item.SubjectName='';
                 }
+                this.assistItemMask=false;
+                this.assistCheck=false;
                 this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
@@ -493,7 +508,7 @@
                 this.$forceUpdate();
             },
             //金额输入框键入*******************
-            inputBlur($event,item,value){
+            inputBlur($event,item,value){console.log(item,111)
 
                 if(!this.countJie||!this.countDai){
                     this.countJie=0;
@@ -504,6 +519,7 @@
                 }
                 item.money[value]=parseFloat(item.money[value]);
                 var val=item.money[value];
+                item.moneyInput[value]=false;
                 var children = $event.target.parentNode.parentNode.children;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
@@ -563,8 +579,6 @@
                 if(item.SubjectCode){
                     item.moneyInput[val]=true;
                     this.moneyInputMask=true;
-                }else{
-                    alert('请先选择科目!')
                 }
             },
             moneyInputHide(){//输入框隐藏**********************
@@ -830,6 +844,10 @@
         outline:1px solid #fff;
         padding:0 30px 0 5px;
         z-index: 5;
+        opacity: 0;
+    }
+    .moneyInputShow{
+        opacity: 1;
     }
     .moneyValCon>input{
         width:100%;

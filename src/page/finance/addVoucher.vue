@@ -194,29 +194,12 @@
                 switch(str){
                     case 'keep':
                         this.voucherData();
-                        if(this.voucherDataList.data.Mst){
-                            Mst=this.voucherDataList.data.Mst;
-                        }
-                        //判断凭证月份是否早于结账月份******************************
-                        if(Mst.PMonth<=parseInt(this.checkedTime)&&Mst.Uyear<=this.checkedTime){
-                            this.$message('该月份已结账,无法修改凭证!')
-                            return;
-                        }else{
-                            this.keepVoucher();
-                        }
+                        this.keepVoucher();
                         break;
                     case 'keepAdd':
                         this.voucherData();
-                        if(this.voucherDataList.data.Mst){
-                            Mst=this.voucherDataList.data.Mst;
-                        }
-                        //判断凭证月份是否早于结账月份******************************
-                        if(Mst.PMonth<=parseInt(this.checkedTime)&&Mst.UYear<=this.checkedTime){
-                            this.$message('该月份已结账,无法修改凭证!')
-                            return;
-                        }else{
-                            this.keepVoucher();
-                        }
+                        this.keepVoucher();
+                        this.resetVoucher();
                         break;
                     case 'modelList':
                         this.modelListCss=true;
@@ -227,6 +210,7 @@
                         break;
                     case 'moreVoucher':
                         this.$router.push({path:'/finance/voucherList'})
+                        break;
                     case 'audit':
                         this.voucherData();
                         this.audit(true);
@@ -238,6 +222,11 @@
                     case 'delete' :
                         this.voucherData();
                         this.delete();
+                        this.voucherDataList.data={
+                            Mst:{},
+                            Attachements:[]
+                        }
+                        this.resetVoucher();
                         break;
                     case 'reset':
                         if(confirm('凭证号重排过程中不允许取消、暂停操作。确定重排？')){
@@ -250,20 +239,27 @@
             keepVoucher(){
                 var url='Add';
                 var Vdata=this.voucherDataList.data;
+                console.log(Vdata)
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
                    return;
                }
-               if(Vdata.Mst.PDate){
+               if(Vdata.Mst.PDate){console.log(Vdata.Mst.PDate)
                    if(typeof(Vdata.Mst.PDate)=='object'){
-                       Vdata.Mst.UYear=Vdata.Mst.PDate.getFullYear();
+                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
                        Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+                       var date=Vdata.Mst.PDate.getDate();
+                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+                   }else {
+                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
                    }
+                   console.log(Vdata.Mst.PDate)
                }else{
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.UYear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth<this.checkedTime) {
+               debugger
+               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -273,7 +269,6 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                   console.log(data)
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            console.log(res)
@@ -342,6 +337,7 @@
                     .then(res=>{
                         if(res.Status=='success'){
                             if(bool){
+                                console.log(111)
                                 this.$message('审核成功!')
                             }else{
                                 this.$message('反审核成功!')
@@ -386,7 +382,15 @@
             //接收temp组件传值***********************
             tempClick(data){
                 console.log(111,data);
+                data.PersistentState=1;
+                for(var dtl of data.Dtls){
+                    dtl.PersistentState=1;
+                    if(dtl.DtlAccounts){
+                        dtl.DtlAccounts[0].PersistentState=1;
+                    }
+                }
                 this.voucherDataList.data.Mst=data;
+                console.log(222,data);
                 this.resetVoucher();
                 this.modelListCss=false;
             },
@@ -404,15 +408,14 @@
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
-                    keyword:this.searchValue,
+                    keyword:this.searchVal,
                     queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
                 }
+                console.log(data)
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         loading1.close();
-
-                        console.log(res)
-                        if(res.Record.length<=0){
+                        if(!res.Record){
                             this.$message('无法找到该凭证!')
                         } else if(res.Record.length==1){
                             this.voucherDataList.data=res.Record[0];
@@ -441,7 +444,7 @@
             },
           //前后快速翻页定位凭证****************
             getvoucher(str){
-                if(str=='pre'){console.log(1111,this.totalRows,this.pageindex,this.pagesize,this.count)
+                if(str=='pre'){
                     if(this.count>0){
                         this.count--;
                         this.voucherDataList.data={
