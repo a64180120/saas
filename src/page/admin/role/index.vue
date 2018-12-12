@@ -6,8 +6,8 @@
                     <el-col :span="24">
                         <el-select v-model="state_mark" placeholder="角色状态" class="handle-select mr10">
                             <el-option label="全部" value=""></el-option>
-                            <el-option label="激活" value="1"></el-option>
-                            <el-option label="未激活" value="0"></el-option>
+                            <el-option label="激活" value="0"></el-option>
+                            <el-option label="未激活" value="1"></el-option>
                         </el-select>
                         <el-input v-model="select_word" placeholder="角色编码/名称" prefix-icon="el-icon-search"
                                   class="handle-input mr10"></el-input>
@@ -152,7 +152,7 @@
             };
         },
         created() {
-            this.getData();
+            this.getData('');
             this.getData2();
         },
         computed: {},
@@ -161,7 +161,7 @@
             // 分页导航
             handleCurrentChange(val) {
                 this.pageIndex = val;
-                this.getData();
+                this.getData('');
             },
             setCheckedKeys() {
                 this.$refs.tree.setCheckedKeys([3]);
@@ -182,14 +182,15 @@
                 );
             },
             // 获取数据
-            getData() {
+            getData(query) {
                 this.loading = true;
                 this.$axios.get("/SysRole/GetSysRoleList", {
                     params: {
                         PageIndex: this.pageIndex - 1,
                         PageSize: this.pageSize,
                         uid: "",
-                        orgid: ""
+                        orgid: "",
+                        queryfilter:query
                     }
                 }).then(
                     res => {
@@ -202,17 +203,41 @@
                     error => {
                         console.log(error);
                         this.loading = false;
+                        this.$message({ showClose: true, message: '角色列表获取错误', type: 'error' });
                     }
                 );
             },
             search() {
+                // let queryfilter;
+                // let shu;
+                // if(this.state_mark == "") {
+                //     if(this.select_word == "") {
+                //         queryfilter = '';
+                //     }else{
+                //         queryfilter='{"[or-dictionary0]*dictionary*or": { "Name*str*like": "'+this.select_word+'", "EnCode*str*like": "'+this.select_word+'" }}';
+                //     }
+                // }else{
+                //     // if(this.state_mark == '0'){
+                //     //     shu = 0;
+                //     // }else {
+                //     //     shu = 1;
+                //     // }
+                //     if(this.select_word == ""){
+                //         queryfilter = '{"AND":{"EnabledMark*byte*eq": "'+this.state_mark+'","Name*str*like": ""}}';
+                //     }else{
+                //         //queryfilter = '{"[or-dictionary0]*dictionary*or":{"AND":{"EnabledMark*byte*eq": "'+this.state_mark+'","Name*str*like": "'+this.select_word+'"},"AND":{"EnabledMark*byte*eq": "'+this.state_mark+'","EnCode*str*like": "'+this.select_word+'"}}}';
+                //         queryfilter = '{"AND":{{"EnabledMark*byte*eq": '+this.state_mark+'},{"[or-dictionary0]*dictionary*or":{ "Name*str*like": "'+this.select_word+'", "EnCode*str*like": "'+this.select_word+'" }}}}'
+                //     }
+                // }
+                // console.log(queryfilter);
+                // this.getData(queryfilter);
                 this.$axios.get("/SysRole/GetRoleByOnameOrOenCode", {
                     params: {
                         PageIndex: "0",
                         PageSize: "20",
                         uid: "8",
                         orgid: "0",
-                        value: this.select_word
+                        value: this.select_word + ","+this.state_mark
                         //value: '{"EnCode*string*like":"this.select_word" , "Name*string*like":"this.select_word"}'
                     }
                 }).then(
@@ -227,6 +252,7 @@
                         this.loading = false;
                     }
                 );
+                //this.loading = false;
                 this.is_search = true;
             },
             formatter(row, column) {
@@ -340,7 +366,7 @@
                                 message: "已取消删除"
                             });
                         });
-                    this.getData();
+                    this.getData('');
                 } else {
                     this.$message({
                         message: "请选中列表的其中一行",
@@ -397,7 +423,7 @@
                                         this.$message.error('新增失败,请重试!');
                                     }
                                     this.singleSelection = [];
-                                    this.getData();
+                                    this.getData('');
                                 });
                         } else {
                             this.$axios
@@ -413,10 +439,10 @@
                                         this.$message.error('修改失败,请重试!');
                                     }
                                     this.singleSelection = [];
-                                    this.getData();
+                                    this.getData('');
                                 });
                         }
-                        this.getData();
+                        this.getData('');
                         this.singleSelection = [];
                     } else {
                         console.log("error submit!!");
