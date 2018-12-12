@@ -237,3 +237,31 @@ ul{
 .newAddStateFalse:before{
     transform: rotate(-45deg);
 }
+<<<<<<< HEAD
+=======
+.btn{
+    cursor: pointer;
+    background: #3e8cbc;
+    color:#fff;
+    text-align: center;
+    border:1px solid #3e8cbc;
+    border-radius: 5px;
+    height:30px;
+    line-height: 30px;
+    width:90px;
+}
+.btn:hover{
+    background: #fff;
+    color:#333;
+}
+
+.sidebar-el-menu[data-v-4d15bc2e]:not(.el-menu--collapse){
+    width:150px !important;
+}
+.content-box{
+    left:150px;
+}
+.content{
+    padding-bottom: 50px;
+}
+>>>>>>> 5f0d5d31845b84e641b9de79668dae95293d12db

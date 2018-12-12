@@ -52,6 +52,10 @@
   export default {
     name: "next-month-check",
       data(){return {
+          month:'',
+          year:'',
+          sideDate:'',
+          nowTime:new Date,
           checkFaile:[
                 {StartBalance:true},
                 {CkeckAudio:true},
@@ -73,7 +77,8 @@
                     this.checkCss=true;
                     break;
                 case 'check':
-                    this.checkOut();
+                    this.checkOut('check',this.sideDate.split('-')[1]);
+                    this.$emit('child-click',false);
                     break;
             }
 
@@ -138,31 +143,45 @@
               var data={
                   uid:this.uid,
                   orgid:this.orgid,
-                  queryfilter:{"JYear*str*eq*1":(new Date).getFullYear(),"OrgId*num*eq*1":this.orgid}
+                  queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
               }
               this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                   .then(res=>{
-                      console.log(res)
-                      if(res.Record.length>0){
-                          this.checkedTime=res.Record;
-                      }else{
-                          this.checkedTime=1;
-                      }
+                      this.checkedTime=res.Record[0].JEnableMonth+1;
+                      this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                      this.year=this.sideDate.split('-')[0];
+                      this.month=this.sideDate.split('-')[1];
                   })
                   .catch(err=>console.log(err))
           },
           //结账功能**********************
-          checkOut(){
-              const loading1=this.$loading();
+          checkOut(str,val){
+              var t;
+              var url;
+              if(str=='check'){
+                  url='/PBusinessConfig/UpdateBusinessConfig';
+              }else if(str=='uncheck'){
+                  if(this.unCheckVal>this.checkedTime-1){
+                      this.$message('当前月份还未结账,无法反结账!');
+                      return;
+                  }
+                  url='/PBusinessConfig/UnUpdateBusinessConfig';
+              }
+              t=this.nowTime.getFullYear()+'-'+val
               var data={
                   orgid:this.orgid,
                   uid:this.uid,
-                  dateTime:'2018'+'-'+'00'
+                  dateTime:t
               }
-              this.$axios.get('/PBusinessConfig/UpdateBusinessConfig',{params:data})
+              const loading1=this.$loading();
+              this.$axios.get(url,{params:data})
                   .then(res=>{
-                      this.$message(res.Msg                                                               );
                       loading1.close();
+                      if(res.Status=='success'){
+                          this.$message('结账成功!');
+                      }else{
+                          this.$message('结账失败!');
+                      }
                   })
                   .catch(err=>{console.log(err);loading1.close();})
           },
@@ -173,7 +192,6 @@
               uid: state => state.user.userid,
           })
       }
-
   }
 </script>
 
