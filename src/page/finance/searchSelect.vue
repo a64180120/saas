@@ -8,7 +8,7 @@
       <ul class="list-module" v-show="inputFocus">
         <li class="flexPublic" v-for ="(item,index) in datalist" @click.stop="appClick(item)"
             :key="index">
-          <span class="list-item-text">{{item.KCode}}&nbsp;{{item.KName}}</span>
+          <span class="list-item-text">{{item}}</span>
         </li>
       </ul>
       <div class="tip__nodata" v-show="inputFocus">{{nodatatext}}</div>
@@ -42,7 +42,6 @@
     watch:{
       itemlist:function(val){
         this.datalist = val.concat();
-
       }
 
     },
@@ -72,10 +71,7 @@
           vm.datalist=[];
         }else{
           vm.datalist = vm.itemlist.filter(function(item,index,arr){
-              var code=item.KCode;
-              var name=item.KName;
-              var str=code+name;
-            return str.indexOf(searchvalue) != -1;
+            return item.indexOf(searchvalue) != -1;
           });
         }
       }

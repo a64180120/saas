@@ -34,11 +34,12 @@
             </ul>
         </div>
         <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+        <!--右侧时间选择组件------------------>
         <div class="asideNav">
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
             <div class="monthsContainer">
-                <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)" @mousewheel.stop="monthsSel" id="scrollMonth" style="bottom: 0;" class="months">
+                <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)" @wheel.stop="monthsSel" id="scrollMonth" style="bottom: 0;" class="months">
                     <li v-for="item of nowTime.getFullYear()-2000"  :key="item">
                         <ul>
                             <li>{{2000+item}}</li>
@@ -47,6 +48,7 @@
                     </li>
                 </ul>
             </div>
+            <!--会计期弹窗------------------------->
             <div v-show="yearSelCss" class="yearsContainer">
                 <p class="yearsTitle">
                     <span @click="checkOutSel('kuaiji')" :class="{active:monthsSelCss=='kuaiji'}">会计期</span>
@@ -75,7 +77,7 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="yearsTrue('check')">确认</span>
+                        <span @click="yearsTrue('check',checkVal)">确认</span>
                     </p>
                 </div>
                 <div v-show="monthsSelCss=='fanjiezhang'" class="yearsContent jiezhang">
@@ -88,12 +90,13 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="yearsTrue('uncheck')">确认</span>
+                        <span @click="yearsTrue('uncheck',checkVal)">确认</span>
                     </p>
                 </div>
 
             </div>
         </div>
+        <!--凭证重排------------------------->
         <div v-if="resetShow" class="codeResetContainer">
             <div>
                 <p class="flexPublic">
@@ -103,13 +106,13 @@
                 <div  class="yearsContent">
                     <p>请选择会计期</p>
                     <div class="flexPublic">
-                        <div>2018</div>
+                        <div>{{year}}</div>
                         <div class="flexPublic">
                             <img @click="nextYear(false)" src="../../assets/icon/leftArr.svg" alt="">
                             <img @click="nextYear(true)" src="../../assets/icon/leftArr.svg" alt="">
                         </div>
                     </div>
-                    <ul  class="year-month">
+                    <ul @click="resetCodeMonth" :class="{allActive:allReset}"  class="year-month">
                         <li :class="{active:month==index}" v-for="index of 12" :key="index">{{index}}月</li>
                     </ul>
                     <div>
@@ -127,6 +130,11 @@
         </div>
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
+        <div class="footInfo">
+            <router-link to="">服务协议</router-link>
+            <router-link to="">运营规范</router-link>
+            <router-link to="">关于政云</router-link>
+        </div>
     </div>
 </template>
 
@@ -145,9 +153,10 @@
             userState:0,
             checkVal:'',
             unCheckVal:'',
-            checkedTime:'',
-            pagesize:9,
+            checkedTime:'',//下一个结账月*******
+            pagesize:10,
             pageindex:0,
+            totalRows:'',
             voucherDataList:{bool:true,data:{Mst:'',Attachements:[]}},
             newAddList:[],
             yearSelCss:false,
@@ -163,7 +172,6 @@
             resetShow:false
         }},
         created(){
-            this.sideDate=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth();
             if(this.$route.query.list){
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
@@ -171,6 +179,13 @@
         },
         mounted(){
             this.getChecked();
+            if (document.addEventListener){
+                var month= document.getElementById('scrollMonth');
+                month.addEventListener('DOMMouseScroll',this.foxMonthSel)
+            }
+        },
+        destroyed() {
+            document.removeEventListener('scroll', this.handleScroll);   //  离开页面清除（移除）滚轮滚动事件
         },
         methods:{
             //操作列表按钮********
@@ -229,30 +244,6 @@
                             this.resetShow=true;
                         }
                         break;
-                }
-            },
-            //凭证号重排确认***************
-            resetCode(val){console.log(val)
-                if(val){
-                const loading5=this.$loading();
-                    var data={
-                        orgid:this.orgid,
-                        Year:this.sideDate.split('-')[0],
-                        Pmonth:this.sideDate.split('-')[1]
-                    }
-                    this.$axios.get('/PVoucherMst/GetRebuilder',{params:data})
-                        .then(res=>{
-                            console.log(res)
-                            if(res.Statue=='success'){
-                                this.$message('重排成功!')
-                            }else{
-                                this.$message(res.Msg)
-                            }
-                            loading5.close();
-                        })
-                        .catch(err=>{console.log(err);loading5.close();})
-                }else{
-                    this.resetShow=false;
                 }
             },
             //保存凭证*******************
@@ -441,38 +432,52 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
-
-                        if(res.Record.length>0){
-                            this.checkedTime=res.Record;
-                        }else{
-                            this.checkedTime=1;
-                        }
-                        console.log(this.checkedTime,this.sideDate)
+                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                        this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                        this.year=this.sideDate.split('-')[0];
+                        this.month=this.sideDate.split('-')[1];
                     })
                     .catch(err=>console.log(err))
             },
-          //前后翻页****************
+          //前后快速翻页定位凭证****************
             getvoucher(str){
-                if(str=='pre'){
+                if(str=='pre'){console.log(1111,this.totalRows,this.pageindex,this.pagesize,this.count)
                     if(this.count>0){
                         this.count--;
-                        this.voucherDataList.data=this.newAddList[this.count];
+                        this.voucherDataList.data={
+                            Mst:this.newAddList[this.count]
+                        };
                         this.resetVoucher();
                     }else{
-                        this.$message("已到当前月份第一张!")
+                        if(this.pageindex>0){
+                            this.pageindex--;
+                            this.getvoucherList('pre');
+                        }else{
+                            this.$message("已到当前月份第一张!")
+                        }
                     }
-                }else if(str=='next'){
+                }else if(str=='next'){console.log(2222,this.totalRows,this.pageindex,this.pagesize,this.count)
                     if(this.count<this.newAddList.length-1){
                         this.count++;
-                        this.voucherDataList.data=this.newAddList[this.count];
+                        this.voucherDataList.data={
+                            Mst:this.newAddList[this.count]
+                        };
                         this.resetVoucher();
-                    }else{
-                        this.$message("已到当前月份最后一张!")
+                    }else{console.log(333,this.totalRows-this.pageindex*this.pagesize-this.count,this.totalRows-this.pageindex*this.pagesize<=this.count)
+                        if(this.totalRows-this.pageindex*this.pagesize<=this.count+1){
+                            this.$message("已到当前月份最后一张!")
+                        }else{
+                            this.pageindex++;
+                            this.getvoucherList();
+                        }
                     }
                 }
             },
             //获取会计期凭证列表****************
-            getvoucherList(){
+            getvoucherList(val){
+                if(val=='reset'){
+                    this.pageindex=0;
+                }
                 const loading1=this.$loading();
                 var data={
                     uid:this.uid,
@@ -480,8 +485,6 @@
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
                     queryfilter:{"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1]),"OrgId*num*eq*1":this.orgid}
-                    /*uyear:this.sideDate.split('-')[0],
-                    pmonth:parseInt(this.sideDate.split('-')[1])*/
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
@@ -490,7 +493,11 @@
                             this.$message('暂无新凭证');
                         } else{
                             this.newAddList=res.Record;
-                            this.count=0;
+                            this.count=val=='pre'?this.newAddList.length-1:0;
+                            this.totalRows=res.totalRows;
+                            this.pagesize=res.size;
+                            this.pageindex=res.index;
+                            console.log(res,'页面'+res.size,res.index)
                             this.voucherDataList.data={
                                 Mst:this.newAddList[this.count]
                             };
@@ -504,7 +511,7 @@
                 this.month=i;
                 this.year=year;
                 this.sideDate=year+'-'+i;
-                this.getvoucherList();
+                this.getvoucherList('reset');
             },
             //鼠标滚轮移动月份选择****************
             monthsSel($event){
@@ -517,6 +524,25 @@
                         month.style.bottom=bot-100+'px';
                     }
                 }else if($event.deltaY=='100'){
+                    if(bot>-100){
+                        month.style.bottom='0px';
+                    }else{
+                        month.style.bottom=bot+100+'px';
+                    }
+                }
+            },
+            //火狐浏览鼠标滚轮移动****************
+            foxMonthSel($event){
+                var month= document.getElementById('scrollMonth');
+                var bot=parseInt(month.style.bottom);
+
+                if($event.detail=='-3'){
+                    if(parseInt(bot)>0){
+                        return;
+                    }else{
+                        month.style.bottom=bot-100+'px';
+                    }
+                }else if($event.detail=='3'){
                     if(bot>-100){
                         month.style.bottom='0px';
                     }else{
@@ -543,7 +569,6 @@
             dragMove($event){
                 if(this.mouseDown){
                     var Y=$event.clientY-this.mouseStartY;
-                    console.log(Y)
                     var month= document.getElementById('scrollMonth');
                     var bot=parseInt(month.style.bottom);
                     if(bot>0){
@@ -556,39 +581,43 @@
 
             },
             //会计期[反]结账确认选择*****************************
-            yearsTrue(val){
-                console.log(val)
-               if(val=='check'||val=='uncheck'){
-                    this.checkOut(val);
+            yearsTrue(str,val){
+               if(str=='check'||str=='uncheck'){
+                    this.checkOut(str,val);
                }else{
                     this.yearSelCss=false;
                }
             },
-            //结账功能**********************
-            checkOut(val){
-                const loading1=this.$loading();
+            //结账功能 //反结账功能*****************************************
+            checkOut(str,val){
                 var t;
                 var url;
-                if(val=='check'){
-                    t=this.nowTime.getFullYear()+'-'+(this.checkVal>9?this.checkVal:'0'+this.checkVal)
-                }else if(val=='uncheck'){
-                    t=this.nowTime.getFullYear()+'-'+(this.checkVal>9?this.checkVal:'0'+this.checkVal)
+                if(str=='check'){
+                    url='/PBusinessConfig/UpdateBusinessConfig';
+                }else if(str=='uncheck'){
+                    if(this.unCheckVal>this.checkedTime-1){
+                        this.$message('当前月份还未结账,无法反结账!');
+                        return;
+                    }
+                    url='/PBusinessConfig/UnUpdateBusinessConfig';
                 }
+                t=this.nowTime.getFullYear()+'-'+val
                 var data={
                     orgid:this.orgid,
                     uid:this.uid,
                     dateTime:t
                 }
-                this.$axios.get('/PBusinessConfig/UpdateBusinessConfig',{params:data})
+                const loading1=this.$loading();
+                this.$axios.get(url,{params:data})
                     .then(res=>{
-                        this.$message(res.Msg);
                         loading1.close();
+                        if(res.Status=='success'){
+                            this.$message('结账成功!');
+                        }else{
+                            this.$message('结账失败!');
+                        }
                     })
                     .catch(err=>{console.log(err);loading1.close();})
-            },
-            //反结账功能*******************
-            unCheckOut(){
-
             },
             //会计期年份上下切换******
             nextYear(bool){
@@ -608,10 +637,48 @@
                 }
                 this[name]=val;
             },
+            //会计期弹窗年月份选择*****************
             yearMonthClick($event){
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
-                this.getvoucherList();
+                this.getvoucherList('reset');
+            },
+            //凭证重排月份选择******************
+            resetCodeMonth($event){
+              this.month= this.month=parseInt($event.target.innerHTML);
+            },
+            //凭证号重排确认***************
+            resetCode(val){
+                if(val){
+                    const loading5=this.$loading();
+                    var data={
+                        orgid:this.orgid,
+                        Year:this.sideDate.split('-')[0],
+                        Pmonth:this.sideDate.split('-')[1]
+                    }
+                    var url='/PVoucherMst/GetRebuilder';
+                    if(this.allReset){
+                        url='PVoucherMst/GetRebuilderForAllYear';
+                        data={
+                            orgid:this.orgid,
+                            Year:this.sideDate.split('-')[0],
+                        }
+                    }
+                    this.$axios.get(url,{params:data})
+                        .then(res=>{
+                            console.log(res)
+                            if(res.Status=='error'){
+                                this.$message(res.Msg);
+                            }else if(res.Status=='success'){
+                                this.$message('重排成功!');
+                                this.resetShow=false;
+                            }
+                            loading5.close();
+                        })
+                        .catch(err=>{console.log(err);loading5.close();})
+                }else{
+                    this.resetShow=false;
+                }
             },
             //会计期内容切换************************************
             checkOutSel(val){
@@ -619,11 +686,11 @@
             },
             //会计期窗口弹出**************************
             yearSelShow(){
-                this.year=this.sideDate.split('-')[0];
                 this.checkVal=this.checkedTime;
                 this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                 this.yearSelCss=!this.yearSelCss;
             },
+            //做下月账****************
             nextMonthShow(){
                 this.nextMonthCss=true;
             }
@@ -914,6 +981,7 @@
             }
             position:absolute;
             top:0;
+            z-index:9;
             left:-320px;
             width:300px;
             height:310px;
@@ -1097,6 +1165,7 @@
                 }
             }
             .yearsContent{
+                font-size: 15px;
                 >p:first-of-type{
                     margin:10px 15px 5px;
                     padding: 5px 0;
@@ -1104,7 +1173,6 @@
                     font-weight: bold;
                     border-bottom: 1px solid #ccc;
                 }
-                font-size: 15px;
                 >div:first-of-type{
                     font-size: 18px;
                     font-weight: bold;
@@ -1196,10 +1264,30 @@
                         }
                     }
                 }
+                .allActive>li{
+                    background:#2780d1 ;
+                    color:#fff;
+                }
             }
         }
 
     }
-
+    .footInfo{
+        margin-top: 50px;
+        height:70px;
+        line-height: 70px;
+        background: #2b3245;
+        text-align: center;
+        color:#fff;
+        font-size: 20px;
+        >a{
+            color:#fff;
+            padding:0 20px;
+            border-right:1px solid #fff;
+            &:last-of-type{
+                border:0;
+            }
+        }
+    }
 
 </style>

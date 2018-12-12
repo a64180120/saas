@@ -18,6 +18,7 @@
       </div>
       <div class="voucherSelect">
           <div>
+<<<<<<< HEAD
               <label>
                   <div>账期:</div>
                   <div class="block">
@@ -40,12 +41,16 @@
               </label>
           </div>
           <div>
-              <label >合计金额: <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
-              <label >至:<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
+              <label >合计金额: <div class="inputContainer"><input type="text"></div> </label>
+              <label >至:<div class="inputContainer"><input type="text"></div></label>
+=======
+              <label >合计金额(元):&nbsp; <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
+              <label >至:&nbsp;<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
+>>>>>>> 5f0d5d31845b84e641b9de79668dae95293d12db
           </div>
           <div class="flexPublic searcherCon">
-              <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
-              <div @click="searchVoucher" class="searcherBtn">搜索</div>
+              <div class="searcherValue"><input v-model="unionSearchValue" type="text" placeholder="科目/摘要/凭证号"></div>
+              <div  class="searcherBtn">搜索</div>
               <div @click.stop="highGradeToggle(true)">高级</div>
               <div v-show="highGradeCss" class="highGradeCss">
                 <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
@@ -106,19 +111,19 @@
                 <ul>
                     <li>
                         <span>凭证日期 : {{item.PDate?item.PDate.replace("T"," "):''}}</span>
-                        <span>凭证字号 : {{item.PNo}}</span>
+                        <span>凭证字号 : 记-{{item.PNo}}</span>
                         <span>附件数 : {{item.PAttachment}}</span>
                         <span>制单人 : {{item.PMakePerson}}</span>
                         <span>审核 : {{item.PAuditor}}</span>
                     </li>
                     <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                         <div>{{dtl.Abstract}}</div>
-                        <div>{{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}</div>
-                        <div>{{dtl.JSum==0?'':dtl.JSum}}</div>
-                        <div>{{dtl.DSum==0?'':dtl.DSum}}</div>
+                        <div>{{dtl.SubjectCode}}</div>
+                        <div>{{dtl.JSum}}</div>
+                        <div>{{dtl.DSum}}</div>
                     </li>
                     <li>
-                        <div>合计:{{'sum' | sum(item.Dtls)}}</div>
+                        <div>合计:{{'sum'|sum(item.Dtls)}}</div>
                         <div>{{'jie'|sum(item.Dtls)}}</div>
                         <div>{{'dai'|sum(item.Dtls)}}</div>
                     </li>
@@ -130,16 +135,10 @@
 </template>
 
 <script>
-    import {mapState, mapActions} from 'vuex'
   export default {
     name: "voucher-list",
       mounted(){
-        if(this.$route.query.voucherList){
-            this.voucherList= this.$route.query.voucherList;
-        }else{
-            this.getvoucherList();
-        }
-
+        this.getvoucherList();
       },
       data(){
         return {
@@ -147,10 +146,7 @@
             date2:'',
             date3:'',
             date4:'',
-            sum1:'',
-            sum2:'',
-            sideDate:2018-12,
-            searchVal:'',
+            unionSearchValue:'',
             pickerOptions: {
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -178,7 +174,7 @@
             },
             voucherList:[],
             highGradeCss:false,
-            pagesize:100,
+            pagesize:10,
             pageindex:0,
         }
       },
@@ -187,56 +183,19 @@
               this.highGradeCss = bool;
           },
           voucherDel(item){
-              this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
-          },
-          /*getvoucher(){
-              var data={
-                  uid:'0001',
-                  orgid:52118082000000,
-                  id:168181205000001
-              }
-              this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
-                  .then(res=>{
-
-                      console.log(res)
-
-                  })
-                  .catch(err=>console.log(err))
-          },*/
-          //凭证搜索**************************
-          searchVoucher(){
-              const loading1=this.$loading();
-              var data={
-                  uid:this.uid,
-                  orgid:this.orgid,
-                  sum1:this.sum1,
-                  sum2:this.sum2,
-                  keyword:this.searchValue,
-                  queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
-              }
-              this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
-                  .then(res=>{
-                      loading1.close();
-                      if(res.Record.length<=0){
-                          this.$message('无法找到该凭证!')
-                      } else{
-                          this.voucherList= res.Record;
-                      }
-                  })
-                  .catch(err=>{console.log(err);loading1.close();})
+              this.$router.push({name:'voucherDel',params:{list:item}});
           },
           getvoucherList(){
               var data={
-                  uid:this.uid,
-                  orgid:this.orgid,
+                  uid:'0001',
+                  orgid:52118082000000,
                   pagesize:this.pagesize,
-                  pageindex:this.pageindex,
-                  keyword:this.searchValue,
-                  queryfilter:{"OrgId*num*eq*1":this.orgid}
+                  pageindex:this.pageindex
               }
               this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                   .then(res=>{
-                      this.voucherList= res.Record
+                      this.voucherList=res.Record;
+                      console.log(this.voucherList)
                       if(this.voucherList.length<=0){
                           alert('暂无新凭证');
                       }
@@ -244,18 +203,9 @@
                   .catch(err=>console.log(err))
           },
       },
-      computed:{
-          ...mapState({
-              orgid: state => state.user.orgid,
-              uid: state => state.user.userid,
-          })
-      },
       filters:{
         sum(val,dtl){
             var sum=0;
-            if(!dtl){
-                dtl=[]
-            }
             switch(val){
                 case 'jie':
                     for(var d of dtl){
@@ -493,22 +443,23 @@
         .voucherSelect{
             display: flex;
             flex-flow: row nowrap;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             >div{
                 display: flex;
                 justify-content: flex-start;
                 width:25%;
+                min-width: 280px;
                 >label{
                     display: flex;
                     align-items: center;
                     &:nth-of-type(2){
                         margin-left:5px ;
                         >div:first-of-type{
-                            width:30px;
+                            width:60px;
                         }
                         >div.inputContainer{
-                            width:40px;
+                            width:70px;
                         }
                     }
                     div{
@@ -516,7 +467,7 @@
                     }
                 }
                 >label>div:first-of-type{
-                    width:40px;
+                    width:70px;
                 }
                 >label>div:nth-of-type(2)>div{
                     width:100px;
@@ -553,6 +504,7 @@
             }
         }
         .listContainer{
+            overflow-y: auto;
             padding:5px;
             margin-top:10px;
             padding-bottom: 20px;

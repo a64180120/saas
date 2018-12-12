@@ -157,12 +157,12 @@ export default {
     this.getData('');
   },
   //计算
-  computed: {
-      ...mapState({
-          userid: state => state.user.userid,
-          orgid: state => state.user.orgid
-      })
-  },
+    computed: {
+        ...mapState({
+            userid: state => state.user.userid,
+            orgid: state => state.user.orgid
+        })
+    },
   methods: {
     // 分页导航
     handleCurrentChange(val) {
@@ -245,7 +245,7 @@ export default {
     search() {
       this.is_search = true;
       if(this.select_word!=''){
-        var queryfilter='{"[or-dictionary0]*dictionary*or": { "CType*str*eq": "'+this.select_word+'", "MobilePhone*str*eq": "'+this.select_word+'" }}';
+        var queryfilter='{"[or-dictionary0]*dictionary*or": { "RealName*str*like": "'+this.select_word+'", "MobilePhone*str*like": "'+this.select_word+'" }}';
         
         console.log(queryfilter);
         this.getData(queryfilter);

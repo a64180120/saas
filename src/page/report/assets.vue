@@ -1,42 +1,33 @@
 <template>
     <div class="manageContent">
-        <div class="unionState flexPublic">
-            <ul class="flexPublic">
-                <li class="flexPublic">
-                    <!--<div>年度:</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                        </select>
-                    </div>
-                    <div>至</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                        </select>
-                    </div>-->
-                        <div>账期:</div>
+        <div class="reportBox">
+            <div class="unionState flexPublic">
+                <ul class="flexPublic">
+                    <li class="flexPublic">
+                        <!--<div>账期:</div>
                         <div class="block selectContainer">
                             <el-date-picker
                                 v-model="date1"
                                 type="date"
                                 placeholder="选择日期">
                             </el-date-picker>
-                        </div>
-                        <div class="pinzheng">凭证：</div>
+                        </div>-->
+                        <div>凭证：</div>
                         <div  class="block selectContainer">
                             <select class="el-input__inner" v-model="proofType">
                                 <option value="0">包含未审核凭证</option>
                                 <option value="1">不包含未审核凭证</option>
                             </select>
                         </div>
-                </li>
-            </ul>
-            <ul class="flexPublic handle">
-                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
-            </ul>
-        </div>
+
+                    </li>
+                </ul>
+                <ul class="flexPublic handle">
+                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                </ul>
+            </div>
+
         <div class="formData" ref="printFrom">
             <ul>
                 <li></li>
@@ -49,124 +40,175 @@
                 <li>期末数</li>
             </ul>
 
-            <ul class="formDataItems flexPublic">
-                <li></li>
-                <li class="align-center">一、资产</li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li class="align-center">二、负债</li>
-                <li></li>
-                <li></li>
-            </ul>
-            <template v-if="cashInData.length >= cashOutData.length+cashData.length+2">
-                <template v-for="(item,index) in cashInData">
-                    <ul class="formDataItems flexPublic">
-                        <li>{{item.KCode}}</li>
-                        <li>{{item.KName}}</li>
-                        <li>{{item.StartSum}}</li>
-                        <li>{{item.EndSum}}</li>
-                        <template v-if="index<=cashOutData.length">
-                            <li>{{cashOutData[index-1].KCode}}</li>
-                            <li>{{cashOutData[index-1].KName}}</li>
-                            <li>{{cashOutData[index-1].StartSum}}</li>
-                            <li>{{cashOutData[index-1].EndSum}}</li>
-                        </template>
-                        <template v-else-if="index==cashOutData.length+1">
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </template>
-                        <template v-else-if="index==cashOutData.length+2">
-                            <li></li>
-                            <li class="align-center">三、净资产类</li>
-                            <li></li>
-                            <li></li>
-                        </template>
-                        <template v-else>
-                            <li>{{cashData[index-cashOutData.length-3].KCode}}</li>
-                            <li>{{cashData[index-cashOutData.length-3].KName}}</li>
-                            <li>{{cashData[index-cashOutData.length-3].StartSum}}</li>
-                            <li>{{cashData[index-cashOutData.length-3].EndSum}}</li>
-                        </template>
-                    </ul>
+                <ul class="formDataItems flexPublic">
+                    <li></li>
+                    <li class="align-center">一、资产</li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li class="align-center">二、负债</li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <template v-if="cashInData.length >= cashOutData.length+cashData.length+6">
+                    <template v-for="(item,index) in cashInData">
+                        <ul class="formDataItems flexPublic">
+                            <li>{{item.KCode}}</li>
+                            <li>{{item.KName}}</li>
+                            <li>{{item.StartSum}}</li>
+                            <li>{{item.EndSum}}</li>
+                            <template v-if="index<=cashOutData.length">
+                                <li>{{cashOutData[index-1].KCode}}</li>
+                                <li>{{cashOutData[index-1].KName}}</li>
+                                <li>{{cashOutData[index-1].StartSum}}</li>
+                                <li>{{cashOutData[index-1].EndSum}}</li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+1">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+2">
+                                <li></li>
+                                <li class="align-center">负债合计</li>
+                                <li>{{cashCounts}}</li>
+                                <li>{{cashCountsQ}}</li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+3">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+4">
+                                <li></li>
+                                <li class="align-center">三、净资产类</li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+cashData.length+5">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+cashData.length+6">
+                                <li></li>
+                                <li class="align-center">净资产合计</li>
+                                <li>{{cashCounts}}</li>
+                                <li>{{cashCountsQ}}</li>
+                            </template>
+                            <template v-else>
+                                <li>{{cashData[index-cashOutData.length-3].KCode}}</li>
+                                <li>{{cashData[index-cashOutData.length-3].KName}}</li>
+                                <li>{{cashData[index-cashOutData.length-3].StartSum}}</li>
+                                <li>{{cashData[index-cashOutData.length-3].EndSum}}</li>
+                            </template>
+                        </ul>
+                    </template>
                 </template>
-            </template>
-            <template v-else>
-                <template v-for="index in (cashOutData.length+cashData.length+2)">
-                    <ul class="formDataItems flexPublic">
-                        <template v-if="index<=cashInData.length">
-                            <li>{{cashInData[index-1].KCode}}</li>
-                            <li>{{cashInData[index-1].KName}}</li>
-                            <li>{{cashInData[index-1].StartSum}}</li>
-                            <li>{{cashInData[index-1].EndSum}}</li>
-                        </template>
-                        <template v-else>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </template>
+                <template v-else>
+                    <template v-for="index in (cashOutData.length+cashData.length+6)">
+                        <ul class="formDataItems flexPublic">
+                            <template v-if="index<=cashInData.length">
+                                <li>{{cashInData[index-1].KCode}}</li>
+                                <li>{{cashInData[index-1].KName}}</li>
+                                <li>{{cashInData[index-1].StartSum}}</li>
+                                <li>{{cashInData[index-1].EndSum}}</li>
+                            </template>
+                            <template v-else>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </template>
 
-                        <template v-if="index<=cashOutData.length">
-                            <li>{{cashOutData[index-1].KCode}}</li>
-                            <li>{{cashOutData[index-1].KName}}</li>
-                            <li>{{cashOutData[index-1].StratSum}}</li>
-                            <li>{{cashOutData[index-1].EndSum}}</li>
-                        </template>
-                        <template v-else-if="index==cashOutData.length+1">
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </template>
-                        <template v-else-if="index==cashOutData.length+2">
-                            <li></li>
-                            <li class="align-center">三、净资产类</li>
-                            <li></li>
-                            <li></li>
-                        </template>
-                        <template v-else>
-                            <li>{{cashData[index-cashOutData.length-3].KCode}}</li>
-                            <li>{{cashData[index-cashOutData.length-3].KName}}</li>
-                            <li>{{cashData[index-cashOutData.length-3].StartSum}}</li>
-                            <li>{{cashData[index-cashOutData.length-3].EndSum}}</li>
-                        </template>
-                    </ul>
+                            <template v-if="index<=cashOutData.length">
+                                <li>{{cashOutData[index-1].KCode}}</li>
+                                <li>{{cashOutData[index-1].KName}}</li>
+                                <li>{{cashOutData[index-1].StratSum}}</li>
+                                <li>{{cashOutData[index-1].EndSum}}</li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+1">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+2">
+                                <li></li>
+                                <li class="align-center">负债合计</li>
+                                <li>{{cashOutCounts}}</li>
+                                <li>{{cashOutCountsQ}}</li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+3">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length+4">
+                                <li></li>
+                                <li class="align-center">三、净资产类</li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-else-if="index <= cashOutData.length+cashData.length+4">
+                                <li>{{cashData[index-cashOutData.length-5].KCode}}</li>
+                                <li>{{cashData[index-cashOutData.length-5].KName}}</li>
+                                <li>{{cashData[index-cashOutData.length-5].StartSum}}</li>
+                                <li>{{cashData[index-cashOutData.length-5].EndSum}}</li>
+                            </template>
+                            <template  v-if="index == cashOutData.length+cashData.length+5">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </template>
+                            <template v-if="index == cashOutData.length+cashData.length+6">
+                                <li></li>
+                                <li class="align-center">净资产合计</li>
+                                <li>{{cashCounts}}</li>
+                                <li>{{cashCountsQ}}</li>
+                            </template>
+                        </ul>
+                    </template>
                 </template>
-            </template>
-            <ul class="formDataItems flexPublic">
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul>
-            <ul class="formDataItems flexPublic">
-                <li></li>
-                <li class="align-center">资产总计</li>
-                <li>{{cashInCounts}}</li>
-                <li></li>
-                <li></li>
-                <li class="align-center">负债与净资产总计</li>
-                <li>{{cashOutCounts+cashCounts}}</li>
-                <li></li>
-            </ul>
-            <ul class="formDataItems flexPublic bottomForm">
-                <li>工会主席：</li>
-                <li></li>
-                <li>财务负责人：</li>
-                <li></li>
-                <li>复核：</li>
-                <li></li>
-                <li>制表：</li>
-                <li></li>
-            </ul>
-
+                <ul class="formDataItems flexPublic">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <ul class="formDataItems flexPublic">
+                    <li></li>
+                    <li class="align-center">资产总计</li>
+                    <li>{{cashInCounts}}</li>
+                    <li>{{cashInCountsQ}}</li>
+                    <li></li>
+                    <li class="align-center">负债与净资产总计</li>
+                    <li>{{cashOutCounts+cashCounts}}</li>
+                    <li>{{cashOutCountsQ+cashCountsQ}}</li>
+                </ul>
+                <!--<ul class="formDataItems flexPublic bottomForm">
+                    <li>工会主席：</li>
+                    <li></li>
+                    <li>财务负责人：</li>
+                    <li></li>
+                    <li>复核：</li>
+                    <li></li>
+                    <li>制表：</li>
+                    <li></li>
+                </ul>-->
+            </div>
+        </div>
+        <div class="timeSelectBox">
+            <time-select-bar @item-click="dateChoose"></time-select-bar>
         </div>
     </div>
 </template>
@@ -174,12 +216,12 @@
 <script>
     import * as axios from "axios";
     import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
-    import { getLodop } from '@/plugins/Lodop/LodopFuncs'
-
+    import { getLodop } from '@/plugins/Lodop/LodopFuncs';
+    import TimeSelectBar from "../../components/TimeSelectBar/index";
 
     let balanceData=[];
     export default {
-        name: "user",
+        name: "assets",
         data(){
             return{
                 userState:0,
@@ -197,34 +239,37 @@
                 cashInCounts:0,
                 cashOutCounts:0,
                 cashCounts:0,
+                cashInCountsQ:0,
+                cashOutCountsQ:0,
+                cashCountsQ:0,
                 date1:'',
                 proofType:'0'
             }
         },
+        components: {TimeSelectBar},
         mounted(){
             this.getData(this.date1,this.proofType);
         },
         watch:{
-            /*
-            *监听日期选择，根据所选的日期以及凭证调用资产负债数据查询方法
-            * */
-            date1:function(){
-                this.getData(this.date1,this.proofType);
-            },
+            // /*
+            // *监听日期选择，根据所选的日期以及凭证调用资产负债数据查询方法
+            // * */
+            // date1:function(){
+            //     this.getData(this.date1,this.proofType);
+            // },
             proofType:function(){
                 this.getData(this.date1,this.proofType);
             }
         },
         methods:{
+            dateChoose:function(val){
+                let time=val.choosedYear+'-'+ val.choosedMonth;
+                this.getData(time,this.proofType);
+            },
             /*
-            *author:hyz
-            *获取资产负债表数据
-            * 接口：PVoucherMst/GetBalanceSheet
-            * 参数：param--日期，未选择自动使用当前时间
-            * proofType--资产凭证类型，包含未审核凭证（0），不包含未审核凭证（1）
-            * */
-            getData(param,proofType){
-                console.log(proofType);
+             *时间处理方法
+             *  */
+            getParamTime(param){
                 let nowtime ='';
                 if(param==null||param==undefined||param==''){
                     nowtime = new Date();
@@ -236,15 +281,26 @@
                 month<10?month='0'+month:month;
                 let day=nowtime.getDate();
                 day<10?day='0'+day:day;
-                param=year+'-'+month+'-'+day;
-
+                return param=year+'-'+month+'-'+day;
+            },
+            /*
+            *author:hyz
+            *获取资产负债表数据
+            * 接口：PVoucherMst/GetBalanceSheet
+            * 参数：param--日期，未选择自动使用当前时间
+            * proofType--资产凭证类型，包含未审核凭证（0），不包含未审核凭证（1）
+            * */
+            getData(param,proofType){
+                console.log(param);
+                param = this.getParamTime(param);
                 let data={
                     accountPeriod:param,
                     isContainUncheck:proofType
                 };
                 this.$axios.get('/PVoucherMst/GetBalanceSheet',{params:data})
                     .then(res => {
-                       let cashIn=[],cashOut=[],cash=[],cashInCount=0,cashOutCount=0,cashCount=0;
+                        console.log(res);
+                       let cashIn=[],cashOut=[],cash=[],cashInCount=0,cashInCountQ=0,cashOutCount=0,cashOutCountQ=0,cashCount=0,cashCountQ=0;
                        for(let i in res.Data){
                            if(res.Data[i].KType==="1"){
                                cashIn.push(res.Data[i]);
@@ -256,12 +312,15 @@
                        }
                        for(let j in cashIn){
                            cashInCount+=cashIn[j].StartSum;
+                           cashInCountQ+=cashIn[j].EndSum;
                        }
                        for(let k in cashOut){
                            cashOutCount+=cashOut[k].StartSum;
+                           cashOutCountQ+=cashOut[k].EndSum;
                        }
                        for(let l in cash){
                            cashCount+=cash[l].StartSum;
+                           cashCountQ+=cash[l].EndSum;
                         }
                        balanceData=res.Data;
                        this.cashInData=cashIn;
@@ -270,6 +329,9 @@
                        this.cashInCounts=cashInCount;
                        this.cashOutCounts=cashOutCount;
                        this.cashCounts=cashCount;
+                        this.cashInCountsQ=cashInCountQ;
+                        this.cashOutCountsQ=cashOutCountQ;
+                        this.cashCountsQ=cashCountQ;
                     })
                     .catch(err => console.log(err))
             },
@@ -282,7 +344,6 @@
             * */
             postBalanceSheetExcel:function(){
                 let param = {'infoData':this.balanceData};
-
                 let baseheader=ajaxhttp.header;
                 let base=ajaxhttp.base;
 
@@ -292,8 +353,8 @@
                     method:'get',
                     url:'/PVoucherMst/GetBalanceSheetExcel',
                     params:{
-                        accountPeriod:'2018-12-01',
-                        isContainUncheck:1
+                        accountPeriod:this.getParamTime(this.date1),
+                        isContainUncheck:this.proofType
                     }
                 }) .then(res => {
                     window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
@@ -351,11 +412,11 @@
                 const me = this
                 var html=this.$refs.printFrom.innerHTML;
                 let  LODOP = getLodop();
-                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句 
+                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
                 LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
                 LODOP.SET_PRINT_STYLE("Bold", 1);
                 //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
-                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");  
+                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
                 LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
                 //LODOP.PRINT();
                 LODOP.PREVIEW();
@@ -370,6 +431,16 @@
 </script>
 
 <style scoped>
+    .reportBox{
+        margin-right: 60px;
+    }
+    .timeSelectBox{
+        position: fixed;
+        right: 0;
+        top: 100px;
+        bottom:0;
+        width: 60px;
+    }
     .pinzheng{
         margin-left: 120px;
     }
@@ -504,4 +575,7 @@
         width:15%;
         text-align: left;
     }
+
+
+
 </style>

@@ -26,7 +26,6 @@
         v-loading="loading"
         highlight-current-row
         @onRowClick="handleClickRow"
-        extraheight=100
         border>
             <el-table-column label="科目类别" align="center">
                 <template slot-scope="scope">
@@ -48,10 +47,7 @@
             </el-table-column>
             <el-table-column label="辅助核算">
                 <template slot-scope="scope">
-                    <span v-for="(v,index) in scope.row.AuxiliaryTypes" :key="v.PhId">       
-                        <span v-if="index<( scope.row.AuxiliaryTypes.length-1)">{{v.BaseName}},</span>
-                        <span v-else>{{v.BaseName}}</span>
-                    </span>
+                    <span v-for="v in scope.row.AuxiliaryTypes" :key="v.PhId">{{v.BaseName}},</span>
                 </template>
             </el-table-column>
             <el-table-column label="停用/启用" align="center">
@@ -100,7 +96,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import treeTable from "@/components/tree-table/indexHeight";
+import treeTable from "@/components/tree-table";
 import { SubjectAdd,SubjectUpdate,SubjectList,SubjectDelete } from '@/api/subject/subjectInfo'
 import { AuxiliaryTypeList } from '@/api/Auxiliary/typeInfo'
 import Auth from "@/util/auth";
@@ -271,12 +267,8 @@ export default {
             this.dialogState = "add";
             this.editVisible = true;
             this.$nextTick(() => {
-                //this.$refs.form.resetFields();  //新增页面数据清空
-                this.form.PhId=0;
-                this.form.KCode='';
-                this.form.KName='';
+                this.$refs.form.resetFields();  //新增页面数据清空
                 this.form.KType='';
-                this.form.KBalanceType='0';
                 this.form.AuxiliaryType=[];
             })
             this.parentKCode=object[0].KCode
@@ -361,7 +353,7 @@ export default {
     },
     //导入按钮
     DownLoad() {
-        alert('正在开发中....')
+
     },
     // 保存表单 (新增，修改)
     Save(formName){
@@ -450,11 +442,8 @@ export default {
                 //清空父级code值
                 this.parentKCode=''
 
-                var queryfilter={
-                    KCode:this.s_word
-                }
                 //刷新列表
-                this.getData(queryfilter);
+                this.getData('');
 
           }).catch(error =>{
             console.log(error);
@@ -534,11 +523,8 @@ export default {
                 //清空父级code值
                 this.parentKCode=''
 
-                var queryfilter={
-                    KCode:this.s_word
-                }
                 //刷新列表
-                this.getData(queryfilter);
+                this.getData('');
 
           }).catch(error =>{
             console.log(error);

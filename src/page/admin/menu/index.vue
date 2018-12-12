@@ -638,6 +638,7 @@
                                 .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostDelete", data)
                                 .then(res => {
                                     let resultData = res;
+                                    console.log(res);
                                     this.tableData.splice(this.idx, 1);
                                     if(res.Status=='success'){
                                         this.$message.success("删除成功");

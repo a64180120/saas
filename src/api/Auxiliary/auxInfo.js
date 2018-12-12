@@ -7,7 +7,7 @@
   export function AuxiliaryList(object,param) {
       return new Promise((resolve, reject) => {
         object.$axios({
-            url: "/PVoucherAuxiliaryType/GetAuxiliaryQueryList",
+            url: "/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId",
             method: 'get',
             params: param
         }).then(res => {

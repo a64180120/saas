@@ -252,3 +252,13 @@ ul{
     background: #fff;
     color:#333;
 }
+
+.sidebar-el-menu[data-v-4d15bc2e]:not(.el-menu--collapse){
+    width:150px !important;
+}
+.content-box{
+    left:150px;
+}
+.content{
+    padding-bottom: 50px;
+}
