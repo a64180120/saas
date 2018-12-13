@@ -3,8 +3,9 @@ let Base64 = require("js-base64").Base64;
 
 const ajaxMode = {
     //网站api的地址
-    //url:"http://10.0.45.51:8028",
+   // url:"http://10.0.45.46:8028",
     //url:"http://10.0.13.52:8028",
+   // url:"http://10.0.15.3:8028",
     //url:"http://127.0.0.1:8028",
     url:process.env.API_ROOT,
 
