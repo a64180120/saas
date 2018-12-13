@@ -1,4 +1,5 @@
 <template>
+
     <div class="voucher">
         <div  class="voucherContent">
             <div @click.stop="moneyInputHide" v-show="moneyInputMask" class="moneyInputMask"></div>

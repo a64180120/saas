@@ -1,4 +1,5 @@
 <template>
+
     <div class="voucher">
         <div class="voucherHead">
             <ul class="flexPublic">
