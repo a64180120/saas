@@ -1,16 +1,16 @@
 <template>
     <div class="manage">
         <section class="container">
-            <aside class="asideNav">
-                <ul>
-                    <li @click="unionTab('details')" :class="{asideActive:asideActive=='details'}">明细表</li>
-                    <li @click="unionTab('auxiliary')" :class="{asideActive:asideActive=='auxiliary'}">辅助项科目明细表</li>
-                    <li @click="unionTab('subject')" :class="{asideActive:asideActive=='subject'}">科目辅助项明细表</li>
-                </ul>
-            </aside>
+            <!--<aside class="asideNav">-->
+                <!--<ul>-->
+                    <!--<li @click="unionTab('details')" :class="{asideActive:asideActive=='details'}">明细表</li>-->
+                    <!--<li @click="unionTab('auxiliary')" :class="{asideActive:asideActive=='auxiliary'}">辅助项科目明细表</li>-->
+                    <!--<li @click="unionTab('subject')" :class="{asideActive:asideActive=='subject'}">科目辅助项明细表</li>-->
+                <!--</ul>-->
+            <!--</aside>-->
             <detls v-if="asideActive=='details'"></detls>
-            <subject v-if="asideActive=='subject'"></subject>
-            <auxiliary v-if="asideActive=='auxiliary'"></auxiliary>
+            <!--<subject v-if="asideActive=='subject'"></subject>-->
+            <!--<auxiliary v-if="asideActive=='auxiliary'"></auxiliary>-->
         </section>
     </div>
 </template>

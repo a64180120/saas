@@ -21,8 +21,6 @@ function recursiveIssuer(m) {
     }
 }
 
-const env = require('../config/prod.env')
-
 const webpackConfig = merge(baseWebpackConfig, {
     module: {
         rules: utils.styleLoaders({
@@ -93,7 +91,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': env   //require('../config/prod.env')
+            'process.env': config.build.env 
         }),
         // extract css into its own file
         new MiniCssExtractPlugin({

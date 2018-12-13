@@ -1,89 +1,83 @@
 <template>
         <div class="manageContent">
-            <div class="unionState flexPublic">
-                <ul class="flexPublic">
-                    <li class="flexPublic">
-                        <div>账期:</div>
-                        <div>
-                            <el-date-picker
-                                v-model="zwTime"
-                                type="daterange"
-                                range-separator="至"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期"
-                                value-format="yyyy-MM-dd">
-                            </el-date-picker>
-                        </div>
-                    </li>
-                </ul>
-                <div class="flexPublic searcherCon">
-                    <div class="searcherValue"><input type="text" placeholder="组织编码/名称"></div>
-                    <div  class="searcherBtn">搜索</div>
+            <div class="reportBox">
+
+                <div class="unionState flexPublic">
+
+                    <!--<div >
+                        <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
+                    </div>-->
+                    <div class="flexPublic handle">
+                        <div class="searcherValue"><input type="text" placeholder="组织编码/名称"></div>
+                        <div  class="searcherBtn">搜索</div>
+                    </div>
+                    <ul class="flexPublic handle">
+                        <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                        <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                    </ul>
                 </div>
-                <ul class="flexPublic handle">
-                    <a href=""><li>打印</li></a>
-                    <a href=""><li>导出</li></a>
-                </ul>
+                <div class="flexPublic  p0">
+                    <div class="unionLists">
+                        <div class="cover"></div>
+                        <div class="unionListsTitle">科目列表 &nbsp;
+                        </div>
+                        <div class="unionListsContent">
+                            <el-tree
+                                class="filter-tree"
+                                :data="subjectLists"
+                                :props="defaultProps"
+                                default-expand-all
+                                node-key="PhId"
+                                :filter-node-method="filterNode"
+                                @node-click="handleNodeClick"
+                                ref="subjectTree">
+                            </el-tree>
+                        </div>
+                    </div>
+                    <div class="formData" > <!--v-loading.fullscreen.lock="loading"-->
+                        <ul>
+                            <li>凭证日期</li>
+                            <li>凭证字号</li>
+                            <li>摘要</li>
+                            <li>借方金额(元)</li>
+                            <li>贷方金额(元)</li>
+                            <li>方向</li>
+                            <li>余额(元)</li>
+                        </ul>
+                        <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
+                            <li>{{item.Pdate.slice(0,10)}}</li>
+                            <li :title="item.Pno">{{item.Pno}}</li>
+                            <li>{{item.Abstract}}</li>
+                            <li>{{item.JSum}}</li>
+                            <li :title="item.DSum">{{item.DSum}}</li>
+                            <li >{{JD[item.DType]}}</li>
+                            <li>{{item.Balance}}</li>
+                        </ul>
+                        <!--
+                            v-infinite-scroll:
+                            infinite-scroll-distance 指定滚动条距离底部多高时触发v-infinite-scroll指向的方法
+                            infinite-scroll-disabled 等于true时代表正在执行加载，这时禁用滚动触发
+                            infinite-scroll-listen-for-event 当vue实例触发事件时立即再次检查
+                            infinite-scroll-throttle-delay 两次检查之间的时间间隔(默认值= 200)
+                          -->
+                        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                            .....加载中
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="flexPublic manageContent p0">
-                <div class="unionLists">
-                    <div class="unionListsTitle">科目列表 &nbsp;
-                        <div >
-                            <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
-                        </div>
-                    </div>
-                    <div class="unionListsContent">
-                        <el-tree
-                            class="filter-tree"
-                            :data="subjectLists"
-                            :props="defaultProps"
-                            default-expand-all
-                            node-key="PhId"
-                            :filter-node-method="filterNode"
-                            @node-click="handleNodeClick"
-                            ref="subjectTree">
-                        </el-tree>
-                    </div>
-                </div>
-                <div class="formData" > <!--v-loading.fullscreen.lock="loading"-->
-                    <ul>
-                        <li>凭证日期</li>
-                        <li>凭证字号</li>
-                        <li>摘要</li>
-                        <li>借方金额(元)</li>
-                        <li>贷方金额(元)</li>
-                        <li>方向</li>
-                        <li>余额(元)</li>
-                    </ul>
-                    <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
-                        <li>{{item.Pdate.slice(0,10)}}</li>
-                        <li :title="item.Pno">{{item.Pno}}</li>
-                        <li>{{item.Abstract}}</li>
-                        <li>{{item.JSum}}</li>
-                        <li :title="item.DSum">{{item.DSum}}</li>
-                        <li >{{JD[item.DType]}}</li>
-                        <li>{{item.Balance}}</li>
-                    </ul>
-                    <!--
-                        v-infinite-scroll:
-                        infinite-scroll-distance 指定滚动条距离底部多高时触发v-infinite-scroll指向的方法
-                        infinite-scroll-disabled 等于true时代表正在执行加载，这时禁用滚动触发
-                        infinite-scroll-listen-for-event 当vue实例触发事件时立即再次检查
-                        infinite-scroll-throttle-delay 两次检查之间的时间间隔(默认值= 200)
-                      -->
-                    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-                        .....加载中
-                    </div>   
-                </div>
+            <div class="timeSelectBox">
+                <time-select-bar @item-click="dateChoose"></time-select-bar>
             </div>
         </div>
+
 </template>
 
 <script>
     import {delList} from '../../../api/detailaccount/details.js'
     import { mapState, mapActions } from 'vuex'
     import { SubjectList } from '@/api/subject/subjectInfo'
-
+    import TimeSelectBar from "@/components/TimeSelectBar/index";
     /**
      * 明细表
      */
@@ -91,6 +85,7 @@
         name: "detailsAc",
         data() {
             return {
+                downloadLoading: false,
                 loading: false,
                 JD: ['平', '借', '贷'],
                 filterText:'',
@@ -104,14 +99,16 @@
                 auxiliary:0,  //显示辅助项
                 pageSize: 40, //pageSize
                 pageIndex: 1, //pageIndex
+                testIndex:0,
                 totalCount: 0, //总页数
                 busy:false,    //是否正在加载过程中
                 dataInfo: [],
-                selectSubject:''  //选择科目
+                selectSubject:'',  //选择科目
+                date1:'2018'
             }
         },
         created() {
-            
+
             //获取科目属性列表
             this.getSubjectData();
         },
@@ -119,10 +116,12 @@
 
         },
         watch: {
+
             filterText(val) {
                 this.$refs.subjectTree.filter(val);
             }
         },
+        components: {TimeSelectBar},
         computed:{
             ...mapState({
                 orgid:state=>state.user.orgid,
@@ -131,14 +130,23 @@
             })
         },
         methods: {
+            dateChoose:function(val){
+                let time=val.choosedYear+'-'+ val.choosedMonth;
+                this.date1=time;
+                this.getBeginYear();
+            },
             getData(flag) {
+                console.log(this.pageIndex);
                 var data = {
                     uid: this.uid,
-                    OrgIds: this.orgid,
+                    orgid:this.orgid,
                     Kcode: this.selectSubject.KCode||'',
-                    Year: this.selectSubject.Uyear|| '',
+                    // Year: this.selectSubject.Uyear|| '',
+                    Year: this.date1,
+                    OrgIds: this.orgid,
+                    pageindex:this.testIndex,
                     pagesize:this.pageSize,
-                    pageindex:this.pageIndex- 1
+                    Title:this.selectSubject.KName
                 };
 
                 this.loading = true;
@@ -151,12 +159,12 @@
                             this.dataInfo=[]
                             return
                         }
-                        if(flag){//如果flag为true则表示分页	
+                        if(flag){//如果flag为true则表示分页
                             this.dataInfo=this.dataInfo.concat(res.Record);  //concat数组串联进行合并
 
                             if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
                                 this.busy=true;
-                            }else{ 
+                            }else{
                                 this.busy=false;
                             }
                         }else{
@@ -174,16 +182,17 @@
 
             },
             async getSubjectData(){
-                var vm=this;
-                this.loading = true;
+                    var vm=this;
+                    this.loading = true;
 
-                //科目列表
-                SubjectList(vm,{
-                    uid: this.uid,
-                    orgid: this.orgid
-                }).then(res => {
+                    //科目列表
+                    SubjectList(vm,{
+                        uid: this.uid,
+                        orgid: this.orgid
+                    }).then(res => {
+                    console.log(res);
                     this.loading = false;
-                    
+
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
@@ -192,6 +201,7 @@
 
                     if(res.length>0){
                         this.selectItem=res[0];
+                        this.selectSubject=res[0];
                         //加载第一个科目的明细
                         this.getData(res[0]);
                     }
@@ -230,20 +240,109 @@
             },
             //当属性滚动的时候  加载  滚动加载
             loadMore(){
-                console.log(this.pageIndex);    	
+                console.log(this.pageIndex);
                 this.busy=true  //将无限滚动给禁用
                 setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
                     this.pageIndex++;  //滚动之后加载第二页
                     if(this.pageIndex < this.totalCount){
                         this.getData(true);
                     }
-                }, 1000);	    	
-            } 
+                }, 1000);
+            },
+            postBalanceSheetExcel:function() {
+                let param = {'uid':this.uid,
+                    'orgid':this.orgid,
+                    'infoData': this.budgetList};
+
+                let baseheader = ajaxhttp.header;
+                let base = ajaxhttp.base;
+
+                //下载Excel
+                this.downloadLoading = true
+                this.$axios({
+                    method: 'post',
+                    url: '/PsubjectBudget/PostExportMiddleYear',
+                    data: param
+                }).then(res => {
+                    console.log(res);
+                    window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
+                    this.downloadLoading = false
+                }).catch(err => {
+                    console.log(err)
+                })
+            },
+            //下载文件
+            fileDownload (data,fileName){
+                if (!data) {
+                    return
+                }
+                // let fileName = res.headers['content-disposition'].split('=')[1];
+                // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
+
+                let blob = new Blob([data],{type:'application/octet-stream'});
+                let filename = fileName || "filename.xls";
+
+                if (typeof window.navigator.msSaveBlob !== "undefined") {
+                    window.navigator.msSaveBlob(blob, filename);
+                } else {
+                    var blobURL = window.URL.createObjectURL(blob);
+                    var tempLink = document.createElement("a");
+                    tempLink.style.display = "none";
+                    tempLink.href = blobURL;
+                    tempLink.setAttribute("download", filename);
+                    if (typeof tempLink.download === "undefined") {
+                        tempLink.setAttribute("target", "_blank");
+                    }
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    window.URL.revokeObjectURL(blobURL);
+                }
+            },
+            printLodop() {
+                const me = this
+                var html=this.$refs.printFrom.innerHTML;
+                let  LODOP = getLodop();
+                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
+                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+                LODOP.SET_PRINT_STYLE("Bold", 1);
+                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
+                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+                //LODOP.PRINT();
+                LODOP.PREVIEW();
+            },
+            // 打印
+            printContent(e){
+                // let subOutputRankPrint = this.$refs.printFrom;
+                // console.log(subOutputRankPrint.innerHTML);
+                // let newContent =subOutputRankPrint.innerHTML;
+                // let oldContent = document.body.innerHTML;
+                // document.body.innerHTML = newContent;
+                // window.print();
+                // window.location.reload();
+                // document.body.innerHTML = oldContent;
+                // return false;
+
+                this.$print(this.$ref.printFrom) // 使用
+            }
+
         },
     }
 </script>
 
 <style scoped>
+    .reportBox{
+        margin-right: 60px;
+        height: 100%;
+    }
+    .timeSelectBox{
+        position: fixed;
+        right: 0;
+        top: 100px;
+        bottom:0;
+        width: 60px;
+    }
     .unionState>ul>li{
         width:100%;
     }
@@ -339,6 +438,11 @@
         margin-bottom: 5px;
 
     }
+    .unionListsContent{
+        position: relative;
+        width: 210px;
+    }
+
     .unionListsContent ul{
         padding-left: 15px;
         position: relative;

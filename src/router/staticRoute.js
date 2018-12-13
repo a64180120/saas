@@ -11,11 +11,11 @@ const staticRoute = [
     },
     {
         path:'/indexfinance',
-        component: () =>import("../page/finance/addVoucher"),
+        component: () =>import("../page/finance/addVoucher")
     },
     {
         path:'/index',
-        component: () =>import("../page/index"),
+        component: () =>import("../page/index")
     },
     {
         path: "/home",
