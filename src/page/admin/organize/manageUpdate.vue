@@ -256,7 +256,7 @@
             orgid: "0",
             infoData: page
           };
-          this.$axios.post("http://10.0.45.51:7758/api/GCW/SysOrganize/PostUpdate",data)
+          this.$axios.post("/SysOrganize/PostUpdate",data)
             .then(res=>{
               if(res.Status=='success'){
                 this.$router.push({path:'/'})
@@ -271,13 +271,14 @@
       init(){
         var PhIdList=this.$route.query.PhId;
         var data={
-          PhId:PhIdList
+          id:PhIdList
         };
         //data.id=JSON.parse(data.infoData).PhId;
-        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganize',{params:data})
+        this.$axios.get('/SysOrganize/GetSysOrganize',{params:data})
           .then(res=>{
-
+            console.log(res);
             this.PhId=res.PhId;
+            this.OrgName = res.OrgName;
             this.EnterpriseCode=res.EnterpriseCode;
             this.Address=res.Address;
             this.MobilePhone=res.MobilePhone;

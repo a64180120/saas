@@ -232,7 +232,25 @@ const staticRoute = [
                 path: "execute",
                 component: () =>import("../page/budget/execute"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            }
+            },
+            {
+                //预算表
+                path: "budget",
+                component: () =>import( "../page/budget/budget"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //调整表
+                path: "adjustbudget",
+                component: () =>import( "../page/budget/adjustbudget"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //决算表
+                path: "actualbudget",
+                component: () =>import( "../page/budget/actualbudget"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
         ]
     },
     {
