@@ -85,6 +85,7 @@
         name: "detailsAc",
         data() {
             return {
+                downloadLoading: false,
                 loading: false,
                 JD: ['平', '借', '贷'],
                 filterText:'',
@@ -97,7 +98,8 @@
                 zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
                 auxiliary:0,  //显示辅助项
                 pageSize: 40, //pageSize
-                pageIndex: 0, //pageIndex
+                pageIndex: 1, //pageIndex
+                testIndex:0,
                 totalCount: 0, //总页数
                 busy:false,    //是否正在加载过程中
                 dataInfo: [],
@@ -114,11 +116,7 @@
 
         },
         watch: {
-            dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.date1=time;
-                this.getBeginYear();
-            },
+
             filterText(val) {
                 this.$refs.subjectTree.filter(val);
             }
@@ -132,7 +130,13 @@
             })
         },
         methods: {
+            dateChoose:function(val){
+                let time=val.choosedYear+'-'+ val.choosedMonth;
+                this.date1=time;
+                this.getBeginYear();
+            },
             getData(flag) {
+                console.log(this.pageIndex);
                 var data = {
                     uid: this.uid,
                     orgid:this.orgid,
@@ -140,8 +144,9 @@
                     // Year: this.selectSubject.Uyear|| '',
                     Year: this.date1,
                     OrgIds: this.orgid,
-                    pageindex:this.pageIndex-1,
-                    pagesize:this.pageSize
+                    pageindex:this.testIndex,
+                    pagesize:this.pageSize,
+                    Title:this.selectSubject.KName
                 };
 
                 this.loading = true;
@@ -196,6 +201,7 @@
 
                     if(res.length>0){
                         this.selectItem=res[0];
+                        this.selectSubject=res[0];
                         //加载第一个科目的明细
                         this.getData(res[0]);
                     }
@@ -242,7 +248,85 @@
                         this.getData(true);
                     }
                 }, 1000);
+            },
+            postBalanceSheetExcel:function() {
+                let param = {'uid':this.uid,
+                    'orgid':this.orgid,
+                    'infoData': this.budgetList};
+
+                let baseheader = ajaxhttp.header;
+                let base = ajaxhttp.base;
+
+                //下载Excel
+                this.downloadLoading = true
+                this.$axios({
+                    method: 'post',
+                    url: '/PsubjectBudget/PostExportMiddleYear',
+                    data: param
+                }).then(res => {
+                    console.log(res);
+                    window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
+                    this.downloadLoading = false
+                }).catch(err => {
+                    console.log(err)
+                })
+            },
+            //下载文件
+            fileDownload (data,fileName){
+                if (!data) {
+                    return
+                }
+                // let fileName = res.headers['content-disposition'].split('=')[1];
+                // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
+
+                let blob = new Blob([data],{type:'application/octet-stream'});
+                let filename = fileName || "filename.xls";
+
+                if (typeof window.navigator.msSaveBlob !== "undefined") {
+                    window.navigator.msSaveBlob(blob, filename);
+                } else {
+                    var blobURL = window.URL.createObjectURL(blob);
+                    var tempLink = document.createElement("a");
+                    tempLink.style.display = "none";
+                    tempLink.href = blobURL;
+                    tempLink.setAttribute("download", filename);
+                    if (typeof tempLink.download === "undefined") {
+                        tempLink.setAttribute("target", "_blank");
+                    }
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    window.URL.revokeObjectURL(blobURL);
+                }
+            },
+            printLodop() {
+                const me = this
+                var html=this.$refs.printFrom.innerHTML;
+                let  LODOP = getLodop();
+                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
+                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+                LODOP.SET_PRINT_STYLE("Bold", 1);
+                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
+                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+                //LODOP.PRINT();
+                LODOP.PREVIEW();
+            },
+            // 打印
+            printContent(e){
+                // let subOutputRankPrint = this.$refs.printFrom;
+                // console.log(subOutputRankPrint.innerHTML);
+                // let newContent =subOutputRankPrint.innerHTML;
+                // let oldContent = document.body.innerHTML;
+                // document.body.innerHTML = newContent;
+                // window.print();
+                // window.location.reload();
+                // document.body.innerHTML = oldContent;
+                // return false;
+
+                this.$print(this.$ref.printFrom) // 使用
             }
+
         },
     }
 </script>
