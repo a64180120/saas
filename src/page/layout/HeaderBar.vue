@@ -42,13 +42,13 @@
         <el-dialog title="修改密码" :visible.sync="dialog.editPaw.show" :modal-append-to-body="false" custom-class="editPawDialog">
             <el-form :model="editPaw" :rules="editPawRules" ref="editPaw" label-width="100px" >
                 <el-form-item label="旧密码" prop="oldPaw">
-                    <el-input v-model="editPaw.oldPaw" auto-complete="off"></el-input>
+                    <el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="新密码" prop="newPaw">
-                    <el-input v-model="editPaw.newPaw" auto-complete="off"></el-input>
+                <el-form-item label="新密码" prop="newPaw" id="newPaw">
+                    <el-input type="password" id="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>                    
                 </el-form-item>
-                <el-form-item label="确认新密码" prop="confirmNewPaw">
-                    <el-input v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>
+                <el-form-item label="确认新密码" prop="confirmNewPaw" >
+                    <el-input type="password" id="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>            
                 </el-form-item>
             </el-form>
             <div class="textC">
@@ -106,8 +106,9 @@ export default {
           },
           {
             // eslint-disable-next-line
-            validator(rule, value, callback, source, options) {
+            validator(rule, value, callback, source, options) {              
               var errors = [];
+
               if (!/^[a-z0-9]+$/.test(value)) {
                 console.log("不符合输入规则");
                 errors.push("请输入字母或特殊字符");
@@ -123,7 +124,10 @@ export default {
   computed: {
     ...mapState({
       username: state => state.user.name,
-      lang: state => state.lang
+      lang: state => state.lang,
+      orgid:state=>state.user.orgid,
+      orgcode:state=>state.user.orgcode,
+      uid:state=>state.user.userid
     }),
     collapse() {
       return this.$store.state.isCollapse;
@@ -161,7 +165,34 @@ export default {
     editPawSubmit() {
       this.$refs.editPaw.validate(valid => {
         if (valid) {
-          console.log("修改密码表单提交");
+          if (this.editPaw.newPaw!= this.editPaw.confirmNewPaw) {
+            console.log("新密码与确认新密码不一致!");
+            this.$message.error("新密码与确认新密码不一致!");
+            return;
+          } 
+          
+          //接口要包含3个参数： uid、 oldPwd、 newPwd 
+          let data={
+              uid:this.uid,
+              orgid:this.orgid,
+              OldPwd: this.editPaw.oldPaw,
+              NewPwd: this.editPaw.newPaw
+          }; 
+          this.$axios.post('/SysUser/PostUpdatePassword',data)
+            .then(res=>{
+                if (res.Status=='success'){
+                    this.$message.success("密码修改成功!");
+                    this.dialog.editPaw.show = false;
+                    return true;
+                }
+
+                if (res.Status=="error"){
+                    this.$message.error(res.Msg);
+                    return false;
+                }
+            })
+            .catch(err=>console.log(err));   
+          
         } else {
           console.log("error submit!!");
           return false;
