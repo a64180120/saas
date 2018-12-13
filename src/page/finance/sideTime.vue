@@ -98,8 +98,7 @@ export default {
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{
-                        
+                    .then(res=>{                        
                         this.checkedTime=res.Record[0].JEnableMonth+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
@@ -306,6 +305,10 @@ export default {
                 }
                 this[name]=val;
             },
+            //ref调用会计期*************
+            refSideDate(){
+                return this.sideDate;
+            }
     },
     computed:{
          ...mapState({

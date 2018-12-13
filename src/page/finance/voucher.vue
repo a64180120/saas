@@ -104,7 +104,7 @@
                                         <div :title="assist.BaseName">{{assist.BaseName}}</div>
                                         <div class="selectContainer">
                                             <select  v-model="assistSels[index2]">
-                                                <option :value="val" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
+                                                <option :value="val" v-for="(val,index) of assist.Children" :key="index">{{val.BaseName}}</option>
                                             </select>
                                         </div>
                                     </li>
@@ -190,7 +190,7 @@
             <ul class="flexPublic ">
                 <li><label>财务主管: <span>{{PFinancePerson}}</span> </label></li>
                 <li><label>记账:<span>{{PKeepingPerson}}</span></label></li>
-                <li><label>审核: <span>{{PAuditor}}</span></label></li>
+                <li><label>审核: <span>{{Verify?'已审核':'未审核'}}</span></label></li>
                 <li><label>制单: <span>{{PMakePerson}}</span></label></li>
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
@@ -274,7 +274,6 @@
                     var account;
                     var item;
                     for( var info of this.voucherInfo){
-                        console.log('jishu',1)
                         if(info.PhId){
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
@@ -375,7 +374,6 @@
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
-                    console.log(this.fatherData)
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -429,6 +427,7 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.Verify=data.Verify;
                 this.PDate=data.PDate;
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
