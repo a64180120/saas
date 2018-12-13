@@ -1,7 +1,7 @@
 <template>
     <div class="vouchertemp">
         <div v-if="tempCss=='list'" class="vouchertempCon">
-            <p class="title"><span>凭证模板</span><i @click.stop="finish"></i></p>
+            <p class="title"><span>凭证模板</span><i @click.stop="finish(false)"></i></p>
             <div class="flexPublic searcherCon">
                 <div class="searcherValue"><input v-model="searchVal" type="text" placeholder="模板名称"></div>
                 <div @click.stop="searchVoucher"  class="searcherBtn">搜索</div>
@@ -30,10 +30,10 @@
                             </div>
                             <div class="tempContent">
                                 <ul>
-                                    <li  v-for="(it1,index2) of item.Dtls"><span >{{index2==0?'借:':''}}</span><span v-if="it1.JSum">{{it1.SubjectCode}}{{it1.SubjectName}}</span></li>
+                                    <li  v-for="(it1,index2) of item.Dtls" :key="index2"><span >{{index2==0?'借:':''}}</span><span v-if="it1.JSum">{{it1.SubjectCode}}{{it1.SubjectName}}</span></li>
                                 </ul>
                                 <ul>
-                                    <li  v-for="(it2,index3) of item.Dtls"><span >{{index3==0?'贷:':''}}</span><span v-if="it2.DSum">{{it2.SubjectCode}}{{it2.SubjectName}}</span></li>
+                                    <li  v-for="(it2,index3) of item.Dtls" :key="index3"><span >{{index3==0?'贷:':''}}</span><span v-if="it2.DSum">{{it2.SubjectCode}}{{it2.SubjectName}}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -84,7 +84,6 @@
                 }
                 this.$axios.get('PVoucherTemplateMst/GetVoucherTemplateList',{params:data})
                     .then(res=>{
-                        console.log(res.Record)
                         this.voucherList=res.Record;
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
@@ -121,7 +120,7 @@
                 var url='add';
                 this.voucherData();
                 if(this.voucherDataList.data.Mst.Dtls.length<=0){
-                    alert('请输入内容!')
+                    this.$message('请输入内容!')
                     return;
                 }
                 this.voucherDataList.data.Mst.TemName=this.TemName;
@@ -171,6 +170,24 @@
             },
             //给父组件传值*************
             finish(item){
+                if(item){
+                    
+                    item.PhId='';
+                    for(var dtl of item.Dtls){
+                        dtl.PhId='';
+                        dtl.PhidTransaction='';
+                        dtl.PhidVouchermst='';
+                        if(dtl.DtlAccounts){
+                            console.log(dtl)
+                            dtl.DtlAccounts[0].PhId='';
+                            dtl.DtlAccounts[0].PhidTransaction='';
+                            dtl.DtlAccounts[0].PhidVouchermst='';
+                            dtl.DtlAccounts[0].PhidVoucherDel='';
+                        }
+                    }
+                }
+                console.log(item)
+                debugger
                 this.$emit('temp-click',item);
             },
             //凭证搜索**************************

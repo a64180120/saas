@@ -247,8 +247,12 @@
                     alert('借方金额不等于贷方金额,请查看');
                     return;
                 }else{
+                    if(!this.fatherData.PhId){
+                        this.fatherData.Dtls=[];
+                    } 
                     var dtls = this.fatherData.Dtls;
                     for( var info of this.voucherInfo){
+                        console.log('jishu',1)
                         if(info.PhId){
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
@@ -297,41 +301,39 @@
                                         }
                                     }
                                 }
-                            } console.log(1,this.fatherData)
-                        }else if(info.SubjectCode){
-                                var newDtl={
+                            }
+                        }
+                        else if(info.SubjectCode){
+                            console.log(2222222)
+                            var newDtl={
+                                Abstract:info.Abstract,
+                                SubjectCode:info.SubjectCode,
+                                SubjectName:info.SubjectName,
+                                JSum:info.money.jiefang,
+                                DSum:info.money.daifang,
+                                PersistentState:1
+                            }
+                            if(info.DtlAccounts.assistItem.length>0){
+                                newDtl.DtlAccounts=[];
+                                var dt={
                                     Abstract:info.Abstract,
                                     SubjectCode:info.SubjectCode,
+                                    SubjectName:info.SubjectName,
                                     JSum:info.money.jiefang,
                                     DSum:info.money.daifang,
                                     PersistentState:1
                                 }
-                                if(info.DtlAccounts.assistItem.length>0){
-                                    newDtl.DtlAccounts=[];
-                                    var dt={
-                                        Abstract:info.Abstract,
-                                        SubjectCode:info.SubjectCode,
-                                        JSum:info.money.jiefang,
-                                        DSum:info.money.daifang,
-                                        PersistentState:1
-                                    }
-                                    var item = info.DtlAccounts.assistItem;
-                                    for(var j=1;j<=50;j++){
-                                        var str='';
-                                        if(parseInt(j)<10){
-                                            str='S0'+parseInt(j);
-                                        }else{
-                                            str='S'+parseInt(j);
-                                        }
-                                        dt[str]=item[j-1]?item[j-1]:0;
-                                    }
-                                    newDtl.DtlAccounts[0]=dt;
+                                item = info.DtlAccounts.assistItem;
+                                for(var i of item){
+                                    dt[i.GLS]=i.PhId;
                                 }
-                                dtls.push(newDtl);
-                            console.log(2,this.fatherData,dtls)
+                                newDtl.DtlAccounts[0]=dt;
                             }
+                            dtls.push(newDtl);
+                        }
                     }
-                    console.log(3,this.fatherData,this.voucherInfo)
+       
+                    this.fatherData.Dtls=dtls;
                     for(var del of this.deleteDtls){
                         if(del.PhId){
                             for(var dtl of  dtls){
@@ -344,20 +346,23 @@
                             }
                         }
                     }
-                    this.fatherData.PhId=this.PhId;
-                    this.fatherData.PDate=this.PDate;
-                    this.fatherData.PAttachment=this.PAttachment;
-                    this.fatherData.PMakePerson=this.PMakePerson;
-                    this.fatherData.PFinancePerson=this. PFinancePerson;
-                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
-                    this.fatherData.PCashier=this.PCashier;
-                    this.fatherData.PAuditor=this.PAuditor;
                     if(!this.PhId){
+                        this.fatherData.PType='记';
+                        this.fatherData.OrgId=this.orgid;
+                        this.fatherData.OrgCode=this.orgcode;
                         this.fatherData.PersistentState=1;
                     }else{
                         this.fatherData.PersistentState=2;
+                        this.fatherData.PhId=this.PhId;
                     }
-                    console.log(this.fatherData,this.voucherInfo)
+                    this.fatherData.PDate=this.PDate;
+                    this.fatherData.PAttachment=this.PAttachment;
+                    this.fatherData.PMakePerson=this.PMakePerson;
+                    this.fatherData.PFinancePerson=this.PFinancePerson;
+                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
+                    this.fatherData.PCashier=this.PCashier;
+                    this.fatherData.PAuditor=this.PAuditor;
+                    console.log(this.fatherData)
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -371,8 +376,10 @@
                     this.addIcon[this.voucherInfo.length-1]={checked:false};
                     this.kemuSel[this.voucherInfo.length-1]={checked:false};
                     this.assistItem[this.voucherInfo.length-1]={checked:false};
-                    this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['科目1','科目2','科目3','科目4','科目5']}
-                    this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
+                    this.itemlists[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:this.subjectlist}
+                    /*
+                                        this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
+                    */
                 }else{
                     if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
                         this.deleteDtls.push(this.voucherInfo[index]);
@@ -382,7 +389,7 @@
                 }
             },
             initVoucherInfo(){
-                return {moneyInput:{jiefang:false,daifang:false},SubjectCode:'',DtlAccounts:{assistItem:[]},Abstract:'',money:{jiefang:'',daifang:''}}
+                return {moneyInput:{jiefang:false,daifang:false},SubjectCode:'',SubjectName:'',DtlAccounts:{assistItem:[]},Abstract:'',money:{jiefang:'',daifang:''}}
             },
             //初始化信息样式***************
             initInfoCss(){
@@ -392,11 +399,7 @@
                     this.assistItem[i]={checked:false}
                     this.itemlists[i]={
                         id:i,
-                        kemu:['科目1','科目2','科目3','科目4','科目5']  //总的科目列表
-                    }
-                    this.assistItems[i]={
-                        id:i,
-                        kemu:['222','333','44','555','666'] //总的辅助项列表
+                        kemu:this.subjectlist  //总的科目列表
                     }
                 }
             },
@@ -406,7 +409,6 @@
                 this.PhId=data.PhId;
                 this.PType=data.PType;
                 this.PNo=data.PNo;
-                this.PDate=data.PDate;
                 this.PAttachment=data.PAttachment;
                 this.PMonth=data.PMonth;
                 this.PMakePerson=data.PMakePerson;
@@ -414,59 +416,87 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.PDate=data.PDate;
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
                 for(var i in dtls){
                     this.voucherInfo[i]=this.initVoucherInfo();
                     this.voucherInfo[i].PhId=dtls[i].PhId;
-                    //this.voucherInfo[i].PhidVouchermst=dtls[i].PhidVouchermst;
                     this.voucherInfo[i].SubjectCode=dtls[i].SubjectCode;
+                    this.voucherInfo[i].SubjectName=dtls[i].SubjectName;
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
-                    if(dtls[i].DtlAccounts) {
-                        var Dtls = Object.keys(dtls[i].DtlAccounts[0]);
-                        this.voucherInfo[i].DtlAccounts.DtlAccounts=dtls[i].DtlAccounts[0];
-                        for (var j in Dtls) {
-                            if (reg.test(Dtls[j])) {
-                                var d=Dtls[j];
-                                if(dtls[i].DtlAccounts[0][d]!=0){
-                                    this.voucherInfo[i].DtlAccounts.assistItem.push(dtls[i].DtlAccounts[0][d])
-                                }
+                    if(dtls[i].DtlAccounts&&dtls[i].DtlAccounts[0].NameValueDtls){
                             }
                         }
-
-                    }
-                }
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
             },
-            assistClick(childMsg){//辅助项下拉框选择的辅助项目********************************
-                this.voucherInfo[childMsg.id].DtlAccounts.assistItem.push(childMsg.data);
-                this.$forceUpdate();
-                console.log(this.voucherInfo[childMsg.id].DtlAccounts.assistItem)
+            //ajax获取科目下的辅助项***************************
+            getAssist(val){
+                const loading1=this.$loading();
+                var data={
+                    id:val.data.PhId
+                }
+                this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
+                    .then(res=>{
+                        if(res.length>0){
+                            this.assistList=res;
+                            this.assistItem[val.id].checked=true;
+                            this.assistItemMask=true;
+                            this.assistCheck=true;
+                            for(var a in this.assistList){
+                                this.assistSels[a]=this.assistList[a].Children[0];
+                            }
+                        }else{
+                            this.assistList=[]
+                        }
+                        loading1.close();
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
+
+            },
+            //辅助项选择完成********************
+            assistOk(bool,item,index){
+                if(bool){
+                    item.DtlAccounts.assistItem=this.assistSels;
+                    console.log(this.assistSels)
+                }else{
+                    item.SubjectCode='';
+                    item.SubjectName='';
+                }
+                this.assistItemMask=false;
+                this.assistCheck=false;
+                this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
-                this.voucherInfo[childMsg.id].SubjectCode=childMsg.data;
+                this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
+                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
-                this.assistItem[childMsg.id].checked=true;
+                this.getAssist(childMsg);
                 this.$forceUpdate();
             },
-            handleKemuSel(index){//选择框显示********************
+            //选择框显示********************
+            handleKemuSel(index){
                 for(var kemu in this.kemuSel){
                     this.assistItem[kemu].checked=false;
                     this.kemuSel[kemu].checked=false;
                 }
-                this.kemuSel[index].checked=true;
+                this.kemuSel[index]={checked:true};
                 this.moneyInputMask=true;
+                this.$forceUpdate();
             },
             kemuCancle(index){
                 this.voucherInfo[index].DtlAccounts.assistItem=[];
                 this.voucherInfo[index].SubjectCode='';
+                this.voucherInfo[index].SubjectName='';
                 this.$forceUpdate();
             },
-            inputBlur($event,item,value){//金额输入框键入*******************
-
+            //金额输入框键入*******************
+            inputBlur($event,item,value){
                 if(!this.countJie||!this.countDai){
                     this.countJie=0;
                     this.countDai=0;
@@ -476,6 +506,7 @@
                 }
                 item.money[value]=parseFloat(item.money[value]);
                 var val=item.money[value];
+                item.moneyInput[value]=false;
                 var children = $event.target.parentNode.parentNode.children;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
@@ -510,6 +541,7 @@
 
             },
             moneyTurn(val,children){  //金额输入框转文本样式***************
+
                 if(val&&val!=0) {
                     val = parseFloat(val).toFixed(2).split('.');
                     var num = val[0];
@@ -534,11 +566,9 @@
                 if(item.SubjectCode){
                     item.moneyInput[val]=true;
                     this.moneyInputMask=true;
-                }else{
-                    alert('请先选择科目!')
                 }
             },
-            moneyInputHide($event){//输入框隐藏**********************
+            moneyInputHide(){//输入框隐藏**********************
                 for(var input of this.voucherInfo){
                     input.moneyInput.jiefang=false;
                     input.moneyInput.daifang=false;
@@ -600,7 +630,11 @@
                     this.daifang=sum.toFixed(2);
                     return ;
                 }
-            }
+            },
+            ...mapState({
+                orgid: state => state.user.orgid,
+                orgcode: state => state.user.orgcode
+            })
         },
         watch:{
             jiefang(){
@@ -625,17 +659,14 @@
         padding:8px 18px;
         font-size:18px;
     }
-    .fileCount{
-        display: inline-block;
-        text-align: right;
-        border:1px solid #999;
-        width:50px;
-        height:30px;
-        line-height: 30px;
-        padding:0 3px;
+    .assistItemMask{
+        position: absolute;
+        width:100%;
+        height:100%;
+        z-index: 9;
     }
     .voucherContent{
-        margin-top:10px;
+        margin-top:20px;
         border-top:1px solid #aaa;
         position: relative;
     }
@@ -797,7 +828,9 @@
         width:100px;
         border:1px solid #ccc;
     }
+
     .moneyValCon{
+        opacity: 0;
         position:absolute;
         width:100%;
         height:100%;
@@ -805,6 +838,9 @@
         outline:1px solid #fff;
         padding:0 30px 0 5px;
         z-index: 5;
+    }
+    .moneyInputShow{
+        opacity: 1;
     }
     .moneyValCon>input{
         width:100%;
@@ -884,6 +920,55 @@
     .kemu>div>ul>li.kemuCancle>i:after{
         transform: rotate(-45deg);
     }
+    .kemu>.assistContainer{
+        background: #fff;
+        position:absolute;
+        height:auto;
+        border-top:1px solid #aaa;
+        z-index: 99;
+    }
+    .kemu>.assistContainer>ul{
+        padding:5px;
+    }
+    .kemu>.assistContainer>ul>li{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom:5px;
+    }
+    .kemu>.assistContainer>ul>li>div:first-of-type{
+        margin-right: 15px;
+        width:60px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .kemu>.assistContainer>a{
+        display: block;
+        height:30px;
+        line-height: 30px;
+        font-size: 16px;
+        width:100%;
+        background: #ccc;
+        border-bottom: 1px solid #aaa;
+    }
+    .kemu>.assistContainer>p{
+        height:30px;
+        line-height: 30px;
+        font-size: 14px;
+        width:100%;
+    }
+    .kemu>.assistContainer>p>span{
+        padding:3px 10px;
+        margin-left: 10px;
+        border: 1px solid #02a7e7;
+        border-radius: 3px;
+        cursor:pointer;
+    }
+    .kemu>.assistContainer>p>span:hover{
+        background: #02a7e7;
+        color:#fff;
 
+    }
 
 </style>

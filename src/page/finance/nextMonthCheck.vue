@@ -54,8 +54,8 @@
       data(){return {
           month:'',
           year:'',
-          sideDate:'',
           nowTime:new Date,
+          checkedTime:'',
           checkFaile:[
                 {StartBalance:true},
                 {CkeckAudio:true},
@@ -66,6 +66,9 @@
           checkOutCss:false,
           checkCss:false
       }},
+      mounted(){
+          this.getChecked();
+      },
       methods:{
         handle(val){
             switch (val){
@@ -77,7 +80,7 @@
                     this.checkCss=true;
                     break;
                 case 'check':
-                    this.checkOut('check',this.sideDate.split('-')[1]);
+                    this.checkOut('check',this.checkedTime);
                     this.$emit('child-click',false);
                     break;
             }
@@ -86,13 +89,13 @@
          matchBegin(){
             var data={
                 orgid:this.orgid,
-                Year:'2018',
-                Pmonth:'0'
+                Year:this.nowTime.getFullYear().toString(),
+                Pmonth:this.checkedTime
             }
              var data2={
                  OrgIds:this.orgid,
-                 Year:'2018',
-                 Pmonth:'0'
+                 Year:this.nowTime.getFullYear().toString(),
+                 Pmonth:this.checkedTime
              }
              //期初余额检查************
              this.$axios.get('/PVoucherMst/GetStartBalance',{params:data2})
@@ -147,10 +150,8 @@
               }
               this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                   .then(res=>{
+                      console.log(res);
                       this.checkedTime=res.Record[0].JEnableMonth+1;
-                      this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
-                      this.year=this.sideDate.split('-')[0];
-                      this.month=this.sideDate.split('-')[1];
                   })
                   .catch(err=>console.log(err))
           },

@@ -93,63 +93,97 @@
                     <div>重置</div>
                     <div>搜索</div>
                 </div>
-              </div>
-          </div>
+            </div>
 
-      </div>
-      <section class="listContainer">
-        <ul class="listTitle">
-            <li>序号</li>
-            <li>摘要</li>
-            <li>科目</li>
-            <li>借方金额</li>
-            <li>贷方金额</li>
-        </ul>
-        <ul class="listContent" v-for="(item,index) of voucherList" :key="index">
-            <li>
-                <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
-                <ul>
-                    <li>
-                        <span>凭证日期 : {{item.PDate?item.PDate.replace("T"," "):''}}</span>
-                        <span>凭证字号 : 记-{{item.PNo}}</span>
-                        <span>附件数 : {{item.PAttachment}}</span>
-                        <span>制单人 : {{item.PMakePerson}}</span>
-                        <span>审核 : {{item.PAuditor}}</span>
-                    </li>
-                    <li v-for="(dtl,ind) of item.Dtls" :key="ind">
-                        <div>{{dtl.Abstract}}</div>
-                        <div>{{dtl.SubjectCode}}</div>
-                        <div>{{dtl.JSum}}</div>
-                        <div>{{dtl.DSum}}</div>
-                    </li>
-                    <li>
-                        <div>合计:{{'sum'|sum(item.Dtls)}}</div>
-                        <div>{{'jie'|sum(item.Dtls)}}</div>
-                        <div>{{'dai'|sum(item.Dtls)}}</div>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-      </section>
-  </div>
+        </div>
+        <section class="listContainer">
+            <ul class="listTitle">
+                <li>序号</li>
+                <li>摘要</li>
+                <li>科目</li>
+                <li>借方金额</li>
+                <li>贷方金额</li>
+            </ul>
+            <ul class="listContent" v-for="(item,index) of voucherList" :key="index">
+                <li>
+                    <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
+                    <ul>
+                        <li>
+                            <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
+                            <span>凭证字号 : {{item.PNo}}</span>
+                            <span>附件数 : {{item.PAttachment}}</span>
+                            <span>制单人 : {{item.PMakePerson}}</span>
+                            <span>审核 : {{item.PAuditor}}</span>
+                        </li>
+                        <li v-for="(dtl,ind) of item.Dtls" :key="ind">
+                            <div>{{dtl.Abstract}}</div>
+                            <div>{{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}</div>
+                            <div>{{dtl.JSum==0?'':dtl.JSum}}</div>
+                            <div>{{dtl.DSum==0?'':dtl.DSum}}</div>
+                        </li>
+                        <li>
+                            <div>合计:{{'sum' | sum(item.Dtls)}}</div>
+                            <div>{{'jie'|sum(item.Dtls)}}</div>
+                            <div>{{'dai'|sum(item.Dtls)}}</div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <side-time></side-time>
+    </div>
 </template>
 
 <script>
-  export default {
-    name: "voucher-list",
-      mounted(){
-        this.getvoucherList();
-      },
-      data(){
-        return {
-            date1:'',
-            date2:'',
-            date3:'',
-            date4:'',
-            unionSearchValue:'',
-            pickerOptions: {
-                disabledDate(time) {
-                    return time.getTime() > Date.now();
+    import {mapState, mapActions} from 'vuex'
+    import sideTime from './sideTime'
+    export default {
+       // name: "voucher-list",
+        mounted(){
+            if(this.$route.query.voucherList){
+                this.voucherList= this.$route.query.voucherList;
+            }else{
+                this.getvoucherList();
+            }
+            this.$store.commit("tagNav/turnCachePage",true);
+            this.getChecked();
+        },
+        data(){
+            return {
+                date1:'',
+                date2:'',
+                date3:'',
+                date4:'',
+                sum1:'',
+                sum2:'',
+                nowTime:new Date,
+                checkedTime:'',
+                sideDate:'',
+                searchVal:'',
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    },
+                    shortcuts: [{
+                        text: '今天',
+                        onClick(picker) {
+                            picker.$emit('pick', new Date());
+                        }
+                    }, {
+                        text: '昨天',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24);
+                            picker.$emit('pick', date);
+                        }
+                    }, {
+                        text: '一周前',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', date);
+                        }
+                    }]
                 },
                 shortcuts: [{
                     text: '今天',
@@ -212,86 +246,145 @@
                         if(d.JSum){
                             sum+=parseFloat(d.JSum);
                         }
-                    }
-                    sum=sum.toFixed(2);
-                    break;
-                case 'dai':
-                    for(var d of dtl){
-                        if(d.DSum){
-                            sum+=parseFloat(d.DSum);
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
+            },
+            getvoucherList(){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    pagesize:this.pagesize,
+                    pageindex:this.pageindex,
+                    keyword:this.searchValue,
+                    queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
+                }
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                    .then(res=>{
+                        this.voucherList= res.Record;
+                        if(this.voucherList.length<=0){
+                            this.$message('暂无新凭证');
                         }
-                    }
-                    sum=sum.toFixed(2);
-                    break;
-                case 'sum':
-                    for(var d of dtl){
-                        if(d.JSum){
-                            sum+=parseFloat(d.JSum);
+                    })
+                    .catch(err=>console.log(err))
+            },
+            //获取当前结账的最新月份************
+            getChecked(){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
+                }
+                this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
+                    .then(res=>{
+                        
+                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                        this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                    })
+                    .catch(err=>console.log(err))
+            },
+        },
+        computed:{
+            ...mapState({
+                orgid: state => state.user.orgid,
+                uid: state => state.user.userid,
+                cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
+            })
+        },
+        filters:{
+            sum(val,dtl){
+                var sum=0;
+                if(!dtl){
+                    dtl=[]
+                }
+                switch(val){
+                    case 'jie':
+                        for(var d of dtl){
+                            if(d.JSum){
+                                sum+=parseFloat(d.JSum);
+                            }
                         }
-                    }
-                    sum=sum.toFixed(2);
-                    var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
-                    var arr2=['','拾','百','千','万','亿'];
-                    var str=sum.toString().split('.');
-                    var dot='元';
-                    var INTstr=str[0];
-                    var INT='';
-                    var bool=false;
-                    var zero='';
-                    if(parseInt(str[1])!=0){
-                        dot+=arr1[str[1][0]]+'角';
-                        if(str[1][1]!=0){
-                            dot+=arr1[str[1][1]]+'分'
+                        sum=sum.toFixed(2);
+                        break;
+                    case 'dai':
+                        for(var d of dtl){
+                            if(d.DSum){
+                                sum+=parseFloat(d.DSum);
+                            }
                         }
-                    }else{
-                        dot+='整'
-                    }
-                    for(var i=INTstr.length-1,j=0;i>=0; i--,j++){
-                        if(INTstr[i]!=0){
-                            bool=true;
+                        sum=sum.toFixed(2);
+                        break;
+                    case 'sum':
+                        for(var d of dtl){
+                            if(d.JSum){
+                                sum+=parseFloat(d.JSum);
+                            }
                         }
-                        if(j==4){
-                            INT=arr2[j]+INT;
-                        }else if(j==8){
-                            INT=arr2[5]+INT;
+                        sum=sum.toFixed(2);
+                        var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
+                        var arr2=['','拾','百','千','万','亿'];
+                        var str=sum.toString().split('.');
+                        var dot='元';
+                        var INTstr=str[0];
+                        var INT='';
+                        var bool=false;
+                        var zero='';
+                        if(parseInt(str[1])!=0){
+                            dot+=arr1[str[1][0]]+'角';
+                            if(str[1][1]!=0){
+                                dot+=arr1[str[1][1]]+'分'
+                            }
+                        }else{
+                            dot+='整'
                         }
-                        if(bool){
+                        for(var i=INTstr.length-1,j=0;i>=0; i--,j++){
                             if(INTstr[i]!=0){
-                                if(zero=='零'){
-                                    zero='';
-                                }
-                                if(j==4){
-                                    INT=arr1[INTstr[i]]+INT;
-                                    bool=false;
-                                }else if(j==8){
-                                    INT=arr1[INTstr[i]]+INT;
+                                bool=true;
+                            }
+                            if(j==4){
+                                INT=arr2[j]+INT;
+                            }else if(j==8){
+                                INT=arr2[5]+INT;
+                            }
+                            if(bool){
+                                if(INTstr[i]!=0){
+                                    if(zero=='零'){
+                                        zero='';
+                                    }
+                                    if(j==4){
+                                        INT=arr1[INTstr[i]]+INT;
+                                        bool=false;
+                                    }else if(j==8){
+                                        INT=arr1[INTstr[i]]+INT;
+                                    }else{
+                                        INT=arr1[INTstr[i]]+arr2[j%4]+INT;
+                                        bool=false;
+                                    }
                                 }else{
-                                    INT=arr1[INTstr[i]]+arr2[j%4]+INT;
-                                    bool=false;
-                                }
-                            }else{
-                                if(zero==''){
-                                    INT='零'+INT;
-                                    zero='零';
-                                }
-                                if(j==4){
-                                    INT=arr2[j]+INT;
-                                    bool=false;
-                                }else if(j==8){
-                                    INT=arr2[5]+INT;
-                                    bool=false;
+                                    if(zero==''){
+                                        INT='零'+INT;
+                                        zero='零';
+                                    }
+                                    if(j==4){
+                                        INT=arr2[j]+INT;
+                                        bool=false;
+                                    }else if(j==8){
+                                        INT=arr2[5]+INT;
+                                        bool=false;
+                                    }
                                 }
                             }
                         }
-                    }
-                    sum=INT+dot;
-                    break;
-            }
-            return sum;
+                        sum=INT+dot;
+                        break;
+                }
+                return sum;
 
+            }
+        },
+        components:{
+            sideTime,
         }
-      }
-  }
+    }
 </script>
 
 <style lang="scss" scoped>
@@ -417,7 +510,11 @@
         cursor:pointer;
     }
     .voucherList{
-        padding:10px;
+        padding:8px 18px;
+        padding-right:70px;
+        margin-right:10px;
+        font-size:14px;
+        position:relative;
         min-width: 1024px;
         height:800px;
         overflow-y: auto;
