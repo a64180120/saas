@@ -3,7 +3,6 @@
     margin:0;
     padding-right: 0;
     height:30px;
-    line-height: 30px;
 }
 .el-input__icon{
     line-height:30px;
@@ -254,12 +253,3 @@ ul{
     color:#333;
 }
 
-.sidebar-el-menu[data-v-4d15bc2e]:not(.el-menu--collapse){
-    width:150px !important;
-}
-.content-box{
-    left:150px;
-}
-.content{
-    padding-bottom: 50px;
-}
