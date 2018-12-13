@@ -35,7 +35,7 @@
                 </div>
                 <ul class="flexPublic handle">
                   <a @click.prevent="routerTo('/admin/orgin/add')"><li>新增</li></a>
-                  <a @click.prevent="routerTo('/admin/orgin/update')"><li>修改</li></a>
+                  <a @click.prevent="routerTo('/admin/orgin/edit')"><li>修改</li></a>
                   <a @click.prevent="routerTo('/admin/orgin/add')"><li>备份</li></a>
                   <a @click.prevent="routerTo('/admin/orgin/add')"><li>恢复</li></a>
                   <a @click.prevent="routerTo('/admin/orgin/add')"><li>导入</li></a>
@@ -70,8 +70,8 @@
                       <li>{{item.cjr}}</li>
                       <li>{{item.kuaiji}}</li>
                       <li class="stateControl flexPublic">
-                        <label><input :name="item.uid" type="radio" value="1"  v-model="item.EnabledMark">启用</label>
-                        <label><input :name="item.uid" type="radio" value="0" v-model="item.EnabledMark">禁止</label>
+                        <label><input :name="item.uid" type="radio" value="0"  v-model="item.EnabledMark" @click="changeEnable(item.PhId, item.EnabledMark)">启用</label>
+                        <label><input :name="item.uid" type="radio" value="1" v-model="item.EnabledMark" @click="changeEnable(item.PhId, item.EnabledMark)">禁止</label>
                       </li>
                     </ul>
                   </li>
@@ -167,7 +167,7 @@ export default {
           parames:['OrgName*eq*'+this.unionSearchValue,'EnterpriseCode*eq*'+this.unionSearchValue],
           logics:['OrgName*eq*'+this.unionSearchValue+'%OR%EnterpriseCode*eq*'+this.unionSearchValue]
         }
-        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
+        this.$axios.get('/SysOrganize/GetSysOrganizeList',{params:data})
           .then(res=>{
 
             console.log(res)
@@ -185,6 +185,34 @@ export default {
             this.pageCount=newArr;
           })
       },
+        changeEnable(PhId, EnabledMark){
+            this.PhIdList = PhId;
+            if(EnabledMark == '0'){
+                EnabledMark = '1'
+            }else {
+                EnabledMark = '0'
+            }
+            console.log(PhId.toString() + "," + EnabledMark.toString());
+            var data = {
+                uid: "0",
+                orgid: "0",
+                value: PhId.toString() + "," + EnabledMark.toString()
+            };
+            this.$axios
+                .post("/SysOrganize/UpdateEnable", data)
+                .then(res => {
+                    // console.log(this.form);
+                    // let resultData = res;
+                    // this.tableData.splice(this.idx, 1);
+                    if(res.Status=='success'){
+                        this.$message.success("修改成功");
+                    }else{
+                        this.$message.error('修改失败,请重试!');
+                    }
+                    //this.singleSelection = [];
+                    this.ajaxMode();
+                });
+        },
       newPage(val){//分页展示****************************************
         console.log()
         if(val=='next'){
@@ -219,6 +247,7 @@ export default {
         }
       },
       ajaxMode(){
+          const loading1=this.$loading();
         let data = {
           uid: "0",
           orgid: "0",
@@ -226,11 +255,11 @@ export default {
           pageindex:this.pageIndex-1,
         };
 
-        this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
+        this.$axios.get('/SysOrganize/GetSysOrganizeList',{params:data})
           .then(res=>{
-
             console.log(1)
             this.userInfo=res.Record;
+            loading1.close();
             for(var i=0;i<this.userInfo.length;i++){
               this.userInfoCssList[i]={checked:false};
             }
@@ -243,7 +272,7 @@ export default {
             }
             this.pageCount=newArr;
           })
-            .catch(err=>{console.log(err)})
+            .catch(err=>{console.log(err);loading1.close();})
       }
     },
     created(){

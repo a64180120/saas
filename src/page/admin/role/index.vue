@@ -196,7 +196,7 @@
                 }).then(
                     res => {
                         this.loading = false;
-
+                        console.log(res);
                         this.tableData = res.Record;
                         this.totalCount = Number(res.totalRows);
                         console.log(this.tableData);

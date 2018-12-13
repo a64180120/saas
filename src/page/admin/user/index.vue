@@ -4,13 +4,13 @@
             <div class="handle-box">
                 <el-row>
                     <el-col :span="24">
-                        <el-select v-model="state_mark" placeholder="请选择用户状态" class="handle-select mr10">
-                            <el-option label="全部" value=""></el-option>
-                            <el-option label="启用" value="0"></el-option>
-                            <el-option label="临时停用" value="1"></el-option>
-                            <el-option label="永久停用" value="2"></el-option>
-                        </el-select>
-                        <el-input v-model="select_word" placeholder="用户编码/名称/手机号" prefix-icon="el-icon-search"
+                        <!--<el-select v-model="state_mark" placeholder="请选择用户状态" class="handle-select mr10">-->
+                            <!--<el-option label="全部" value=""></el-option>-->
+                            <!--<el-option label="启用" value="0"></el-option>-->
+                            <!--<el-option label="临时停用" value="1"></el-option>-->
+                            <!--<el-option label="永久停用" value="2"></el-option>-->
+                        <!--</el-select>-->
+                        <el-input v-model="select_word" placeholder="用户名称/手机号码" prefix-icon="el-icon-search"
                                   class="handle-input mr10"></el-input>
                         <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
 
@@ -102,6 +102,7 @@
                         </el-pagination>
                     </div>
                 </div>
+                <div style="clear:both"></div>
             </div>
         </div>
 
@@ -137,40 +138,6 @@
                         <el-table-column prop="RoleName" label="角色"></el-table-column>
                     </el-table>
                 </el-form-item>
-                <!--<el-form-item label="用户姓名：" prop="realName">-->
-                    <!--<el-input v-model="form.realName"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="手机号码：" prop="mobilePhone">-->
-                    <!--<el-input v-model="form.mobilePhone"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="角色：" prop="roles">-->
-                    <!--<el-checkbox-group v-model="form.roles">-->
-                        <!--<el-checkbox label="1" class="el-checkbox-role">主席 <span>  权限详情</span></el-checkbox>-->
-                        <!--<el-checkbox label="2" class="el-checkbox-role">财务主管</el-checkbox>-->
-                        <!--<el-checkbox label="3" class="el-checkbox-role">会计</el-checkbox>-->
-                        <!--<el-checkbox label="4" class="el-checkbox-role">统计员</el-checkbox>-->
-                        <!--<el-checkbox label="5" class="el-checkbox-role">单位管理员</el-checkbox>-->
-                    <!--</el-checkbox-group>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="账号状态：" prop="enabledMark">-->
-                    <!--<el-radio-group v-model="form.enabledMark">-->
-                        <!--<el-radio label="0">启用</el-radio>-->
-                        <!--<el-radio label="1">临时停用</el-radio>-->
-                        <!--<el-radio label="2">永久停用</el-radio>-->
-                    <!--</el-radio-group>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="历史关联账号：" v-if="dialogState=='add'?false:true">-->
-                    <!--<el-table-->
-                        <!--:data="form.historyAccount"-->
-                        <!--border-->
-                        <!--style="width: 100%">-->
-                        <!--<el-table-column label="序号" type="index" width="50"></el-table-column>-->
-                        <!--<el-table-column prop="RealName" label="用户姓名"></el-table-column>-->
-                        <!--<el-table-column prop="MobilePhone" label="手机号码"></el-table-column>-->
-                        <!--<el-table-column prop="Roles" label="角色"></el-table-column>-->
-                        <!--<el-table-column prop="EnabledMark" label="账号状态"></el-table-column>-->
-                    <!--</el-table>-->
-                <!--</el-form-item>-->
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="saveEdit('form')">保 存</el-button>
@@ -270,7 +237,7 @@
                 //获取200角色信息
                 SysUserTransferList(vm,{
                     uid: userid,
-                    orgid: this.orgid,
+                    orgid: this.qOrgId,
                     pagesize: 200,
                     pageindex: 0
                 }).then(res => {
@@ -402,7 +369,6 @@
                 this.is_search = true;
                 if(this.select_word!=''){
                     var queryfilter='{"[or-dictionary0]*dictionary*or": { "RealName*str*like": "'+this.select_word+'", "MobilePhone*str*like": "'+this.select_word+'" }}';
-
                     console.log(queryfilter);
                     this.getData(queryfilter);
                     this.is_search = false;
@@ -588,7 +554,6 @@
                                     return
                                 }
                                 vm.$message.success('密码重置成功!');
-
                             }).catch(error =>{
                                 console.log(error);
                                 vm.$message({ showClose: true,message: "密码重置错误", type: "error"});
@@ -596,6 +561,7 @@
                         }).catch(() => {
                             this.$message({ type: 'info',message: '已取消删除' });
                         });
+                        this.singleSelection = [];
                     } else {
                         this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
                     }
@@ -611,7 +577,7 @@
                 if(this.qOrgId != ""){
                     //账号移交
                     let object = this.singleSelection;
-
+                    console.log(this.orgid);
                     let id = object.length > 0 ? object[0].PhId : 0;
                     if (id != 0) {
                         var roles=[];
