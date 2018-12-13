@@ -254,10 +254,10 @@
                     if(code=='BNSHTZ'){
 
                         this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value
-                        this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
+                        this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                     }else if(code=='BNTZ'){
                         this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+parseFloat(this.budgetList[index].BudgetTotal)-in_value
-                        this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
+                        this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                     }
                     else{
                         //本年投资输入
@@ -269,30 +269,30 @@
                                 //确定修改的对应一级科目，进行计算，先减去该科目的原数据，在加上修改后的数据，得到对应一级科目的总和
                                 this.code_firstCount[codeSub]=parseFloat(this.code_firstCount[codeSub])-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
                                 this.budgetList[i].BudgetTotal=this.code_firstCount[codeSub];
-                                this.budgetList[i].FinalaccountsTotal=this.budgetList[i].BudgetTotal;
+                                this.budgetList[i].ApprovedBudgetTotal=this.budgetList[i].BudgetTotal;
                                 //判断修改的数据是在收入合计之前还是在支出合计之前
                                 if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
                                     //收入合计更改
                                     this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
-                                    this.budgetList[this.specialSubIndex['BNSRHJ']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal;
+                                    this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal;
                                     this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
+                                    this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                                 }else{
                                     //支出合计更改
                                     this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
-                                    this.budgetList[this.specialSubIndex['BNZCHJ']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
+                                    this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
                                     this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+parseFloat(this.budgetList[index].BudgetTotal)-in_value;
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
+                                    this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                                 }
                                 //计算本年结余
                                 this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
-                                this.budgetList[this.specialSubIndex['BNJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal;
+                                this.budgetList[this.specialSubIndex['BNJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal;
                             }
                         }
                     }
                     //修改该科目在总list中的数据
                     this.budgetList[index].BudgetTotal=in_value;
-                    this.budgetList[index].FinalaccountsTotal=this.budgetList[index].BudgetTotal
+                    this.budgetList[index].ApprovedBudgetTotal=this.budgetList[index].BudgetTotal
                 }
             },
             /*
@@ -402,7 +402,9 @@
             *
             * */
             postBalanceSheetExcel:function() {
-                let param = {'infoData': this.balanceData};
+                let param = {'uid':this.uid,
+                    'orgid':this.orgid,
+                    'infoData': this.budgetList};
 
                 let baseheader = ajaxhttp.header;
                 let base = ajaxhttp.base;
@@ -410,13 +412,11 @@
                 //下载Excel
                 this.downloadLoading = true
                 this.$axios({
-                    method: 'get',
-                    url: '/PVoucherMst/GetBalanceSheetExcel',
-                    params: {
-                        accountPeriod: '2018-12-01',
-                        isContainUncheck: 1
-                    }
+                    method: 'post',
+                    url: '/PsubjectBudget/PostExportBeginYear',
+                    data: param
                 }).then(res => {
+                    console.log(res);
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {

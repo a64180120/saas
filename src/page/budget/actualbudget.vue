@@ -172,7 +172,7 @@
                         <ul class="formDataItems flexPublic">
                             <li v-bind:class="{'align-center':item.Layers==1}">{{item.SubjectCode}}</li>
                             <li v-bind:class="{'align-center':item.Layers==1}">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
+                            <li>{{item.BudgetTotal}}</li>
                             <li>
                                 {{item.ThisaccountsTotal}}
                             </li>
@@ -223,11 +223,11 @@
                 userState:0,
                 downloadLoading: false,
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
-                dataInfo:[
-                    {PhId:1,PDate:'2018-01-01',Abstract:'test1', PNo:'0001',JSum:'1111',DSum:'1111',JD:'1',money:'2222'},
-                    {PhId:1,PDate:'2018-02-01',Abstract:'test2', PNo:'0001',JSum:'333',DSum:'',JD:'2',money:'3333'},
-                    {PhId:1,PDate:'2018-03-01',Abstract:'test3', PNo:'0001',JSum:'',DSum:'333',JD:'0',money:'4444'}
-                ],
+                // dataInfo:[
+                //     {PhId:1,PDate:'2018-01-01',Abstract:'test1', PNo:'0001',JSum:'1111',DSum:'1111',JD:'1',money:'2222'},
+                //     {PhId:1,PDate:'2018-02-01',Abstract:'test2', PNo:'0001',JSum:'333',DSum:'',JD:'2',money:'3333'},
+                //     {PhId:1,PDate:'2018-03-01',Abstract:'test3', PNo:'0001',JSum:'',DSum:'333',JD:'0',money:'4444'}
+                // ],
 
                 date1:'',
                 proofType:'0',
@@ -336,10 +336,9 @@
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
                         res.Record[i].Uyear=this.getParamTime(this.date1).substring(0,4);
-                        console.log(res.Record[i].ApprovedBudgetTotal==0);
+                       // console.log(res.Record[i].ApprovedBudgetTotal==0);
                         if(res.Record[i].ApprovedBudgetTotal==0||res.Record[i].ApprovedBudgetTotal==''||res.Record[i].ApprovedBudgetTotal==null){
-                            let anwser=Math.floor(Math.random()*100)
-                            console.log('answer'+anwser);
+                            let anwser=0;
                             dataInfo.push({zhixing:anwser})
                         }else{
                             console.log(parseFloat(res.Record[i].ThisaccountsTotal));
@@ -397,28 +396,27 @@
                     }
                 },35)
             },
-            postBalanceSheetExcel:function(){
-                let param = {'infoData':this.balanceData};
+            postBalanceSheetExcel:function() {
+                let param = {'uid':this.uid,
+                    'orgid':this.orgid,
+                    'infoData': this.budgetList};
 
-                let baseheader=ajaxhttp.header;
-                let base=ajaxhttp.base;
+                let baseheader = ajaxhttp.header;
+                let base = ajaxhttp.base;
 
                 //下载Excel
                 this.downloadLoading = true
                 this.$axios({
-                    method:'get',
-                    url:'PSubjectBudget/GetEndYear',
-                    params:{
-                        accountPeriod:'2018-12-01',
-                        isContainUncheck:1
-                    }
-                }) .then(res => {
-                    window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
+                    method: 'post',
+                    url: '/PsubjectBudget/PostExportMiddleYear',
+                    data: param
+                }).then(res => {
+                    console.log(res);
+                    window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
                     console.log(err)
                 })
-
             },
             //下载文件
             fileDownload (data,fileName){

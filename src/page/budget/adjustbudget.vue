@@ -36,9 +36,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input disabled type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal">
+                            <input disabled type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal">
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -59,9 +59,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input disabled type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal">
+                            <input disabled type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal">
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             <input type="text" v-bind:disabled="changeBtn.disable" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -74,9 +74,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input disabled type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal">
+                            <input disabled type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal">
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -89,9 +89,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input disabled type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal">
+                            <input disabled type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal">
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -104,9 +104,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input v-bind:disabled="changeBtn.disable" type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" >
+                            <input v-bind:disabled="changeBtn.disable" type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" >
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -119,9 +119,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input  v-bind:disabled="changeBtn.disable" type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" >
+                            <input  v-bind:disabled="changeBtn.disable" type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" >
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -134,9 +134,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input disabled type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal">
+                            <input disabled type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal">
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -149,9 +149,9 @@
                         <li class="align-center bolder">{{item.k_name}}</li>
                         <li>{{item.BudgetTotal}}</li>
                         <li>
-                            <input disabled type="number" v-bind:value="item.FinalaccountsTotal-item.BudgetTotal" >
+                            <input disabled type="number" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal" >
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -171,7 +171,7 @@
                                 <input  v-bind:disabled="changeBtn.disable" type="number" v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" value="0">
                             </template>
                         </li>
-                        <li>{{item.FinalaccountsTotal}}</li>
+                        <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description" v-bind:index="index" v-on:input="inputDicription">
                         </li>
@@ -273,16 +273,16 @@
             * */
             inputLis:function(val){
                 //alert(val);
-                console.log(val);
+                // console.log(val);
                 let code = val.target.attributes.code.value;//当前修改数据的code
                 let index=val.target.attributes.index.value;//当前修改数据在列表中的下标
                 let in_value = parseFloat(val.target.value);//input数据转数字
                 let code_first=this.code_first;//一级科目数据列表
                 if(!isNaN(in_value)){
                     if(code=='BNSHTZ'){
-                        this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal)-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value
+                        this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal)-(parseFloat(this.budgetList[index].ApprovedBudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal))+in_value
                     }else if(code=='BNTZ'){
-                        this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal)+parseFloat(this.budgetList[index].FinalaccountsTotal)-in_value
+                        this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal)+(parseFloat(this.budgetList[index].ApprovedBudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal))-in_value
                     }
                     else{
                         //本年投资输入
@@ -292,37 +292,43 @@
                             let codeSub = code.substring(0,len);
                             if(codeSub==this.budgetList[i].SubjectCode&&code.length!=len){
 
-                                this.budgetList[i].FinalaccountsTotal=this.budgetList[i].FinalaccountsTotal-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value;
-                                console.log(this.code_firstCount);
+                                this.budgetList[i].ApprovedBudgetTotal=parseFloat(this.budgetList[i].ApprovedBudgetTotal)- (this.budgetList[index].ApprovedBudgetTotal-this.budgetList[index].BudgetTotal)+in_value;
+                                console.log(this.budgetList[i].ApprovedBudgetTotal);
+                                //console.log(this.code_firstCount);
                                 //判断修改的数据是在收入合计之前还是在支出合计之前
                                 if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
                                     //收入合计更改
-                                    this.budgetList[this.specialSubIndex['BNSRHJ']].FinalaccountsTotal=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].FinalaccountsTotal)-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value
+                                    this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal)-(parseFloat(this.budgetList[index].ApprovedBudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal))+in_value
+
                                     //滚存结余更改
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal)-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value
+                                    this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal)-(parseFloat(this.budgetList[index].ApprovedBudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal))+in_value
                                     //修改输入列的合计
-                                    this.code_firstCount['BNSRHJ']=parseFloat(this.code_firstCount['BNSRHJ'])-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value;
+                                    this.budgetList[index].ApprovedBudgetTotal=this.budgetList[index].BudgetTotal+in_value;
+                                    // this.code_firstCount['BNSRHJ']=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].FinalaccountsTotal)-parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal)+in_value;
                                     //修改输入列的滚存结余
-                                    this.code_firstCount['QMGCJY']=parseFloat(this.code_firstCount['QMGCJY'])-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value;
+                                    //this.code_firstCount['QMGCJY']=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal)-parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+in_value;
                                 }else{
                                     //支出合计更改
-                                    this.budgetList[this.specialSubIndex['BNZCHJ']].FinalaccountsTotal=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].FinalaccountsTotal)-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].FinalaccountsTotal)+parseFloat(this.budgetList[index].FinalaccountsTotal)-in_value
+                                    this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal)-(parseFloat(this.budgetList[index].ApprovedBudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal))+in_value
+                                    this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal)+(parseFloat(this.budgetList[index].ApprovedBudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal))-in_value
                                     //修改输入列的支出合计
-                                    this.code_firstCount['BNZCHJ']=parseFloat(this.code_firstCount['BNZCHJ'])-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value;
+                                    this.budgetList[index].ApprovedBudgetTotal=this.budgetList[index].BudgetTotal+in_value;
+                                    //this.code_firstCount['BNZCHJ']=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal)-parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal)+in_value;
                                     //修改输入列的滚存结余
-                                    this.code_firstCount['QMGCJY']=parseFloat(this.code_firstCount['QMGCJY'])+parseFloat(this.budgetList[index].FinalaccountsTotal)-in_value;
+                                    //this.code_firstCount['QMGCJY']=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal)-parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-in_value;
                                 }
-                                //确定修改的对应一级科目，进行计算，先减去该科目的原数据，在加上修改后的数据，得到对应一级科目的总和
-                                this.code_firstCount[codeSub]=parseFloat(this.code_firstCount[codeSub])-parseFloat(this.budgetList[index].FinalaccountsTotal)+in_value;
+//确定修改的对应一级科目，进行计算，先减去该科目的原数据，在加上修改后的数据，得到对应一级科目的总和
+                                console.log(this.budgetList[i].ApprovedBudgetTotal);
+                                this.code_firstCount[codeSub]=parseFloat(this.budgetList[i].ApprovedBudgetTotal)-parseFloat(this.budgetList[i].BudgetTotal);
+                                console.log(this.code_firstCount[codeSub]);
                                 //计算本年结余
-                                this.budgetList[this.specialSubIndex['BNJY']].FinalaccountsTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].FinalaccountsTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].FinalaccountsTotal;
+                                this.budgetList[this.specialSubIndex['BNJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal;
 
                             }
                         }
                     }
                     //修改该科目在总list中的数据
-                    this.budgetList[index].FinalaccountsTotal=in_value+this.budgetList[index].BudgetTotal;
+                    this.budgetList[index].ApprovedBudgetTotal=in_value+this.budgetList[index].BudgetTotal;
                 }
             },
             /*
@@ -390,7 +396,7 @@
                         }
                         if(res.Record[i].Layers=='0'){
                             code_first.push(res.Record[i]);//一级科目
-                            code_firstCount[res.Record[i].SubjectCode]=res.Record[i].FinalaccountsTotal-res.Record[i].BudgetTotal;//本年一级科目调整后预算数
+                            code_firstCount[res.Record[i].SubjectCode]=res.Record[i].ApprovedBudgetTotal-res.Record[i].BudgetTotal;//本年一级科目调整后预算数
                         }
                         //计算上年决算数对应的本年合计收入，以及本年支出合计
                         // 得到  本年收入合计,本年支出合计，本年结余，上年结余，收回投资，本年投资，本年提取后备金，期末滚存结余  对应下标用于计算
@@ -420,28 +426,27 @@
             * 接口：PVoucherMst/PostBalanceSheetExcel
             * 参数：Data--资产负债表数据的整个data
             * */
-            postBalanceSheetExcel:function(){
-                let param = {'infoData':this.balanceData};
+            postBalanceSheetExcel:function() {
+                let param = {'uid':this.uid,
+                    'orgid':this.orgid,
+                    'infoData': this.budgetList};
 
-                let baseheader=ajaxhttp.header;
-                let base=ajaxhttp.base;
+                let baseheader = ajaxhttp.header;
+                let base = ajaxhttp.base;
 
                 //下载Excel
                 this.downloadLoading = true
                 this.$axios({
-                    method:'get',
-                    url:'/PVoucherMst/GetBalanceSheetExcel',
-                    params:{
-                        accountPeriod:'2018-12-01',
-                        isContainUncheck:1
-                    }
-                }) .then(res => {
-                    window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
+                    method: 'post',
+                    url: '/PsubjectBudget/PostExportEndYear',
+                    data: param
+                }).then(res => {
+                    console.log(res);
+                    window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
                     console.log(err)
                 })
-
             },
             //下载文件
             fileDownload (data,fileName){
