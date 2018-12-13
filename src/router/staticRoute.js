@@ -11,11 +11,11 @@ const staticRoute = [
     },
     {
         path:'/indexfinance',
-        component: () =>import("../page/finance/addVoucher"),
+        component: () =>import("../page/finance/addVoucher")
     },
     {
         path:'/index',
-        component: () =>import("../page/index"),
+        component: () =>import("../page/index")
     },
     {
         path: "/home",
@@ -24,7 +24,7 @@ const staticRoute = [
             {
                 path: "",
                 component: () =>import("../page/home/index"),
-                meta:{ requireAuth:true,type:'page',isMenu:true }
+                meta:{ requireAuth:true,type:'page',isMenu:true,name:'首页' }
             }
         ]
     },
@@ -87,7 +87,7 @@ const staticRoute = [
                 //凭证管理
                 path: "voucherList",
                 component: () =>import("../page/finance/voucherList"),
-                meta:{ requireAuth:true,isMenu:true,type:'page'}
+                meta:{ requireAuth:true,isMenu:true,type:'page',name:'凭证管理'}
             },
             {
                 //查看凭证
@@ -232,26 +232,7 @@ const staticRoute = [
                 path: "execute",
                 component: () =>import("../page/budget/execute"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //预算表
-                path: "budget",
-                component: () =>import( "../page/budget/budget"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //调整表
-                path: "adjustbudget",
-                component: () =>import( "../page/budget/adjustbudget"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-            {
-                //决算表
-                path: "actualbudget",
-                component: () =>import( "../page/budget/actualbudget"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            },
-
+            }
         ]
     },
     {

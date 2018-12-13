@@ -78,7 +78,7 @@ ul{
 
 .searcherValue{
     border:1px solid #ddd;
-    border-radius: 15px 0 0 15px ;
+    border-radius: 10px 0 0 10px ;
     overflow: hidden;
     padding-left:10px;
 }
@@ -91,14 +91,13 @@ ul{
     border:0;
 }
 .searcherBtn{
-    height:32px;
+    height:30px;
     width:60px;
     text-align: center;
     line-height: 30px;
     background:#509edc;
     color:#fff;
     cursor:pointer;
-    border-radius: 0 15px 15px 0;
 }
 .unionState .handle>a>li{
     border:1px solid #ff9900;
@@ -254,10 +253,3 @@ ul{
     color:#333;
 }
 
-.sidebar-el-menu[data-v-4d15bc2e]:not(.el-menu--collapse){
-    width:150px !important;
-}
-
-.content{
-    padding-bottom: 50px;
-}

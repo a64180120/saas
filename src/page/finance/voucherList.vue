@@ -1,97 +1,72 @@
 <template>
-  <div class="voucherList">
-      <div class="voucherNav">
-          <ul>
-              <li>新增</li>
-              <li>修改</li>
-              <li>删除</li>
-              <li>审核</li>
-              <li>反审核</li>
-              <li>复制</li>
-              <li>剪切</li>
-              <li>冲红</li>
-              <li>凭证重排</li>
-              <li>导入</li>
-              <li>导出</li>
-              <li>打印</li>
-          </ul>
-      </div>
-      <div class="voucherSelect">
-          <div>
-<<<<<<< HEAD
-              <label>
-                  <div>账期:</div>
-                  <div class="block">
-                      <el-date-picker
-                          v-model="date1"
-                          type="date"
-                          placeholder="选择日期">
-                      </el-date-picker>
-                  </div>
-              </label>
-              <label >
-                  <div>至:</div>
-                  <div class="block">
-                      <el-date-picker
-                          v-model="date2"
-                          type="date"
-                          placeholder="选择日期">
-                      </el-date-picker>
-                  </div>
-              </label>
-          </div>
-          <div>
-              <label >合计金额: <div class="inputContainer"><input type="text"></div> </label>
-              <label >至:<div class="inputContainer"><input type="text"></div></label>
-=======
-              <label >合计金额(元):&nbsp; <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
-              <label >至:&nbsp;<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
->>>>>>> 5f0d5d31845b84e641b9de79668dae95293d12db
-          </div>
-          <div class="flexPublic searcherCon">
-              <div class="searcherValue"><input v-model="unionSearchValue" type="text" placeholder="科目/摘要/凭证号"></div>
-              <div  class="searcherBtn">搜索</div>
-              <div @click.stop="highGradeToggle(true)">高级</div>
-              <div v-show="highGradeCss" class="highGradeCss">
-                <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
-                <ul>
-                    <li>
-                        <div>科目名称</div>
-                        <div class="inputContainer"><input type="text"></div>
-                    </li>
-                    <li>
-                        <div>辅助核算</div>
-                        <div class="flexPublic">
-                            <div class="selectContainer"><select></select></div>
+
+    <div class="voucherList">
+        <div class="voucherNav">
+            <ul>
+                <a><li>新增</li></a>
+                <a><li>修改</li></a>
+                <a><li>删除</li></a>
+                <a><li>审核</li></a>
+                <a><li>反审核</li></a>
+                <a><li>复制</li></a>
+                <a><li>剪切</li></a>
+                <a><li>冲红</li></a>
+                <a><li>凭证重排</li></a>
+                <a><li>导入</li></a>
+                <a><li>导出</li></a>
+                <a><li>打印</li></a>
+            </ul>
+        </div>
+        <div class="voucherSelect">
+            <div>
+                <label >合计金额(元):&nbsp; <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
+                <label >至:&nbsp;<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
+            </div>
+            <div class="flexPublic searcherCon">
+                <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
+                <div @click="searchVoucher" class="searcherBtn">搜索</div>
+                <div @click.stop="highGradeToggle(true)">高级</div>
+                <div v-show="highGradeCss" class="highGradeCss">
+                    <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
+                    <ul>
+                        <li>
+                            <div>科目名称</div>
                             <div class="inputContainer"><input type="text"></div>
-                        </div>
-                    </li>
-                    <li>
-                        <div>合计金额</div>
-                        <div class="flexPublic">
-                            <div class="inputContainer"><input type="text"></div>
-                            <span>至</span>
-                            <div class="inputContainer"><input type="text"></div>
-                        </div>
-                    </li>
-                    <li>
-                        <div>账期</div>
-                        <div class="flexPublic">
-                            <div class="block">
-                                <el-date-picker type="date" v-model="date3" placeholder="请选择日期">
-                                </el-date-picker>
+                        </li>
+                        <li>
+                            <div>辅助核算</div>
+                            <div class="flexPublic">
+                                <div class="selectContainer"><select></select></div>
+                                <div class="inputContainer"><input type="text"></div>
                             </div>
-                            <span>至</span>
-                            <div class="block">
-                                <el-date-picker type="date" v-model="date4" placeholder="请选择日期">
-                                </el-date-picker>
+                        </li>
+                        <li>
+                            <div>合计金额</div>
+                            <div class="flexPublic">
+                                <div class="inputContainer"><input type="text"></div>
+                                <span>至</span>
+                                <div class="inputContainer"><input type="text"></div>
                             </div>
-                        </div>
-                    </li>
-                </ul>
-                <div>
-                    <div>重置</div>
-                    <div>搜索</div>
+                        </li>
+                        <li>
+                            <div>账期</div>
+                            <div class="flexPublic">
+                                <div class="block">
+                                    <el-date-picker type="date" v-model="date3" placeholder="请选择日期">
+                                    </el-date-picker>
+                                </div>
+                                <span>至</span>
+                                <div class="block">
+                                    <el-date-picker type="date" v-model="date4" placeholder="请选择日期">
+                                    </el-date-picker>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div>
+                        <div>重置</div>
+                        <div>搜索</div>
+                    </div>
                 </div>
             </div>
 
@@ -130,7 +105,7 @@
                 </li>
             </ul>
         </section>
-        <side-time></side-time>
+        <side-time @time-click="getSideDate"></side-time>
     </div>
 </template>
 
@@ -185,66 +160,51 @@
                         }
                     }]
                 },
-                shortcuts: [{
-                    text: '今天',
-                    onClick(picker) {
-                        picker.$emit('pick', new Date());
-                    }
-                }, {
-                    text: '昨天',
-                    onClick(picker) {
-                        const date = new Date();
-                        date.setTime(date.getTime() - 3600 * 1000 * 24);
-                        picker.$emit('pick', date);
-                    }
-                }, {
-                    text: '一周前',
-                    onClick(picker) {
-                        const date = new Date();
-                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-                        picker.$emit('pick', date);
-                    }
-                }]
+                voucherList:[],
+                highGradeCss:false,
+                pagesize:100,
+                pageindex:0,
+            }
+        },
+        methods:{
+            highGradeToggle(bool) {
+                this.highGradeCss = bool;
             },
-            voucherList:[],
-            highGradeCss:false,
-            pagesize:10,
-            pageindex:0,
-        }
-      },
-      methods:{
-          highGradeToggle(bool) {
-              this.highGradeCss = bool;
-          },
-          voucherDel(item){
-              this.$router.push({name:'voucherDel',params:{list:item}});
-          },
-          getvoucherList(){
-              var data={
-                  uid:'0001',
-                  orgid:52118082000000,
-                  pagesize:this.pagesize,
-                  pageindex:this.pageindex
-              }
-              this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
-                  .then(res=>{
-                      this.voucherList=res.Record;
-                      console.log(this.voucherList)
-                      if(this.voucherList.length<=0){
-                          alert('暂无新凭证');
-                      }
-                  })
-                  .catch(err=>console.log(err))
-          },
-      },
-      filters:{
-        sum(val,dtl){
-            var sum=0;
-            switch(val){
-                case 'jie':
-                    for(var d of dtl){
-                        if(d.JSum){
-                            sum+=parseFloat(d.JSum);
+            voucherDel(item){
+                this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
+            },
+            /*getvoucher(){
+                var data={
+                    uid:'0001',
+                    orgid:52118082000000,
+                    id:168181205000001
+                }
+                this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
+                    .then(res=>{
+
+                        console.log(res)
+
+                    })
+                    .catch(err=>console.log(err))
+            },*/
+            //凭证搜索**************************
+            searchVoucher(){
+                const loading1=this.$loading();
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    sum1:this.sum1,
+                    sum2:this.sum2,
+                    keyword:this.searchValue,
+                    queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
+                }
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                    .then(res=>{
+                        loading1.close();
+                        if(res.Record.length<=0){
+                            this.$message('无法找到该凭证!')
+                        } else{
+                            this.voucherList= res.Record;
                         }
                     })
                     .catch(err=>{console.log(err);loading1.close();})
@@ -282,6 +242,10 @@
                     })
                     .catch(err=>console.log(err))
             },
+            getSideDate(data){
+                this.sideDate=data.sideDate;
+                this.getvoucherList();
+            }
         },
         computed:{
             ...mapState({

@@ -2,8 +2,13 @@
     // position: relative;
     width: 100%;
     height: $headerHeight;
-    background-color: $headerBgColor;
+    border-bottom: 1px solid $headerBgColor;
+    
     z-index: 500;
+    .collapse-btn{
+        background-color: $headerBgColor;
+        color: $white;
+    }
     .logo {
         float: left;
         height: $headerHeight;
@@ -14,6 +19,11 @@
         .a, a:link, a:active, a:visited{
             color: $headerColor
         }      
+    }
+    .header-user-con{
+        .el-dropdown{
+            color: $headerColor;
+        }
     }
     .userInfo {
         float: right;

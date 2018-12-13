@@ -1,4 +1,5 @@
 <template>
+<!--17-->
     <div class="addVoucher">
         <div class="unionState flexPublic">
             <div class="flexPublic searcherCon">
@@ -193,29 +194,12 @@
                 switch(str){
                     case 'keep':
                         this.voucherData();
-                        if(this.voucherDataList.data.Mst){
-                            Mst=this.voucherDataList.data.Mst;
-                        }
-                        //判断凭证月份是否早于结账月份******************************
-                        if(Mst.PMonth<=parseInt(this.checkedTime)&&Mst.Uyear<=this.checkedTime){
-                            this.$message('该月份已结账,无法修改凭证!')
-                            return;
-                        }else{
-                            this.keepVoucher();
-                        }
+                        this.keepVoucher();
                         break;
                     case 'keepAdd':
                         this.voucherData();
-                        if(this.voucherDataList.data.Mst){
-                            Mst=this.voucherDataList.data.Mst;
-                        }
-                        //判断凭证月份是否早于结账月份******************************
-                        if(Mst.PMonth<=parseInt(this.checkedTime)&&Mst.UYear<=this.checkedTime){
-                            this.$message('该月份已结账,无法修改凭证!')
-                            return;
-                        }else{
-                            this.keepVoucher();
-                        }
+                        this.keepVoucher();
+                        this.resetVoucher();
                         break;
                     case 'modelList':
                         this.modelListCss=true;
@@ -227,6 +211,7 @@
                     case 'moreVoucher':
                         this.$store.commit("tagNav/turnCachePage",false);
                         this.$router.push({path:'/finance/voucherList'})
+                        break;
                     case 'audit':
                         this.voucherData();
                         this.audit(true);
@@ -238,6 +223,11 @@
                     case 'delete' :
                         this.voucherData();
                         this.delete();
+                        this.voucherDataList.data={
+                            Mst:{},
+                            Attachements:[]
+                        }
+                        this.resetVoucher();
                         break;
                     case 'reset':
                         if(confirm('凭证号重排过程中不允许取消、暂停操作。确定重排？')){
@@ -256,8 +246,12 @@
                }
                if(Vdata.Mst.PDate){
                    if(typeof(Vdata.Mst.PDate)=='object'){
-                       Vdata.Mst.UYear=Vdata.Mst.PDate.getFullYear();
+                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
                        Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+                       var date=Vdata.Mst.PDate.getDate();
+                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+                   }else {
+                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
                    }
                }else{
                    this.$message('请输入凭证会计期!')

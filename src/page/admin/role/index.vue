@@ -174,6 +174,7 @@
                     }
                 }).then(
                     res => {
+                        this.checkStrictly = true;
                         this.data2 = res;
                     },
                     error => {
@@ -195,7 +196,7 @@
                 }).then(
                     res => {
                         this.loading = false;
-
+                        console.log(res);
                         this.tableData = res.Record;
                         this.totalCount = Number(res.totalRows);
                         console.log(this.tableData);
@@ -273,6 +274,9 @@
             },
             //新增按钮
             PageAdd() {
+                this.form = {};
+                this.singleSelection= [];
+                this.CheckedList = [];
                 this.showForm = true;
                 this.showForm2 = false;
                 this.dialogState = "add";

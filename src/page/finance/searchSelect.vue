@@ -1,4 +1,5 @@
 <template>
+<!--17-->
     <div @click.stop="0" class="vue-dropdown default-theme" v-show-extend="show">
       <div class="search-module clearfix" v-show="itemlists.kemu.length">
         <input  class="search-text" v-model="searchValue"
@@ -8,10 +9,10 @@
       <ul class="list-module" v-show="inputFocus">
         <li class="flexPublic" v-for ="(item,index) in datalist" @click.stop="appClick(item)"
             :key="index">
-          <span class="list-item-text">{{item}}</span>
+          <span class="list-item-text">{{item.KCode}}{{item.KName}}</span>
         </li>
       </ul>
-      <div class="tip__nodata" v-show="inputFocus">{{nodatatext}}</div>
+      <div class="tip__nodata" v-show="inputFocus"><router-link to="/setting/subject">{{nodatatext}}</router-link></div>
     </div>
 </template>
 
@@ -71,7 +72,7 @@
           vm.datalist=[];
         }else{
           vm.datalist = vm.itemlist.filter(function(item,index,arr){
-            return item.indexOf(searchvalue) != -1;
+            return item.KCode.indexOf(searchvalue) != -1||item.KName.indexOf(searchvalue) != -1;
           });
         }
       }
@@ -163,7 +164,7 @@
     }
   }
   .tip__nodata {
-    font-size: 12px;
+    font-size: 16px;
     border-bottom:1px solid #999;
     background: #ddd;
     height:30px;

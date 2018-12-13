@@ -3,11 +3,13 @@ let Base64 = require("js-base64").Base64;
 
 const ajaxMode = {
     //网站api的地址
-    // url:"http://10.0.13.52:8028",
-      // url:"http://10.0.20.46:8028",
-    url:"http://10.0.45.51:8028",
-    //url:"http://10.0.15.3:8028",
-    dbname:"NG0001" 
+    //url:"http://10.0.45.51:8028",
+    //url:"http://10.0.13.52:8028",
+    //url:"http://127.0.0.1:8028",
+    url:process.env.API_ROOT,
+
+    dbname:"NG0001",
+
   getAxiosConfig:function(){
     var appKey = "D31B7F91-3068-4A49-91EE-F3E13AE5C48C",
         appSecret = "103CB639-840C-4E4F-8812-220ECE3C4E4D",

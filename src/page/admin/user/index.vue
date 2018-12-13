@@ -4,13 +4,13 @@
             <div class="handle-box">
                 <el-row>
                     <el-col :span="24">
-                        <el-select v-model="state_mark" placeholder="请选择用户状态" class="handle-select mr10">
-                            <el-option label="全部" value=""></el-option>
-                            <el-option label="启用" value="0"></el-option>
-                            <el-option label="临时停用" value="1"></el-option>
-                            <el-option label="永久停用" value="2"></el-option>
-                        </el-select>
-                        <el-input v-model="select_word" placeholder="用户编码/名称/手机号" prefix-icon="el-icon-search"
+                        <!--<el-select v-model="state_mark" placeholder="请选择用户状态" class="handle-select mr10">-->
+                            <!--<el-option label="全部" value=""></el-option>-->
+                            <!--<el-option label="启用" value="0"></el-option>-->
+                            <!--<el-option label="临时停用" value="1"></el-option>-->
+                            <!--<el-option label="永久停用" value="2"></el-option>-->
+                        <!--</el-select>-->
+                        <el-input v-model="select_word" placeholder="用户名称/手机号码" prefix-icon="el-icon-search"
                                   class="handle-input mr10"></el-input>
                         <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
 
@@ -26,14 +26,17 @@
                         <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10"
                                    @click="PageReset">密码重置
                         </el-button>
+                        <!--<el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10"-->
+                                   <!--@click="SendCode">发送邀请码-->
+                        <!--</el-button>-->
                         <el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10"
-                                   @click="SendCode">发送邀请码
+                                   @click="Transfer">账号移交
                         </el-button>
                     </el-col>
                 </el-row>
             </div>
             <div style="width: 100%">
-                <div style="float: left; width: 30%; height: 100%">
+                <div style="float: left; width: 20%; height: 100%">
                     <div align="center">
                         工会组织列表
                     </div>
@@ -53,6 +56,7 @@
                             :props="defaultProps"
                             @current-change="changeTable"
                             node-key="OrgId"
+                            :expand-on-click-node="expandOnClickNode"
                             default-expand-all
                             :highlight-current="highlightCurrent"
                             :default-checked-keys="CheckedList"
@@ -61,7 +65,7 @@
                     </div>
 
                 </div>
-                <div style="float: right; width: 70%; height: 100%">
+                <div style="float: right; width: 80%; height: 100%">
                     <el-table
                         :data="tableData"
                         border
@@ -98,6 +102,7 @@
                         </el-pagination>
                     </div>
                 </div>
+                <div style="clear:both"></div>
             </div>
         </div>
 
@@ -133,40 +138,6 @@
                         <el-table-column prop="RoleName" label="角色"></el-table-column>
                     </el-table>
                 </el-form-item>
-                <!--<el-form-item label="用户姓名：" prop="realName">-->
-                    <!--<el-input v-model="form.realName"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="手机号码：" prop="mobilePhone">-->
-                    <!--<el-input v-model="form.mobilePhone"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="角色：" prop="roles">-->
-                    <!--<el-checkbox-group v-model="form.roles">-->
-                        <!--<el-checkbox label="1" class="el-checkbox-role">主席 <span>  权限详情</span></el-checkbox>-->
-                        <!--<el-checkbox label="2" class="el-checkbox-role">财务主管</el-checkbox>-->
-                        <!--<el-checkbox label="3" class="el-checkbox-role">会计</el-checkbox>-->
-                        <!--<el-checkbox label="4" class="el-checkbox-role">统计员</el-checkbox>-->
-                        <!--<el-checkbox label="5" class="el-checkbox-role">单位管理员</el-checkbox>-->
-                    <!--</el-checkbox-group>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="账号状态：" prop="enabledMark">-->
-                    <!--<el-radio-group v-model="form.enabledMark">-->
-                        <!--<el-radio label="0">启用</el-radio>-->
-                        <!--<el-radio label="1">临时停用</el-radio>-->
-                        <!--<el-radio label="2">永久停用</el-radio>-->
-                    <!--</el-radio-group>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="历史关联账号：" v-if="dialogState=='add'?false:true">-->
-                    <!--<el-table-->
-                        <!--:data="form.historyAccount"-->
-                        <!--border-->
-                        <!--style="width: 100%">-->
-                        <!--<el-table-column label="序号" type="index" width="50"></el-table-column>-->
-                        <!--<el-table-column prop="RealName" label="用户姓名"></el-table-column>-->
-                        <!--<el-table-column prop="MobilePhone" label="手机号码"></el-table-column>-->
-                        <!--<el-table-column prop="Roles" label="角色"></el-table-column>-->
-                        <!--<el-table-column prop="EnabledMark" label="账号状态"></el-table-column>-->
-                    <!--</el-table>-->
-                <!--</el-form-item>-->
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="saveEdit('form')">保 存</el-button>
@@ -198,6 +169,7 @@
                 qOrgId: "",
                 flam: 0,
                 highlightCurrent: true,
+                expandOnClickNode: false,
                 tableData: [], //table数据
                 pageSize: 10, //pageSize
                 pageIndex: 1, //pageIndex
@@ -265,7 +237,7 @@
                 //获取200角色信息
                 SysUserTransferList(vm,{
                     uid: userid,
-                    orgid: this.orgid,
+                    orgid: this.qOrgId,
                     pagesize: 200,
                     pageindex: 0
                 }).then(res => {
@@ -315,6 +287,7 @@
             changeTable(CheckedKeys, CheckedNodes){
                 let key = CheckedKeys;
                 this.qOrgId = key.OrgId;
+                this.getData('');
                 console.log(key);
             },
             //获取组织树
@@ -351,7 +324,7 @@
                     pagesize: this.pageSize,
                     Type:'R', //获取角色信息
                     uid: this.userid,
-                    orgid: this.orgid,
+                    orgid: this.qOrgId,
                     queryfilter:query
                 }).then(res => {
                     this.loading = false;
@@ -396,7 +369,6 @@
                 this.is_search = true;
                 if(this.select_word!=''){
                     var queryfilter='{"[or-dictionary0]*dictionary*or": { "RealName*str*like": "'+this.select_word+'", "MobilePhone*str*like": "'+this.select_word+'" }}';
-
                     console.log(queryfilter);
                     this.getData(queryfilter);
                     this.is_search = false;
@@ -436,34 +408,41 @@
             },
             //编辑按钮
             PageEdit() {
-                let object = this.singleSelection;
-                var me=this;
-                //debugger;
-                let id = object.length > 0 ? object[0].PhId : 0;
-                if (id != 0) {
-                    //this.form=object[0];
+                if(this.qOrgId != ""){
+                    let object = this.singleSelection;
+                    var me=this;
+                    //debugger;
+                    let id = object.length > 0 ? object[0].PhId : 0;
+                    if (id != 0) {
+                        //this.form=object[0];
 
-                    var roles=[];
-                    console.log(object[0]);
-                    if(object[0].Roles.length>0){
-                        object[0].Roles.forEach(el =>{
-                            roles.push(el.PhId);
-                        })
+                        var roles=[];
+                        console.log(object[0]);
+                        if(object[0].Roles.length>0){
+                            object[0].Roles.forEach(el =>{
+                                roles.push(el.PhId);
+                            })
+                        }
+                        this.form.phid=object[0].PhId;
+                        this.form.realName=object[0].RealName;
+                        this.form.mobilePhone=object[0].MobilePhone;
+                        this.form.rolesid=roles;
+                        this.form.enabledMark= String(object[0].EnabledMark);
+                        //改变更新状态
+                        this.dialogState = "edit";
+                        this.dialogTitle = "编辑";
+                        this.editVisible = true;
+                        //获取移交记录
+                        this.getTransData(id);
+
+                    } else {
+                        this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
                     }
-                    this.form.phid=object[0].PhId;
-                    this.form.realName=object[0].RealName;
-                    this.form.mobilePhone=object[0].MobilePhone;
-                    this.form.rolesid=roles;
-                    this.form.enabledMark= String(object[0].EnabledMark);
-                    //改变更新状态
-                    this.dialogState = "edit";
-                    this.dialogTitle = "编辑";
-                    this.editVisible = true;
-                    //获取移交记录
-                    this.getTransData(id);
-
-                } else {
-                    this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
+                }else{
+                    this.$message({
+                        message: "请选中左边组织中的一行",
+                        type: "warning"
+                    });
                 }
                 // let object = this.singleSelection;
                 //
@@ -497,70 +476,450 @@
             },
             //删除按钮
             PageDelete() {
-                let length = this.singleSelection.length;
-                if (length > 0) {
-                    this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
-                        confirmButtonText: "确定",
-                        cancelButtonText: "取消",
-                        type: "warning"
-                    })
-                        .then(() => {
-                            this.$axios
-                                .get("http://10.0.20.46:8028/api/GCW/SysUser/PostDelete", {
-                                    params: {
-                                        id: id
-                                    }
-                                })
-                                .then(res => {
+                if(this.qOrgId != ""){
+                    let object = this.singleSelection;
+                    let length = object.length;
+                    if (length > 0) {
+                        this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
+                            confirmButtonText: "确定",
+                            cancelButtonText: "取消",
+                            type: "warning"
+                        }).then(() => {
 
-                                    this.tableData.splice(this.idx, 1);
+                            var vm=this;
+                            this.loading = true;
 
+                            //提交asiox
+                            SysUserDelete(vm,{
+                                id:object[0].PhId,
+                                uid:this.userid,
+                                orgid:this.qOrgId
+                            }).then(res => {
+                                this.loading = false;
+                                if(res.Status=='success'){
+                                    //设置状态，隐藏新增页面
                                     this.$message.success("删除成功");
                                     this.singleSelection = [];
-                                });
-                        })
-                        .catch(() => {
+
+                                    //刷新列表
+                                    this.getData('');
+                                }else{
+                                    this.$message.error('删除失败,请重试!');
+                                }
+                            }).catch(error =>{
+                                console.log(error);
+                                this.loading = false;
+                                this.$message.error('删除错误');
+                            })
+
+                        }).catch(() => {
                             this.$message({
                                 type: "info",
                                 message: "已取消删除"
                             });
                         });
-                } else {
+                    } else {
+                        this.$message({
+                            message: "请选中列表的其中一行",
+                            type: "warning"
+                        });
+                    }
+                }else{
                     this.$message({
-                        message: "请选中列表的其中一行",
+                        message: "请选中左边组织中的一行",
+                        type: "warning"
+                    });
+                }
+
+            },
+            //密码重置
+            PageReset() {
+                if(this.qOrgId != ""){
+                    let object = this.singleSelection;
+                    var vm=this;
+
+                    let id = object.length > 0 ? object[0].PhId : 0;
+                    if (id != 0) {
+                        this.$confirm('确定对账号进行密码重置?', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            SysUserUpdatePassword(vm,{
+                                uid:object[0].PhId,
+                                orgid:vm.qOrgId
+                            }).then(res => {
+                                if(res.Status==='error'){
+                                    vm.$message.error(res.Msg);
+                                    return
+                                }
+                                vm.$message.success('密码重置成功!');
+                            }).catch(error =>{
+                                console.log(error);
+                                vm.$message({ showClose: true,message: "密码重置错误", type: "error"});
+                            })
+                        }).catch(() => {
+                            this.$message({ type: 'info',message: '已取消删除' });
+                        });
+                        this.singleSelection = [];
+                    } else {
+                        this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
+                    }
+                }else{
+                    this.$message({
+                        message: "请选中左边组织中的一行",
                         type: "warning"
                     });
                 }
             },
-            //密码重置
-            PageReset() {
+            //账号移交
+            Transfer() {
+                if(this.qOrgId != ""){
+                    //账号移交
+                    let object = this.singleSelection;
+                    console.log(this.orgid);
+                    let id = object.length > 0 ? object[0].PhId : 0;
+                    if (id != 0) {
+                        var roles=[];
+                        if(object[0].Roles.length>0){
+                            object[0].Roles.forEach(el =>{
+                                roles.push(el.PhId);
+                            })
+                        }
+
+                        this.form.phid=object[0].PhId;
+                        //this.form.realName=object[0].RealName;
+                        //this.form.mobilePhone=object[0].MobilePhone;
+                        this.form.rolesid=roles;
+                        this.form.enabledMark= String(object[0].EnabledMark);
+
+
+                        //改变更新状态
+                        this.dialogState = "trans";
+                        this.dialogTitle = "账号移交";
+                        this.editVisible = true;
+
+                        //获取移交记录
+                        this.getTransData(id);
+
+                    } else {
+                        this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
+                    }
+                }else{
+                    this.$message({
+                        message: "请选中左边组织中的一行",
+                        type: "warning"
+                    });
+                }
             },
-            //发送邀请吗
-            SendCode() {
-            },
+            // //删除按钮
+            // PageDelete() {
+            //     let length = this.singleSelection.length;
+            //     if (length > 0) {
+            //         this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
+            //             confirmButtonText: "确定",
+            //             cancelButtonText: "取消",
+            //             type: "warning"
+            //         })
+            //             .then(() => {
+            //                 this.$axios
+            //                     .get("http://10.0.20.46:8028/api/GCW/SysUser/PostDelete", {
+            //                         params: {
+            //                             id: id
+            //                         }
+            //                     })
+            //                     .then(res => {
+            //
+            //                         this.tableData.splice(this.idx, 1);
+            //
+            //                         this.$message.success("删除成功");
+            //                         this.singleSelection = [];
+            //                     });
+            //             })
+            //             .catch(() => {
+            //                 this.$message({
+            //                     type: "info",
+            //                     message: "已取消删除"
+            //                 });
+            //             });
+            //     } else {
+            //         this.$message({
+            //             message: "请选中列表的其中一行",
+            //             type: "warning"
+            //         });
+            //     }
+            // },
+            // //密码重置
+            // PageReset() {
+            // },
+            // //发送邀请吗
+            // SendCode() {
+            // },
             //选择行
             handleClickRow(row) {
                 this.singleSelection.push(row);
-
                 console.log(row);
                 console.log(this.singleSelection);
             },
-            // 保存编辑
+            // 保存 新增保存
             saveEdit(formName) {
                 this.$refs[formName].validate(valid => {
                     if (valid) {
-                        //this.$set(this.tableData, this.idx, this.form);
-                        //this.$message.success(`修改第 ${this.idx+1} 行成功`);
-                        this.editVisible = false;
 
-                        console.log(this.form);
-                        this.$message.success(`修改成功`);
-                    } else {
-                        console.log("error submit!!");
-                        return false;
+                        if(this.dialogState==='add'){
+                            this.addUser();
+                        }else if(this.dialogState==='edit'){
+                            this.editUser();
+                        }else if(this.dialogState==='trans'){
+                            this.transUser();
+                        }
                     }
                 });
+            },
+            //新增
+            addUser(){
+                //获取缓存 的用户 组织，角色基本信息
+                let cookiesUser = Auth.getUserInfoData();
+                var vm=this;
+                /**
+                 * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
+                 * 新增数据信息 编辑
+                 *  */
+                var userinfo={
+                    PhId:this.form.phid,
+                    PersistentState:1,
+                    Account:this.form.mobilePhone,
+                    Password:'123456',
+                    RealName:this.form.realName,
+                    NickName:this.form.realName,
+                    MobilePhone:this.form.mobilePhone,
+                    Type:1,
+                    InvitationCode:'',
+                    Description:'组织管理员新增'
+                };
+
+
+                //角色-组织-用户信息 实体信息组合
+                var relations=[];
+                var roles=this.form.rolesid;
+                for(let i=0; i<roles.length;i++){
+                    var roleItem=vm.roledata.filter(item =>{
+                        return item.PhId===roles[i];
+                    })
+
+                    relations.push({
+                        PersistentState:1,
+                        UserId:'',
+                        UserAccount:vm.form.mobilePhone,
+                        OrgId:this.qOrgId,
+                        OrgCode:cookiesUser.orgInfo.EnCode,
+                        RoleId:roles[i],
+                        RoleCode:roleItem[0].Name
+                    })
+                }
+
+
+                this.loading = true;
+                //提交asiox
+                SysUserAdd(vm,{
+                    otype:this.dialogState,
+                    uid:'',
+                    orgid:this.qOrgId,
+                    infoData: { Mst:userinfo,Relation:relations}
+                }).then(res => {
+                    this.loading = false;
+
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+
+                    this.$message.success('保存成功!');
+                    //设置状态，隐藏新增页面
+                    this.dialogState = "";
+                    this.editVisible = false;
+                    //刷新列表
+                    this.getData('');
+
+
+                }).catch(error =>{
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({ showClose: true,message: "用户列表获取错误", type: "error"});
+
+                })
+            },
+            //修改
+            editUser(){
+
+                //获取缓存 的用户 组织，角色基本信息
+                let cookiesUser = Auth.getUserInfoData();
+                var vm=this;
+                /**
+                 * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
+                 *  编辑数据信息
+                 * */
+                var userinfo=this.singleSelection[0];
+                userinfo.PersistentState=2;
+                userinfo.Account=this.form.mobilePhone;
+                userinfo.RealName=this.form.realName;
+                userinfo.NickName=this.form.realName;
+                userinfo.MobilePhone=this.form.mobilePhone;
+
+
+                //角色-组织-用户信息 实体信息组合
+                var relations=[];
+                var roles=this.form.rolesid;
+                for(let i=0; i<roles.length;i++){
+                    var roleItem=vm.roledata.filter(item =>{
+                        return item.PhId===roles[i];
+                    })
+
+                    relations.push({
+                        PersistentState:1,
+                        UserId:userinfo.PhId,
+                        UserAccount:userinfo.MobilePhone,
+                        OrgId:vm.qOrgId,
+                        OrgCode:cookiesUser.orgInfo.EnCode,
+                        RoleId:roles[i],
+                        RoleCode:roleItem[0].Name
+                    })
+                }
+
+                this.loading = true;
+                //提交asiox
+                SysUserUpdate(vm,{
+                    otype:this.dialogState,
+                    uid:this.userid,
+                    orgid:this.qOrgId,
+                    infoData: { Mst:userinfo,Relation:relations}
+                }).then(res => {
+                    this.loading = false;
+
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+
+                    this.$message.success('修改成功!');
+                    //设置状态，隐藏新增页面
+                    this.dialogState = "";
+                    this.editVisible = false;
+                    //清空选中项
+                    this.singleSelection = [];
+                    //刷新列表
+                    this.getData('');
+
+                }).catch(error =>{
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({ showClose: true,message: "用户列表获取错误", type: "error"});
+
+                })
+            },
+            //账号移交
+            transUser(){
+                //获取缓存 的用户 组织，角色基本信息
+                let cookiesUser = Auth.getUserInfoData();
+                var vm=this;
+                //选中用户
+                let selectUser = this.singleSelection[0];
+
+                var userinfo=this.singleSelection[0];
+                userinfo.PersistentState=2;
+                userinfo.Account=this.form.mobilePhone;
+                userinfo.RealName=this.form.realName;
+                userinfo.NickName=this.form.realName;
+                userinfo.MobilePhone=this.form.mobilePhone;
+
+
+                //角色-组织-用户信息 实体信息组合
+                var relations=[];
+                var roles=this.form.rolesid;
+                for(let i=0; i<roles.length;i++){
+                    var roleItem=vm.roledata.filter(item =>{
+                        return item.PhId===roles[i];
+                    })
+
+                    relations.push({
+                        PersistentState:1,
+                        UserId:userinfo.PhId,
+                        UserAccount:userinfo.MobilePhone,
+                        OrgId:vm.qOrgId,
+                        OrgCode:cookiesUser.orgInfo.EnCode,
+                        RoleId:roles[i],
+                        RoleCode:roleItem[0].Name
+                    })
+                }
+
+                var rolesname=[];
+                var rolesid=[];
+
+                if(selectUser.Roles.length>0){
+                    selectUser.Roles.forEach(el =>{
+                        rolesname.push(el.Name);
+                        rolesid.push(el.PhId);
+
+                    })
+                }
+
+                var transrecord={
+                    UserId:selectUser.PhId,
+                    UserAccount:selectUser.Account,
+                    RealName:selectUser.RealName,
+                    MobilePhone:selectUser.MobilePhone,
+                    RoleName:String(rolesname),
+                    RoleId:String(rolesid)
+                };
+
+
+                this.loading = true;
+                //提交asiox
+                SysUserUpdate(vm,{
+                    otype:this.dialogState,
+                    uid:this.userid,
+                    orgid:this.qOrgId,
+                    infoData: { Mst:userinfo,Relation:relations,sysUserTransferRecord:transrecord}
+                }).then(res => {
+                    this.loading = false;
+
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+
+                    this.$message.success('修改成功!');
+                    //设置状态，隐藏新增页面
+                    this.dialogState = "";
+                    this.editVisible = false;
+                    //清空选中项
+                    this.singleSelection = [];
+                    //刷新列表
+                    this.getData('');
+
+                }).catch(error =>{
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({ showClose: true,message: "用户列表获取错误", type: "error"});
+
+                })
             }
+            // 保存编辑
+            // saveEdit(formName) {
+            //     this.$refs[formName].validate(valid => {
+            //         if (valid) {
+            //             //this.$set(this.tableData, this.idx, this.form);
+            //             //this.$message.success(`修改第 ${this.idx+1} 行成功`);
+            //             this.editVisible = false;
+            //
+            //             console.log(this.form);
+            //             this.$message.success(`修改成功`);
+            //         } else {
+            //             console.log("error submit!!");
+            //             return false;
+            //         }
+            //     });
+            // }
         }
     };
 </script>
