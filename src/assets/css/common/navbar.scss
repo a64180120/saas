@@ -1,0 +1,29 @@
+.sidebar{
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 60px;
+    bottom: 0;
+    overflow-y: scroll;
+    
+    .el-menu{
+        background-color: $themeColorDarken;
+        .el-submenu__title{
+            color: $white;
+            &>i{
+                color: $white;
+            }
+        }
+        .el-menu-item {
+            color: $white;
+            &>i{
+                color: $white;
+            }
+        }
+        
+        .is-active{
+            color: $lightYellow;
+        }
+    }
+    
+}
