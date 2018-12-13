@@ -89,7 +89,7 @@ const actions = {
                     }
                     
                 }else{
-                    alert('网络不通,请检查服务接口！.....')
+                    alert('网络不通,请检查服务接口网络！.....')
                 }
                 resolve(res);
                 
