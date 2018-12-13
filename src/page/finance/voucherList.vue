@@ -3,18 +3,18 @@
     <div class="voucherList">
         <div class="voucherNav">
             <ul>
-                <li>新增</li>
-                <li>修改</li>
-                <li>删除</li>
-                <li>审核</li>
-                <li>反审核</li>
-                <li>复制</li>
-                <li>剪切</li>
-                <li>冲红</li>
-                <li>凭证重排</li>
-                <li>导入</li>
-                <li>导出</li>
-                <li>打印</li>
+                <a><li>新增</li></a>
+                <a><li>修改</li></a>
+                <a><li>删除</li></a>
+                <a><li>审核</li></a>
+                <a><li>反审核</li></a>
+                <a><li>复制</li></a>
+                <a><li>剪切</li></a>
+                <a><li>冲红</li></a>
+                <a><li>凭证重排</li></a>
+                <a><li>导入</li></a>
+                <a><li>导出</li></a>
+                <a><li>打印</li></a>
             </ul>
         </div>
         <div class="voucherSelect">

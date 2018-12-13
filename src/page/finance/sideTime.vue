@@ -273,13 +273,10 @@ export default {
             },
             //会计期弹窗年月份选择*****************
             yearMonthClick($event){
-                console.log(111)
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
                 this.getvoucherList('reset');
-                 console.log(111)
                 this.$emit("time-click",{sideDate:this.sideDate})
-                console.log(111)
             },
         //会计期内容切换************************************
             checkOutSel(val){
@@ -308,12 +305,6 @@ export default {
                     val++;
                 }
                 this[name]=val;
-            },
-            //会计期弹窗年月份选择*****************
-            yearMonthClick($event){
-                this.month=parseInt($event.target.innerHTML)
-                this.sideDate=this.year+'-'+this.month;
-                this.getvoucherList('reset');
             },
     },
     computed:{
