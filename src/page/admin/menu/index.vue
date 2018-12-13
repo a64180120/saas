@@ -201,15 +201,15 @@
         <!--按钮编辑页-->
         <el-dialog :title="dialogButton=='add'?'新增按钮':'修改按钮'" :visible.sync="editButton" width="40%">
             <el-form ref="formButton" :model="formButton" :rules="rulesButton" label-width="100px" label-position="right">
-                <el-form-item label="名称：" prop="Name">
+                <el-form-item label="姓名：" prop="Name">
                     <el-input v-model="formButton.Name"></el-input>
                 </el-form-item>
                 <el-form-item label="编号：" prop="EnCode">
                     <el-input v-model="formButton.EnCode"></el-input>
                 </el-form-item>
-                <!--<el-form-item label="图标：" prop="Icon">-->
-                    <!--<el-input v-model="formButton.Icon"></el-input>-->
-                <!--</el-form-item>-->
+                <el-form-item label="图标：" prop="Icon">
+                    <el-input v-model="formButton.Icon"></el-input>
+                </el-form-item>
                 <el-form-item label="上级按钮：" prop="ParentName">
                     <el-input v-model="formButton.ParentName" disabled="true"></el-input>
                 </el-form-item>
@@ -298,7 +298,6 @@
                     UrlAddress: "",
                     Icon: "",
                     Type: "",
-                    EnCode:"",
                     SortCode: "",
                     ParentId: "",
                     ParentName:"",
@@ -387,7 +386,7 @@
             },
             getData() {
                 this.loading = true;
-                this.$axios.get("/SysMenu/GetSysMenuList", {
+                this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenuList", {
                     params: {
                         PageIndex: "0",
                         PageSize: "20",
@@ -398,7 +397,11 @@
                     res => {
                         this.loading = false;
                         console.log(res);
-                        this.tableData = res;
+                        if(res.length == 0) {
+                            this.tableData = res;
+                        }else{
+                            this.tableData = res;
+                        }
                         //let resultData = JSON.parse(res);
 
                         console.log(this.tableData);
@@ -414,7 +417,7 @@
             getDataButton(menuId) {
                 console.log(menuId);
                 this.loadingButton = true;
-                this.$axios.get("/SysMenu/GetSysMenuButtonList", {
+                this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenuButtonList", {
                     params: {
                         // PageIndex: this.pageIndex - 1,
                         // PageSize: this.pageSize,
@@ -427,7 +430,11 @@
                     res => {
                         console.log(res);
                         this.loadingButton = false;
-                        this.tableDataButton = res;
+                        if(res.length == 0) {
+                            this.tableDataButton = res;
+                        }else{
+                            this.tableDataButton = res;
+                        }
                         console.log(this.tableDataButton);
                         //this.totalCount = Number(resultData.totalRows);
 
@@ -444,7 +451,7 @@
                 {
                     this.getData();
                 } else{
-                    this.$axios.get("/SysMenu/GetMenuNameList", {
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetMenuNameList", {
                         params: {
                             PageIndex: "0",
                             PageSize: "20",
@@ -457,7 +464,12 @@
                             this.loading = false;
                             console.log(res);
                             //let resultData = JSON.parse(res);
-                            this.tableData = res;
+                            if(res.length == 0) {
+                                this.tableData = res;
+                            }else{
+                                //this.tableData = JSON.parse(res);
+                                this.tableData = res;
+                            }
                             console.log(this.tableData);
 
                         },
@@ -475,7 +487,7 @@
                 {
                     this.getDataButton(this.qMenuId);
                 } else{
-                    this.$axios.get("/SysMenu/GetMenuButtonNameList", {
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetMenuButtonNameList", {
                         params: {
                             uid: "8",
                             orgid: "0",
@@ -487,8 +499,13 @@
                             this.loadingButton = false;
                             console.log(res);
                             //let resultData = JSON.parse(res);
-                            this.tableDataButton = res;
+                            if(res.length == 0) {
+                                this.tableDataButton = res;
+                            }else{
+                                this.tableDataButton = res;
+                            }
                             console.log(this.tableDataButton);
+
                         },
                         error => {
                             console.log(error);
@@ -526,7 +543,7 @@
                     this.qParentId = "0";
                     this.qParentName = "父级菜单";
                 }
-                this.form ={};
+                this.form =[];
                 this.form.ParentName = this.qParentName;
                 this.form.EnabledMark = true;
                 this.dialogState = "add";
@@ -539,8 +556,9 @@
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if (id != 0) {
                     this.qParentId = object[0].ParentId;
+                    this.qParentName = object[0].Name;
                     // this.loading=true
-                    this.$axios.get("/SysMenu/GetSysMenu", {
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenu", {
                         params: {
                             uid: "0",
                             orgid: "0",
@@ -550,7 +568,6 @@
                         //this.loading=false;
                         console.log(res);
                         this.form = res;
-                        this.qParentName = this.form.EnCode;
                         this.form.ParentName = this.qParentName;
                         if(this.form.IsMenu == "1"){
                             this.form.IsMenu = true;
@@ -618,7 +635,7 @@
                     })
                         .then(() => {
                             this.$axios
-                                .post("/SysMenu/PostDelete", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostDelete", data)
                                 .then(res => {
                                     let resultData = res;
                                     console.log(res);
@@ -678,7 +695,7 @@
                     this.qParentButtonId = "0";
                     this.qParentButtonName = "父级按钮";
                 }
-                this.fromButton ={};
+                this.fromButton =[];
                 this.fromButton.EnabledMark = true;
                 this.formButton.ParentName = this.qParentButtonName;
                 this.dialogButton = "add";
@@ -691,7 +708,8 @@
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if (id != 0) {
                     this.qParentButtonId = object[0].ParentId;
-                    this.$axios.get("/SysMenu/GetSysMenuButton", {
+                    this.qParentButtonName = object[0].Name;
+                    this.$axios.get("http://10.0.45.46:8028/api/GCW/SysMenu/GetSysMenuButton", {
                         params: {
                             uid: "0",
                             orgid: "0",
@@ -720,7 +738,6 @@
                         } else {
                             this.formButton.AlowDelete = false;
                         }
-                        this.qParentButtonName = this.formButton.Icon;
                         this.formButton.ParentName = this.qParentButtonName;
                         console.log(this.formButton);
                         this.dialogButton = "edit";
@@ -757,7 +774,7 @@
                     })
                         .then(() => {
                             this.$axios
-                                .post("/SysMenu/PostDeleteMenuButton", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostDeleteMenuButton", data)
                                 .then(res => {
                                     let resultData = res;
                                     //this.tableData.splice(this.idx, 1);
@@ -837,7 +854,7 @@
                         if(this.dialogState == "add")
                         {
                             this.$axios
-                                .post("/SysMenu/PostAdd", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostAdd", data)
                                 .then(res => {
                                     console.log(this.form);
                                     let resultData = res;
@@ -854,7 +871,7 @@
                                 });
                         }else {
                             this.$axios
-                                .post("/SysMenu/PostUpdate", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostUpdate", data)
                                 .then(res => {
                                     console.log(this.form);
                                     let resultData = res;
@@ -923,7 +940,7 @@
                         if(this.dialogButton == "add")
                         {
                             this.$axios
-                                .post("/SysMenu/PostAddMenuButton", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostAddMenuButton", data)
                                 .then(res => {
                                     console.log(this.formButton);
                                     //let resultData = res;
@@ -940,7 +957,7 @@
                                 });
                         }else {
                             this.$axios
-                                .post("/SysMenu/PostUpdateMenuButton", data)
+                                .post("http://10.0.45.46:8028/api/GCW/SysMenu/PostUpdateMenuButton", data)
                                 .then(res => {
                                     console.log(this.formButton);
                                     // let resultData = res;

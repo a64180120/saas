@@ -89,19 +89,19 @@ export default {
 </script>
 
 <style scoped>
-/* .sidebar {
+.sidebar {
   display: block;
   position: absolute;
   left: 0;
   top: 70px;
   bottom: 0;
   overflow-y: scroll;
-} */
+}
 .sidebar::-webkit-scrollbar {
   width: 0;
 }
 .sidebar-el-menu:not(.el-menu--collapse) {
-  width: 180px;
+  width: 250px;
 }
 .sidebar > ul {
   height: 100%;

@@ -2,7 +2,7 @@
     <div class="voucher">
         <div class="voucherHead">
             <ul class="flexPublic">
-                <li><span>凭证字号: </span><span>{{PNo}}</span></li>
+                <li><span>凭证字号: 记-</span><span>{{PNo}}</span></li>
                 <li>
                     <div class="block">
                         <span class="demonstration">凭证日期: </span>
@@ -33,7 +33,6 @@
         </div>
         <div  class="voucherContent">
             <div @click.stop="moneyInputHide" v-show="moneyInputMask" class="moneyInputMask"></div>
-            <div  v-show="assistItemMask" class="assistItemMask"></div>
             <ul>
                 <li>
                     <ul class="flexPublic voucherContentItem">
@@ -88,32 +87,20 @@
                             <div>
                                 <ul>
                                     <li class="flexPublic">
-                                        <span>{{item.SubjectCode}}{{item.SubjectName}}</span>
-                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.AuxiliaryName}}{{assist.BaseName}}</span>
+                                        <span>{{item.SubjectCode}}</span>
+                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-辅助项{{assist}}</span>
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle(index)"><i></i></li>
                                 </ul>
                             </div>
-                            <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
-                                          :nodatatext="itemText" @item-click="itemClick"></searchSelect>
-                            <div @click.stop="1" v-show="assistItem[index].checked" class="assistContainer">
-                                <ul>
-                                    <li v-for="(assist,index2) of assistList" :key="index2">
-                                        <div :title="assist.BaseName">{{assist.BaseName}}</div>
-                                        <div class="selectContainer">
-                                            <select  v-model="assistSels[index2]">
-                                                <option :value="val" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
-                                            </select>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <p><span @click.stop="assistOk(true,item,index)">确认</span><span @click.stop="assistOk(false,item,index)">取消</span></p>
-                                <router-link to="/setting/auxiliary">添加辅助项</router-link>
-                            </div>
+                            <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" :show="kemuSel[index].checked"
+                                          :nodatatext="itemlistText" @item-click="itemClick"></searchSelect>
+                            <searchSelect :itemlists="assistItems[index]" :placeholder="assistItemText" :show="assistItem[index].checked"
+                                          :nodatatext="assistItemText" @item-click="assistClick"></searchSelect>
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
-                            <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
+                            <span v-show="item.moneyInput.jiefang" class="moneyValCon">
                                 <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i class="inputCancle">X</i>
@@ -131,7 +118,7 @@
                             <div></div>
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
-                            <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
+                            <span v-show="item.moneyInput.daifang" class="moneyValCon">
                                 <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i class="inputCancle">X</i>
@@ -199,7 +186,6 @@
 
 <script>
     import searchSelect from './searchSelect'
-    import {mapState, mapActions} from 'vuex'
     export default {
         name: "voucher",
         props:{
@@ -210,7 +196,7 @@
             fileList:[],
             PhId:'',
             PDate:'',
-            PNo:'',
+            PNo:'0001',
             PAttachment:'0',
             PMakePerson:'',
             PFinancePerson:'',
@@ -225,22 +211,17 @@
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
-            assistList:[],//科目下辅助项列表******************
-            itemlistText:'选择科目',
-            itemText:'添加科目',
+            assistItems:[],//辅助项组件参数*****************
+            itemlistText:'输入科目',
+            assistItemText:'输入辅助项',
             moneyInputMask:false,
-            assistSels:[],//选中的辅助项列表************
-            subjectlist:[],//所有科目列表*****************
             addIcon:[],//添加删除的按钮样式参数****************
             kemuSel:[],//科目选择框显示隐藏样式参数************
-            assistItem:[],//辅助项显示隐藏样式参数********************
-            assistItemMask:false,
-            assistCheck:true
+            assistItem:[]//辅助项显示隐藏样式参数********************
         }},
         created(){
-            if(!this.dataList.data.Mst){//没有传参时初始化页面
+            if(!this.dataList.data.PhId){//没有传参时初始化页面
                 this.voucherInfo=[
-                    this.initVoucherInfo(),
                     this.initVoucherInfo(),
                     this.initVoucherInfo(),
                     this.initVoucherInfo(),
@@ -251,18 +232,18 @@
                     Dtls:[]
                 }
             }else{
-                this.getVoucherData(this.dataList.data.Mst);
+                this.getVoucherData(this.dataList.data);
             }
             this.initInfoCss();
         },
         mounted(){
             this.initMoneyCss();
-            this.getSubject();
         },
         methods:{
             //voucher组件要返回数据的函数********************
             voucherData() {
                 if(this.jiefang!==this.daifang){
+                    console.log(this.jiefang,this.daifang)
                     alert('借方金额不等于贷方金额,请查看');
                     return;
                 }else{
@@ -270,46 +251,53 @@
                         this.fatherData.Dtls=[];
                     } 
                     var dtls = this.fatherData.Dtls;
-                    var account;
-                    var item;
                     for( var info of this.voucherInfo){
                         console.log('jishu',1)
                         if(info.PhId){
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
                                     dtl.SubjectCode=info.SubjectCode;
-                                    dtl.SubjectName=info.SubjectName;
                                     dtl.Abstract=info.Abstract;
                                     dtl.JSum=info.money.jiefang;
                                     dtl.DSum=info.money.daifang;
                                     dtl.PersistentState=2;
-                                    if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                    if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
                                         dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
-                                        dtl.DtlAccounts[0].SubjectName=info.SubjectName;
                                         dtl.DtlAccounts[0].Abstract=info.Abstract;
-                                        item = info.DtlAccounts.assistItem;
-                                        account=dtl.DtlAccounts[0];
-                                        for(var i of item){
-                                            account[i.GLS]=i.PhId;
+                                        var item = info.DtlAccounts.assistItem;
+                                        var account=dtl.DtlAccounts[0];
+                                        for(var j=1;j<=50;j++){
+                                            var str='';
+                                            if(parseInt(j)<10){
+                                                str='S0'+parseInt(j);
+                                            }else{
+                                                str='S'+parseInt(j);
+                                            }
+                                            account[str]=item[j-1]?item[j-1]:0;
                                         }
                                         dtl.DtlAccounts[0].PersistentState=2;
-                                    }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
+                                    }else if(dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length<=0){
                                         dtl.DtlAccounts[0].PersistentState=3;
-                                    }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                    }else if(!dtl.DtlAccounts[0]&&info.DtlAccounts.assistItem.length>0){
                                         dtl.DtlAccounts=[{
                                         }];
                                         dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                         dtl.DtlAccounts[0].DSum=info.money.daifang;
                                         dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
-                                        dtl.DtlAccounts[0].SubjectName=info.SubjectName;
                                         dtl.DtlAccounts[0].Abstract=info.Abstract;
                                         dtl.DtlAccounts[0].PersistentState=1;
-                                        item = info.DtlAccounts.assistItem;
-                                        account=dtl.DtlAccounts[0];
-                                        for(var i of item){
-                                            account[i.GLS]=i.PhId;
+                                        var item = info.DtlAccounts.assistItem;
+                                        var account=dtl.DtlAccounts[0];
+                                        for(var j=1;j<=50;j++){
+                                            var str='';
+                                            if(parseInt(j)<10){
+                                                str='S0'+parseInt(j);
+                                            }else{
+                                                str='S'+parseInt(j);
+                                            }
+                                            account[str]=item[j-1]?item[j-1]:0;
                                         }
                                     }
                                 }
@@ -440,31 +428,6 @@
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
                     if(dtls[i].DtlAccounts&&dtls[i].DtlAccounts[0].NameValueDtls){
-                        this.voucherInfo[i].DtlAccounts.assistItem=dtls[i].DtlAccounts[0].NameValueDtls;
-                    }
-                }
-                if(this.voucherInfo.length<5){
-                    var leng=5-this.voucherInfo.length;
-                    for(var k=0;k<leng;k++){
-                        this.voucherInfo.push(this.initVoucherInfo());
-                    }
-                }
-            },
-            //获取科目列表******************
-            getSubject(){
-                const loading1=this.$loading();
-                var data={
-                    orgid:this.orgid,
-                    Ryear:(new Date).getFullYear()
-                }
-                this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
-                    .then(res=>{
-                        this.subjectlist=res;
-                        loading1.close();
-                        for(var i in this.voucherInfo){
-                            this.itemlists[i]={
-                                id:i,
-                                kemu:this.subjectlist  //总的科目列表
                             }
                         }
                     })

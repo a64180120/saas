@@ -174,7 +174,6 @@
                     }
                 }).then(
                     res => {
-                        this.checkStrictly = true;
                         this.data2 = res;
                     },
                     error => {
@@ -274,9 +273,6 @@
             },
             //新增按钮
             PageAdd() {
-                this.form = {};
-                this.singleSelection= [];
-                this.CheckedList = [];
                 this.showForm = true;
                 this.showForm2 = false;
                 this.dialogState = "add";

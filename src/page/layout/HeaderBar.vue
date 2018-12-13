@@ -1,8 +1,8 @@
 <template>
     <div class="sys-header">
          <!-- 折叠按钮 -->
-        <div class="collapse-btn" >
-            <i class="el-icon-menu" @click="collapseChage">政云数据</i>
+        <div class="collapse-btn" @click="collapseChage">
+            <i class="el-icon-menu"></i>
         </div>
         <div class="logo">
             <slot name="logo"></slot>
@@ -42,13 +42,13 @@
         <el-dialog title="修改密码" :visible.sync="dialog.editPaw.show" :modal-append-to-body="false" custom-class="editPawDialog">
             <el-form :model="editPaw" :rules="editPawRules" ref="editPaw" label-width="100px" >
                 <el-form-item label="旧密码" prop="oldPaw">
-                    <el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
+                    <el-input v-model="editPaw.oldPaw" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="新密码" prop="newPaw" id="newPaw">
-                    <el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>                    
+                <el-form-item label="新密码" prop="newPaw">
+                    <el-input v-model="editPaw.newPaw" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="确认新密码" prop="confirmNewPaw" >
-                    <el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>            
+                <el-form-item label="确认新密码" prop="confirmNewPaw">
+                    <el-input v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div class="textC">
@@ -106,9 +106,8 @@ export default {
           },
           {
             // eslint-disable-next-line
-            validator(rule, value, callback, source, options) {              
+            validator(rule, value, callback, source, options) {
               var errors = [];
-
               if (!/^[a-z0-9]+$/.test(value)) {
                 console.log("不符合输入规则");
                 errors.push("请输入字母或特殊字符");
@@ -124,10 +123,7 @@ export default {
   computed: {
     ...mapState({
       username: state => state.user.name,
-      lang: state => state.lang,
-      orgid:state=>state.user.orgid,
-      orgcode:state=>state.user.orgcode,
-      uid:state=>state.user.userid
+      lang: state => state.lang
     }),
     collapse() {
       return this.$store.state.isCollapse;
@@ -143,7 +139,7 @@ export default {
         case "logout":
           this.logout();
           break;
-        case "editPaw":          
+        case "editPaw":
           this.dialog.editPaw.show = true;
           console.log("编辑密码");
           break;
@@ -165,37 +161,7 @@ export default {
     editPawSubmit() {
       this.$refs.editPaw.validate(valid => {
         if (valid) {
-          if (this.editPaw.newPaw!= this.editPaw.confirmNewPaw) {
-            console.log("新密码与确认新密码不一致!");
-            this.$message.error("新密码与确认新密码不一致!");
-            return;
-          } 
-          
-          //接口要包含3个参数： uid、 oldPwd、 newPwd 
-          let data={
-              uid:this.uid,
-              orgid:this.orgid,
-              OldPwd: this.editPaw.oldPaw,
-              NewPwd: this.editPaw.newPaw
-          }; 
-          this.$axios.post('/SysUser/PostUpdatePassword',data)
-            .then(res=>{
-                if (res.Status=='success'){
-                    this.$message.success("密码修改成功!");
-                    this.dialog.editPaw.show = false;
-                    this.editPaw.oldPaw="";
-                    this.editPaw.newPaw="";
-                    this.editPaw.confirmNewPaw="";
-                    return true;
-                }
-
-                if (res.Status=="error"){
-                    this.$message.error(res.Msg);
-                    return false;
-                }
-            })
-            .catch(err=>console.log(err));   
-          
+          console.log("修改密码表单提交");
         } else {
           console.log("error submit!!");
           return false;
@@ -212,13 +178,13 @@ export default {
   width: 100%;
   height: 60px;
   font-size: 22px;
+  color: #fff;
 }
 .collapse-btn {
   float: left;
   padding: 0 21px;
   cursor: pointer;
   line-height: 60px;
-  width: 180px;
 }
 .header .logo {
   float: left;
@@ -256,11 +222,14 @@ export default {
   height: 8px;
   border-radius: 4px;
   background: #f56c6c;
+  color: #fff;
 }
 .el-icon-menu{
+  color: #fff;
   font-size: 20px;
 }
 .btn-bell .el-icon-bell {
+  color: #fff;
   font-size: 20px;
 }
 .user-name {
@@ -276,13 +245,10 @@ export default {
   border-radius: 50%;
 }
 .el-dropdown-link {
+  color: #fff;
   cursor: pointer;
 }
 .el-dropdown-menu__item {
   text-align: center;
-}
-.header-title{
-    font-size: 30px;
-    font-weight: 600;
 }
 </style>
