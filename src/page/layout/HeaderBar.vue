@@ -1,8 +1,8 @@
 <template>
     <div class="sys-header">
          <!-- 折叠按钮 -->
-        <div class="collapse-btn" @click="collapseChage">
-            <i class="el-icon-menu"></i>
+        <div class="collapse-btn" >
+            <i class="el-icon-menu" @click="collapseChage">政云数据</i>
         </div>
         <div class="logo">
             <slot name="logo"></slot>
@@ -212,13 +212,13 @@ export default {
   width: 100%;
   height: 60px;
   font-size: 22px;
-  color: #fff;
 }
 .collapse-btn {
   float: left;
   padding: 0 21px;
   cursor: pointer;
   line-height: 60px;
+  width: 180px;
 }
 .header .logo {
   float: left;
@@ -256,14 +256,11 @@ export default {
   height: 8px;
   border-radius: 4px;
   background: #f56c6c;
-  color: #fff;
 }
 .el-icon-menu{
-  color: #fff;
   font-size: 20px;
 }
 .btn-bell .el-icon-bell {
-  color: #fff;
   font-size: 20px;
 }
 .user-name {
@@ -279,10 +276,13 @@ export default {
   border-radius: 50%;
 }
 .el-dropdown-link {
-  color: #fff;
   cursor: pointer;
 }
 .el-dropdown-menu__item {
   text-align: center;
+}
+.header-title{
+    font-size: 30px;
+    font-weight: 600;
 }
 </style>
