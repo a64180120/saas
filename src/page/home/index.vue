@@ -198,7 +198,7 @@
         },
         deactivated(){
             window.removeEventListener('resize', this.renderChart);
-            bus.$off('collapse', this.handleBus);
+            //bus.$off('collapse', this.handleBus);
         },
         methods: {
             changeDate(){

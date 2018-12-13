@@ -1,292 +1,326 @@
 <template>
-  <div class="voucherList">
-      <div class="voucherNav">
-          <ul>
-              <li>新增</li>
-              <li>修改</li>
-              <li>删除</li>
-              <li>审核</li>
-              <li>反审核</li>
-              <li>复制</li>
-              <li>剪切</li>
-              <li>冲红</li>
-              <li>凭证重排</li>
-              <li>导入</li>
-              <li>导出</li>
-              <li>打印</li>
-          </ul>
-      </div>
-      <div class="voucherSelect">
-          <div>
-              <label>
-                  <div>账期:</div>
-                  <div class="block">
-                      <el-date-picker
-                          v-model="date1"
-                          type="date"
-                          placeholder="选择日期">
-                      </el-date-picker>
-                  </div>
-              </label>
-              <label >
-                  <div>至:</div>
-                  <div class="block">
-                      <el-date-picker
-                          v-model="date2"
-                          type="date"
-                          placeholder="选择日期">
-                      </el-date-picker>
-                  </div>
-              </label>
-          </div>
-          <div>
-              <label >合计金额: <div class="inputContainer"><input type="text"></div> </label>
-              <label >至:<div class="inputContainer"><input type="text"></div></label>
-          </div>
-          <div class="flexPublic searcherCon">
-              <div class="searcherValue"><input v-model="unionSearchValue" type="text" placeholder="科目/摘要/凭证号"></div>
-              <div  class="searcherBtn">搜索</div>
-              <div @click.stop="highGradeToggle(true)">高级</div>
-              <div v-show="highGradeCss" class="highGradeCss">
-                <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
-                <ul>
-                    <li>
-                        <div>科目名称</div>
-                        <div class="inputContainer"><input type="text"></div>
-                    </li>
-                    <li>
-                        <div>辅助核算</div>
-                        <div class="flexPublic">
-                            <div class="selectContainer"><select></select></div>
+    <div class="voucherList">
+        <div class="voucherNav">
+            <ul>
+                <li>新增</li>
+                <li>修改</li>
+                <li>删除</li>
+                <li>审核</li>
+                <li>反审核</li>
+                <li>复制</li>
+                <li>剪切</li>
+                <li>冲红</li>
+                <li>凭证重排</li>
+                <li>导入</li>
+                <li>导出</li>
+                <li>打印</li>
+            </ul>
+        </div>
+        <div class="voucherSelect">
+            <div>
+                <label >合计金额(元):&nbsp; <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
+                <label >至:&nbsp;<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
+            </div>
+            <div class="flexPublic searcherCon">
+                <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
+                <div @click="searchVoucher" class="searcherBtn">搜索</div>
+                <div @click.stop="highGradeToggle(true)">高级</div>
+                <div v-show="highGradeCss" class="highGradeCss">
+                    <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
+                    <ul>
+                        <li>
+                            <div>科目名称</div>
                             <div class="inputContainer"><input type="text"></div>
-                        </div>
-                    </li>
-                    <li>
-                        <div>合计金额</div>
-                        <div class="flexPublic">
-                            <div class="inputContainer"><input type="text"></div>
-                            <span>至</span>
-                            <div class="inputContainer"><input type="text"></div>
-                        </div>
-                    </li>
-                    <li>
-                        <div>账期</div>
-                        <div class="flexPublic">
-                            <div class="block">
-                                <el-date-picker type="date" v-model="date3" placeholder="请选择日期">
-                                </el-date-picker>
+                        </li>
+                        <li>
+                            <div>辅助核算</div>
+                            <div class="flexPublic">
+                                <div class="selectContainer"><select></select></div>
+                                <div class="inputContainer"><input type="text"></div>
                             </div>
-                            <span>至</span>
-                            <div class="block">
-                                <el-date-picker type="date" v-model="date4" placeholder="请选择日期">
-                                </el-date-picker>
+                        </li>
+                        <li>
+                            <div>合计金额</div>
+                            <div class="flexPublic">
+                                <div class="inputContainer"><input type="text"></div>
+                                <span>至</span>
+                                <div class="inputContainer"><input type="text"></div>
                             </div>
-                        </div>
-                    </li>
-                </ul>
-                <div>
-                    <div>重置</div>
-                    <div>搜索</div>
+                        </li>
+                        <li>
+                            <div>账期</div>
+                            <div class="flexPublic">
+                                <div class="block">
+                                    <el-date-picker type="date" v-model="date3" placeholder="请选择日期">
+                                    </el-date-picker>
+                                </div>
+                                <span>至</span>
+                                <div class="block">
+                                    <el-date-picker type="date" v-model="date4" placeholder="请选择日期">
+                                    </el-date-picker>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div>
+                        <div>重置</div>
+                        <div>搜索</div>
+                    </div>
                 </div>
-              </div>
-          </div>
+            </div>
 
-      </div>
-      <section class="listContainer">
-        <ul class="listTitle">
-            <li>序号</li>
-            <li>摘要</li>
-            <li>科目</li>
-            <li>借方金额</li>
-            <li>贷方金额</li>
-        </ul>
-        <ul class="listContent" v-for="(item,index) of voucherList" :key="index">
-            <li>
-                <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
-                <ul>
-                    <li>
-                        <span>凭证日期 : {{item.PDate?item.PDate.replace("T"," "):''}}</span>
-                        <span>凭证字号 : 记-{{item.PNo}}</span>
-                        <span>附件数 : {{item.PAttachment}}</span>
-                        <span>制单人 : {{item.PMakePerson}}</span>
-                        <span>审核 : {{item.PAuditor}}</span>
-                    </li>
-                    <li v-for="(dtl,ind) of item.Dtls" :key="ind">
-                        <div>{{dtl.Abstract}}</div>
-                        <div>{{dtl.SubjectCode}}</div>
-                        <div>{{dtl.JSum}}</div>
-                        <div>{{dtl.DSum}}</div>
-                    </li>
-                    <li>
-                        <div>合计:{{'sum'|sum(item.Dtls)}}</div>
-                        <div>{{'jie'|sum(item.Dtls)}}</div>
-                        <div>{{'dai'|sum(item.Dtls)}}</div>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-      </section>
-  </div>
+        </div>
+        <section class="listContainer">
+            <ul class="listTitle">
+                <li>序号</li>
+                <li>摘要</li>
+                <li>科目</li>
+                <li>借方金额</li>
+                <li>贷方金额</li>
+            </ul>
+            <ul class="listContent" v-for="(item,index) of voucherList" :key="index">
+                <li>
+                    <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
+                    <ul>
+                        <li>
+                            <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
+                            <span>凭证字号 : {{item.PNo}}</span>
+                            <span>附件数 : {{item.PAttachment}}</span>
+                            <span>制单人 : {{item.PMakePerson}}</span>
+                            <span>审核 : {{item.PAuditor}}</span>
+                        </li>
+                        <li v-for="(dtl,ind) of item.Dtls" :key="ind">
+                            <div>{{dtl.Abstract}}</div>
+                            <div>{{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}</div>
+                            <div>{{dtl.JSum==0?'':dtl.JSum}}</div>
+                            <div>{{dtl.DSum==0?'':dtl.DSum}}</div>
+                        </li>
+                        <li>
+                            <div>合计:{{'sum' | sum(item.Dtls)}}</div>
+                            <div>{{'jie'|sum(item.Dtls)}}</div>
+                            <div>{{'dai'|sum(item.Dtls)}}</div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+    </div>
 </template>
 
 <script>
-  export default {
-    name: "voucher-list",
-      mounted(){
-        this.getvoucherList();
-      },
-      data(){
-        return {
-            date1:'',
-            date2:'',
-            date3:'',
-            date4:'',
-            unionSearchValue:'',
-            pickerOptions: {
-                disabledDate(time) {
-                    return time.getTime() > Date.now();
+    import {mapState, mapActions} from 'vuex'
+    export default {
+        name: "voucher-list",
+        mounted(){
+            if(this.$route.query.voucherList){
+                this.voucherList= this.$route.query.voucherList;
+            }else{
+                this.getvoucherList();
+            }
+
+        },
+        data(){
+            return {
+                date1:'',
+                date2:'',
+                date3:'',
+                date4:'',
+                sum1:'',
+                sum2:'',
+                sideDate:2018-12,
+                searchVal:'',
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    },
+                    shortcuts: [{
+                        text: '今天',
+                        onClick(picker) {
+                            picker.$emit('pick', new Date());
+                        }
+                    }, {
+                        text: '昨天',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24);
+                            picker.$emit('pick', date);
+                        }
+                    }, {
+                        text: '一周前',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', date);
+                        }
+                    }]
                 },
-                shortcuts: [{
-                    text: '今天',
-                    onClick(picker) {
-                        picker.$emit('pick', new Date());
-                    }
-                }, {
-                    text: '昨天',
-                    onClick(picker) {
-                        const date = new Date();
-                        date.setTime(date.getTime() - 3600 * 1000 * 24);
-                        picker.$emit('pick', date);
-                    }
-                }, {
-                    text: '一周前',
-                    onClick(picker) {
-                        const date = new Date();
-                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-                        picker.$emit('pick', date);
-                    }
-                }]
+                voucherList:[],
+                highGradeCss:false,
+                pagesize:100,
+                pageindex:0,
+            }
+        },
+        methods:{
+            highGradeToggle(bool) {
+                this.highGradeCss = bool;
             },
-            voucherList:[],
-            highGradeCss:false,
-            pagesize:10,
-            pageindex:0,
-        }
-      },
-      methods:{
-          highGradeToggle(bool) {
-              this.highGradeCss = bool;
-          },
-          voucherDel(item){
-              this.$router.push({name:'voucherDel',params:{list:item}});
-          },
-          getvoucherList(){
-              var data={
-                  uid:'0001',
-                  orgid:52118082000000,
-                  pagesize:this.pagesize,
-                  pageindex:this.pageindex
-              }
-              this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
-                  .then(res=>{
-                      this.voucherList=res.Record;
-                      console.log(this.voucherList)
-                      if(this.voucherList.length<=0){
-                          alert('暂无新凭证');
-                      }
-                  })
-                  .catch(err=>console.log(err))
-          },
-      },
-      filters:{
-        sum(val,dtl){
-            var sum=0;
-            switch(val){
-                case 'jie':
-                    for(var d of dtl){
-                        if(d.JSum){
-                            sum+=parseFloat(d.JSum);
+            voucherDel(item){
+                this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
+            },
+            /*getvoucher(){
+                var data={
+                    uid:'0001',
+                    orgid:52118082000000,
+                    id:168181205000001
+                }
+                this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
+                    .then(res=>{
+
+                        console.log(res)
+
+                    })
+                    .catch(err=>console.log(err))
+            },*/
+            //凭证搜索**************************
+            searchVoucher(){
+                const loading1=this.$loading();
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    sum1:this.sum1,
+                    sum2:this.sum2,
+                    keyword:this.searchValue,
+                    queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
+                }
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                    .then(res=>{
+                        loading1.close();
+                        if(res.Record.length<=0){
+                            this.$message('无法找到该凭证!')
+                        } else{
+                            this.voucherList= res.Record;
                         }
-                    }
-                    sum=sum.toFixed(2);
-                    break;
-                case 'dai':
-                    for(var d of dtl){
-                        if(d.DSum){
-                            sum+=parseFloat(d.DSum);
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
+            },
+            getvoucherList(){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    pagesize:this.pagesize,
+                    pageindex:this.pageindex,
+                    keyword:this.searchValue,
+                    queryfilter:{"OrgId*num*eq*1":this.orgid}
+                }
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                    .then(res=>{
+                        this.voucherList= res.Record;
+                        console.log(res)
+                        if(this.voucherList.length<=0){
+                            alert('暂无新凭证');
                         }
-                    }
-                    sum=sum.toFixed(2);
-                    break;
-                case 'sum':
-                    for(var d of dtl){
-                        if(d.JSum){
-                            sum+=parseFloat(d.JSum);
+                    })
+                    .catch(err=>console.log(err))
+            },
+        },
+        computed:{
+            ...mapState({
+                orgid: state => state.user.orgid,
+                uid: state => state.user.userid,
+            })
+        },
+        filters:{
+            sum(val,dtl){
+                var sum=0;
+                if(!dtl){
+                    dtl=[]
+                }
+                switch(val){
+                    case 'jie':
+                        for(var d of dtl){
+                            if(d.JSum){
+                                sum+=parseFloat(d.JSum);
+                            }
                         }
-                    }
-                    sum=sum.toFixed(2);
-                    var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
-                    var arr2=['','拾','百','千','万','亿'];
-                    var str=sum.toString().split('.');
-                    var dot='元';
-                    var INTstr=str[0];
-                    var INT='';
-                    var bool=false;
-                    var zero='';
-                    if(parseInt(str[1])!=0){
-                        dot+=arr1[str[1][0]]+'角';
-                        if(str[1][1]!=0){
-                            dot+=arr1[str[1][1]]+'分'
+                        sum=sum.toFixed(2);
+                        break;
+                    case 'dai':
+                        for(var d of dtl){
+                            if(d.DSum){
+                                sum+=parseFloat(d.DSum);
+                            }
                         }
-                    }else{
-                        dot+='整'
-                    }
-                    for(var i=INTstr.length-1,j=0;i>=0; i--,j++){
-                        if(INTstr[i]!=0){
-                            bool=true;
+                        sum=sum.toFixed(2);
+                        break;
+                    case 'sum':
+                        for(var d of dtl){
+                            if(d.JSum){
+                                sum+=parseFloat(d.JSum);
+                            }
                         }
-                        if(j==4){
-                            INT=arr2[j]+INT;
-                        }else if(j==8){
-                            INT=arr2[5]+INT;
+                        sum=sum.toFixed(2);
+                        var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
+                        var arr2=['','拾','百','千','万','亿'];
+                        var str=sum.toString().split('.');
+                        var dot='元';
+                        var INTstr=str[0];
+                        var INT='';
+                        var bool=false;
+                        var zero='';
+                        if(parseInt(str[1])!=0){
+                            dot+=arr1[str[1][0]]+'角';
+                            if(str[1][1]!=0){
+                                dot+=arr1[str[1][1]]+'分'
+                            }
+                        }else{
+                            dot+='整'
                         }
-                        if(bool){
+                        for(var i=INTstr.length-1,j=0;i>=0; i--,j++){
                             if(INTstr[i]!=0){
-                                if(zero=='零'){
-                                    zero='';
-                                }
-                                if(j==4){
-                                    INT=arr1[INTstr[i]]+INT;
-                                    bool=false;
-                                }else if(j==8){
-                                    INT=arr1[INTstr[i]]+INT;
+                                bool=true;
+                            }
+                            if(j==4){
+                                INT=arr2[j]+INT;
+                            }else if(j==8){
+                                INT=arr2[5]+INT;
+                            }
+                            if(bool){
+                                if(INTstr[i]!=0){
+                                    if(zero=='零'){
+                                        zero='';
+                                    }
+                                    if(j==4){
+                                        INT=arr1[INTstr[i]]+INT;
+                                        bool=false;
+                                    }else if(j==8){
+                                        INT=arr1[INTstr[i]]+INT;
+                                    }else{
+                                        INT=arr1[INTstr[i]]+arr2[j%4]+INT;
+                                        bool=false;
+                                    }
                                 }else{
-                                    INT=arr1[INTstr[i]]+arr2[j%4]+INT;
-                                    bool=false;
-                                }
-                            }else{
-                                if(zero==''){
-                                    INT='零'+INT;
-                                    zero='零';
-                                }
-                                if(j==4){
-                                    INT=arr2[j]+INT;
-                                    bool=false;
-                                }else if(j==8){
-                                    INT=arr2[5]+INT;
-                                    bool=false;
+                                    if(zero==''){
+                                        INT='零'+INT;
+                                        zero='零';
+                                    }
+                                    if(j==4){
+                                        INT=arr2[j]+INT;
+                                        bool=false;
+                                    }else if(j==8){
+                                        INT=arr2[5]+INT;
+                                        bool=false;
+                                    }
                                 }
                             }
                         }
-                    }
-                    sum=INT+dot;
-                    break;
-            }
-            return sum;
+                        sum=INT+dot;
+                        break;
+                }
+                return sum;
 
+            }
         }
-      }
-  }
+    }
 </script>
 
 <style lang="scss" scoped>
@@ -438,22 +472,23 @@
         .voucherSelect{
             display: flex;
             flex-flow: row nowrap;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             >div{
                 display: flex;
                 justify-content: flex-start;
                 width:25%;
+                min-width: 280px;
                 >label{
                     display: flex;
                     align-items: center;
                     &:nth-of-type(2){
                         margin-left:5px ;
                         >div:first-of-type{
-                            width:30px;
+                            width:60px;
                         }
                         >div.inputContainer{
-                            width:40px;
+                            width:70px;
                         }
                     }
                     div{
@@ -461,7 +496,7 @@
                     }
                 }
                 >label>div:first-of-type{
-                    width:40px;
+                    width:70px;
                 }
                 >label>div:nth-of-type(2)>div{
                     width:100px;
@@ -498,6 +533,7 @@
             }
         }
         .listContainer{
+            overflow-y: auto;
             padding:5px;
             margin-top:10px;
             padding-bottom: 20px;

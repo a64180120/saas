@@ -90,10 +90,10 @@ service.interceptors.request.use(
             cancel = req;
         });
 
-        let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
-        var new_header = Object.assign({},config_header, baseheader);  //合并对象
+        //let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
+        //var new_header = Object.assign({},config_header, baseheader);  //合并对象
 
-        config.headers = new_header
+        config.headers = baseheader
 
         //POST传参序列化
         if (config.method === "post") {
@@ -130,12 +130,8 @@ service.interceptors.response.use(
         //     }
         // }
 
-        let result = /^[{\[].*[}\]]$/g.test(res)
-        if (result) {
-            return Promise.resolve(JSON.parse(res));
-        } else {
-            return Promise.resolve(res);
-        }
+        return Promise.resolve(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
+
     },
     error => {
         if (axios.isCancel(error)) {
@@ -155,7 +151,11 @@ service.interceptors.response.use(
                         type: "error"
                     });
             }
-            return Promise.reject(JSON.parse(error.response.data));
+
+            const res = error.response.data
+            //return Promise.reject(JSON.parse(error.response.data));
+            return Promise.resolve(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
+
         }
     }
 );

@@ -4,12 +4,8 @@
  * object 当前对象 vue
  * param 参数集合
 */
-export function SysUserAddUp(object,param) {
+export function SysUserAdd(object,param) {
   return new Promise((resolve, reject) => {
-    // let url='/SysUser/PostAdd'
-    // if(param.otype==='edit'){
-    //     url='/SysUser/PostAdd'
-    // }
     object.$axios({
           url: '/SysUser/PostAdd',
           method: "post",
@@ -25,6 +21,27 @@ export function SysUserAddUp(object,param) {
 }
 
 /** 
+ * 说明: 修改编辑
+ * object 当前对象 vue
+ * param 参数集合
+*/
+export function SysUserUpdate(object,param) {
+    return new Promise((resolve, reject) => {
+      object.$axios({
+            url: '/SysUser/PostUpdate',
+            method: "post",
+            data: param,
+        }).then(res => {
+            //正确
+            resolve(res);               
+        }).catch(error => {
+            //错误
+            reject(error);
+        });
+    });
+  }
+
+/** 
  * 说明:用户信息列表的方法
  * object 当前对象 vue
  * param 参数集合
@@ -32,7 +49,7 @@ export function SysUserAddUp(object,param) {
 export function SysUserList(object,param) {
   return new Promise((resolve, reject) => {
     object.$axios({
-        url: "/SysUser/GetSysUserList",
+        url: "/SysUser/GetSysUserListWithRoleAndOrg",
         method: 'get',
         params: param
     }).then(res => {
@@ -62,5 +79,45 @@ export function SysUserDelete(object,param) {
             //错误
             reject(error);
         });
+    });
+  }
+
+/** 
+ * 说明:用户移交用户信息
+ * object 当前对象 vue
+ * param 参数集合
+*/
+export function SysUserTransferList(object,param) {
+    return new Promise((resolve, reject) => {
+      object.$axios({
+          url: "/SysUser/GetSysUserTransferRecordsList",
+          method: 'get',
+          params: param
+      }).then(res => {
+          resolve(res)
+      }).catch(error => {
+          //错误
+          reject(error);
+      });
+    });
+  }
+
+/** 
+ * 说明:密码重置
+ * object 当前对象 vue
+ * param 参数集合
+*/
+export function SysUserUpdatePassword(object,param) {
+    return new Promise((resolve, reject) => {
+      object.$axios({
+          url: "/SysUser/PostUpdateUserPassword",
+          method: "post",
+          data: param
+      }).then(res => {
+          resolve(res)
+      }).catch(error => {
+          //错误
+          reject(error);
+      });
     });
   }

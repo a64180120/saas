@@ -14,6 +14,7 @@
     "babel-polyfill": "^6.26.0",
     "echarts": "^4.1.0",
     "element-ui": "^2.3.8",
+    "file-saver": "^2.0.0",
     "jquery": "^2.2.1",
     "js-base64": "^2.4.9",
     "js-cookie": "^2.2.0",
@@ -23,8 +24,11 @@
     "nprogress": "^0.2.0",
     "vue": "^2.5.16",
     "vue-i18n": "^7.3.2",
+    "vue-img-inputer": "^2.1.0",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "xlsx": "^0.14.1"
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.3.0",
@@ -55,7 +59,9 @@
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^3.2.0",
+    "html2canvas": "^1.0.0-alpha.12",
     "http-proxy-middleware": "^0.18.0",
+    "jspdf": "^1.4.1",
     "less": "^3.0.4",
     "less-loader": "^4.0.5",
     "mini-css-extract-plugin": "^0.4.0",
@@ -69,6 +75,7 @@
     "qs": "^6.5.2",
     "rimraf": "^2.6.2",
     "sass-loader": "^7.0.1",
+    "script-loader": "^0.7.2",
     "semver": "^5.4.1",
     "shelljs": "^0.8.2",
     "style-loader": "^0.21.0",

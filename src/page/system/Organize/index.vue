@@ -6,42 +6,43 @@
                     <div class="choose">
                         <ul class="flexPublic">
                             <li @click="save">修改</li>
-                            <li>备份</li>
+                            <li @click="Backups">备份</li>
                             <li>恢复</li>
+                            <li @click="testFile">附件</li>
                         </ul>
                     </div>
                 </el-header>
                 <el-main>
-                     <h3 class="addTitle">基层组织账套管理</h3>
+                     <h4 class="addTitle">基层组织账套管理</h4>
                     <div class="container">
-                        <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="200px" label-position="right" size="mini" v-loading.fullscreen.lock="loading">
+                        <el-form :model="orgForm" :rules="rules" ref="orgForm" class="orgform" label-width="200px" label-position="right" v-loading.fullscreen.lock="loading">
                             <el-form-item label="工会名称：" prop="OrgName">
-                                <el-input v-model="orgForm.OrgName"></el-input>
+                                <el-input v-model="orgForm.OrgName" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="统一社会信用代码：" prop="EnterpriseCode">
-                                <el-input v-model="orgForm.EnterpriseCode" style="width: 80%;"></el-input>
+                                <el-input v-model="orgForm.EnterpriseCode" class="pic-input"></el-input>
                                 <el-upload
+                                    ref="uploadEnterprise"
                                     class="avatar-uploader"
                                     action=""
                                     :show-file-list="false"
-                                    :http-request='uploadFileMethod'
-                                    :on-success="handleAvatarSuccess"
-                                    :before-upload="beforeAvatarUpload">
-                                    <img v-if="orgForm.EnterpriseAttachment" :src="baseImgPath + orgForm.EnterpriseAttachment" class="avatar">
+                                    :before-upload="beforeAvatarUpload"
+                                    :http-request='uploadFileMethodEnterprise'>
+                                    <img v-if="orgForm.EnterpriseAttachment" :src="picUrl+orgForm.EnterpriseAttachment" class="avatar">
                                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                 </el-upload>
                             </el-form-item>
                             <el-form-item label="单位地址：">
-                                <el-input v-model="orgForm.Address"></el-input>
+                                <el-input v-model="orgForm.Address" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="联系电话：">
-                                <el-input v-model="orgForm.TelePhone"></el-input>
+                                <el-input v-model="orgForm.TelePhone" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="隶属工会：" prop="ParentName">
-                                <el-input v-model="orgForm.ParentName"></el-input>
+                                <el-input v-model="orgForm.ParentName" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="会计制度：">
-                                <el-input v-model="orgForm.AccountSystem"></el-input>
+                                <el-input v-model="orgForm.AccountSystem" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="启用日期：">
                                 <el-date-picker
@@ -51,10 +52,20 @@
                                 </el-date-picker>
                             </el-form-item>
                             <el-form-item label="工会主席：" prop="Chairman">
-                                <el-input v-model="orgForm.Chairman"></el-input>
+                                <el-input v-model="orgForm.Chairman" class="pic-input"></el-input>
+                                <el-upload
+                                    ref="uploadChairman"
+                                    class="avatar-uploader"
+                                    action=""
+                                    :show-file-list="false"
+                                    :before-upload="beforeAvatarUpload"
+                                    :http-request='uploadFileMethodChairman'>
+                                    <img v-if="orgForm.ChairmanAttachment" :src="picUrl+orgForm.ChairmanAttachment" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>
                             </el-form-item>
                             <el-form-item label="经审会主任：" prop="Director">
-                                <el-input v-model="orgForm.Director"></el-input>
+                                <el-input v-model="orgForm.Director" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="使用期限：">
                                 <el-date-picker
@@ -73,25 +84,44 @@
                     </div>
                 </el-main>
             </el-container>
+            <!-- 附件弹出框 -->
+            <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
+                <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+            </el-dialog>
         </div>
     </div>
+
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 import UserInfo from "@/util/auth";
-import { SysOrgModel,SysOrgAdd,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
-import axios from "axios";
+import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
 import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import pictureUpload from "@/components/upload";
 
 export default {
     name: 'demo',
     data(){
         return {
-            baseImgPath:'http://10.0.20.46:8028/api/GCW',
             loading: false,
+            fileVisible:false,
+            imglist:[
+                { 
+                    PhId:0,
+                    BTable:'gcw3_voucher_mst',
+                    BName:'aa.jpg',
+                    BType:'.jpg',
+                    BSize:'203',
+                    BFilebody:'',
+                    BUrlPath:'/UpLoadFiles/Voucher/2018-12-07/62ad64e635a3435d82b6cc1c770124f7.jpg',
+                    BRemark:'',
+                    RelPhid:''
+                },
+            ],
             orgForm:{
-                OrgName:'新中大',
+                PhId:0,
+                OrgName:'',
                 EnterpriseCode:'',
                 EnterpriseAttachment:'',
                 Address:'',
@@ -126,7 +156,7 @@ export default {
     },
     //组件
     components: {
-        
+        pictureUpload
     },
     created() {
         this.getData();
@@ -138,23 +168,29 @@ export default {
         ...mapState({
             userid: state => state.user.userid,
             orgid: state => state.user.orgid
-        })
+        }),
+        picUrl:function(){
+             return ajaxhttp.url;
+        }
     },
     watch:{
-        "orgForm.ServiceTime"(val){
-            
+        "orgForm.ServiceTime"(val){           
             this.orgForm.ServiceStartTime=''
             this.orgForm.ServiceEndTime=''
         }
     },
     methods: {
+        ...mapActions({
+            uploadFile: 'uploadFile/Orgupload'
+        }),
+        //修改保存
         save(){
            var route=this.$route;
            var vm=this;
            this.loading = true;
          
           //提交asiox
-          SysOrgAdd(vm,{
+          SysOrgUpdate(vm,{
               otype:'edit',
               uid:this.userid,
               orgid:this.orgid,
@@ -165,7 +201,7 @@ export default {
                 //移除TagNav
                 this.$store.commit("tagNav/removeTagNav", route);
                 //跳转路由
-                this.$router.push('/home');
+                this.$router.push('/system/organization');
               }else{
                   this.$message.error('保存失败,请重试!');
               }
@@ -175,21 +211,23 @@ export default {
             this.$message.error('保存组织错误');
           })
         },
+        //获取组织信息
         getData(){
             var vm=this;
             this.loading = true;
 
             SysOrgModel(vm,{
-                id:547181121000001,
+                id:this.orgid,
                 uid: this.userid,
                 orgid: this.orgid
             }).then(res => {
                 this.loading = false;
-                if(res!=undefined){
-                    this.orgForm=res;
-                }else{
-                    this.$message.error("获取组织信息失败！");
+                if(res.Status==="error"){
+                    this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                    return;
                 }
+                this.orgForm=res; 
+
             }).catch(error =>{
                 console.log(error);
                 this.loading = false;
@@ -200,59 +238,111 @@ export default {
                 })
             })
         },
-        handleAvatarSuccess(res, file) {
-            if (res.status == 1) {
-                this.orgForm.EnterpriseAttachment = URL.createObjectURL(file.raw);
-            }else{
-                this.$message.error('上传图片失败！');
-            }
+        //备份
+        Backups(){
+
+            alert('正在开发.....')
         },
         handleRemove(file, fileList) {
             console.log(file, fileList);
         },
+        //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
         beforeAvatarUpload(file) {
-            const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png');
+            const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
             const isLt2M = file.size / 1024 / 1024 < 2;
 
             if (!isRightType) {
-                this.$message.error('上传头像图片只能是 JPG,png 格式!');
+                this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
+                return false
             }
             if (!isLt2M) {
-                this.$message.error('上传头像图片大小不能超过 2MB!');
+                this.$message.error('上传图片大小不能超过 2MB!');
+                return false
             }
-            return isRightType && isLt2M;
-		},
-        uploadFileMethod(param) {
-            var vm=this;
+        },
+        uploadFileMethodEnterprise(param) {
             let fileObject = param.file;
             let formData = new FormData();
-            formData.append('id', 123456)
+            formData.append('id', this.orgForm.PhId)
             formData.append("file", fileObject);
 
-            let baseheader=ajaxhttp.header;
-            let base=ajaxhttp.base;
-
-            let config_header = { "Content-Type": "multipart/form-data" };
-
-            var new_header = Object.assign({},config_header, baseheader);
-
-            axios.create(base).post('/SysOrganize/PostUploadFile',formData,{ headers:new_header }).then(res => {
-                var response=JSON.parse(res.data);
-                if(response.Status=='success'){              
-                    //设置状态，隐藏新增页面
-                    this.$message.success("上传成功");
-                }else{
-                    this.$message.error(response.Msg);
+            this.uploadFile(formData).then(res => {
+                if(res.Status==='error'){
+                    this.$message.error(res.Msg);
+                    return
                 }
-        　　}).catch((error) =>{
-                var error=JSON.parse(error.data);
-                this.$message.error(error.Msg);
+                //回传的上传临时文件
+                if(res.Data[0]){
+                    this.orgForm.EnterpriseAttachment = res.Data[0];
+                    this.$message.success("上传成功");
+                }
+
+            }).catch(error => {      
+                console.log(error);
+                this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+            })
+        },
+        uploadFileMethodChairman(param){
+            let fileObject = param.file;
+            let formData = new FormData();
+            formData.append('id', this.orgForm.PhId)
+            formData.append("file", fileObject);
+
+            this.uploadFile(formData).then(res => {
+                if(res.Status==='error'){
+                    this.$message.error(res.Msg);
+                    return
+                }
+
+                //回传的上传临时文件
+                if(res.Data[0]){
+                    this.orgForm.ChairmanAttachment = res.Data[0];
+                    this.$message.success("上传成功");
+                }
+
+            }).catch(error => {      
+                console.log(error);
+                this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+            })
+        },
+
+        testFile(){
+            this.fileVisible=true;
+        },
+        removeimg(item,deleValue) {
+            this.imglist=item;
+            console.log(deleValue)
+
+            var param={
+                PhId:deleValue.phid,
+                BTable:'gcw3_voucher_mst',
+                BUrlPath:deleValue.imgPath
+            };
+
+            this.$axios({
+                url: '/PVoucherAttachment/PostDeleteFile',
+                method: "post",
+                data: param,
+            }).then(res => {
+               if(res.Status==="error"){
+                    this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                    return;
+                }
+
+            }).catch(error => {
+                console.log(error);
+                this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
             });
+        },
+        uploadimg(item) {
+            //console.log(item)
+            this.imglist.push(item);
         }
     }
 }
 </script>
 <style scoped>
+
 .choose{
   background:#fff;
   padding:5px;
@@ -272,33 +362,57 @@ export default {
   background: #ff9900;
   color:#fff;
 }
-  .addTitle{
+.addTitle{
     font-size: 18px;
     font-size: 18px;
     text-align: center;
     padding-bottom: 10px;
-  }
-    .avatar-uploader .el-upload {
+}
+.pic-input{
+    width: 80%;
+    float: left;
+}
+</style>
+<style>
+.avatar-uploader{
+    position: absolute;
+    z-index: 1;
+    right: 61px;
+    top: -20px;
+}
+.avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
+}
+.avatar-uploader .el-upload:hover {
     border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 18px;
+}
+.avatar-uploader .el-upload--text{
+    width: 80px;
+    height: 80px;
+}
+
+.avatar-uploader-icon {
+    font-size: 20px;
     color: #8c939d;
     width: 80px;
     height: 80px;
     line-height: 80px;
     text-align: center;
-  }
-  .avatar {
+}
+.avatar {
     width: 80px;
     height: 80px;
     display: block;
-  }
+}
+.orgform .el-form-item__label{
+    background: #00B8EE;
+}
+
+.orgform .el-form-item{
+    margin-bottom: 2px;
+}
 </style>

@@ -21,18 +21,17 @@ function recursiveIssuer(m) {
     }
 }
 
+const env = require('../config/prod.env')
+
 const webpackConfig = merge(baseWebpackConfig, {
-    entry: {
-        'theme-dark': './src/assets/css/theme-dark.scss',
-        'theme-default': './src/assets/css/theme-default.scss'
-    },
     module: {
         rules: utils.styleLoaders({
             sourceMap: config.build.productionSourceMap,
-            extract: true
+            extract: true,
+            usePostCSS: true
         })
     },
-    devtool: config.build.productionSourceMap ? '#source-map' : false,
+    devtool: config.build.productionSourceMap ? config.build.devtool : false,
     output: {
         path: config.build.assetsRoot,
         filename: utils.assetsPath('js/[name].[chunkhash:7].js'),
@@ -94,7 +93,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': config.build.env   //require('../config/prod.env')
+            'process.env': env   //require('../config/prod.env')
         }),
         // extract css into its own file
         new MiniCssExtractPlugin({
@@ -106,14 +105,25 @@ const webpackConfig = merge(baseWebpackConfig, {
         new HtmlWebpackPlugin({
             filename: config.build.index,
             template: './src/index.html',
+            filename: 'index.html',
+            favicon: './favicon.ico',
             inject: true,
-            minify: false,
+            //minify: false,
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeAttributeQuotes: true
+                // more options:
+                // https://github.com/kangax/html-minifier#options-quick-reference
+            },
             // necessary to consistently work with multiple chunks via CommonsChunkPlugin
             chunksSortMode: 'dependency',
             excludeChunks: ['theme-default', 'theme-dark']
         }),
         // keep module.id stable when vender modules does not change
         new webpack.HashedModuleIdsPlugin(),
+        // enable scope hoisting
+        new webpack.optimize.ModuleConcatenationPlugin(),
         // copy custom static assets
         new CopyWebpackPlugin([
           {
