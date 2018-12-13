@@ -34,7 +34,7 @@
             </ul>
         </div>
         <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
-        <!--右侧时间选择组件------------------>
+        <!--右侧时间选择组件-->
         <div class="asideNav">
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
@@ -48,7 +48,7 @@
                     </li>
                 </ul>
             </div>
-            <!--会计期弹窗------------------------->
+            <!--会计期弹窗*************************************-->
             <div v-show="yearSelCss" class="yearsContainer">
                 <p class="yearsTitle">
                     <span @click="checkOutSel('kuaiji')" :class="{active:monthsSelCss=='kuaiji'}">会计期</span>
@@ -96,7 +96,7 @@
 
             </div>
         </div>
-        <!--凭证重排------------------------->
+        <!--凭证重排****************************-->
         <div v-if="resetShow" class="codeResetContainer">
             <div>
                 <p class="flexPublic">
@@ -166,7 +166,6 @@
             mouseStartY:'',
             count:0,
             modelListCss:false,
-            checkedEnd:'',
             nextMonthCss:false,
             allReset:'',
             resetShow:false
@@ -209,6 +208,7 @@
                         this.keepModel();
                         break;
                     case 'moreVoucher':
+                        this.$store.commit("tagNav/turnCachePage",false);
                         this.$router.push({path:'/finance/voucherList'})
                         break;
                     case 'audit':
@@ -239,12 +239,11 @@
             keepVoucher(){
                 var url='Add';
                 var Vdata=this.voucherDataList.data;
-                console.log(Vdata)
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
                    return;
                }
-               if(Vdata.Mst.PDate){console.log(Vdata.Mst.PDate)
+               if(Vdata.Mst.PDate){
                    if(typeof(Vdata.Mst.PDate)=='object'){
                        Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
                        Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
@@ -253,12 +252,10 @@
                    }else {
                        Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
                    }
-                   console.log(Vdata.Mst.PDate)
                }else{
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               debugger
                if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
@@ -269,6 +266,7 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
+                   console.log(data,url)
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            console.log(res)
@@ -381,8 +379,8 @@
             },
             //接收temp组件传值***********************
             tempClick(data){
-                console.log(111,data);
-                data.PersistentState=1;
+                if(data){ 
+                    data.PersistentState=1;
                 for(var dtl of data.Dtls){
                     dtl.PersistentState=1;
                     if(dtl.DtlAccounts){
@@ -391,7 +389,8 @@
                 }
                 this.voucherDataList.data.Mst=data;
                 console.log(222,data);
-                this.resetVoucher();
+                this.resetVoucher(); 
+                }
                 this.modelListCss=false;
             },
             //接收下月账传值******************
@@ -435,6 +434,7 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
+                        
                         this.checkedTime=res.Record[0].JEnableMonth+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
@@ -500,7 +500,6 @@
                             this.totalRows=res.totalRows;
                             this.pagesize=res.size;
                             this.pageindex=res.index;
-                            console.log(res,'页面'+res.size,res.index)
                             this.voucherDataList.data={
                                 Mst:this.newAddList[this.count]
                             };
@@ -703,7 +702,8 @@
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
                 uname: state => state.user.username,
-                orgcode: state => state.user.orgcode
+                orgcode: state => state.user.orgcode,
+                cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
             })
         },
         components:{

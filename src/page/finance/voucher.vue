@@ -266,10 +266,14 @@
                     alert('借方金额不等于贷方金额,请查看');
                     return;
                 }else{
+                    if(!this.fatherData.PhId){
+                        this.fatherData.Dtls=[];
+                    } 
                     var dtls = this.fatherData.Dtls;
                     var account;
                     var item;
                     for( var info of this.voucherInfo){
+                        console.log('jishu',1)
                         if(info.PhId){
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
@@ -312,6 +316,7 @@
                             }
                         }
                         else if(info.SubjectCode){
+                            console.log(2222222)
                             var newDtl={
                                 Abstract:info.Abstract,
                                 SubjectCode:info.SubjectCode,
@@ -339,6 +344,8 @@
                             dtls.push(newDtl);
                         }
                     }
+       
+                    this.fatherData.Dtls=dtls;
                     for(var del of this.deleteDtls){
                         if(del.PhId){
                             for(var dtl of  dtls){
@@ -367,6 +374,7 @@
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
+                    console.log(this.fatherData)
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList

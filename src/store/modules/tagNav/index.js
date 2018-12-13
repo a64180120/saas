@@ -8,6 +8,9 @@ const state = {
 }
 
 const mutations = {
+    turnCachePage(state,data){//改变路由是否缓存12-13*****
+        state.cachePage=data;
+    },
     addTagNav(state, data){
         if (state.openedPageList.some(v => v.path === data.path)) return
         if(state.cachedPageName.includes(data.name)){
