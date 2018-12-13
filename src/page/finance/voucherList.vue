@@ -104,7 +104,7 @@
                 </li>
             </ul>
         </section>
-        <side-time></side-time>
+        <side-time @time-click="getSideDate"></side-time>
     </div>
 </template>
 
@@ -241,6 +241,10 @@
                     })
                     .catch(err=>console.log(err))
             },
+            getSideDate(data){
+                this.sideDate=data.sideDate;
+                this.getvoucherList();
+            }
         },
         computed:{
             ...mapState({

@@ -130,10 +130,10 @@ export default {
                             this.totalRows=res.totalRows;
                             this.pagesize=res.size;
                             this.pageindex=res.index;
-                            this.voucherDataList.data={
-                                Mst:this.newAddList[this.count]
-                            };
-                            this.resetVoucher();
+                            // this.voucherDataList.data={
+                            //     Mst:this.newAddList[this.count]
+                            // };
+                            // this.resetVoucher();
                         }
                     })
                     .catch(err=>{console.log(err);loading1.close();})
@@ -144,6 +144,7 @@ export default {
                 this.year=year;
                 this.sideDate=year+'-'+i;
                 this.getvoucherList('reset');
+                this.$emit("time-click",{sideDate:this.sideDate})
             },
             //鼠标滚轮移动月份选择****************
             monthsSel($event){
@@ -271,9 +272,13 @@ export default {
             },
             //会计期弹窗年月份选择*****************
             yearMonthClick($event){
+                console.log(111)
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
                 this.getvoucherList('reset');
+                 console.log(111)
+                this.$emit("time-click",{sideDate:this.sideDate})
+                console.log(111)
             },
         //会计期内容切换************************************
             checkOutSel(val){
