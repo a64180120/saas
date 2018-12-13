@@ -45,10 +45,10 @@
                     <el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="新密码" prop="newPaw" id="newPaw">
-                    <el-input type="password" id="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>                    
+                    <el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>                    
                 </el-form-item>
                 <el-form-item label="确认新密码" prop="confirmNewPaw" >
-                    <el-input type="password" id="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>            
+                    <el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>            
                 </el-form-item>
             </el-form>
             <div class="textC">
@@ -143,7 +143,7 @@ export default {
         case "logout":
           this.logout();
           break;
-        case "editPaw":
+        case "editPaw":          
           this.dialog.editPaw.show = true;
           console.log("编辑密码");
           break;
@@ -183,6 +183,9 @@ export default {
                 if (res.Status=='success'){
                     this.$message.success("密码修改成功!");
                     this.dialog.editPaw.show = false;
+                    this.editPaw.oldPaw="";
+                    this.editPaw.newPaw="";
+                    this.editPaw.confirmNewPaw="";
                     return true;
                 }
 
