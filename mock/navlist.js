@@ -118,21 +118,20 @@ var data = [
                 name: '预算执行',
                 path: '/budget/execute',
 
-            }
-        ]
-    },
-    {
-        name: '预算管理',
-        icon: 'el-icon-lx-home',
-        child: [
+            },
             {
-                name: '预算编制',
-                path: '/budget/setting'
+                name: '工会经费收支预算表',
+                path: '/budget/budget',
 
             },
             {
-                name: '预算执行',
-                path: '/budget/execute',
+                name: '工会经费收支调整表',
+                path: '/budget/adjustbudget',
+
+            },
+            {
+                name: '工会经费收支决算表',
+                path: '/budget/actualbudget',
 
             }
         ]

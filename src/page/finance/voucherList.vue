@@ -1,19 +1,20 @@
 <template>
+
     <div class="voucherList">
         <div class="voucherNav">
             <ul>
-                <li>新增</li>
-                <li>修改</li>
-                <li>删除</li>
-                <li>审核</li>
-                <li>反审核</li>
-                <li>复制</li>
-                <li>剪切</li>
-                <li>冲红</li>
-                <li>凭证重排</li>
-                <li>导入</li>
-                <li>导出</li>
-                <li>打印</li>
+                <a><li>新增</li></a>
+                <a><li>修改</li></a>
+                <a><li>删除</li></a>
+                <a><li>审核</li></a>
+                <a><li>反审核</li></a>
+                <a><li>复制</li></a>
+                <a><li>剪切</li></a>
+                <a><li>冲红</li></a>
+                <a><li>凭证重排</li></a>
+                <a><li>导入</li></a>
+                <a><li>导出</li></a>
+                <a><li>打印</li></a>
             </ul>
         </div>
         <div class="voucherSelect">
@@ -104,20 +105,23 @@
                 </li>
             </ul>
         </section>
+        <side-time @time-click="getSideDate"></side-time>
     </div>
 </template>
 
 <script>
     import {mapState, mapActions} from 'vuex'
+    import sideTime from './sideTime'
     export default {
-        name: "voucher-list",
+       // name: "voucher-list",
         mounted(){
             if(this.$route.query.voucherList){
                 this.voucherList= this.$route.query.voucherList;
             }else{
                 this.getvoucherList();
             }
-
+            this.$store.commit("tagNav/turnCachePage",true);
+            this.getChecked();
         },
         data(){
             return {
@@ -127,7 +131,9 @@
                 date4:'',
                 sum1:'',
                 sum2:'',
-                sideDate:2018-12,
+                nowTime:new Date,
+                checkedTime:'',
+                sideDate:'',
                 searchVal:'',
                 pickerOptions: {
                     disabledDate(time) {
@@ -210,23 +216,42 @@
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
                     keyword:this.searchValue,
-                    queryfilter:{"OrgId*num*eq*1":this.orgid}
+                    queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         this.voucherList= res.Record;
-                        console.log(res)
                         if(this.voucherList.length<=0){
-                            alert('暂无新凭证');
+                            this.$message('暂无新凭证');
                         }
                     })
                     .catch(err=>console.log(err))
             },
+            //获取当前结账的最新月份************
+            getChecked(){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
+                }
+                this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
+                    .then(res=>{
+                        
+                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                        this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                    })
+                    .catch(err=>console.log(err))
+            },
+            getSideDate(data){
+                this.sideDate=data.sideDate;
+                this.getvoucherList();
+            }
         },
         computed:{
             ...mapState({
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
+                cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
             })
         },
         filters:{
@@ -319,6 +344,9 @@
                 return sum;
 
             }
+        },
+        components:{
+            sideTime,
         }
     }
 </script>
@@ -446,7 +474,11 @@
         cursor:pointer;
     }
     .voucherList{
-        padding:10px;
+        padding:8px 18px;
+        padding-right:70px;
+        margin-right:10px;
+        font-size:14px;
+        position:relative;
         min-width: 1024px;
         height:800px;
         overflow-y: auto;
