@@ -3,15 +3,15 @@
     <div class="voucherList">
         <div class="voucherNav">
             <ul>
-                <a><li>新增</li></a>
-                <a><li>修改</li></a>
-                <a><li>删除</li></a>
-                <a><li>审核</li></a>
-                <a><li>反审核</li></a>
+                <router-link to="/finance/voucherAdd"><li>新增</li></router-link>
+                <a @click.prevent="handle('update')"><li>修改</li></a>
+                <a @click.prevent="handle('delete')"><li>删除</li></a>
+                <a @click.prevent="handle('audit')"><li>审核</li></a>
+                <a @click.prevent="handle('unaudit')"><li>反审核</li></a>
                 <a><li>复制</li></a>
                 <a><li>剪切</li></a>
                 <a><li>冲红</li></a>
-                <a><li>凭证重排</li></a>
+                <a @click.prevent="handle('reset')"><li>凭证重排</li></a>
                 <a><li>导入</li></a>
                 <a><li>导出</li></a>
                 <a><li>打印</li></a>
@@ -79,7 +79,7 @@
                 <li>借方金额</li>
                 <li>贷方金额</li>
             </ul>
-            <ul class="listContent" v-for="(item,index) of voucherList" :key="index">
+            <ul @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
                 <li>
                     <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
                     <ul>
@@ -88,7 +88,7 @@
                             <span>凭证字号 : {{item.PNo}}</span>
                             <span>附件数 : {{item.PAttachment}}</span>
                             <span>制单人 : {{item.PMakePerson}}</span>
-                            <span>审核 : {{item.PAuditor}}</span>
+                            <span>审核 : {{item.Verify?'已审核':'未审核'}}</span>
                         </li>
                         <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                             <div>{{dtl.Abstract}}</div>
@@ -105,7 +105,38 @@
                 </li>
             </ul>
         </section>
-        <side-time @time-click="getSideDate"></side-time>
+        <!--凭证重排****************************-->
+        <div v-if="resetShow" class="codeResetContainer">
+            <div>
+                <p class="flexPublic">
+                    <span>凭证重排</span>
+                    <i @click="resetCode(false)"></i>
+                </p>
+                <div  class="yearsContent">
+                    <p>请选择会计期</p>
+                    <div class="flexPublic">
+                        <div>{{year}}</div>
+                        <div class="flexPublic">
+                            <img @click="nextYear(false)" src="../../assets/icon/leftArr.svg" alt="">
+                            <img @click="nextYear(true)" src="../../assets/icon/leftArr.svg" alt="">
+                        </div>
+                    </div>
+                    <ul @click="resetCodeMonth" :class="{allActive:allReset}"  class="year-month">
+                        <li :class="{active:month==index}" v-for="index of 12" :key="index">{{index}}月</li>
+                    </ul>
+                    <div>
+                        <p>
+                            <label ><input type="checkbox" v-model="allReset">对所有会计期进行凭证号重排</label>
+                        </p>
+                        <div>
+                            <span @click="resetCode(false)" class="btn">取消</span>
+                            <span @click="resetCode(true)" class="btn">确认</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <side-time @time-click="getSideDate" ref='sideDate'></side-time>
     </div>
 </template>
 
@@ -115,13 +146,15 @@
     export default {
        // name: "voucher-list",
         mounted(){
+
             if(this.$route.query.voucherList){
                 this.voucherList= this.$route.query.voucherList;
             }else{
-                this.getvoucherList();
+                if(!this.sideDate){
+                    this.getChecked();
+             }
             }
             this.$store.commit("tagNav/turnCachePage",true);
-            this.getChecked();
         },
         data(){
             return {
@@ -131,9 +164,12 @@
                 date4:'',
                 sum1:'',
                 sum2:'',
+                chooseItem:'',
                 nowTime:new Date,
                 checkedTime:'',
                 sideDate:'',
+                month:'',
+                year:'',
                 searchVal:'',
                 pickerOptions: {
                     disabledDate(time) {
@@ -164,29 +200,110 @@
                 highGradeCss:false,
                 pagesize:100,
                 pageindex:0,
+                allReset:'',
+                resetShow:false
             }
         },
         methods:{
+            //操作导航******************
+            handle(str){
+                switch(str){
+                    case 'update'://修改**********
+                    this.voucherDel(this.chooseItem);
+                    break;
+                    case 'audit'://审核**********  
+                        this.audit(true,this.chooseItem.PhId);
+                        this.getvoucherList();
+                        break;
+                    case 'unaudit'://反审核************
+                        this.audit(false,this.chooseItem.PhId);
+                        break;
+                    case 'delete' :
+                        if(!this.chooseItem.PhId){
+                            this.$message("请先选择凭证!");
+                            return;
+                        }
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            id:this.chooseItem.PhId
+                        }
+                        this.delete(data1);
+                        break;
+                    case 'reset':
+                        if(confirm('凭证号重排过程中不允许取消、暂停操作。确定重排？')){
+                            this.resetShow=true;
+                        }
+                        break;
+                }
+            },
+            //高级搜索显示隐藏****************
             highGradeToggle(bool) {
                 this.highGradeCss = bool;
             },
+            //凭证详情***************************
             voucherDel(item){
                 this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
             },
-            /*getvoucher(){
-                var data={
-                    uid:'0001',
-                    orgid:52118082000000,
-                    id:168181205000001
+            //凭证选择**********************
+            choose(item){
+                if(this.chooseItem.PhId==item.PhId){
+                   this.chooseItem=''; 
+                }else{
+                    this.chooseItem=item;
                 }
-                this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
-                    .then(res=>{
-
-                        console.log(res)
-
+                console.log(item)
+            },
+             //审核*****************
+            audit(bool,PhId){
+                if(!this.chooseItem.PhId){
+                    this.$message("请先选择凭证!");
+                    return;
+                }
+                var data={
+                    orgid:this.orgid,
+                    uid:this.uid,
+                    realname:this.uname,
+                    infoData:[PhId]
+                }
+                var url='PVoucherMst/PostAudit';
+                if(!bool){
+                    url='PVoucherMst/PostUnAudit'
+                }
+                this.$axios.post(url,data)
+                    .then(res=>{        
+                        if(res.Status=='success'){
+                            if(bool){ 
+                                this.$message('审核成功!')
+                            }else{
+                                this.$message('反审核成功!')
+                            }
+                             this.getvoucherList();
+                        }else{console.log(bool,2)
+                            if(bool){
+                                this.$message('审核失败!')
+                            }else{
+                                this.$message('反审核失败!')
+                            }
+                        }
+                       
                     })
                     .catch(err=>console.log(err))
-            },*/
+            },
+            //删除***********************
+            delete(data){ 
+                this.$axios.post('PVoucherMst/PostDelete',data)
+                    .then(res=>{
+                        console.log(res)
+                        if(res.Status=='success'){
+                            this.$message('删除成功!');
+                            this.getvoucherList();
+                        }else{
+                            this.$message('删除失败,请重试!')
+                        }
+                    })
+                    .catch(err=>console.log(err))
+            },
             //凭证搜索**************************
             searchVoucher(){
                 const loading1=this.$loading();
@@ -198,6 +315,7 @@
                     keyword:this.searchValue,
                     queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
                 }
+                console.log(data);
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         loading1.close();
@@ -209,7 +327,8 @@
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
-            getvoucherList(){
+            //凭证列表***************
+            getvoucherList(){console.log(111)
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -236,21 +355,64 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
-                        
                         this.checkedTime=res.Record[0].JEnableMonth+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                        this.year=this.nowTime.getFullYear();
+                        this.month=this.checkedTime;
+                        this.getvoucherList();
                     })
                     .catch(err=>console.log(err))
             },
+            //获取time组件传参********************
             getSideDate(data){
                 this.sideDate=data.sideDate;
+                this.year=this.sideDate.split('-')[0];
+                this.month=this.sideDate.split('-')[1];
                 this.getvoucherList();
-            }
+            },
+             //凭证重排月份选择******************
+            resetCodeMonth($event){
+              this.month= this.month=parseInt($event.target.innerHTML);
+            },
+            //凭证号重排确认***************
+            resetCode(val){
+                if(val){
+                    const loading5=this.$loading();
+                    var data={
+                        orgid:this.orgid,
+                        Year:this.sideDate.split('-')[0],
+                        Pmonth:this.sideDate.split('-')[1]
+                    }
+                    var url='/PVoucherMst/GetRebuilder';
+                    if(this.allReset){
+                        url='PVoucherMst/GetRebuilderForAllYear';
+                        data={
+                            orgid:this.orgid,
+                            Year:this.sideDate.split('-')[0],
+                        }
+                    }
+                    this.$axios.get(url,{params:data})
+                        .then(res=>{
+                            console.log(res)
+                            if(res.Status=='error'){
+                                this.$message(res.Msg);
+                            }else if(res.Status=='success'){
+                                this.$message('重排成功!');
+                                this.resetShow=false;
+                            }
+                            loading5.close();
+                        })
+                        .catch(err=>{console.log(err);loading5.close();})
+                }else{
+                    this.resetShow=false;
+                }
+            },
         },
         computed:{
             ...mapState({
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
+                uname: state => state.user.username,
                 cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
             })
         },
@@ -564,6 +726,9 @@
                 }
             }
         }
+        .choosed{
+            background: #000;
+        }
         .listContainer{
             overflow-y: auto;
             padding:5px;
@@ -598,6 +763,11 @@
                 border-top:1px solid #ccc;
                 margin-bottom: 20px;
                 background: #fff;
+                &.choosed{
+                    >li>dl{
+                        background: #2780d1;
+                    }
+                }
                 >li {
                     width:100%;
                     height:100%;
@@ -668,6 +838,143 @@
                 }
             }
         }
+    }
+    .codeResetContainer{
+        background: rgba(0,0,0,0.5);
+        position: absolute;
+        z-index: 99;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        >div{
+            width:300px;
+            height:410px;
+            margin: 150px auto 0;
+            border-radius: 10px;
+            background: #fff;
+            padding:10px;
+            >p:first-of-type{
+                height:35px;
+                font-size: 18px;
+                font-weight: bold;
+                border-bottom: 1px solid #ccc;
+                padding:5px;
+                >i{
+                    width:25px;
+                    height:25px;
+                    background: url("../../assets/icon/close.svg");
+                    background-size: cover;
+                    cursor:pointer;
+                }
+            }
+            .yearsContent{
+                font-size: 15px;
+                >p:first-of-type{
+                    margin:10px 15px 5px;
+                    padding: 5px 0;
+                    font-size: 18px;
+                    font-weight: bold;
+                    border-bottom: 1px solid #ccc;
+                }
+                >div:first-of-type{
+                    font-size: 18px;
+                    font-weight: bold;
+                    padding:5px 0 0 15px;
+                    >div:nth-of-type(2){
+                        width:70px;
+                        margin-right: 20px;
+                        >img{
+                            width:20px;
+                            height:20px;
+                            transform: rotate(-90deg);
+                            position:relative;
+                            top:-8px;
+                            cursor:pointer;
+                            &:first-of-type{
+                                transform: rotate(90deg);
+                                top:0px;
+                            }
+                        }
+                    }
+                }
+                >div:nth-of-type(2){
+                    margin:0 15px;
+                    >p{
+                        >label{
+                            display: flex;
+                            align-items: center;
+                            color:#000;
+                            font-weight: 400;
+                            font-size: 16px;
+                            input{
+                                margin-right: 10px;
+                            }
+                        }
+                        margin-bottom: 20px;
+                    }
+                    >div{
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding:0 15px;
+                        >span{
+                            height:40px;
+                            line-height: 40px;
+                        }
+                    }
+                }
+                >ul{
+                    display: flex;
+                    align-items: center;
+                    flex-flow: row wrap;
+                    justify-content: space-between;
+                    padding:5px 20px;
+                    width:100%;
+                    >li{
+                        width:60px;
+                        height:60px;
+                        line-height: 60px;
+                        text-align: center;
+                        cursor:pointer;
+                        font-size: 16px;
+                        &:hover{
+                            background:#2780d1 ;
+                            color:#fff;
+                        }
+                        &.active{
+                            background:#2780d1 ;
+                            color:#fff;
+                        }
+                    }
+                }
+                >p{
+                    display: flex;
+                    align-items: center;
+                    font-size: 15px;
+                    >span{
+                        width:80px;
+                        height:30px;
+                        line-height: 30px;
+                        text-align: center;
+                        margin-left: 40px;
+                        color:#3e8cbc;
+                        border:1px solid #3e8cbc;
+                        border-radius: 3px;
+                        cursor:pointer;
+                        &:hover{
+                            color:#fff;
+                            background: #3e8cbc;
+                        }
+                    }
+                }
+                .allActive>li{
+                    background:#2780d1 ;
+                    color:#fff;
+                }
+            }
+        }
+
     }
 
 </style>

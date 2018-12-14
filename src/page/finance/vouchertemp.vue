@@ -1,4 +1,5 @@
 <template>
+
     <div class="vouchertemp">
         <div v-if="tempCss=='list'" class="vouchertempCon">
             <p class="title"><span>凭证模板</span><i @click.stop="finish(false)"></i></p>

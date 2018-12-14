@@ -1,4 +1,5 @@
 <template>
+
     <div class="addVoucher">
         <div class="unionState  flexPublic">
             <ul class="voucherDel handle">

@@ -214,15 +214,24 @@
                         break;
                     case 'audit':
                         this.voucherData();
-                        this.audit(true);
+                        this.audit(true,this.voucherDataList.data.Mst.PhId);
                         break;
                     case 'unAudit':
                         this.voucherData();
-                        this.audit(false);
+                        this.audit(false,this.voucherDataList.data.Mst.PhId);
                         break;
                     case 'delete' :
                         this.voucherData();
-                        this.delete();
+                        if(this.voucherDataList.data.Mst.Dtls.length<=0){
+                            alert('请输入内容!')
+                            return;
+                        }
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            id:this.voucherDataList.data.Mst.PhId
+                        }
+                        this.delete(data1);
                         this.voucherDataList.data={
                             Mst:{},
                             Attachements:[]
@@ -320,14 +329,13 @@
                     .catch(err=>console.log(err))
             },
             //审核*****************
-            audit(bool){
+            audit(bool,PhId){
                 var data={
                     orgid:this.orgid,
                     uid:this.uid,
                     realname:this.uname,
-                    infoData:[this.voucherDataList.data.Mst.PhId]
+                    infoData:[PhId]
                 }
-
                 var url='PVoucherMst/PostAudit';
                 if(!bool){
                     url='PVoucherMst/PostUnAudit'
@@ -336,11 +344,11 @@
                     .then(res=>{
                         if(res.Status=='success'){
                             if(bool){
-                                console.log(111)
                                 this.$message('审核成功!')
                             }else{
                                 this.$message('反审核成功!')
                             }
+                            this.getVoucherData(PhId);
                         }else{
                             if(bool){
                                 this.$message('审核失败!')
@@ -348,22 +356,11 @@
                                 this.$message('反审核失败!')
                             }
                         }
-                        console.log(this.voucherDataList.data)
                     })
                     .catch(err=>console.log(err))
             },
             //删除***********************
-            delete(){
-                if(this.voucherDataList.data.Mst.Dtls.length<=0){
-                    alert('请输入内容!')
-                    return;
-                }
-                var data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    id:this.voucherDataList.data.Mst.PhId
-                }
-                console.log(data)
+            delete(data){ 
                 this.$axios.post('PVoucherMst/PostDelete',data)
                     .then(res=>{
                         console.log(res)
@@ -425,6 +422,22 @@
                         }
                     })
                     .catch(err=>{console.log(err);loading1.close();})
+            },
+            //获取单个凭证**************
+            getVoucherData(PhId){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    id:PhId
+                }
+                this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
+                    .then(res=>{
+                        if(res.Status=='success'){
+                            this.voucherDataList.data.Mst=res.Data;
+                            this.resetVoucher();
+                        }                            
+                    })
+                    .catch(err=>console.log(err))
             },
             //获取当前结账的最新月份************
             getChecked(){

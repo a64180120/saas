@@ -11,7 +11,7 @@ const staticRoute = [
     },
     {
         path:'/indexfinance',
-        component: () =>import("../page/finance/addVoucher")
+        component: () =>import("../page/finance/voucherAdd")
     },
     {
         path:'/index',
@@ -80,7 +80,7 @@ const staticRoute = [
             {
                 //新增凭证
                 path: "voucherAdd",
-                component: () =>import( "../page/finance/addVoucher"),
+                component: () =>import( "../page/finance/voucherAdd"),
                 meta:{ requireAuth:true,isMenu:true,type:'page'}
             },
             {
