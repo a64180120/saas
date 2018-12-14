@@ -10,10 +10,10 @@ export default function treeSum(data) {
   Array.from(data).forEach(function(record) {
 
     tmp.push(record)
-    if (record.children && record.children.length > 0) {
-      const children = treeSum(record.children)
-      tmp = tmp.concat(children)
-    }
+    // if (record.children && record.children.length > 0) {
+    //   const children = treeSum(record.children)
+    //   tmp = tmp.concat(children)
+    // }
   })
 
   return tmp

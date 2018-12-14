@@ -1,5 +1,5 @@
 <template>
-    <div class="manageContent">
+    <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
                 <ul class="flexPublic">
@@ -15,16 +15,16 @@
                         <div>凭证：</div>
                         <div  class="block selectContainer">
                             <select class="el-input__inner" v-model="proofType">
-                                <option value="0">包含未审核凭证</option>
-                                <option value="1">不包含未审核凭证</option>
+                                <option value="1">包含未审核凭证</option>
+                                <option value="0">不包含未审核凭证</option>
                             </select>
                         </div>
 
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                    <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                    <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
                 </ul>
             </div>
 
@@ -35,6 +35,7 @@
                 <li>年初数</li>
                 <li>期末数</li>
                 <li></li>
+                <li></li>
                 <li>资产与净资产</li>
                 <li>年初数</li>
                 <li>期末数</li>
@@ -43,6 +44,7 @@
                 <ul class="formDataItems flexPublic">
                     <li></li>
                     <li class="align-center">一、资产</li>
+                    <li></li>
                     <li></li>
                     <li></li>
                     <li></li>
@@ -57,6 +59,7 @@
                             <li>{{item.KName}}</li>
                             <li>{{item.StartSum}}</li>
                             <li>{{item.EndSum}}</li>
+                            <li></li>
                             <template v-if="index<=cashOutData.length">
                                 <li>{{cashOutData[index-1].KCode}}</li>
                                 <li>{{cashOutData[index-1].KName}}</li>
@@ -123,7 +126,7 @@
                                 <li></li>
                                 <li></li>
                             </template>
-
+                            <li></li>
                             <template v-if="index<=cashOutData.length">
                                 <li>{{cashOutData[index-1].KCode}}</li>
                                 <li>{{cashOutData[index-1].KName}}</li>
@@ -184,12 +187,14 @@
                     <li></li>
                     <li></li>
                     <li></li>
+                    <li></li>
                 </ul>
                 <ul class="formDataItems flexPublic">
                     <li></li>
                     <li class="align-center">资产总计</li>
                     <li>{{cashInCounts}}</li>
                     <li>{{cashInCountsQ}}</li>
+                    <li></li>
                     <li></li>
                     <li class="align-center">负债与净资产总计</li>
                     <li>{{cashOutCounts+cashCounts}}</li>
@@ -218,6 +223,7 @@
     import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
     import { getLodop } from '@/plugins/Lodop/LodopFuncs';
     import TimeSelectBar from "../../components/TimeSelectBar/index";
+    import { mapState, mapGetters } from "vuex";
 
     let balanceData=[];
     export default {
@@ -243,10 +249,18 @@
                 cashOutCountsQ:0,
                 cashCountsQ:0,
                 date1:'',
-                proofType:'0'
+                proofType:'1',
+                loading:false
             }
         },
         components: {TimeSelectBar},
+        computed:{
+            ...mapState({
+                userid: state => state.user.userid,
+                orgid: state => state.user.orgid,
+                OrgIds:state => state.user.OrgIds
+            }),
+        },
         mounted(){
             this.getData(this.date1,this.proofType);
         },
@@ -291,15 +305,17 @@
             * proofType--资产凭证类型，包含未审核凭证（0），不包含未审核凭证（1）
             * */
             getData(param,proofType){
-                console.log(param);
+                let that=this;
+                this.loading=true;
                 param = this.getParamTime(param);
                 let data={
                     accountPeriod:param,
-                    isContainUncheck:proofType
+                    isContainUncheck:proofType,
+                    orgid:this.orgid
                 };
                 this.$axios.get('/PVoucherMst/GetBalanceSheet',{params:data})
                     .then(res => {
-                        console.log(res);
+                        that.loading=false;
                        let cashIn=[],cashOut=[],cash=[],cashInCount=0,cashInCountQ=0,cashOutCount=0,cashOutCountQ=0,cashCount=0,cashCountQ=0;
                        for(let i in res.Data){
                            if(res.Data[i].KType==="1"){
@@ -333,7 +349,7 @@
                         this.cashOutCountsQ=cashOutCountQ;
                         this.cashCountsQ=cashCountQ;
                     })
-                    .catch(err => console.log(err))
+                    .catch(err => {that.loading=false;console.log(err)})
             },
 
             /*
@@ -354,7 +370,8 @@
                     url:'/PVoucherMst/GetBalanceSheetExcel',
                     params:{
                         accountPeriod:this.getParamTime(this.date1),
-                        isContainUncheck:this.proofType
+                        isContainUncheck:this.proofType,
+                        orgid:this.orgid
                     }
                 }) .then(res => {
                     window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
@@ -460,6 +477,9 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+    .formData>ul>li:nth-of-type(5){
+        width:10px;
+    }
     .formData>ul>li:nth-of-type(2){
         width:20%;
     }
@@ -494,6 +514,11 @@
     .formData>ul.formDataItems>li:first-child{
         border-left:1px solid #ddd;
     }
+    .formData>ul.formDataItems>li:nth-of-type(5){
+        width:10px;
+        padding:0
+    }
+
     .unionLists{
         width:20%;
         align-self: flex-start;
