@@ -62,12 +62,7 @@
                 handleNav:'',    //类型 add update
                 
                 navActive:{id:'',BaseName:'部门'},
-                navTab:[
-                    {PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
-                    {PhId:112,BaseCode:'02',EnabledMark:1,BaseName:'往来单位'},
-                    {PhId:113,BaseCode:'03',EnabledMark:0,BaseName:'往来个人'},
-                    {PhId:114,BaseCode:'04',EnabledMark:0,BaseName:'项目'}
-                ]
+                navTab:[]
             }
         },
         methods:{
@@ -155,7 +150,7 @@
                         this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
                     })
             },
-
+    
             //切换辅助项分类**************************
             navTabTurn(item){
                 this.navActive=item;

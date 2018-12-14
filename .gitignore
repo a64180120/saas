@@ -3,3 +3,4 @@
 /.vscode
 /test
 /.idea
+/src/util/ajaxConfig.js
