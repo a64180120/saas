@@ -43,6 +43,7 @@
         created(){
         },
         mounted(){
+            console.log(this.PhIdList);
             this.formData=this.PhIdList.data;
         },
         computed:{
@@ -53,19 +54,17 @@
         },
         data(){
             return{
-                formData:{PhId:'',BaseCode:'',BaseName:'',EnabledMark:0},
-                handleName:{add:'新增',update:'修改'},
+                formData:{ PhId:'',BaseCode:'',BaseName:'',EnabledMark:0 },
+                handleName:{ add:'新增',update:'修改' },
             }
         },
         methods:{
+            //保存
             newAdd(name){
                 if(this.formData.BaseName===''){
                      this.$message.warning("请填写辅助项名称！");
                       return;
                 }
-
-                var url='/PVoucherAuxiliaryType/PostAddAuxiliary';
-                //console.log(this.PhIdList.type.PhId)
                 this.formData.PhidBaseType=this.PhIdList.type.PhId;
                 var data={
                     uid:this.uid,
@@ -73,21 +72,27 @@
                     infoData:this.formData
                 }
 
-                this.$axios.post(url,data)
-                    .then(res=>{ console.log(res)
-                        //console.log(res)
-                        if(res.Status=='success'){
-                            this.$emit('add-click',false);
-                            if(name=='add'){
+                this.$axios.post('/PVoucherAuxiliaryType/PostAddAuxiliary',data)
+                    .then(res=>{ 
+                        console.log(res)
 
-                                this.$message.success("新增成功!");
-                            }else if(name=='update'){
-
-                                this.$message.success("更新成功!");
-                            }
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
                         }
+
+                        this.$emit('add-click',false);
+                        if(name=='add'){
+                            this.$message.success("新增成功!");
+                        }else if(name=='update'){
+
+                            this.$message.success("更新成功!");
+                        }
+                        
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{
+                        console.log(err)
+                    })
 
 
             },

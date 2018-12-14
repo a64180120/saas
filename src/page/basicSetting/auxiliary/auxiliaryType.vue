@@ -3,7 +3,7 @@
         <div class="newAddContent">
             <div class="newAddTitle flexPublic">
                 <span>类型分类</span>
-                <span @click.stop="newAdd()"></span>
+                <span @click.stop="cancle"></span>
             </div>
             <ul class="contentItem">
                 <li>
@@ -49,8 +49,8 @@
 
             </div>
             <div class="itemBtnCon">
-                <div @click.stop="newAdd(true)">保存</div>
-                <div @click.stop="newAdd()">取消</div>
+                <div @click.stop="newAdd">保存</div>
+                <div @click.stop="cancle">取消</div>
             </div>
         </div>
     </div>
@@ -67,8 +67,12 @@
         datalists:''
       },
       created(){
-        this.dataList=JSON.parse(this.datalists);
-        this.initCss();
+        //this.dataList=JSON.parse(this.datalists);
+        
+        
+      },
+      mounted(){
+        this.getData();
       },
       data(){
         return {
@@ -88,99 +92,139 @@
         })
       },
       methods:{
-          newAdd(bool){
-              if(bool){
-                  for(var del of this.deleteList){
-                      this.dataList.push(del);
-                  }
-                  let data={
-                      uid:this.uid,
-                      orgid:this.orgid,
-                      infoData:this.dataList
-                  };
+            getData(){
+                let data = {
+                    uid: this.uid,
+                    orgid: this.orgid
+                };
+                var vm=this;
+                this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryType',{params:data})
+                    .then(res=>{
 
-                  var vm=this;
-                  this.$axios.post('/PVoucherAuxiliaryType/PostAddAuxiliaryType',data)
-                      .then(res=>{
-                          if(res.Status=='success'){
-                              vm.$emit('type-click',false);
-                              //alert('保存成功!')
-                              this.$message.success("保存成功!");
-                          }
-                      })
-                      .catch(err=>console.log(err))
-              }else{
-                  this.$emit('type-click',false);
-              }
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
 
-          },
-          fastCreate(){
+                        this.dataList=res.type;
+                        this.initCss();
 
-            if(this.dataList.length>=50){
-                alert('当前组织辅助项数量已到上限!')
-                return;
-            }
-            if(this.formData.BaseName===''){
-                this.$message.warning("请填写类型名称！");
-                return;
-            }
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                        this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
+                    })
+            },
+            //新增保存
+            newAdd(){
 
-            // 获取
-            //debugger;
-
-            var lastObject=this.dataList[this.dataList.length-1];
-          
-            var addData={
-                PhId:0,
-                Type:'',
-                BaseCode:dealAddString(lastObject.BaseCode),
-                BaseName:this.formData.BaseName,
-                GLS:dealAddString(lastObject.GLS),
-                OrgId:this.orgid,
-                OrgCode:this.orgcode,
-                IsSystem:0,
-                EnabledMark:this.formData.EnabledMark,
-                CreatorName:this.username,
-                EditorName:this.username
-            };
-
-
-            this.dataList.unshift(addData);
-
-            this.$nextTick(() => {
-                this.formData.BaseCode='';
-                this.formData.BaseName='';
-                this.formData.EnabledMark=0;
-            })
-            this.initCss();
-            this.$forceUpdate();
-              
-          },
-          deleteData(item,index){
-            item.DeleteMark=1;
-            this.deleteList.push(item);
-            this.dataList.splice(index,1);
-            this.initCss();
-            this.btnShow('delete');
-          },
-          initCss(){
-              for(var i in this.dataList){
-                  this.updateCss[i]={checked:false}
-                  this.deleteCss[i]={checked:false}
-              }
-          },
-          btnShow(val){
-            if(val=='delete'){
-                for(var del of this.deleteCss){
-                    del.checked=!del.checked;
+                for(var del of this.deleteList){
+                    this.dataList.push(del);
                 }
-            }else if(val=='update'){
-                for(var up of this.updateCss){
-                    up.checked=!up.checked;
+                let data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    infoData:this.dataList
+                };
+
+                var vm=this;
+                this.$axios.post('/PVoucherAuxiliaryType/PostAddAuxiliaryType',data)
+                    .then(res=>{
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
+
+                        vm.$emit('type-click',true);
+                        this.$message.success("类型保存成功!");
+                        
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                    })
+
+
+            },
+            //取消
+            cancle(){
+                this.$emit('type-click',false);
+                return;                
+            },
+            //立即创建
+            fastCreate(){
+
+                //辅助项类型最多50个
+                if(this.dataList.length>=50){
+                    this.$message.warning("当前组织辅助项数量已到上限!");
+                    return;
                 }
-            }
-            this.$forceUpdate();
-          },
+                //名称不能为空
+                if(this.formData.BaseName===''){
+                    this.$message.warning("请填写类型名称！");
+                    return;
+                }
+
+                var lastObject=this.dataList[this.dataList.length-1];
+            
+                var addData={
+                    PhId:0,
+                    BaseCode:dealAddString(lastObject.BaseCode),
+                    BaseName:this.formData.BaseName,
+                    GLS:dealAddString(lastObject.GLS),
+                    OrgId:this.orgid,
+                    OrgCode:this.orgcode,
+                    IsSystem:0,
+                    EnabledMark:this.formData.EnabledMark,
+                    CreatorName:this.username,
+                    EditorName:this.username
+                };
+
+
+                this.dataList.push(addData);
+
+                this.$nextTick(() => {
+                    this.formData.BaseCode='';
+                    this.formData.BaseName='';
+                    this.formData.EnabledMark=0;
+                })
+                this.initCss();
+                this.$forceUpdate();
+                
+            },
+            deleteData(item,index){
+
+                if(item.IsSystem!=1){
+
+                    item.DeleteMark=1;
+
+                    //添加删除信息 和移除list的删除
+                    this.deleteList.push(item);
+                    this.dataList.splice(index,1);
+
+                    this.initCss();
+                    this.btnShow('delete');
+                }else{
+                    this.$message.warning("内置辅助项不可删除");
+                }
+            },
+            initCss(){
+                for(var i in this.dataList){
+                    this.updateCss[i]={checked:false}
+                    this.deleteCss[i]={checked:false}
+                }
+            },
+            btnShow(val){
+                if(val=='delete'){
+                    for(var del of this.deleteCss){
+                        del.checked=!del.checked;
+                    }
+                }else if(val=='update'){
+                    for(var up of this.updateCss){
+                        up.checked=!up.checked;
+                    }
+                }
+                this.$forceUpdate();
+            },
       }
   }
 </script>

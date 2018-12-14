@@ -1,41 +1,45 @@
 <template>
-    <div class="manageContent">
-        <div class="unionState flexPublic">
-            <div class="flexPublic">
-                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
-                <div @click="unionSearch" class="searcherBtn">搜索</div>
+    <div class="sys-page">
+        <div class="container">
+            <div class="unionState flexPublic">
+                <div class="flexPublic" style="margin-left: 15%;">
+                    <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
+                    <div @click="unionSearch" class="searcherBtn">搜索</div>
+                </div>
+                <ul class="flexPublic handle">
+                    <a @click.prevent="handlePage('add')"><li>新增</li></a>
+                    <a @click.prevent="handlePage('update')"><li>修改</li></a>
+                    <a @click.prevent="handlePage('delete')"><li>删除</li></a>
+                    <a @click.prevent="handlePage('type')"><li>分类管理</li></a>
+                </ul>
             </div>
-            <ul class="flexPublic handle">
-                <a @click.prevent="handlePage('add')"><li>新增</li></a>
-                <a @click.prevent="handlePage('update')"><li>修改</li></a>
-                <a @click.prevent="handlePage('delete')"><li>删除</li></a>
-                <a @click.prevent="handlePage('type')"><li>分类管理</li></a>
-            </ul>
+            <div class="auxiliary manageContent">
+                <div class="auxiliaryNav">
+                    <p class="auxiliaryNavTitle">辅助类型</p>
+                    <ul>
+                        <li @click.stop="navTabTurn(item)" :class="{active:navActive.BaseName==item.BaseName}" v-for="(item,index) of navTab" :key="index">{{item.BaseName}}</li>
+                    </ul>
+                </div>
+                <div class="formData auxiliaryContent">
+                    <ul>
+                        <li>序号</li>
+                        <li>编码</li>
+                        <li>名称</li>
+                        <li>启用/停用</li>
+                    </ul>
+                    <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item)" v-for="(item,index) of userInfo" :key="index">
+                        <li>{{index+1}}</li>
+                        <li>{{item.BaseCode}}</li>
+                        <li>{{item.BaseName}}</li>
+                        <li><i :class="{newAddStateTrue:!item.EnabledMark,newAddStateFalse:item.EnabledMark}"></i></li>
+                    </ul>
+                </div>
+            </div>
+             <!--辅助项类型页面-->
+            <auxiliary-type datalists="" @type-click="addTypeFinish" v-if="handleNav=='type'"></auxiliary-type>
+            <!--辅助项新增编辑页面-->
+            <handle-update :PhIdList="{name:handleNav,data:PhIdList,type:navActive}" v-if="handleNav=='add'||handleNav=='update'" @add-click="addFinish"></handle-update>
         </div>
-        <div class="auxiliary manageContent">
-            <div class="auxiliaryNav">
-                <p class="auxiliaryNavTitle">辅助类型</p>
-                <ul>
-                    <li @click.stop="navTabTurn(item)" :class="{active:navActive.BaseName==item.BaseName}" v-for="(item,index) of navTab" :key="index">{{item.BaseName}}</li>
-                </ul>
-            </div>
-            <div class="formData auxiliaryContent">
-                <ul>
-                    <li>序号</li>
-                    <li>编码</li>
-                    <li>名称</li>
-                    <li>启用/停用</li>
-                </ul>
-                <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item)" v-for="(item,index) of userInfo" :key="index">
-                    <li>{{index+1}}</li>
-                    <li>{{item.BaseCode}}</li>
-                    <li>{{item.BaseName}}</li>
-                    <li><i :class="{newAddStateTrue:!item.EnabledMark,newAddStateFalse:item.EnabledMark}"></i></li>
-                </ul>
-            </div>
-        </div>
-        <auxiliary-type :datalists="JSON.stringify(navTab)" @type-click="addFinish" v-if="handleNav=='type'"></auxiliary-type>
-        <handle-update :PhIdList="{name:handleNav,data:PhIdList,type:navActive}" v-if="handleNav=='add'||handleNav=='update'" @add-click="addFinish"></handle-update>
     </div>
 </template>
 
@@ -69,6 +73,12 @@
         methods:{
             unionSearch(){
                 //alert('输入的是:'+this.unionSearchValue)
+                // var queryfilter={
+                //     BaseCode:this.unionSearchValue,
+                //     BaseName:this.unionSearchValue
+                // }
+
+                this.getData('');
             },
             initInfoCss(){
                 for(var i in this.userInfo){
@@ -80,11 +90,12 @@
                     case 'add':
                         this.handleNav='add';
 
-                        var lastObject=this.userInfo[this.userInfo.length-1]||{BaseCode:'000'};
+                        //倒序排，获取第一项的 BaseCode
+                        var firstObject=this.userInfo[0]||{BaseCode:'000'};
 
                         this.PhIdList={
                             PhId:'',
-                            BaseCode:dealAddString(lastObject.BaseCode),
+                            BaseCode:dealAddString(firstObject.BaseCode),
                             BaseName:'',
                             EnabledMark:0
                         }
@@ -110,8 +121,10 @@
                 this.$forceUpdate();
                 this.PhIdList=item;
             },
+            /**
+             * 获取辅助项类别信息
+             */
             ajaxMode(){
-
                 let data = {
                     uid: this.uid,//this.uid获取到store中的uid************
                     orgid: this.orgid,//this.orgid获取到store中的orgid************
@@ -121,9 +134,14 @@
                 this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
                     .then(res=>{
 
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
+
                         this.userInfo=res.list;
                         this.navTab=res.type;
-                        //console.log( this.navTab)
+
                         if(!this.navTab.id){
                             this.navActive=this.navTab[0];
                         }
@@ -132,36 +150,61 @@
                         }
 
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{
+                        console.log(err)
+                        this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
+                    })
             },
 
             //切换辅助项分类**************************
             navTabTurn(item){
                 this.navActive=item;
+                //加载数据
+                this.getData('');
 
+            },
+             /**
+             * 获取辅助项信息
+             * query:查询参数
+             *  */
+            getData(query){
                 let data = {
                     uid: this.uid,
                     orgid: this.orgid,
                     typeId:this.navActive.PhId,
-                    infoData:null
+                    CodeOrName:this.unionSearchValue
                 };
-                this.$axios.get('/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId',{params:data})
+                this.$axios.get('/PVoucherAuxiliaryType/GetAuxiliaryQueryList',{params:data})
                     .then(res=>{
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
                         this.userInfo=res.list;
-                        this.navTab=res.type;
                         for(var i=0;i<this.userInfo.length;i++){
                             this.userInfoCssList[i]={checked:false};
                         }
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{
+                        console.log(err)
+                        this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
+                    })
+            },
+            addTypeFinish(val){
+                this.handleNav=false;
+                if(val){
+                    this.ajaxMode();
+                }
             },
             addFinish(val){
                 this.handleNav=val;
                 this.navTabTurn(this.navActive);
+                this.getData('');
                 //this.initInfoCss();
             },
+            //删除
             deleteBase(){
-                var url='/PVoucherAuxiliaryType/PostAddAuxiliary';
+
                 this.PhIdList.DeleteMark=1;
                 var data={
                     uid:this.uid,
@@ -169,23 +212,40 @@
                     infoData:this.PhIdList
                 }
 
-                this.$axios.post(url,data)
-                    .then(res=>{
-                        if(res.Status=='success'){
-                            this.ajaxMode();
+                this.$confirm('此操作将永久删除该辅助项, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post('/PVoucherAuxiliaryType/PostAddAuxiliary',data)
+                        .then(res=>{
+                            if(res.Status==='error'){
+                                this.$message.error(res.Msg);
+                                return
+                            }
+
+                            this.getData('');
                             this.initInfoCss();
-                            alert('删除成功!')
-                        }
-                    })
-                    .catch(err=>{console.log(err)})
+                            this.$message.success('删除成功!');  
+                        })
+                        .catch(err=>{
+                            console.log(err)
+                            this.$message({ showClose: true,message: "删除错误", type: "error"});
+                        })
+                }).catch((err) => {
+                    console.log(err)
+                    this.$message({ showClose: true,message: "删除错误", type: "error"});      
+                });
             }
         },
         created(){
             this.initInfoCss();
         },
         mounted(){
+            //加载辅助项类型
             this.ajaxMode();
         },
+        //计算
         computed:{
             addupdate(){
                 return {name:'',data:this.PhIdList}
@@ -196,6 +256,7 @@
                 user:state=>state.user
             })
         },
+        //组件
         components:{
             handleUpdate,
             auxiliaryType

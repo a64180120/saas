@@ -28,31 +28,26 @@ let base=ajaxhttp.base;
  *              跳转授权Token：过期时中断当前所有请求并跳转到对应页面获取Token。注意：跳转页面授权最佳实现应在授权页面点击触发
  */
 function checkToken(cancel, callback) {
-    if (!Auth.getToken()) {
-        // 自动获取Token
-        if (Auth.tokenTimeoutMethod == "getNewToken") {
-            // 如果当前有请求正在获取Token
-            if (getTokenLock) {
-                setTimeout(function() {
-                    checkToken(cancel, callback);
-                }, 500);
-            } else {
-                getTokenLock = true;
-                store.dispatch("user/getNewToken").then(() => {
-                    console.log("已获取新token");
-                    callback();
-                    getTokenLock = false;
-                });
-            }
+    var token_Cookies=Auth.getToken();
+    if (!token_Cookies) {
+
+        // 如果当前有请求正在获取Token
+        if (getTokenLock) {
+            setTimeout(function() {
+                checkToken(cancel, callback);
+            }, 500);
+        } else {
+            getTokenLock = true;
+            store.dispatch("user/getToken").then(() => {
+                console.log("已获取新token");
+                callback();
+                getTokenLock = false;
+            }).catch((error)=>{
+                console.log(error);
+                getTokenLock = false;
+            });
         }
-        // 跳转授权Token
-        // if (Auth.tokenTimeoutMethod == "jumpAuthPage" &&Auth.getUserInfoData()) {
-        //     if (router.currentRoute.path != "/auth") {
-        //         // BUG: 无法保证一定会中断所有请求
-        //         cancel();
-        //         router.push("/auth");
-        //     }
-        // }
+        
     } else {
         callback();
     }
@@ -92,7 +87,6 @@ service.interceptors.request.use(
 
         //let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
         //var new_header = Object.assign({},config_header, baseheader);  //合并对象
-
         config.headers = baseheader
 
         //POST传参序列化
@@ -102,11 +96,15 @@ service.interceptors.request.use(
 
         //Token校验
         // checkToken(cancel, function(){
-        //     Auth.setLoginStatus()
-        //     config.headers.Authorization = `${store.state.user.token}`
+        //     var token=Auth.getToken();
+        //     console.log(token);
+        //     //config.headers.Authorization = `${store.state.user.token}`
         // })
+
+
         //添加请求的url
         //stopRepeatRequest(config.url, cancel)
+
         return config;
     },
     err => {
