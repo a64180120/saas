@@ -84,9 +84,7 @@ export default {
         })
     },
     created() {
-        // this.getToken().then((res) => {
-        //     console.log("已获取新token")
-        // })
+        
     },
     watch: {
         //监听password变化 ，(debounce)停留0.3s获取组织信息
@@ -134,9 +132,7 @@ export default {
         // 初始化错误信息。保证单独点击input时可以弹出正确的错误提示
     },
     mounted(){
-        this.getToken().then((res) => {
 
-        })
     },
     methods: {
         ...mapActions({

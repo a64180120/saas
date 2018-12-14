@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
 import axios from "@/util/ajax";
 import Auth from "@/util/auth";
+import httpajax from "axios";
+import ajaxConfig from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
 
 //状态
@@ -68,34 +70,34 @@ const actions = {
     // 获取Token
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
-            
-            axios({
-                url: "/SysUser/GetToken",
-                method: "get",
+            let base=ajaxConfig.base;
+            let url=ajaxConfig.url;
+
+            httpajax.create(base).get('/SysToken/GetToken',{
                 params: {
-                    token: ''
+                    token: 'g6c'
                 }
             }).then(res => {
-                
-                if(res){
-                    if (res.Status !== "error") {
-                        var object = {
-                            token: res.Token,
-                            appKey: res.AppKey,
-                            appSecret: res.AppSecret
-                        };
-                        //用户信息缓存
-                        commit("setToken", object);
-                    }
-                    
+
+                if (res.status === 200) {
+                    var response=JSON.parse(res.data);
+                    var object = {
+                        token: response.Token,
+                        appKey: response.AppKey,
+                        appSecret: response.AppSecret
+                    };
+                    //用户信息缓存
+                    commit("setToken", object);
                 }else{
-                    alert('网络不通,请检查服务接口网络！.....')
+                    alert('网络不通:'+ url +',请检查服务接口网络！.....')
                 }
+
                 resolve(res);
-                
-            }).catch(error =>{
+
+        　　}).catch((error) =>{
                 console.log(error)
-                reject(error)
+                //错误
+                reject(error);
             });
         });
     },
