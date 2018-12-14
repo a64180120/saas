@@ -17,18 +17,19 @@
                 <li class="flexPublic">
                     <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
                     <el-upload
-                        class="upload-demo flexPublic"
-                        action="https://jsonplaceholder.typicode.com/posts/"
-                        :on-preview="handlePreview"
-                        :on-remove="handleRemove"
-                        :before-remove="beforeRemove"
-                        multiple
-                        :limit="3"
-                        :on-exceed="handleExceed"
-                        :file-list="fileList">
-                        <el-button size="small" type="primary">点击上传</el-button>
-                        <div title="只能上传jpg/png文件，且不超过500kb" slot="tip" class="el-upload__tip"></div>
+                        ref="uploadChairman"
+                        class="avatar-uploader"
+                        action=""
+                        :show-file-list="false"
+                        :before-upload="beforeAvatarUpload"
+                        :http-request='uploadFileMethodChairman'>
+                        <img v-if="orgForm.ChairmanAttachment" :src="picUrl+orgForm.ChairmanAttachment" class="avatar">
+                        <i v-else  class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
+                    <!-- 附件弹出框 -->
+                    <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
+                        <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+                    </el-dialog>
                 </li>
             </ul>
         </div>
@@ -104,7 +105,7 @@
                                         <div :title="assist.BaseName">{{assist.BaseName}}</div>
                                         <div class="selectContainer">
                                             <select  v-model="assistSels[index2]">
-                                                <option :value="val" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
+                                                <option :value="val" v-for="(val,index) of assist.Children" :key="index">{{val.BaseName}}</option>
                                             </select>
                                         </div>
                                     </li>
@@ -190,7 +191,7 @@
             <ul class="flexPublic ">
                 <li><label>财务主管: <span>{{PFinancePerson}}</span> </label></li>
                 <li><label>记账:<span>{{PKeepingPerson}}</span></label></li>
-                <li><label>审核: <span>{{PAuditor}}</span></label></li>
+                <li><label>审核: <span>{{Verify?'已审核':'未审核'}}</span></label></li>
                 <li><label>制单: <span>{{PMakePerson}}</span></label></li>
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
@@ -201,6 +202,8 @@
 <script>
     import searchSelect from './searchSelect'
     import {mapState, mapActions} from 'vuex'
+    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+    import pictureUpload from "@/components/upload";
     export default {
         name: "voucher",
         props:{
@@ -223,6 +226,38 @@
             jiefang:'',
             daifang:'',
             PersistentState:'1',
+            //附件****************
+            loading: false,
+            fileVisible:false,
+            imglist:[
+                { 
+                    PhId:0,
+                    BTable:'gcw3_voucher_mst',
+                    BName:'aa.jpg',
+                    BType:'.jpg',
+                    BSize:'203',
+                    BFilebody:'',
+                    BUrlPath:'/UpLoadFiles/Voucher/2018-12-07/62ad64e635a3435d82b6cc1c770124f7.jpg',
+                    BRemark:'',
+                    RelPhid:''
+                },
+            ],
+            orgForm:{
+                PhId:0,
+                OrgName:'',
+                EnterpriseCode:'',
+                EnterpriseAttachment:'',
+                Address:'',
+                TelePhone:'',
+                ParentName:'',
+                AccountSystem:'',
+                EnableTime:'',
+                Chairman:'',
+                ChairmanAttachment:'',
+                Director:'',
+                ServiceStartTime:'',
+                ServiceEndTime:''
+            },
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
@@ -274,7 +309,6 @@
                     var account;
                     var item;
                     for( var info of this.voucherInfo){
-                        console.log('jishu',1)
                         if(info.PhId){
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
@@ -375,7 +409,6 @@
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
-                    console.log(this.fatherData)
                     return {
                         Mst:this.fatherData,
                         Attachements:this.fileList
@@ -429,6 +462,7 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.Verify=data.Verify;
                 this.PDate=data.PDate;
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
@@ -626,18 +660,102 @@
                 this.addIcon[index].checked=true;
                 this.$forceUpdate();
             },
-            handleRemove(file, fileList) {//预留文件上传**************************
-                console.log(file, fileList);
+            //附件上传************************************
+            //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
+            beforeAvatarUpload(file) {
+                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isRightType) {
+                    this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
+                    return false
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false
+                }
             },
-            handlePreview(file) {
-                console.log(file);
+            uploadFileMethodEnterprise(param) {
+                let fileObject = param.file;
+                let formData = new FormData();
+                formData.append('id', this.orgForm.PhId)
+                formData.append("file", fileObject);
+
+                this.uploadFile(formData).then(res => {
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    //回传的上传临时文件
+                    if(res.Data[0]){
+                        this.orgForm.EnterpriseAttachment = res.Data[0];
+                        this.$message.success("上传成功");
+                    }
+
+                }).catch(error => {      
+                    console.log(error);
+                    this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+                })
             },
-            handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            uploadFileMethodChairman(param){
+                let fileObject = param.file;
+                let formData = new FormData();
+                formData.append('id', this.orgForm.PhId)
+                formData.append("file", fileObject);
+
+                this.uploadFile(formData).then(res => {
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+
+                    //回传的上传临时文件
+                    if(res.Data[0]){
+                        this.orgForm.ChairmanAttachment = res.Data[0];
+                        this.$message.success("上传成功");
+                    }
+
+                }).catch(error => {      
+                    console.log(error);
+                    this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+                })
             },
-            beforeRemove(file, fileList) {
-                return this.$confirm(`确定移除 ${ file.name }？`);
-            }
+
+            testFile(){
+                this.fileVisible=true;
+            },
+            removeimg(item,deleValue) {
+                this.imglist=item;
+                console.log(deleValue)
+
+                var param={
+                    PhId:deleValue.phid,
+                    BTable:'gcw3_voucher_mst',
+                    BUrlPath:deleValue.imgPath
+                };
+
+                this.$axios({
+                    url: '/PVoucherAttachment/PostDeleteFile',
+                    method: "post",
+                    data: param,
+                }).then(res => {
+                if(res.Status==="error"){
+                        this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                        return;
+                    }
+
+                }).catch(error => {
+                    console.log(error);
+                    this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
+                });
+            },
+            uploadimg(item) {
+                //console.log(item)
+                this.imglist.push(item);
+            },
+            ...mapActions({
+                uploadFile: 'uploadFile/Orgupload'
+            }),
         },
         computed:{
             countJie:{
@@ -672,7 +790,10 @@
             ...mapState({
                 orgid: state => state.user.orgid,
                 orgcode: state => state.user.orgcode
-            })
+            }),
+            picUrl:function(){
+             return ajaxhttp.url;
+            }
         },
         watch:{
             jiefang(){
@@ -682,6 +803,10 @@
             daifang(){
                 var dai=document.querySelector(".count>li:nth-child(3)");
                 this.moneyTurn(this.daifang,dai.children);
+            },
+            "orgForm.ServiceTime"(val){           
+                this.orgForm.ServiceStartTime=''
+                this.orgForm.ServiceEndTime=''
             }
         },
         components:{
@@ -1008,5 +1133,16 @@
         color:#fff;
 
     }
+    .avatar-uploader{
+        position:relative;
+        width:40px;
+        height:30px;
+        left:0;
+        top:0;
+        background: url("../../assets/icon/f90c871a-13a3-4900-9b6f-ff9edc5c98c5.svg") no-repeat;
+        background-size:40px 30px;
+        z-index:2;
+    }
+    
 
 </style>

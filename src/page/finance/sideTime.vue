@@ -1,4 +1,5 @@
 <template>
+<!--17-->
     <div class="asideNav"><!--右侧时间选择组件-->
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
@@ -97,8 +98,7 @@ export default {
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{
-                        
+                    .then(res=>{                        
                         this.checkedTime=res.Record[0].JEnableMonth+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
@@ -130,10 +130,10 @@ export default {
                             this.totalRows=res.totalRows;
                             this.pagesize=res.size;
                             this.pageindex=res.index;
-                            this.voucherDataList.data={
-                                Mst:this.newAddList[this.count]
-                            };
-                            this.resetVoucher();
+                            // this.voucherDataList.data={
+                            //     Mst:this.newAddList[this.count]
+                            // };
+                            // this.resetVoucher();
                         }
                     })
                     .catch(err=>{console.log(err);loading1.close();})
@@ -144,6 +144,7 @@ export default {
                 this.year=year;
                 this.sideDate=year+'-'+i;
                 this.getvoucherList('reset');
+                this.$emit("time-click",{sideDate:this.sideDate})
             },
             //鼠标滚轮移动月份选择****************
             monthsSel($event){
@@ -274,6 +275,7 @@ export default {
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
                 this.getvoucherList('reset');
+                this.$emit("time-click",{sideDate:this.sideDate})
             },
         //会计期内容切换************************************
             checkOutSel(val){
@@ -303,12 +305,10 @@ export default {
                 }
                 this[name]=val;
             },
-            //会计期弹窗年月份选择*****************
-            yearMonthClick($event){
-                this.month=parseInt($event.target.innerHTML)
-                this.sideDate=this.year+'-'+this.month;
-                this.getvoucherList('reset');
-            },
+            //ref调用会计期*************
+            refSideDate(){
+                return this.sideDate;
+            }
     },
     computed:{
          ...mapState({

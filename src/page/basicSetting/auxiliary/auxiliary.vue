@@ -58,17 +58,29 @@
                 handleNav:'',    //类型 add update
                 
                 navActive:{id:'',BaseName:'部门'},
-                navTab:[
-                    {PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
-                    {PhId:112,BaseCode:'02',EnabledMark:1,BaseName:'往来单位'},
-                    {PhId:113,BaseCode:'03',EnabledMark:0,BaseName:'往来个人'},
-                    {PhId:114,BaseCode:'04',EnabledMark:0,BaseName:'项目'}
-                ]
+                navTab:[]
             }
         },
         methods:{
             unionSearch(){
-                //alert('输入的是:'+this.unionSearchValue)
+                var data={
+                    TypeId:this.navActive.PhId,
+                    CodeOrName:this.unionSearchValue
+                }
+                const loading1=this.$loading();
+                this.$axios.get('PVoucherAuxiliaryType/GetAuxiliaryQueryList',{params:data})
+                .then(res=>{
+                    if(res.Status=='success'){
+                        if(res.list.length<1){
+                            this.$message('未找到符合条件的辅助项!')
+                        }
+                        this.userInfo=res.list;
+                    }else{
+                        this.$message('搜索失败!')
+                    }
+                    loading1.close();
+                })
+                .catch(err=>{console.log(err);loading1.close})
             },
             initInfoCss(){
                 for(var i in this.userInfo){
@@ -120,10 +132,8 @@
                 var vm=this;
                 this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
                     .then(res=>{
-
                         this.userInfo=res.list;
                         this.navTab=res.type;
-                        //console.log( this.navTab)
                         if(!this.navTab.id){
                             this.navActive=this.navTab[0];
                         }
@@ -134,11 +144,10 @@
                     })
                     .catch(err=>console.log(err))
             },
-
+    
             //切换辅助项分类**************************
             navTabTurn(item){
                 this.navActive=item;
-
                 let data = {
                     uid: this.uid,
                     orgid: this.orgid,
@@ -147,8 +156,9 @@
                 };
                 this.$axios.get('/PVoucherAuxiliaryType/GetAuxiliaryListByTypeId',{params:data})
                     .then(res=>{
+                        console.log(res)
                         this.userInfo=res.list;
-                        this.navTab=res.type;
+                        // this.navTab=res.type;
                         for(var i=0;i<this.userInfo.length;i++){
                             this.userInfoCssList[i]={checked:false};
                         }
@@ -156,9 +166,12 @@
                     .catch(err=>console.log(err))
             },
             addFinish(val){
-                this.handleNav=val;
-                this.navTabTurn(this.navActive);
-                //this.initInfoCss();
+                if(val=='type'){
+                    this.ajaxMode();
+                }else{
+                    this.navTabTurn(this.navActive);
+                }   
+                this.handleNav='';
             },
             deleteBase(){
                 var url='/PVoucherAuxiliaryType/PostAddAuxiliary';

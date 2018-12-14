@@ -3,7 +3,7 @@
         <div class="newAddContent">
             <div class="newAddTitle flexPublic">
                 <span>类型分类</span>
-                <span @click.stop="newAdd()"></span>
+                <span @click.stop="newAdd(false)"></span>
             </div>
             <ul class="contentItem">
                 <li>
@@ -50,7 +50,7 @@
             </div>
             <div class="itemBtnCon">
                 <div @click.stop="newAdd(true)">保存</div>
-                <div @click.stop="newAdd()">取消</div>
+                <div @click.stop="newAdd(false)">取消</div>
             </div>
         </div>
     </div>
@@ -69,6 +69,7 @@
       created(){
         this.dataList=JSON.parse(this.datalists);
         this.initCss();
+        console.log(this.dataList)
       },
       data(){
         return {
@@ -89,6 +90,7 @@
       },
       methods:{
           newAdd(bool){
+              console.log(this.dataList)
               if(bool){
                   for(var del of this.deleteList){
                       this.dataList.push(del);
@@ -98,17 +100,22 @@
                       orgid:this.orgid,
                       infoData:this.dataList
                   };
-
+                    const loading1=this.$loading();
                   var vm=this;
                   this.$axios.post('/PVoucherAuxiliaryType/PostAddAuxiliaryType',data)
                       .then(res=>{
                           if(res.Status=='success'){
-                              vm.$emit('type-click',false);
+                              vm.$emit('type-click','type');
                               //alert('保存成功!')
                               this.$message.success("保存成功!");
+                          }else{
+                              vm.$emit('type-click','type');
+                              //alert('保存成功!')
+                              this.$message.success("保存失败!");
                           }
+                          loading1.close();
                       })
-                      .catch(err=>console.log(err))
+                      .catch(err=>{loading1.close();console.log(err)})
               }else{
                   this.$emit('type-click',false);
               }
@@ -124,9 +131,6 @@
                 this.$message.warning("请填写类型名称！");
                 return;
             }
-
-            // 获取
-            //debugger;
 
             var lastObject=this.dataList[this.dataList.length-1];
           
