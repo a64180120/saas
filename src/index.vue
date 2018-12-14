@@ -28,6 +28,14 @@ export default {
         this.$nextTick(() => {
             setTheme("theme-default")
             this.$store.commit("setThemeColor", "theme-default")
+            //加载token信息
+            if(!Auth.getToken()){
+                this.$store.dispatch('user/getToken').then((res) => {
+                    console.log(res)
+                }).catch((error) =>{
+                    alert('网络不通,请检查服务接口网络！.....')
+                })
+            }
         })
     }
 }

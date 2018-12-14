@@ -366,13 +366,13 @@
         },
         unionInput(bool){
           if(bool){
-            if(!this.unionName){
+            if(!this.OrgName){
                 this.unionCss.name=true;
             }else{
                 this.unionCss.name=false;
             }
           }else{
-            if(!this.unionId){
+            if(!this.EnterpriseCode){
               this.unionCss.id=true;
             }else{
               this.unionCss.id=false;
@@ -391,9 +391,9 @@
                 }
               }
 
-              formData.append('unionId', this.unionId);
+              formData.append('EnterpriseCode', this.EnterpriseCode);
               formData.append('file', this.file);
-              this.$axios.post("http://127.0.0.1:666/trip/planerec", this.unionId, config)
+              this.$axios.post("/trip/planerec", this.EnterpriseCode, config)
                   .then(console.log('finish'))
             }else{
               alert('请输入工会名称和统一社会信用代码')
@@ -430,7 +430,7 @@
             orgid: "0",
             infoData: page
           };
-          this.$axios.post('http://10.0.45.51:7758/api/GCW/SysOrganize/PostAdd',data)
+          this.$axios.post('/SysOrganize/PostAdd',data)
             .then(res=>{
               if(res.Status=='success'){
                 this.$router.push({path:'/'})

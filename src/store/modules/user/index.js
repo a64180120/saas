@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
 import axios from "@/util/ajax";
 import Auth from "@/util/auth";
+import httpajax from "axios";
+import ajaxConfig from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
 
 //状态
@@ -68,34 +70,33 @@ const actions = {
     // 获取Token
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
-            
-            axios({
-                url: "/SysUser/GetToken",
-                method: "get",
+            let base=ajaxConfig.base;
+            let url=ajaxConfig.url;
+
+            httpajax.create(base).get('/SysToken/GetToken',{
                 params: {
-                    token: ''
+                    token: 'g6c'
                 }
             }).then(res => {
-                
-                if(res){
-                    if (res.Status !== "error") {
-                        var object = {
-                            token: res.Token,
-                            appKey: res.AppKey,
-                            appSecret: res.AppSecret
-                        };
-                        //用户信息缓存
-                        commit("setToken", object);
-                    }
-                    
+                if (res.status === 200) {
+                    var response=JSON.parse(res.data);
+                    var object = {
+                        token: response.Token,
+                        appKey: response.AppKey,
+                        appSecret: response.AppSecret
+                    };
+                    //用户信息缓存
+                    commit("setToken", object);
                 }else{
-                    alert('网络不通,请检查服务接口网络！.....')
+                    alert('网络不通:'+ url +',请检查服务接口网络！.....')
                 }
+
                 resolve(res);
-                
-            }).catch(error =>{
+
+        　　}).catch((error) =>{
                 console.log(error)
-                reject(error)
+                //错误
+                reject(error);
             });
         });
     },
@@ -172,49 +173,37 @@ const actions = {
             menuInfo = Auth.getMenuStatus();
 
             // 重新登录时校验Token是否存在，若不存在则获取
-            if (!tokenInfo && !userInfo) {
-                //token
-                dispatch("getNewToken").then(() => {
+
+            //token
+            if(!tokenInfo){
+                dispatch("getToken").then(() => {
                     //commit("setToken", state.token);
                 });
-                //用户
+            }else{
+                //设置用户 state ,重新加载用户缓存
+                commit("setToken", tokenInfo);
+            }
+            //用户
+            if(!userInfo){
                 dispatch("loginByPhone").then(() => {
 
                 });
+            }else{
+                //设置用户 state ,重新加载用户缓存
+                commit("setUserInfo", userInfo);
+            }
 
-                //菜单
+            //菜单
+            if(!menuInfo){
                 dispatch("getNavList").then(() => {
 
                 });
-
-            } else {
+            }else{
                 //设置用户 state ,重新加载用户缓存
-                commit("setToken", tokenInfo);
-                commit("setUserInfo", userInfo);
-                if(menuInfo){
-                    commit("setNavList", menuInfo);
-                }
+                commit("setNavList", menuInfo);
             }
+            
             resolve();
-        });
-    },
-
-    // 获取新Token
-    getNewToken({ commit, state }) {
-        return new Promise((resolve, reject) => {
-            axios({
-                url: "/SysUser/GetToken",
-                method: "get",
-                param: {
-                    token: state.token
-                }
-            }).then(res => {
-                commit("setToken", res.token);
-                resolve();
-            }).catch(error =>{
-                console.log(error)
-                reject(error)
-            });
         });
     },
 

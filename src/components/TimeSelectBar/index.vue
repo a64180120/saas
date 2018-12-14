@@ -43,7 +43,7 @@
                 <ul id="Month">
                     <template v-for="n in 12">
                         <li :class="{'selectMonth':n==choosedMonth,'uncatchMont':n>currentmonth&&choosedYear==currentyear}"
-                            @click="(n>currentmonth&&choosedYear==currentyear)?choosedMonth:choosedMonth=n"
+                            @click="chosedataT(n)"
                         >{{n}}月</li>
                     </template>
                 </ul>
@@ -57,8 +57,8 @@
                 <input id="plus"type="button" value="+" style="color:#FFF; width:24px; background:#45c0f7; border:none;" @click="jiezhangMonth<12?jiezhangMonth++:12" />
                 <div class="anniu">
                     <ul>
-                        <li style="margin-left:26px;" @click="showTogg">确认</li>
-                        <li @click="showTogg">取消</li>
+                        <li style="margin-left:26px;" @click="yearsTrue('check',jiezhangMonth)">确认</li>
+                        <li @click="yearsTrue(false)">取消</li>
                     </ul>
                 </div>
             </div>
@@ -71,8 +71,8 @@
                 <input id="plus1"type="button" value="+" style="color:#FFF; width:24px; background:#45c0f7; border:none;" @click="fanjiezhangMonth<12?fanjiezhangMonth++:12"/>
                 <div class="anniu">
                     <ul>
-                        <li style="margin-left:26px;" @click="showTogg">确认</li>
-                        <li @click="showTogg">取消</li>
+                        <li style="margin-left:26px;" @click="yearsTrue('uncheck',fanjiezhangMonth)">确认</li>
+                        <li @click="yearsTrue(false)">取消</li>
                     </ul>
                 </div>
             </div>
@@ -81,6 +81,7 @@
 </template>
 
 <script>
+    import {mapState, mapActions} from 'vuex'
     export default {
         name: "timeSelectBar",
         data(){
@@ -96,10 +97,19 @@
               showTog:'none',
               scrollTop:0,
               monthsSelCss:'kuaiji',
+              nowTime:new Date,
+              checkedTime:'',//下一个结账月*******
           }
         },
+        computed:{
+            ...mapState({
+                orgid: state => state.user.orgid,
+                orgcode: state => state.user.orgcode,
+                uid:state=>state.user.userid
+            })
+        },
         mounted(){
-
+                this.getChecked();
                 let currentYear = new Date();
                 let currentyear=currentYear.getFullYear(currentYear);
                 let currentMonth=currentYear.getMonth()+1;
@@ -133,7 +143,74 @@
                     'choosedMonth':this.choosedMonth
                 }
                 this.$emit('item-click',data)
-            }
+            },
+            /*月份点击事件*/
+            chosedataT:function(n){
+                console.log(n);
+                (n>this.currentmonth&&this.choosedYear==this.currentyear)?this.choosedMonth:this.choosedMonth=n;
+                let data={
+                    'choosedYear':this.choosedYear,
+                    'choosedMonth':this.choosedMonth
+                }
+                this.$emit('item-click',data)
+            },
+//获取当前结账的最新月份************
+            getChecked(){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
+                }
+                this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
+                    .then(res=>{
+                        console.log(res);
+                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                        //this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                        //this.year=this.sideDate.split('-')[0];
+                        this.choosedMonth=this.checkedTime;
+                    })
+                    .catch(err=>console.log(err))
+            },
+            //会计期[反]结账确认选择*****************************
+            yearsTrue(str,val){
+                if(str=='check'||str=='uncheck'){
+                    this.checkOut(str,val);
+                }else{
+                    this.showTog='none';
+                }
+            },
+            //结账功能 //反结账功能*****************************************
+            checkOut(str,val){
+                var t;
+                var url;
+                if(str=='check'){
+                    url='/PBusinessConfig/UpdateBusinessConfig';
+                }else if(str=='uncheck'){
+                    console.log(this.fanjiezhangMonth+'=='+(this.checkedTime-1));
+                    if(this.fanjiezhangMonth>this.checkedTime-1){
+                        this.$message('当前月份还未结账,无法反结账!');
+                        return;
+                    }
+                    url='/PBusinessConfig/UnUpdateBusinessConfig';
+                }
+                t=this.currentyear+'-'+val
+                var data={
+                    orgid:this.orgid,
+                    uid:this.uid,
+                    dateTime:t
+                }
+                const loading1=this.$loading();
+                this.$axios.get(url,{params:data})
+                    .then(res=>{
+                        loading1.close();
+                        if(res.Status=='success'){
+                            this.$message('结账成功!');
+                        }else{
+                            this.$message('结账失败!');
+                        }
+                    })
+                    .catch(err=>{console.log(err);loading1.close();})
+            },
         }
     }
 

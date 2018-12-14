@@ -1,23 +1,23 @@
 <template>
-    <div class="manageContent">
+    <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
                 <ul class="flexPublic">
                     <li class="flexPublic">
-                        <div>账期:</div>
-                        <div class="block selectContainer">
-                            <el-date-picker
-                                v-model="date1"
-                                type="date"
-                                placeholder="选择日期">
-                            </el-date-picker>
-                        </div>
+                        <!--<div>账期:</div>-->
+                        <!--<div class="block selectContainer">-->
+                            <!--<el-date-picker-->
+                                <!--v-model="date1"-->
+                                <!--type="date"-->
+                                <!--placeholder="选择日期">-->
+                            <!--</el-date-picker>-->
+                        <!--</div>-->
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="changeBtnC">{{changeBtn.title}}</el-button >
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-mail" @click="changeBtnC">{{changeBtn.title}}</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
                 </ul>
             </div>
             <div class="formData" id="form1" ref="printFrom">
@@ -73,7 +73,7 @@
                             <input disabled type="number" v-bind:value="item.BudgetTotal">
                         </li>
                         <li>
-                            其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-on:input="inputDicription">
+                            其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
                     </ul>
                 </template>
@@ -205,7 +205,8 @@
                 code_firstCount:[],//一级科目数据对应的合计数
                 specialSubIndex:[],//特殊科目对应的下标数组，用于计算
                 date1:'',
-                proofType:'0'
+                proofType:'0',
+                loading: false,
             }
         },
         components: {TimeSelectBar},
@@ -315,11 +316,13 @@
                     "orgid":this.orgid,
                     "Year":  this.getParamTime(this.date1).substring(0,4),
                     "OrgIds": this.orgid,
-                }
+                };
+                this.loading=true;
                 this.$axios.get(
                     'PSubjectBudget/GetBeginYear',
                     {params:data}
                 ).then(res=>{
+                    this.loading=false;
                     console.log(res.Record);
                     let  code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
@@ -355,6 +358,7 @@
                     this.code_firstCount = code_firstCount;
                     this.specialSubIndex = specialSubIndex;
                 }).catch(res=>{
+                    this.loading=false;
                     console.log(res);
                 })
             },
@@ -362,8 +366,8 @@
             * 修改保存
             * */
             saveChange:function(){
-                console.log('11111');
-                console.log(this.orgcode);
+                let that=this;
+                this.loading=true;
               this.$axios.post(
                   'PSubjectBudget/PostSave',
                   {
@@ -372,8 +376,10 @@
                       "infodata": this.budgetList
                   }
               ).then(function(res){
+                  that.loading=false;
                   alert(res.Msg);
               }).catch(function(err){
+                  that.loading=false;
                   console.log(err);
               })
 
@@ -467,17 +473,7 @@
             },
             // 打印
             printContent(e){
-                // let subOutputRankPrint = this.$refs.printFrom;
-                // console.log(subOutputRankPrint.innerHTML);
-                // let newContent =subOutputRankPrint.innerHTML;
-                // let oldContent = document.body.innerHTML;
-                // document.body.innerHTML = newContent;
-                // window.print();
-                // window.location.reload();
-                // document.body.innerHTML = oldContent;
-                // return false;
-
-                this.$print(this.$ref.printFrom) // 使用
+                this.$print(this.$refs.printFrom) // 使用
             }
 
         }

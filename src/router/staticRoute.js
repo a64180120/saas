@@ -11,7 +11,7 @@ const staticRoute = [
     },
     {
         path:'/indexfinance',
-        component: () =>import("../page/finance/addVoucher")
+        component: () =>import("../page/finance/voucherAdd")
     },
     {
         path:'/index',
@@ -80,7 +80,7 @@ const staticRoute = [
             {
                 //新增凭证
                 path: "voucherAdd",
-                component: () =>import( "../page/finance/addVoucher"),
+                component: () =>import( "../page/finance/voucherAdd"),
                 meta:{ requireAuth:true,isMenu:true,type:'page'}
             },
             {
@@ -88,14 +88,14 @@ const staticRoute = [
                 path: "voucherList",
                 component: () =>import("../page/finance/voucherList"),
                 meta:{ requireAuth:true,isMenu:true,type:'page',name:'凭证管理'}
-            },
-            {
-                //查看凭证
-                name:"voucherDel",
-                path: "voucherDel/:list",
-                component: () =>import("../page/finance/voucherDel"),
-                meta:{ requireAuth:true,type:'button',name:'查看凭证'}
             }
+            // {
+            //     //查看凭证
+            //     name:"voucherDel",
+            //     path: "voucherDel/:list",
+            //     component: () =>import("../page/finance/voucherDel"),
+            //     meta:{ requireAuth:true,type:'button',name:'查看凭证'}
+            // }
         ]
     },
     {
@@ -232,7 +232,25 @@ const staticRoute = [
                 path: "execute",
                 component: () =>import("../page/budget/execute"),
                 meta:{ requireAuth:true,isMenu:true ,type:'page'}
-            }
+            },
+            {
+                //预算表
+                path: "budget",
+                component: () =>import( "../page/budget/budget"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //调整表
+                path: "adjustbudget",
+                component: () =>import( "../page/budget/adjustbudget"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
+            {
+                //决算表
+                path: "actualbudget",
+                component: () =>import( "../page/budget/actualbudget"),
+                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+            },
         ]
     },
     {

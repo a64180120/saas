@@ -1,0 +1,6 @@
+/dist
+/node_modules
+/.vscode
+/test
+/.idea
+/src/util/ajaxConfig.js

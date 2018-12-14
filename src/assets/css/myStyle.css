@@ -16,6 +16,7 @@ ul{
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
+    position:relative;
 }
 .inputContainer{
     width:100%;
@@ -91,7 +92,7 @@ ul{
     border:0;
 }
 .searcherBtn{
-    height:30px;
+    height:32px;
     width:60px;
     text-align: center;
     line-height: 30px;
@@ -251,5 +252,10 @@ ul{
 .btn:hover{
     background: #fff;
     color:#333;
+}
+.voucherHead .el-upload.el-upload--text{
+    background: none;
+    position:relative;
+     z-index:1;
 }
 
