@@ -67,20 +67,10 @@
         datalists:''
       },
       created(){
-<<<<<<< HEAD
-        this.GetVoucherAuxiliaryType();
-        console.log(11)
         //this.dataList=JSON.parse(this.datalists);
-        this.initCss();console.log(22)
-        //console.log(this.dataList)
-=======
-        //this.dataList=JSON.parse(this.datalists);
-        
-        
       },
       mounted(){
         this.getData();
->>>>>>> 97288583f19cb3e8070f23cff85693857d6dbff3
       },
       data(){
         return {
@@ -109,32 +99,10 @@
                 this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryType',{params:data})
                     .then(res=>{
 
-<<<<<<< HEAD
-          },
-
-            //获取辅助项类型********************
-            GetVoucherAuxiliaryType(){
-                var data={
-                    orgid:this.orgid
-                }
-                var vm=this;
-                const loading1=this.$loading();
-                this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryType',{params:data})
-                    .then(res=>{
-                        this.dataList=res.type;
-                        this.initCss();
-                        loading1.close();
-                    })
-                    .catch(err=>{console.log(err);loading1.close()})
-            }
-          ,
-          fastCreate(){
-=======
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
                             return
                         }
->>>>>>> 97288583f19cb3e8070f23cff85693857d6dbff3
 
                         this.dataList=res.type;
                         this.initCss();
@@ -183,40 +151,10 @@
             //立即创建
             fastCreate(){
 
-<<<<<<< HEAD
-            this.$nextTick(() => {
-                this.formData.BaseCode='';
-                this.formData.BaseName='';
-                this.formData.EnabledMark=0;
-            })
-            this.initCss();
-            this.$forceUpdate();
-              
-          },
-          deleteData(item,index){
-            item.DeleteMark=1;
-            this.deleteList.push(item);
-            this.dataList.splice(index,1);
-            this.initCss();
-            this.btnShow('delete');
-          },
-          initCss(){
-              for(var i in this.dataList){
-                  this.updateCss[i]={checked:false}
-                  this.deleteCss[i]={checked:false}
-              }
-              console.log(this.updateCss,this.deleteCss)
-          },
-          btnShow(val){
-            if(val=='delete'){
-                for(var del of this.deleteCss){
-                    del.checked=!del.checked;
-=======
                 //辅助项类型最多50个
                 if(this.dataList.length>=50){
                     this.$message.warning("当前组织辅助项数量已到上限!");
                     return;
->>>>>>> 97288583f19cb3e8070f23cff85693857d6dbff3
                 }
                 //名称不能为空
                 if(this.formData.BaseName===''){

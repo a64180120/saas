@@ -60,8 +60,14 @@
                     {PhId:'222',BaseCode:'03',BaseName:'财务科',EnabledMark:1},
                 ],
                 handleNav:'',    //类型 add update
+                
                 navActive:{id:'',BaseName:'部门'},
-                navTab:[]
+                navTab:[
+                    {PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
+                    {PhId:112,BaseCode:'02',EnabledMark:1,BaseName:'往来单位'},
+                    {PhId:113,BaseCode:'03',EnabledMark:0,BaseName:'往来个人'},
+                    {PhId:114,BaseCode:'04',EnabledMark:0,BaseName:'项目'}
+                ]
             }
         },
         methods:{
@@ -83,14 +89,10 @@
                 switch(val){
                     case 'add':
                         this.handleNav='add';
-<<<<<<< HEAD
-                        var lastObject=this.userInfo[this.userInfo.length-1]||{BaseCode:'000'};
-=======
 
                         //倒序排，获取第一项的 BaseCode
                         var firstObject=this.userInfo[0]||{BaseCode:'000'};
 
->>>>>>> 97288583f19cb3e8070f23cff85693857d6dbff3
                         this.PhIdList={
                             PhId:'',
                             BaseCode:dealAddString(firstObject.BaseCode),
@@ -153,7 +155,7 @@
                         this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
                     })
             },
-    
+
             //切换辅助项分类**************************
             navTabTurn(item){
                 this.navActive=item;
