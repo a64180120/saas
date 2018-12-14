@@ -34,7 +34,11 @@
                 <a @click.prevent="addVoucher('reset')"><li>凭证号重排</li></a>
             </ul>
         </div>
-        <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+        <!--凭证组件*******************-->
+        <div ref="print">
+                <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+        </div>
+       
         <!--右侧时间选择组件-->
         <div class="asideNav">
             <div @click.stop="yearSelShow"><span>会计期</span></div>
@@ -144,6 +148,7 @@
     import voucher from './voucher'
     import {mapState, mapActions} from 'vuex'
     import voucherTemp from './vouchertemp'
+    import { getLodop } from '@/plugins/Lodop/LodopFuncs';
     export default {
         data(){return {
             val1:'',
@@ -243,10 +248,14 @@
                             this.resetShow=true;
                         }
                         break;
+                    case 'print':
+                        this.voucherData();
+                        this.keepVoucher('print');
+                        break;
                 }
             },
             //保存凭证*******************
-            keepVoucher(){
+            keepVoucher(str){
                 var url='Add';
                 var Vdata=this.voucherDataList.data;
                if(Vdata.Mst.Dtls.length<=0){
@@ -282,6 +291,9 @@
                            console.log(res)
                            if (res.Status == 'success') {
                                this.$message('保存成功!')
+                               if(str=='print'){
+                                   this.printContent();
+                               }
                            } else {
                                this.$message('保存失败,请重试!')
                            }
@@ -408,7 +420,6 @@
                     keyword:this.searchVal,
                     queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
                 }
-                console.log(data)
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         loading1.close();
@@ -456,7 +467,7 @@
                     })
                     .catch(err=>console.log(err))
             },
-          //前后快速翻页定位凭证****************
+            //前后快速翻页定位凭证****************
             getvoucher(str){
                 if(str=='pre'){
                     if(this.count>0){
@@ -709,6 +720,25 @@
             //做下月账****************
             nextMonthShow(){
                 this.nextMonthCss=true;
+            },
+            //打印******************
+            printLodop() {
+                const me = this
+                var html=this.$refs.print.innerHTML; 
+                console.log(html) 
+                let  LODOP = getLodop();
+                LODOP.PRINT_INIT("凭证信息");      //首先一个初始化语句
+                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+                LODOP.SET_PRINT_STYLE("Bold", 1);
+                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "凭证信息");
+                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+                //LODOP.PRINT();
+                LODOP.PREVIEW();
+            },
+             // 打印
+            printContent(e){
+                this.$print(this.$refs.print) // 使用
             }
         },
         computed:{
