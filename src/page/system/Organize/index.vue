@@ -86,7 +86,7 @@
             </el-container>
             <!-- 附件弹出框 -->
             <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
-                <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+                <picture-upload class="pictrueUpload" @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
             </el-dialog>
         </div>
     </div>
@@ -414,5 +414,9 @@ export default {
 
 .orgform .el-form-item{
     margin-bottom: 2px;
+}
+.pictrueUpload{
+    width:100%;
+    height:100%;
 }
 </style>

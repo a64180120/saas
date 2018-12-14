@@ -16,16 +16,7 @@
                 </li>
                 <li class="flexPublic">
                     <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
-                    <el-upload
-                        ref="uploadChairman"
-                        class="avatar-uploader"
-                        action=""
-                        :show-file-list="false"
-                        :before-upload="beforeAvatarUpload"
-                        :http-request='uploadFileMethodChairman'>
-                        <img v-if="orgForm.ChairmanAttachment" :src="picUrl+orgForm.ChairmanAttachment" class="avatar">
-                        <i v-else  class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
+                    <div @click.stop="testFile" class="uploaderTitle"></div>
                     <!-- 附件弹出框 -->
                     <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
                         <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
@@ -118,7 +109,7 @@
                             <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
                                 <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                                <i class="inputCancle">X</i>
+                                <i @click.stop="moneyCancle(item,'jiefang')" class="inputCancle">X</i>
                              </span>
                             <div></div>
                             <div></div>
@@ -136,7 +127,7 @@
                             <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
                                 <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                                <i class="inputCancle">X</i>
+                                <i @click.stop="moneyCancle(item,'daifang')" class="inputCancle">X</i>
                             </span>
                             <div></div>
                             <div></div>
@@ -202,6 +193,8 @@
 <script>
     import searchSelect from './searchSelect'
     import {mapState, mapActions} from 'vuex'
+    import UserInfo from "@/util/auth";
+    import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
     import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
     import pictureUpload from "@/components/upload";
     export default {
@@ -229,35 +222,7 @@
             //附件****************
             loading: false,
             fileVisible:false,
-            imglist:[
-                { 
-                    PhId:0,
-                    BTable:'gcw3_voucher_mst',
-                    BName:'aa.jpg',
-                    BType:'.jpg',
-                    BSize:'203',
-                    BFilebody:'',
-                    BUrlPath:'/UpLoadFiles/Voucher/2018-12-07/62ad64e635a3435d82b6cc1c770124f7.jpg',
-                    BRemark:'',
-                    RelPhid:''
-                },
-            ],
-            orgForm:{
-                PhId:0,
-                OrgName:'',
-                EnterpriseCode:'',
-                EnterpriseAttachment:'',
-                Address:'',
-                TelePhone:'',
-                ParentName:'',
-                AccountSystem:'',
-                EnableTime:'',
-                Chairman:'',
-                ChairmanAttachment:'',
-                Director:'',
-                ServiceStartTime:'',
-                ServiceEndTime:''
-            },
+            imglist:[],
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
@@ -411,7 +376,7 @@
                     this.fatherData.PAuditor=this.PAuditor;
                     return {
                         Mst:this.fatherData,
-                        Attachements:this.fileList
+                        Attachements:this.imglist
                     }
                 }
             },
@@ -567,6 +532,11 @@
                 this.voucherInfo[index].SubjectName='';
                 this.$forceUpdate();
             },
+            //
+            moneyCancle(item,val){
+                console.log(item,val)
+                item.money[val]='';
+            },
             //金额输入框键入*******************
             inputBlur($event,item,value){
                 if(!this.countJie||!this.countDai){
@@ -663,6 +633,7 @@
             //附件上传************************************
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
             beforeAvatarUpload(file) {
+                console.log(1111)
                 const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
                 const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -675,65 +646,74 @@
                     return false
                 }
             },
-            uploadFileMethodEnterprise(param) {
-                let fileObject = param.file;
-                let formData = new FormData();
-                formData.append('id', this.orgForm.PhId)
-                formData.append("file", fileObject);
+            // uploadFileMethodEnterprise(param) {console.log(res,2);
+            //     let fileObject = param.file;
+            //     let formData = new FormData();
+            //     formData.append('id', this.orgForm.PhId)
+            //     formData.append("file", fileObject);
+            //     this.uploadFile(formData).then(res => {
+            //         console.log(res,2);
+            //         if(res.Status==='error'){
+            //             this.$message.error(res.Msg);
+            //             return
+            //         }
+                    
+            //         //回传的上传临时文件
+            //         if(res.Data[0]){
+            //             this.orgForm.EnterpriseAttachment = res.Data[0];
+            //             this.$message.success("上传成功");
+            //         }
 
-                this.uploadFile(formData).then(res => {
-                    if(res.Status==='error'){
-                        this.$message.error(res.Msg);
-                        return
-                    }
-                    //回传的上传临时文件
-                    if(res.Data[0]){
-                        this.orgForm.EnterpriseAttachment = res.Data[0];
-                        this.$message.success("上传成功");
-                    }
+            //     }).catch(error => {      
+            //         console.log(error);
+            //         this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+            //     })
+            // },
+            // uploadFileMethodChairman(param){console.log(res,2);
+            //     let fileObject = param.file;
+            //     let formData = new FormData();
+            //     formData.append('id', this.orgForm.PhId)
+            //     formData.append("file", fileObject);
 
-                }).catch(error => {      
-                    console.log(error);
-                    this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
-                })
-            },
-            uploadFileMethodChairman(param){
-                let fileObject = param.file;
-                let formData = new FormData();
-                formData.append('id', this.orgForm.PhId)
-                formData.append("file", fileObject);
+            //     this.uploadFile(formData).then(res => {
+            //         console.log(res,1);
+            //         if(res.Status==='error'){
+            //             this.$message.error(res.Msg);
+            //             return
+            //         }
 
-                this.uploadFile(formData).then(res => {
-                    if(res.Status==='error'){
-                        this.$message.error(res.Msg);
-                        return
-                    }
+            //         //回传的上传临时文件
+            //         if(res.Data[0]){
+            //             this.orgForm.ChairmanAttachment = res.Data[0];
+            //             this.$message.success("上传成功");
+            //         }
 
-                    //回传的上传临时文件
-                    if(res.Data[0]){
-                        this.orgForm.ChairmanAttachment = res.Data[0];
-                        this.$message.success("上传成功");
-                    }
-
-                }).catch(error => {      
-                    console.log(error);
-                    this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
-                })
-            },
-
+            //     }).catch(error => {      
+            //         console.log(error);
+            //         this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+            //     })
+            // },
             testFile(){
                 this.fileVisible=true;
             },
-            removeimg(item,deleValue) {
-                this.imglist=item;
-                console.log(deleValue)
-
+            removeimg(item,deleValue) {//
+               
+                var urls=deleValue.imgPath.split('/');
+                console.log(item,urls,item)
+                for(var i in item[0]){ 
+                    console.log(item[0][i].BName,urls[4])
+                    if(item[0][i].BName==urls[4]){
+                            console.log(item)
+                          item[0].splice(i,1);  
+                    }
+                }  
+                 this.imglist=item[0];
+                 console.log( this.imglist)
                 var param={
                     PhId:deleValue.phid,
                     BTable:'gcw3_voucher_mst',
                     BUrlPath:deleValue.imgPath
                 };
-
                 this.$axios({
                     url: '/PVoucherAttachment/PostDeleteFile',
                     method: "post",
@@ -743,18 +723,15 @@
                         this.$message({ showClose: true, message: res.Msg, type: 'error'});
                         return;
                     }
-
                 }).catch(error => {
-                    console.log(error);
                     this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
                 });
             },
             uploadimg(item) {
-                //console.log(item)
                 this.imglist.push(item);
             },
             ...mapActions({
-                uploadFile: 'uploadFile/Orgupload'
+                uploadFile: 'uploadFile/Voucherupload'
             }),
         },
         computed:{
@@ -811,6 +788,7 @@
         },
         components:{
             searchSelect,
+            pictureUpload
         }
     }
 </script>
@@ -1018,6 +996,7 @@
         height:25px;
         line-height: 25px;
         color:red;
+        cursor:pointer;
         border-radius: 50%;
         font-style: normal;
         position: absolute;
@@ -1133,16 +1112,54 @@
         color:#fff;
 
     }
-    .avatar-uploader{
+    .uploaderTitle{
         position:relative;
         width:40px;
-        height:30px;
-        left:0;
-        top:0;
+        height:30px;  
+        cursor:pointer; 
         background: url("../../assets/icon/f90c871a-13a3-4900-9b6f-ff9edc5c98c5.svg") no-repeat;
         background-size:40px 30px;
-        z-index:2;
     }
     
+    .avatar-uploader{
+    position: absolute;
+    z-index: 1;
+    right: 61px;
+    top: -20px;
+}
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+.avatar-uploader .el-upload--text{
+    width: 80px;
+    height: 80px;
+}
 
+.avatar-uploader-icon {
+    font-size: 20px;
+    color: #8c939d;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+}
+.avatar {
+    width: 80px;
+    height: 80px;
+    display: block;
+}
+.orgform .el-form-item__label{
+    background: #00B8EE;
+}
+
+.orgform .el-form-item{
+    margin-bottom: 2px;
+}
 </style>

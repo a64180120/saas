@@ -514,7 +514,6 @@
 </script>
 
 <style lang="scss" scoped>
-
     .searcherCon{
         width:40%;
         min-width: 170px;
@@ -636,14 +635,13 @@
         cursor:pointer;
     }
     .voucherList{
-        padding:8px 18px;
-        padding-right:70px;
+        padding:8px 70px 50px 18px;
         margin-right:10px;
+        margin-bottom: 50px;
         font-size:14px;
         position:relative;
         min-width: 1024px;
-        height:800px;
-        overflow-y: auto;
+        height:100%;
         .voucherNav>ul{
             display: flex;
             flex-flow: row nowrap;

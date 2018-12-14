@@ -56,7 +56,6 @@
                     {PhId:'222',BaseCode:'03',BaseName:'财务科',EnabledMark:1},
                 ],
                 handleNav:'',    //类型 add update
-                
                 navActive:{id:'',BaseName:'部门'},
                 navTab:[]
             }
@@ -91,9 +90,7 @@
                 switch(val){
                     case 'add':
                         this.handleNav='add';
-
                         var lastObject=this.userInfo[this.userInfo.length-1]||{BaseCode:'000'};
-
                         this.PhIdList={
                             PhId:'',
                             BaseCode:dealAddString(lastObject.BaseCode),
@@ -123,7 +120,6 @@
                 this.PhIdList=item;
             },
             ajaxMode(){
-
                 let data = {
                     uid: this.uid,//this.uid获取到store中的uid************
                     orgid: this.orgid,//this.orgid获取到store中的orgid************

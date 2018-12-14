@@ -20,7 +20,6 @@
                         <span @click.prevent="addVoucher('keepModel')">存为模板</span>
                     </li>
                 </a>
-
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li>保存</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li>修改</li></a>
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li>保存并新增</li></a>
@@ -38,7 +37,6 @@
         <div ref="print">
                 <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
         </div>
-       
         <!--右侧时间选择组件-->
         <div class="asideNav">
             <div @click.stop="yearSelShow"><span>会计期</span></div>
@@ -458,8 +456,7 @@
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{
-                        
+                    .then(res=>{        
                         this.checkedTime=res.Record[0].JEnableMonth+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
@@ -722,20 +719,20 @@
                 this.nextMonthCss=true;
             },
             //打印******************
-            printLodop() {
-                const me = this
-                var html=this.$refs.print.innerHTML; 
-                console.log(html) 
-                let  LODOP = getLodop();
-                LODOP.PRINT_INIT("凭证信息");      //首先一个初始化语句
-                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
-                LODOP.SET_PRINT_STYLE("Bold", 1);
-                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
-                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "凭证信息");
-                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
-                //LODOP.PRINT();
-                LODOP.PREVIEW();
-            },
+            // printLodop() {
+            //     const me = this
+            //     var html=this.$refs.print.innerHTML; 
+            //     console.log(html) 
+            //     let  LODOP = getLodop();
+            //     LODOP.PRINT_INIT("凭证信息");      //首先一个初始化语句
+            //     LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+            //     LODOP.SET_PRINT_STYLE("Bold", 1);
+            //     //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+            //     LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "凭证信息");
+            //     LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+            //     //LODOP.PRINT();
+            //     LODOP.PREVIEW();
+            // },
              // 打印
             printContent(e){
                 this.$print(this.$refs.print) // 使用

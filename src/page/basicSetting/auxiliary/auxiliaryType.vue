@@ -67,9 +67,11 @@
         datalists:''
       },
       created(){
-        this.dataList=JSON.parse(this.datalists);
-        this.initCss();
-        console.log(this.dataList)
+        this.GetVoucherAuxiliaryType();
+        console.log(11)
+        //this.dataList=JSON.parse(this.datalists);
+        this.initCss();console.log(22)
+        //console.log(this.dataList)
       },
       data(){
         return {
@@ -121,6 +123,23 @@
               }
 
           },
+
+            //获取辅助项类型********************
+            GetVoucherAuxiliaryType(){
+                var data={
+                    orgid:this.orgid
+                }
+                var vm=this;
+                const loading1=this.$loading();
+                this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryType',{params:data})
+                    .then(res=>{
+                        this.dataList=res.type;
+                        this.initCss();
+                        loading1.close();
+                    })
+                    .catch(err=>{console.log(err);loading1.close()})
+            }
+          ,
           fastCreate(){
 
             if(this.dataList.length>=50){
@@ -172,6 +191,7 @@
                   this.updateCss[i]={checked:false}
                   this.deleteCss[i]={checked:false}
               }
+              console.log(this.updateCss,this.deleteCss)
           },
           btnShow(val){
             if(val=='delete'){

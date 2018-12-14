@@ -253,9 +253,10 @@ ul{
     background: #fff;
     color:#333;
 }
-.voucherHead .el-upload.el-upload--text{
-    background: none;
-    position:relative;
-     z-index:1;
+.content{
+    height:100%;
+    overflow-y: auto;
+    margin-bottom: 500px;
 }
+
 

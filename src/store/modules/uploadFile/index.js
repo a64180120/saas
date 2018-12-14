@@ -46,8 +46,10 @@ const actions = {
 
             let config_header = { "Content-Type": "multipart/form-data" };
             var new_header = Object.assign({},config_header, baseheader);
+            console.log(data)
             axios.create(base).post('/PVoucherAttachment/PostUploadFile', data, { headers:new_header }).then(res => {
                 var response=JSON.parse(res.data);
+                console.log(response)
                 resolve(response);
 
         　　}).catch((error) =>{
