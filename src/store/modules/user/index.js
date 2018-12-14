@@ -78,7 +78,6 @@ const actions = {
                     token: 'g6c'
                 }
             }).then(res => {
-
                 if (res.status === 200) {
                     var response=JSON.parse(res.data);
                     var object = {
@@ -174,49 +173,37 @@ const actions = {
             menuInfo = Auth.getMenuStatus();
 
             // 重新登录时校验Token是否存在，若不存在则获取
-            if (!tokenInfo && !userInfo) {
-                //token
-                dispatch("getNewToken").then(() => {
+
+            //token
+            if(!tokenInfo){
+                dispatch("getToken").then(() => {
                     //commit("setToken", state.token);
                 });
-                //用户
+            }else{
+                //设置用户 state ,重新加载用户缓存
+                commit("setToken", tokenInfo);
+            }
+            //用户
+            if(!userInfo){
                 dispatch("loginByPhone").then(() => {
 
                 });
+            }else{
+                //设置用户 state ,重新加载用户缓存
+                commit("setUserInfo", userInfo);
+            }
 
-                //菜单
+            //菜单
+            if(!menuInfo){
                 dispatch("getNavList").then(() => {
 
                 });
-
-            } else {
+            }else{
                 //设置用户 state ,重新加载用户缓存
-                commit("setToken", tokenInfo);
-                commit("setUserInfo", userInfo);
-                if(menuInfo){
-                    commit("setNavList", menuInfo);
-                }
+                commit("setNavList", menuInfo);
             }
+            
             resolve();
-        });
-    },
-
-    // 获取新Token
-    getNewToken({ commit, state }) {
-        return new Promise((resolve, reject) => {
-            axios({
-                url: "/SysUser/GetToken",
-                method: "get",
-                param: {
-                    token: state.token
-                }
-            }).then(res => {
-                commit("setToken", res.token);
-                resolve();
-            }).catch(error =>{
-                console.log(error)
-                reject(error)
-            });
         });
     },
 

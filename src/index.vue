@@ -29,11 +29,13 @@ export default {
             setTheme("theme-default")
             this.$store.commit("setThemeColor", "theme-default")
             //加载token信息
-            this.$store.dispatch('user/getToken').then((res) => {
-                console.log(res)
-            }).catch((error) =>{
-                alert('网络不通,请检查服务接口网络！.....')
-            })
+            if(!Auth.getToken()){
+                this.$store.dispatch('user/getToken').then((res) => {
+                    console.log(res)
+                }).catch((error) =>{
+                    alert('网络不通,请检查服务接口网络！.....')
+                })
+            }
         })
     }
 }

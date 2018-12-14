@@ -60,6 +60,8 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import md5 from 'js-md5'
+import desHelper from "@/util/desHelper"
 
 export default {
   data() {
@@ -169,14 +171,17 @@ export default {
             console.log("新密码与确认新密码不一致!");
             this.$message.error("新密码与确认新密码不一致!");
             return;
-          } 
+          }           
           
+          var oldPwd = md5(this.editPaw.oldPaw);
+          var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);  
+
           //接口要包含3个参数： uid、 oldPwd、 newPwd 
           let data={
               uid:this.uid,
               orgid:this.orgid,
-              OldPwd: this.editPaw.oldPaw,
-              NewPwd: this.editPaw.newPaw
+              OldPwd: oldPwd, 
+              NewPwd: newPwd
           }; 
           this.$axios.post('/SysUser/PostUpdatePassword',data)
             .then(res=>{
