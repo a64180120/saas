@@ -1,9 +1,9 @@
 <template>
-    <div class="manageContent">
+    <div class="manageContent" v-loading="loading">
         <div class="reportBox">
         <div class="unionState flexPublic">
             <ul class="flexPublic">
-                <!--<li class="flexPublic">-->
+                <li class="flexPublic">
                     <!--<div>账期:</div>-->
                     <!--<div>-->
                         <!--<el-date-picker-->
@@ -15,14 +15,21 @@
                             <!--value-format="yyyy-MM-dd">-->
                         <!--</el-date-picker>-->
                     <!--</div>-->
-                <!--</li>-->
+                    <div>凭证：</div>
+                    <div  class="block selectContainer">
+                        <select class="el-input__inner" v-model="proofType">
+                            <option value="1">包含未审核凭证</option>
+                            <option value="0">不包含未审核凭证</option>
+                        </select>
+                    </div>
+                </li>
             </ul>
             <ul class="flexPublic handle">
                 <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</el-button >
                 <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</el-button>
             </ul>
         </div>
-        <div class="formData">
+        <div class="formData" ref="printFrom">
             <tree-table
                 :data="inMoney"
                 :expand-all="expandAll"
@@ -82,7 +89,8 @@
                 userState:0,
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
                 proofType:'1',
-                date1:''
+                date1:'',
+                loading:false
             }
         },
         components: { treeTable,TimeSelectBar },
@@ -124,15 +132,16 @@
             },
             getData:function(param,proofType){
                 param = this.getParamTime(param);
+                this.loading=true;
                 //收入科目的数据
                 var data = {
                     accountPeriod: param, //账期
                     isContainUncheck: proofType,      //是否包含未审核的凭证(1=包含，0=不包含)
+                    orgid:this.orgid
                 };
                 var vm=this;
                 IncomList(vm,data).then(res => {
                     this.loading = false;
-                    console.log(res);
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
@@ -152,12 +161,10 @@
 
                     var indata_StartSum=0;
                     var indata_EndSum=0;
-                    //var listArry=treeSum(indata);
                     treeSum(indata).forEach(item =>{
                         indata_StartSum +=item.StartSum;
                         indata_EndSum +=item.EndSum
                     })
-
                     var outdata=data.filter((value,key,arr) => {
                         //1-资产,2-负债,3-净资产,4-收入,5-支出
                         return value.KType==="5"

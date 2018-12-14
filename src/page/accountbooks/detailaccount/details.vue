@@ -1,5 +1,5 @@
 <template>
-        <div class="manageContent">
+        <div class="manageContent" v-loading="loading">
             <div class="reportBox">
 
                 <div class="unionState flexPublic">
@@ -8,8 +8,8 @@
                         <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
                     </div>-->
                     <div class="flexPublic handle">
-                        <div class="searcherValue"><input type="text" placeholder="组织编码/名称"></div>
-                        <div  class="searcherBtn">搜索</div>
+                        <div class="searcherValue"><input type="text" placeholder="科目编码" v-model="inputCode"></div>
+                        <div  class="searcherBtn" @click="selectBtn">搜索</div>
                     </div>
                     <ul class="flexPublic handle">
                         <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
@@ -18,7 +18,7 @@
                 </div>
                 <div class="flexPublic  p0">
                     <div class="unionLists">
-                        <div class="cover"></div>
+
                         <div class="unionListsTitle">科目列表 &nbsp;
                         </div>
                         <div class="unionListsContent">
@@ -34,7 +34,7 @@
                             </el-tree>
                         </div>
                     </div>
-                    <div class="formData" > <!--v-loading.fullscreen.lock="loading"-->
+                    <div class="formData" ref="printFrom"> <!--v-loading.fullscreen.lock="loading"-->
                         <ul>
                             <li>凭证日期</li>
                             <li>凭证字号</li>
@@ -60,9 +60,9 @@
                             infinite-scroll-listen-for-event 当vue实例触发事件时立即再次检查
                             infinite-scroll-throttle-delay 两次检查之间的时间间隔(默认值= 200)
                           -->
-                        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-                            .....加载中
-                        </div>
+                        <!--<div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">-->
+                            <!--.....加载中-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                 selectItem:'',
                 defaultProps: {
                     children: 'children',
-                    label: 'KName'
+                    label: 'KNameC'
                 },
                 zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
                 auxiliary:0,  //显示辅助项
@@ -104,7 +104,11 @@
                 busy:false,    //是否正在加载过程中
                 dataInfo: [],
                 selectSubject:'',  //选择科目
-                date1:'2018'
+                date1:'2018',
+                loading:false,
+                inputCode:'',//搜索框输入项目编码
+                focus:false
+
             }
         },
         created() {
@@ -119,6 +123,9 @@
 
             filterText(val) {
                 this.$refs.subjectTree.filter(val);
+            },
+            inputCode(val){
+                this.inputCode=val;
             }
         },
         components: {TimeSelectBar},
@@ -130,13 +137,25 @@
             })
         },
         methods: {
+            selectBtn:function(){
+                let flag=true;
+                for(let i in this.subjectLists){
+                    if(this.subjectLists[i].KCode==this.inputCode){
+                        this.selectSubject=this.subjectLists[i];
+                        flag=false;
+                    }
+                }
+                if(flag){
+                    alert('您输入的科目编码有误');
+                    this.focus=true;
+                }
+            },
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
+                let time=val.choosedYear;
                 this.date1=time;
-                this.getBeginYear();
+                this.getData();
             },
             getData(flag) {
-                console.log(this.pageIndex);
                 var data = {
                     uid: this.uid,
                     orgid:this.orgid,
@@ -190,18 +209,19 @@
                         uid: this.uid,
                         orgid: this.orgid
                     }).then(res => {
-                    console.log(res);
                     this.loading = false;
 
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
                     }
+                    this.pingjie(res);
                     this.subjectLists=res;
 
                     if(res.length>0){
                         this.selectItem=res[0];
                         this.selectSubject=res[0];
+                        this.inputCode=res[0].KCode;
                         //加载第一个科目的明细
                         this.getData(res[0]);
                     }
@@ -216,6 +236,15 @@
                     })
                 })
 
+            },
+            pingjie:function(res){
+                for(var i in res){
+                    let KNameC=(res[i].KCode+' - '+res[i].KName)
+                    res[i]['KNameC']=KNameC;
+                    if(res[i].children!=[]){
+                        this.pingjie(res[i].children)
+                    }
+                }
             },
             // unionListOpen($event) {
             //     var e = $event.target;
@@ -237,6 +266,7 @@
             handleNodeClick(data){
                 this.selectSubject=data;
                 this.getData();
+                this.inputCode=data.KCode;
             },
             //当属性滚动的时候  加载  滚动加载
             loadMore(){
@@ -324,14 +354,17 @@
                 // document.body.innerHTML = oldContent;
                 // return false;
 
-                this.$print(this.$ref.printFrom) // 使用
+                this.$print(this.$refs.printFrom) // 使用
             }
 
-        },
+        }
     }
 </script>
 
 <style scoped>
+    .searcherValue {
+        border-radius: 15px 0 0 15px;
+    }
     .reportBox{
         margin-right: 60px;
         height: 100%;
@@ -440,7 +473,6 @@
     }
     .unionListsContent{
         position: relative;
-        width: 210px;
     }
 
     .unionListsContent ul{

@@ -1,23 +1,23 @@
 <template>
-    <div class="manageContent">
+    <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
                 <ul class="flexPublic">
                     <li class="flexPublic">
-                        <div>账期:</div>
-                        <div class="block selectContainer">
-                            <el-date-picker
-                                v-model="date1"
-                                type="date"
-                                placeholder="选择日期">
-                            </el-date-picker>
-                        </div>
+                        <!--<div>账期:</div>-->
+                        <!--<div class="block selectContainer">-->
+                            <!--<el-date-picker-->
+                                <!--v-model="date1"-->
+                                <!--type="date"-->
+                                <!--placeholder="选择日期">-->
+                            <!--</el-date-picker>-->
+                        <!--</div>-->
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="changeBtnC">{{changeBtn.title}}</el-button >
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-mail" @click="changeBtnC">{{changeBtn.title}}</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
                 </ul>
             </div>
             <div class="formData" id="form1" ref="printFrom">
@@ -78,7 +78,7 @@
                         </li>
                         <li>{{item.ApprovedBudgetTotal}}</li>
                         <li>
-                            其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-on:input="inputDicription">
+                            其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:placeholder="item.Description" v-on:input="inputDicription">
                         </li>
                     </ul>
                 </template>
@@ -165,10 +165,10 @@
                         <li>{{item.BudgetTotal}}</li>
                         <li>
                             <template v-if="item.Layers==0">
-                                <input disabled type="number" v-bind:code="item.SubjectCode" v-bind:value="code_firstCount[item.SubjectCode]">
+                                <input disabled type="number" v-bind:code="item.SubjectCode" v-bind:value="item.ApprovedBudgetTotal-item.BudgetTotal">
                             </template>
                             <template v-else>
-                                <input  v-bind:disabled="changeBtn.disable" type="number" v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" value="0">
+                                <input  v-bind:disabled="changeBtn.disable" type="number" v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" :value="item.ApprovedBudgetTotal-item.BudgetTotal">
                             </template>
                         </li>
                         <li>{{item.ApprovedBudgetTotal}}</li>
@@ -217,7 +217,8 @@
                 code_firstCount:[],//一级科目数据对应的合计数
                 specialSubIndex:[],//特殊科目对应的下标数组，用于计算
                 date1:'',
-                proofType:'0'
+                proofType:'0',
+                loading:false
             }
         },
         components: {TimeSelectBar},
@@ -252,8 +253,8 @@
             * 修改保存
             * */
             saveChange:function(){
-                console.log('11111');
-                console.log(this.orgcode);
+                this.loading=true;
+                let that=this;
                 this.$axios.post(
                     'PSubjectBudget/PostSave',
                     {
@@ -262,6 +263,7 @@
                         "infodata": this.budgetList
                     }
                 ).then(function(res){
+                    that.loading=false;
                     alert(res.Msg);
                 }).catch(function(err){
                     console.log(err);
@@ -374,11 +376,13 @@
                     "Year":  this.getParamTime(this.date1).substring(0,4),
                     "OrgIds": this.orgid,
                 }
+                this.loading=true;
                 this.$axios.get(
                     // 'PSubjectBudget/GetBeginYear',
                     'PSubjectBudget/GetMiddleYear',
                     {params:data}
                 ).then(res=>{
+                    this.loading=false;
                     let code_first=[],//存放一级科目
                         code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
@@ -501,7 +505,7 @@
                 // document.body.innerHTML = oldContent;
                 // return false;
 
-                this.$print(this.$ref.printFrom) // 使用
+                this.$print(this.$refs.printFrom) // 使用
             }
 
         }
