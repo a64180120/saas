@@ -16,6 +16,7 @@ ul{
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
+    position:relative;
 }
 .inputContainer{
     width:100%;
@@ -98,7 +99,6 @@ ul{
     background:#509edc;
     color:#fff;
     cursor:pointer;
-    border-radius: 0 15px 15px 0;
 }
 .unionState .handle>a>li{
     border:1px solid #ff9900;
@@ -252,5 +252,10 @@ ul{
 .btn:hover{
     background: #fff;
     color:#333;
+}
+.voucherHead .el-upload.el-upload--text{
+    background: none;
+    position:relative;
+     z-index:1;
 }
 
