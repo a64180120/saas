@@ -43,7 +43,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             let baseheader=ajaxhttp.header;
             let base=ajaxhttp.base;
-
+                
             let config_header = { "Content-Type": "multipart/form-data" };
             var new_header = Object.assign({},config_header, baseheader);
             console.log(data)

@@ -340,13 +340,14 @@
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         this.voucherList= res.Record;
+                        console.log(this.voucherList)
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
                         }
                     })
                     .catch(err=>console.log(err))
             },
-            //获取当前结账的最新月份************
+             //获取当前结账的最新月份************
             getChecked(){
                 var data={
                     uid:this.uid,
@@ -354,14 +355,13 @@
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{
-                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                    .then(res=>{                     
+                        this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
-                        this.year=this.nowTime.getFullYear();
-                        this.month=this.checkedTime;
-                         console.log(this.checkedTime)
-                        debugger
+                        this.year=this.sideDate.split('-')[0];
+                        this.month=this.sideDate.split('-')[1];
                         this.getvoucherList();
+                        this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
             },

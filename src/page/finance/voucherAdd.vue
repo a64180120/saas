@@ -736,7 +736,7 @@
                 var vm=this;
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
-                var oldData=JSON.stringify(Mst);
+                //var oldData=JSON.stringify(Mst);
                 for(var dtl of Mst.Dtls){
                     
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';

@@ -107,7 +107,7 @@
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
-                                <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                                <input type="number"  v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i @click.stop="moneyCancle(item,'jiefang')" class="inputCancle">X</i>
                              </span>
@@ -125,7 +125,7 @@
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
-                                <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
+                                <input type="number"  v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i @click.stop="moneyCancle(item,'daifang')" class="inputCancle">X</i>
                             </span>
@@ -377,8 +377,12 @@
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
                     for(var img in this.imglist ){
-                        this.Attachements[img]=this.imglist[img][0]
+                        if(this.imglist[img][0]){
+                            this.Attachements[this.Attachements.length]=this.imglist[img][0]
+                        }
+                        
                     }
+                    debugger
                     return {
                         Mst:this.fatherData,
                         Attachements: this.Attachements
@@ -702,16 +706,16 @@
                 this.fileVisible=true;
             },
             removeimg(item,deleValue) {//
-               //this.imglist=item;
-                var urls=deleValue.imgPath.split('/');
-                console.log(this.imglist,item,urls,deleValue)
-                for(var i in item[0]){ 
-                    console.log(item[0][i].BName,urls[4])
-                    if(item[0][i].BName==urls[4]){
-                            console.log(item)
-                          item[0].splice(i,1);  
-                    }
-                } 
+               this.imglist=item;
+                // var urls=deleValue.imgPath.split('/');
+                // console.log(this.imglist,item,urls,deleValue)
+                // for(var i in item[0]){ 
+                //     console.log(item[0][i].BName,urls[4])
+                //     if(item[0][i].BName==urls[4]){
+                //             console.log(item)
+                //           item[0].splice(i,1);  
+                //     }
+                // } 
                 var param={
                     PhId:deleValue.phid,
                     BTable:'gcw3_voucher_mst',

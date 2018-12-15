@@ -238,7 +238,6 @@
                     return;
                 }else{
                     var dtls = this.fatherData.Dtls;
-                    console.log(this.fatherData)
                     var account;
                     var item;
                     for( var info of this.voucherInfo){

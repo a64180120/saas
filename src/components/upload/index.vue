@@ -106,7 +106,6 @@ export default {
                 return result
             });
 
-            debugger
 
             this.curimgList=[];
 
@@ -136,13 +135,13 @@ export default {
             this.$message.warning(`当前限制选择 ${this.limit} 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
         },
         uploadFileMethod(param){
+            let me=this;
             let fileObject = param.file;
             let formData = new FormData();
             formData.append('RelPhid', '0')
             formData.append('BTable', 'gcw3_voucher_mst')
             formData.append("file", fileObject);
             this.uploadFile(formData).then(res => {
-                debugger;
                 if(res.Status==='error'){
                     this.$message.error(res.Msg);
                     return
