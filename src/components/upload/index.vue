@@ -28,8 +28,8 @@ export default {
   props: {
     //父组件传递的图片列表
     imgList:{
-        type: Array,
-        default: []
+      type: Array,
+      default: () => []
     },
     //图片数量限制
     limit:''
@@ -96,11 +96,20 @@ export default {
             };
 
             //文件剩余对象
-            this.imgList.forEach(el =>{
-                if(el.BUrlPath!==deleValue.imgPath){
-                    item.push(el);
-                }
-            })
+            // this.imgList.forEach(el =>{
+            //     if(el.BUrlPath === deleValue.imgPath){
+            //         //移除删除的文件
+                    
+            //     }
+            // })
+
+            item=this.imgList.filter(function(item,index,array){
+                return el.BUrlPath !== deleValue.imgPath
+            });
+
+            this.imgList=item;
+
+
 
             this.$emit("removeimg", item, deleValue);
         },
@@ -129,6 +138,7 @@ export default {
             formData.append('RelPhid', '0')
             formData.append('BTable', 'gcw3_voucher_mst')
             formData.append("file", fileObject);
+            var me=this;
 
             this.uploadFile(formData).then(res => {
                 if(res.Status==='error'){
@@ -138,12 +148,11 @@ export default {
                 //回传的上传临时文件
                 if(res.Data){
                     this.$emit("uploadimg", res.Data);
-                    var attachment=res.Attachment
-                    var url_=this.picUrl
-                    attachment.forEach(t=>{
-                        this.fileList.push({url: url_+ t})
+                    var model=res.Data
+                    var url_=me.picUrl
+                    model.forEach(t=>{
+                        me.imgList.push(t)
                     });
-                    
                 }
 
             }).catch(error => {      
