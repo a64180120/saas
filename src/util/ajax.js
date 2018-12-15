@@ -7,17 +7,14 @@ import store from "../store";
 import router from "../router";
 import { Message,MessageBox } from "element-ui";
 import Auth from "@/util/auth";
+import httpConfig from '@/util/ajaxConfig'
 import qs from 'qs'
-import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
 
 
 var getTokenLock = false,
     CancelToken = axios.CancelToken,
     requestList = [];
-
-let baseheader=ajaxhttp.header;
-let base=ajaxhttp.base;
 
 /**
  * Token校验
@@ -71,8 +68,11 @@ function stopRepeatRequest(url, cancelfunction) {
     requestList.push(url);
 }
 
+
+//let base=httpConfig.getAxiosBaseConfig();
+
 // 超时设置
-const service = axios.create(base);
+const service = axios.create(httpConfig.getAxiosBaseConfig());
 
 // baseURL
 // axios.defaults.baseURL = 'http://10.0.45.51:8028/api/GCW';
@@ -87,6 +87,7 @@ service.interceptors.request.use(
 
         //let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
         //var new_header = Object.assign({},config_header, baseheader);  //合并对象
+        let baseheader=httpConfig.getHeaderConfig();
         config.headers = baseheader
 
         //POST传参序列化

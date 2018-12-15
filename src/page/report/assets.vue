@@ -220,7 +220,7 @@
 
 <script>
     import * as axios from "axios";
-    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+    import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import { getLodop } from '@/plugins/Lodop/LodopFuncs';
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { mapState, mapGetters } from "vuex";
@@ -360,8 +360,8 @@
             * */
             postBalanceSheetExcel:function(){
                 let param = {'infoData':this.balanceData};
-                let baseheader=ajaxhttp.header;
-                let base=ajaxhttp.base;
+                //let baseheader=httpConfig.getHeaderConfig();
+                let base=httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true

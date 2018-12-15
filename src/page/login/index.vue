@@ -20,12 +20,7 @@
                             :value="item.PhId">
                             </el-option>
                         </el-select>
-                    </el-form-item>
-                    <!-- <el-form-item prop="captcha" v-if="captcha.show" class="captcha">
-                        <img :src="captcha.src" alt="">
-                        <el-input v-model="loginForm.captcha" type="text" placeholder="验证码"></el-input>
-                    </el-form-item> -->
-                    
+                    </el-form-item> 
                     <p class="textL width50" style="float:left;">注册</p>
                     <p class="textR width50" style="float:left;">忘记密码？</p>
 
@@ -87,7 +82,7 @@ export default {
         
     },
     watch: {
-        //监听password变化 ，(debounce)停留0.3s获取组织信息
+        //监听password变化 ，(debounce)停留0.5s获取组织信息
         'loginForm.password': lodash.debounce(function(val){
 
                 const loading = this.$loading({
@@ -97,13 +92,9 @@ export default {
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
 
-                axios({
-                    url: '/SysUser/PostOrgByUNameOrUPhone',
-                    method: 'post',
-                    data: {
-                        uname_login:this.loginForm.name,
-                        password:this.loginForm.password
-                    }
+                this.orgByUser({
+                    uname_login:this.loginForm.name,
+                    password:this.loginForm.password
                 }).then(res => {
                     loading.close();
                     if(res){
@@ -116,7 +107,10 @@ export default {
                         if(orgData.length===1){
                             this.loginForm.orgid=orgData[0].PhId;
                             this.submitForm('loginForm');
-                        }else{
+                        } else if(orgData.length===0){
+                             this.$message.error("当前用户组织不存在!");
+                        }
+                        else{
                             this.isOrganize=true;
                             this.options=orgData;
                         }
@@ -137,7 +131,8 @@ export default {
     methods: {
         ...mapActions({
             login: 'user/loginByPhone',
-            getToken:'user/getToken'
+            getToken:'user/getToken',
+            orgByUser:'user/GetOrgByUser'
         }),
         submitForm(formName){
 

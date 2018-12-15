@@ -20,7 +20,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
 //附件
 export default {
@@ -50,7 +50,7 @@ export default {
         orgid: state => state.user.orgid
     }),
     picUrl:function(){
-        return ajaxhttp.url;
+        return httpConfig.baseurl;
     }
   },
   watch:{
@@ -105,7 +105,6 @@ export default {
 
                 return result
             });
-
 
             this.curimgList=[];
 

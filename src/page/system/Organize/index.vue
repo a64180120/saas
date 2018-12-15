@@ -97,7 +97,7 @@
 import { mapState, mapActions } from "vuex";
 import UserInfo from "@/util/auth";
 import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
-import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 import pictureUpload from "@/components/upload";
 
 export default {
@@ -117,7 +117,7 @@ export default {
                     BUrlPath:'/UpLoadFiles/Voucher/2018-12-07/62ad64e635a3435d82b6cc1c770124f7.jpg',
                     BRemark:'',
                     RelPhid:''
-                },
+                }
             ],
             orgForm:{
                 PhId:0,
@@ -162,7 +162,7 @@ export default {
         this.getData();
     },
     mounted(){
-        console.log(this.$store.state.user);
+        //console.log(this.picUrl);
     },
     computed:{
         ...mapState({
@@ -170,7 +170,7 @@ export default {
             orgid: state => state.user.orgid
         }),
         picUrl:function(){
-             return ajaxhttp.url;
+             return httpConfig.baseurl;
         }
     },
     watch:{
@@ -311,7 +311,7 @@ export default {
         },
         removeimg(item,deleValue) {
             this.imglist=item;
-            console.log(deleValue)
+            console.log(item)
 
             var param={
                 PhId:deleValue.phid,

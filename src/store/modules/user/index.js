@@ -2,7 +2,8 @@ import Cookies from "js-cookie";
 import axios from "@/util/ajax";
 import Auth from "@/util/auth";
 import httpajax from "axios";
-import ajaxConfig from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
+import qs from 'qs'
 
 
 //状态
@@ -70,12 +71,16 @@ const actions = {
     // 获取Token
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
-            let base=ajaxConfig.base;
-            let url=ajaxConfig.url;
+            let base=httpConfig.getAxiosBaseConfig();
+            let url=httpConfig.baseurl;
 
             httpajax.create(base).get('/SysToken/GetToken',{
                 params: {
                     token: 'g6c'
+                },
+                headers:{
+                    'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
+                    'Accept': "application/json; charset=utf-8"
                 }
             }).then(res => {
                 if (res.status === 200) {
@@ -105,28 +110,57 @@ const actions = {
     loginByPhone({ commit }, userInfo) {
         return new Promise((resolve, reject) => {
 
-            axios({
+            let base=httpConfig.getAxiosBaseConfig();
+            //测试的Header
+            let headconfig=httpConfig.getTestHeaderConfig();
+
+            var data={
+                uname_login:userInfo.name,
+                orgid:userInfo.orgid,
+                password:userInfo.password
+            };
+
+            httpajax.create(base)({
                 url: "/SysUser/PostLogin",
                 method: "post",
-                data: {
-                    uname_login:userInfo.name,
-                    orgid:userInfo.orgid,
-                    password:userInfo.password
-                }
+                data: qs.stringify(data),
+                headers:headconfig
             }).then(res => {
-
-                if (res.Status === "success") {
-                    var user = res.Data;
+                var response=JSON.parse(res.data);
+                if (response.Status === "success") {
+                    var user = response.Data;
                     //用户信息缓存
                     commit("setUserInfo", user);
                 }
-                resolve(res);
+                resolve(response);
             }).catch(error =>{
                 console.log(error)
                 reject(error)
             });
         });
     },
+    // 获取当前用户的组织信息
+    GetOrgByUser({ commit, state }, parameters) {
+        return new Promise((resolve, reject) => {
+            let base=httpConfig.getAxiosBaseConfig();
+            //测试的Header
+            let headconfig=httpConfig.getTestHeaderConfig();
+
+            httpajax.create(base)({
+                url: "/SysUser/PostOrgByUNameOrUPhone",
+                method: "post",
+                data: qs.stringify(parameters),
+                headers:headconfig
+            }).then(res => {
+                var response=JSON.parse(res.data);
+                resolve(response);
+            }).catch(error =>{
+                console.log(error)
+                reject(error)
+            });
+        });
+    },
+
     // 获取用户信息
     GetInfo({ commit, state }) {
         return new Promise((resolve, reject) => {

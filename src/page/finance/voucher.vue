@@ -195,7 +195,7 @@
     import {mapState, mapActions} from 'vuex'
     import UserInfo from "@/util/auth";
     import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
-    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+    import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import pictureUpload from "@/components/upload";
     export default {
         name: "voucher",
@@ -777,7 +777,7 @@
                 orgcode: state => state.user.orgcode
             }),
             picUrl:function(){
-             return ajaxhttp.url;
+                return httpConfig.baseurl;
             }
         },
         watch:{

@@ -26,7 +26,7 @@
         v-loading="loading"
         highlight-current-row
         @onRowClick="handleClickRow"
-        extraheight=100
+        :extraheight='extraheight'
         border>
             <el-table-column label="科目类别" align="center">
                 <template slot-scope="scope">
@@ -122,6 +122,7 @@ export default {
         }
       ],
       data: [],
+      extraheight:100,
       expandAll: true,
       loading: false,
       is_search: false,
@@ -195,7 +196,7 @@ export default {
           infoData:query
       }).then(res => {
           this.loading = false;
-          console.log(res);
+          //console.log(res);
 
           if(res.Status==='error'){
             this.$message.error(res.Msg);
@@ -222,7 +223,7 @@ export default {
             orgid: this.orgid,
             infoData:query
         }).then(res => {
-            console.log(res);
+            //console.log(res);
 
             if(res.Status==='error'){
                 this.$message.error("获取辅助项类别错误");
@@ -241,7 +242,7 @@ export default {
     },
     //列表点击事件
     handleClickRow(row, event, Column) {
-      console.log(row);
+      //console.log(row);
       this.singleSelection=[];
       this.singleSelection.push(row);
     },

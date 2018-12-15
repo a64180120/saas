@@ -179,7 +179,7 @@
 
 <script>
     import * as axios from "axios";
-    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+    import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import { mapState, mapGetters } from "vuex";
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
@@ -412,8 +412,8 @@
                     'orgid':this.orgid,
                     'infoData': this.budgetList};
 
-                let baseheader = ajaxhttp.header;
-                let base = ajaxhttp.base;
+                //let baseheader = httpConfig.header;
+                let base = httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true

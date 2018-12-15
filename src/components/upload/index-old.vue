@@ -23,7 +23,7 @@
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
-import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 
 export default {
     name: 'pictureupload',
@@ -42,8 +42,6 @@ export default {
             upLoadData: { img: "" },
             dialogVisible: false,
             dialogImageUrl: ""
-            //baseUrl: ajaxhttp.base.baseURL,
-            //headers: ajaxhttp.header 
         };
     },
     computed:{
@@ -52,10 +50,10 @@ export default {
             orgid: state => state.user.orgid
         }),
         picUrl:function(){
-          return ajaxhttp.url;
+          return httpConfig.baseurl;
         },
         headers:function(){
-          let config_header = ajaxhttp.header;
+          let config_header = httpConfig.getHeaderConfig();
 
           let new_header={
             'Content-Type': 'multipart/form-data',
@@ -66,7 +64,7 @@ export default {
           return new_header
         },
         baseUrl:function(){
-          return ajaxhttp.base.baseURL ;
+          return httpConfig.getAxiosBaseConfig().baseURL;
         }
     },
     watch: {
