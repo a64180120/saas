@@ -5,8 +5,11 @@ let Base64 = require("js-base64").Base64;
 
 const AxiosHeader = {
     //网站api的地址
-    //url:"http://10.0.45.46:8028",
-    baseurl:process.env.API_ROOT||'',
+    //baseurl:"http://10.0.45.46:8028",
+    //baseurl:"http://10.0.13.52:8028",
+    //baseurl:"http://10.0.15.3:8028",
+    baseurl:"http://10.0.45.51:8028",
+    //baseurl:process.env.API_ROOT||'',
     //数据库
     dbname:"NG0001",
 
