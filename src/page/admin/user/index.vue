@@ -37,6 +37,14 @@
             </div>
             <div style="width: 100%">
                 <div style="float: left; width: 20%; height: 100%">
+                    <div class="block" style="margin-bottom: 10px">
+                        <span class="demonstration">请选择要查看的组织所在区域</span>
+                        <el-cascader
+                            placeholder="可搜索"
+                            :options="options"
+                            filterable
+                        ></el-cascader>
+                    </div>
                     <div align="center">
                         工会组织列表
                     </div>
@@ -164,6 +172,38 @@
                 }
             }
             return {
+                options:[],
+                // options: [{
+                //     value: 'zhinan',
+                //     label: '指南',
+                //     children: [{
+                //         value: 'shejiyuanze',
+                //         label: '设计原则',
+                //         children: [{
+                //             value: 'yizhi',
+                //             label: '一致'
+                //         }, {
+                //             value: 'fankui',
+                //             label: '反馈'
+                //         }, {
+                //             value: 'xiaolv',
+                //             label: '效率'
+                //         }, {
+                //             value: 'kekong',
+                //             label: '可控'
+                //         }]
+                //     }, {
+                //         value: 'daohang',
+                //         label: '导航',
+                //         children: [{
+                //             value: 'cexiangdaohang',
+                //             label: '侧向导航'
+                //         }, {
+                //             value: 'dingbudaohang',
+                //             label: '顶部导航'
+                //         }]
+                //     }]
+                // }],
                 loading: false,
                 data2: [],
                 qOrgId: "",
@@ -212,9 +252,11 @@
         },
         created() {
             this.getRoleData();
+            //this.getAreaData();
         },
         mounted: function () {
             this.getData('');
+
             this.getOrgtree();
         },
         //计算
@@ -253,6 +295,23 @@
                     this.$message({ showClose: true, message: '移交记录获取错误', type: 'error'});
                 });
             },
+            //获取行政地址信息
+            getAreaData(){
+                this.$axios.get("/SysArea/GetAreaList", {
+                    params: {
+                        uid: userid,
+                        orgid: this.qOrgId,
+                    }
+                }).then(
+                    res => {
+                        console.log(res);
+                        this.options = res;
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                );
+            },
             //获取角色数据
             async getRoleData(){
                 var vm=this;
@@ -261,7 +320,7 @@
                     PageIndex: 0,
                     PageSize: 200
                 }).then(res => {
-
+                    console.log(res);
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return

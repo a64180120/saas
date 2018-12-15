@@ -183,7 +183,7 @@ export default {
               pageindex:this.pageIndex-1,
               infoData:null
             };
-            this.$axios.get('http://10.0.20.46:8028/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
+            this.$axios.get('/SysOrganize/GetSysOrganizeList',{params:data})
               .then(res=>{
 
                 this.userInfo=res.Record;
