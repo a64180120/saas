@@ -240,6 +240,7 @@
             assistCheck:true
         }},
         created(){
+            console.log(this.dataList.data.Mst)
             if(!this.dataList.data.Mst){//没有传参时初始化页面
                 this.voucherInfo=[
                     this.initVoucherInfo(),

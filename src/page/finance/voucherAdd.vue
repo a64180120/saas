@@ -286,6 +286,7 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
+                   console.log(data,url)
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            console.log(res)
@@ -305,8 +306,10 @@
             },
             //手动刷新voucher组件**************************
             resetVoucher(){
+                var vm=this;    
+                console.log('rest')
                 this.voucherDataList.bool=false;
-                var vm=this;
+               
                 function delay(){
                     vm.voucherDataList.bool=true
                 }
@@ -323,7 +326,6 @@
                     orgid:this.orgid,
                     infoData:this.voucherDataList.data
                 }
-                console.log(data);
                 this.$axios.post('/PVoucherTemplateMst/PostAdd',data)
                     .then(res=>{
                         if(res.Status=='success'){
@@ -521,6 +523,11 @@
                         loading1.close();
                         if(res.Record.length<=0){
                             this.$message('暂无新凭证');
+                            this.voucherDataList.data={
+                                        Mst:{},
+                                        Attachements:[]
+                            }
+                            this.resetVoucher();
                         } else{
                             this.newAddList=res.Record;
                             this.count=val=='pre'?this.newAddList.length-1:0;
@@ -726,16 +733,38 @@
             },
             //冲红***********************
             chongh(){
-                this.voucherData();
+                var vm=this;
+                this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
-                console.log(Mst);
+                var oldData=JSON.stringify(Mst);
                 for(var dtl of Mst.Dtls){
-                    dtl.JSum?dtl.JSum*-1:'';
-                    dtl.JSum?dtl.DSum*-1:'';
+                    
+                    dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                   dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
                     if(dtl.DtlAccounts){
-                        
+                        dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                        dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
                     }
                 }
+                console.log(this.voucherDataList.data);
+                this.clearPhId(this.voucherDataList.data.Mst); 
+                this.resetVoucher();        
+                this.$message("请查看凭证信息,确认无误点击保存!")                      
+            },
+            //清空凭证phid*****************
+            clearPhId(item){
+                item.PhId='';
+                    for(var dtl of item.Dtls){
+                        dtl.PhId='';
+                        dtl.PhidTransaction='';
+                        dtl.PhidVouchermst='';
+                        if(dtl.DtlAccounts){
+                            dtl.DtlAccounts[0].PhId='';
+                            dtl.DtlAccounts[0].PhidTransaction='';
+                            dtl.DtlAccounts[0].PhidVouchermst='';
+                            dtl.DtlAccounts[0].PhidVoucherDel='';
+                        }
+                    }    
             },
             //打印******************
             // printLodop() {

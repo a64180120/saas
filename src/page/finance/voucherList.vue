@@ -146,10 +146,10 @@
     export default {
        // name: "voucher-list",
         mounted(){
-
             if(this.$route.query.voucherList){
                 this.voucherList= this.$route.query.voucherList;
             }else{
+                console.log(this.sideDate==true)
                 if(!this.sideDate){
                     this.getChecked();
              }
@@ -336,6 +336,7 @@
                     keyword:this.searchValue,
                     queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
                 }
+               
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         this.voucherList= res.Record;
@@ -358,6 +359,8 @@
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.nowTime.getFullYear();
                         this.month=this.checkedTime;
+                         console.log(this.checkedTime)
+                        debugger
                         this.getvoucherList();
                     })
                     .catch(err=>console.log(err))

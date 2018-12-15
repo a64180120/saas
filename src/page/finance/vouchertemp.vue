@@ -171,25 +171,25 @@
             },
             //给父组件传值*************
             finish(item){
-                if(item){
-                    
-                    item.PhId='';
+                if(item){             
+                    this.clearPhId(item);
+                }
+                this.$emit('temp-click',item);
+            },
+            //清空凭证phid*****************
+            clearPhId(item){
+                item.PhId='';
                     for(var dtl of item.Dtls){
                         dtl.PhId='';
                         dtl.PhidTransaction='';
                         dtl.PhidVouchermst='';
                         if(dtl.DtlAccounts){
-                            console.log(dtl)
                             dtl.DtlAccounts[0].PhId='';
                             dtl.DtlAccounts[0].PhidTransaction='';
                             dtl.DtlAccounts[0].PhidVouchermst='';
                             dtl.DtlAccounts[0].PhidVoucherDel='';
                         }
-                    }
-                }
-                console.log(item)
-                debugger
-                this.$emit('temp-click',item);
+                    }    
             },
             //凭证搜索**************************
             searchVoucher(val){
