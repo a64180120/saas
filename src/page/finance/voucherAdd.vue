@@ -28,7 +28,7 @@
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li>删除</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li>复制</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('paste')"><li>剪切</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongH')"><li>冲红</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li>冲红</li></a>
                 <a @click.prevent="addVoucher('print')"><li>保存并打印</li></a>
                 <a @click.prevent="addVoucher('reset')"><li>凭证号重排</li></a>
             </ul>
@@ -93,7 +93,7 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="yearsTrue('uncheck',checkVal)">确认</span>
+                        <span @click="yearsTrue('uncheck',unCheckVal)">确认</span>
                     </p>
                 </div>
 
@@ -223,6 +223,9 @@
                         this.voucherData();
                         this.audit(false,this.voucherDataList.data.Mst.PhId);
                         break;
+                    case 'chongh':
+                        this.chongh();
+                        break;
                     case 'delete' :
                         this.voucherData();
                         if(this.voucherDataList.data.Mst.Dtls.length<=0){
@@ -283,7 +286,6 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                   console.log(data,url)
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            console.log(res)
@@ -457,10 +459,13 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{        
-                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                        this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
+                        this.checkVal=this.checkedTime;
+                        this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
+                        this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
             },
@@ -623,7 +628,7 @@
                         this.$message('当前月份还未结账,无法反结账!');
                         return;
                     }
-                    url='/PBusinessConfig/UnUpdateBusinessConfig';
+                    url='/PBusinessConfig/GetUnUpdateBusinessConfig';
                 }
                 t=this.nowTime.getFullYear()+'-'+val
                 var data={
@@ -637,6 +642,7 @@
                         loading1.close();
                         if(res.Status=='success'){
                             this.$message('结账成功!');
+                            this.getChecked();
                         }else{
                             this.$message('结账失败!');
                         }
@@ -717,6 +723,19 @@
             //做下月账****************
             nextMonthShow(){
                 this.nextMonthCss=true;
+            },
+            //冲红***********************
+            chongh(){
+                this.voucherData();
+                var Mst=this.voucherDataList.data.Mst;
+                console.log(Mst);
+                for(var dtl of Mst.Dtls){
+                    dtl.JSum?dtl.JSum*-1:'';
+                    dtl.JSum?dtl.DSum*-1:'';
+                    if(dtl.DtlAccounts){
+                        
+                    }
+                }
             },
             //打印******************
             // printLodop() {

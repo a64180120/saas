@@ -53,29 +53,30 @@ export default {
     }
   },
   watch:{
-       imgList:{
-         handler(newValue, oldValue) {
-             if(newValue.length === 0) {
-                 this.fileList = [];
-                 return;
-             }
-             for (let i = 0; i < newValue.length; i++) {
-                 if (oldValue[i] != newValue[i]) {
-                    this.fileList = [];
-                    newValue.forEach(el=>{
-                         this.fileList.push({url: this.picUrl + el.BUrlPath,phid:el.PhId})
-                    })
-                    return;
-                 }
-             }
-         },
-         deep: true
-      }
+    //    imgList:{
+    //      handler(newValue, oldValue) {
+    //          if(newValue.length === 0) {
+    //              this.fileList = [];
+    //              return;
+    //          }
+    //          for (let i = 0; i < newValue.length; i++) {
+    //              if (oldValue[i] != newValue[i]) {
+    //                 this.fileList = [];
+    //                 newValue.forEach(el=>{
+    //                      this.fileList.push({url: this.picUrl + el.BUrlPath,phid:el.PhId})
+    //                 })
+    //                 return;
+    //              }
+    //          }
+    //      },
+    //      deep: true
+    //   }
   },
   created() {},
   //加载数据
   mounted(){
       var url=this.picUrl;
+      this.fileList=[];
       if (this.imgList.length != 0) {
           this.imgList.forEach(el =>{
               this.fileList.push({ phid:el.PhId,url: url+ el.BUrlPath });
@@ -101,7 +102,6 @@ export default {
                     item.push(el);
                 }
             })
-
             this.$emit("removeimg", item, deleValue);
         },
         //附件上传前的判断
@@ -129,7 +129,6 @@ export default {
             formData.append('RelPhid', '0')
             formData.append('BTable', 'gcw3_voucher_mst')
             formData.append("file", fileObject);
-
             this.uploadFile(formData).then(res => {
                 if(res.Status==='error'){
                     this.$message.error(res.Msg);

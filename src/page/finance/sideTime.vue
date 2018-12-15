@@ -55,7 +55,7 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="yearsTrue('uncheck',checkVal)">确认</span>
+                        <span @click="yearsTrue('uncheck',unCheckVal)">确认</span>
                     </p>
                 </div>
 
@@ -98,11 +98,14 @@ export default {
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{                        
-                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                    .then(res=>{                     
+                        this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
+                        this.checkVal=this.checkedTime;
+                        this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
+                        this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
             },
@@ -232,7 +235,7 @@ export default {
                         this.$message('当前月份还未结账,无法反结账!');
                         return;
                     }
-                    url='/PBusinessConfig/UnUpdateBusinessConfig';
+                    url='/PBusinessConfig/GetUnUpdateBusinessConfig';
                 }
                 t=this.nowTime.getFullYear()+'-'+val
                 var data={
@@ -246,6 +249,7 @@ export default {
                         loading1.close();
                         if(res.Status=='success'){
                             this.$message('结账成功!');
+                            this.getChecked();
                         }else{
                             this.$message('结账失败!');
                         }
@@ -283,8 +287,6 @@ export default {
             },
             //会计期窗口弹出**************************
             yearSelShow(){
-                this.checkVal=this.checkedTime;
-                this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                 this.yearSelCss=!this.yearSelCss;
             },
             //会计期年份上下切换******

@@ -252,7 +252,6 @@
                 }else{
                     this.chooseItem=item;
                 }
-                console.log(item)
             },
              //审核*****************
             audit(bool,PhId){
@@ -328,7 +327,7 @@
                     .catch(err=>{console.log(err);loading1.close();})
             },
             //凭证列表***************
-            getvoucherList(){console.log(111)
+            getvoucherList(){
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -777,6 +776,7 @@
                         border-top:0;
                         height:100%;
                         width:5%;
+                        cursor:pointer;
                         display: flex;
                         align-items: center;
                         justify-content: center;

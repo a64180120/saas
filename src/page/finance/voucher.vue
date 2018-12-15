@@ -220,6 +220,7 @@
             daifang:'',
             PersistentState:'1',
             //附件****************
+            Attachements:[],
             loading: false,
             fileVisible:false,
             imglist:[],
@@ -374,9 +375,12 @@
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
+                    for(var img in this.imglist ){
+                        this.Attachements[img]=this.imglist[img][0]
+                    }
                     return {
                         Mst:this.fatherData,
-                        Attachements:this.imglist
+                        Attachements: this.Attachements
                     }
                 }
             },
@@ -697,18 +701,16 @@
                 this.fileVisible=true;
             },
             removeimg(item,deleValue) {//
-               
+               //this.imglist=item;
                 var urls=deleValue.imgPath.split('/');
-                console.log(item,urls,item)
+                console.log(this.imglist,item,urls,deleValue)
                 for(var i in item[0]){ 
                     console.log(item[0][i].BName,urls[4])
                     if(item[0][i].BName==urls[4]){
                             console.log(item)
                           item[0].splice(i,1);  
                     }
-                }  
-                 this.imglist=item[0];
-                 console.log( this.imglist)
+                } 
                 var param={
                     PhId:deleValue.phid,
                     BTable:'gcw3_voucher_mst',
@@ -728,6 +730,7 @@
                 });
             },
             uploadimg(item) {
+                console.log(item);
                 this.imglist.push(item);
             },
             ...mapActions({
