@@ -15,7 +15,7 @@
                     </div>
                 </li>
                 <li class="flexPublic">
-                    <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
+                    <div class="flexPublic">附单据&nbsp;<span class="fileCount"></span>&nbsp;张&nbsp;</div>
                     <div @click.stop="testFile" class="uploaderTitle"></div>
                     <!-- 附件弹出框 -->
                     <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
@@ -107,7 +107,7 @@
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
-                                <input type="number"  v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                                <input type="text"  v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i @click.stop="moneyCancle(item,'jiefang')" class="inputCancle">X</i>
                              </span>
@@ -237,11 +237,11 @@
             kemuSel:[],//科目选择框显示隐藏样式参数************
             assistItem:[],//辅助项显示隐藏样式参数********************
             assistItemMask:false,
-            assistCheck:true
+            assistCheck:true,
+            haveAttachements:false
         }},
-        created(){
-            console.log(this.dataList.data.Mst)
-            if(!this.dataList.data.Mst){//没有传参时初始化页面
+        created(){console.log( this.dataList); 
+            if((!this.dataList.data.Mst)||typeof(this.dataList.data.Mst)=='string'){//没有传参时初始化页面
                 this.voucherInfo=[
                     this.initVoucherInfo(),
                     this.initVoucherInfo(),
@@ -253,8 +253,9 @@
                     PhId:'',
                     Dtls:[]
                 }
-            }else{
+            }else{   
                 this.getVoucherData(this.dataList.data.Mst);
+                this.getAttachements(this.dataList.data.Mst.PhId);
             }
             this.initInfoCss();
         },
@@ -269,10 +270,12 @@
                     alert('借方金额不等于贷方金额,请查看');
                     return;
                 }else{
+                    var dtls; 
                     if(!this.fatherData.PhId){
-                        this.fatherData.Dtls=[];
-                    } 
-                    var dtls = this.fatherData.Dtls;
+                        dtls=[];
+                    }else{
+                        dtls= this.fatherData.Dtls;
+                    }
                     var account;
                     var item;
                     for( var info of this.voucherInfo){
@@ -318,7 +321,6 @@
                             }
                         }
                         else if(info.SubjectCode){
-                            console.log(2222222)
                             var newDtl={
                                 Abstract:info.Abstract,
                                 SubjectCode:info.SubjectCode,
@@ -346,7 +348,6 @@
                             dtls.push(newDtl);
                         }
                     }
-       
                     this.fatherData.Dtls=dtls;
                     for(var del of this.deleteDtls){
                         if(del.PhId){
@@ -378,11 +379,25 @@
                     this.fatherData.PAuditor=this.PAuditor;
                     for(var img in this.imglist ){
                         if(this.imglist[img][0]){
-                            this.Attachements[this.Attachements.length]=this.imglist[img][0]
+                            this.Attachements[this.Attachements.length]={
+                                PersistentState : 1,
+                                BTable : "gcw3_voucher_mst",
+                                BName : '123',
+                                BType : 'JPG',
+                                BSize : this.imglist[img][0].BSize,
+                                BFilebody : null
+                            };
+                            // this.Attachements[this.Attachements.length-1]
+                            // console.log(this.Attachements,this.Attachements[this.Attachements.length-1].PhId,this.imglist,img)
+                            // if(this.Attachements[this.Attachements.length-1].PhId==0){
+                            //     this.Attachements[this.Attachements.length-1].PersistentState=1;
+                            //     this.Attachements[this.Attachements.length-1].BTable='gcw3_voucher_mst';
+                            //     this.Attachements[this.Attachements.length-1].BusinessPrimaryKeys='';
+                            //     this.Attachements[this.Attachements.length-1].ForeignKeys='';
+                            // }
                         }
                         
                     }
-                    debugger
                     return {
                         Mst:this.fatherData,
                         Attachements: this.Attachements
@@ -425,6 +440,7 @@
             },
             //获取父组件传参*********************************
             getVoucherData(data){
+                console.log(data)
                 this.fatherData=data;
                 this.PhId=data.PhId;
                 this.PType=data.PType;
@@ -458,6 +474,29 @@
                         this.voucherInfo.push(this.initVoucherInfo());
                     }
                 }
+            },
+            //获取附件信息*******************
+            getAttachements(PhId){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    id:PhId
+                }
+                const loading=this.$loading();
+                this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
+                .then(res=>{
+                    console.log(res)
+                    if(res){
+                        this.haveAttachements=true;    
+                    }else{
+                        this.haveAttachements=false;
+                    }
+                    loading.close();
+                })
+                .catch(err=>{
+                        console.log(err);loading.close();
+                    }
+                )
             },
             //获取科目列表******************
             getSubject(){
@@ -555,7 +594,10 @@
                     this.countJie++;
                     this.countDai++;
                 }
-                item.money[value]=parseFloat(item.money[value]);
+                if(item.money[value]){
+                    item.money[value]=parseFloat(item.money[value]);    
+                }
+                
                 var val=item.money[value];
                 item.moneyInput[value]=false;
                 var children = $event.target.parentNode.parentNode.children;
@@ -774,6 +816,7 @@
             },
             ...mapState({
                 orgid: state => state.user.orgid,
+                uid: state => state.user.userid,
                 orgcode: state => state.user.orgcode
             }),
             picUrl:function(){
