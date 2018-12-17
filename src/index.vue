@@ -42,6 +42,7 @@ export default {
                     loading.close();
                     console.log(res)
                 }).catch((error) =>{
+                    loading.close();
                     alert('网络不通,请检查服务接口网络！.....')
                 })
             }
