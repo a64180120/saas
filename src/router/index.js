@@ -83,25 +83,23 @@ router.beforeEach((to, from, next) => {
         } else {
             initRoute(router,menuInfo).then(() => {
                 let isPermission = true;
-                // if (to.meta.requireAuth) {
-                //     if (to.meta.type == "page") {
-                //         console.log("进入权限判断 page");
-                //         permissionList.forEach(v => {
-                //             // 判断跳转的页面是否在权限列表中
-                //             if (v.path == to.fullPath) {
-                //                 isPermission = true;
-                //             }
-                //         });
-                //     } else{
-                //         if(to.meta.type == "button"){
-                //             console.log("进入权限判断 button");
-                //             isPermission = true;
-                //         }
-                //     }
-                // } else {
-                //     //不需要权限判断，直接打开
-                //     isPermission = true;
-                // }
+                if (to.meta.requireAuth) {
+                    if (to.meta.type == "page") {
+                        console.log("进入权限判断 page");
+                        permissionList.forEach(v => {
+                            // 判断跳转的页面是否在权限列表中
+                            if (v.path == to.fullPath) {
+                                isPermission = true;
+                            }
+                        });
+                    } else if (to.meta.type == "button") {
+                        console.log("进入权限判断 button");
+                        isPermission = true;
+                    }
+                } else {
+                    //不需要权限判断，直接打开
+                    isPermission = true;
+                }
 
                 // 没有权限时跳转到401页面
                 if (!isPermission) {

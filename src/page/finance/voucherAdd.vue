@@ -153,7 +153,7 @@
     import voucher from './voucher'
     import {mapState, mapActions} from 'vuex'
     import voucherTemp from './vouchertemp'
-    import { getLodop } from '@/plugins/Lodop/LodopFuncs';
+    //import { getLodop } from '@/plugins/Lodop/LodopFuncs';
     export default {
         data(){return {
             val1:'',

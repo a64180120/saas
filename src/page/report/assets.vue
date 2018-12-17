@@ -172,8 +172,8 @@
                             <template v-if="index == cashOutData.length+cashData.length+6">
                                 <li></li>
                                 <li class="align-center">净资产合计</li>
-                                <li>{{cashCounts}}</li>
-                                <li>{{cashCountsQ}}</li>
+                                <li>{{cashCounts | NumFormat}}</li>
+                                <li>{{cashCountsQ | NumFormat}}</li>
                             </template>
                         </ul>
                     </template>
@@ -221,7 +221,7 @@
 <script>
     import * as axios from "axios";
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
-    import { getLodop } from '@/plugins/Lodop/LodopFuncs';
+    //import { getLodop } from '@/plugins/Lodop/LodopFuncs';
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { mapState, mapGetters } from "vuex";
 
@@ -426,17 +426,17 @@
                 }
             },
             printLodop() {
-                const me = this
-                var html=this.$refs.printFrom.innerHTML;
-                let  LODOP = getLodop();
-                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
-                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
-                LODOP.SET_PRINT_STYLE("Bold", 1);
-                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
-                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
-                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
-                //LODOP.PRINT();
-                LODOP.PREVIEW();
+                // const me = this
+                // var html=this.$refs.printFrom.innerHTML;
+                // let  LODOP = getLodop();
+                // LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
+                // LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+                // LODOP.SET_PRINT_STYLE("Bold", 1);
+                // //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                // LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
+                // LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+                // //LODOP.PRINT();
+                // LODOP.PREVIEW();
             },
              // 打印
             printContent(e){
