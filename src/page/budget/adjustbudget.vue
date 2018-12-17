@@ -1,4 +1,5 @@
 <template>
+    <div class="container">
     <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
@@ -183,6 +184,7 @@
         <div class="timeSelectBox">
             <time-select-bar @item-click="dateChoose"></time-select-bar>
         </div>
+    </div>
     </div>
 </template>
 
@@ -518,7 +520,7 @@
     .timeSelectBox{
         position: fixed;
         right: 0;
-        top: 100px;
+        top: 110px;
         bottom:0;
         width: 60px;
     }

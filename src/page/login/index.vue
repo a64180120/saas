@@ -20,7 +20,7 @@
                             :value="item.PhId">
                             </el-option>
                         </el-select>
-                    </el-form-item> 
+                    </el-form-item>
                     <p class="textL width50" style="float:left;">注册</p>
                     <p class="textR width50" style="float:left;">忘记密码？</p>
 
@@ -68,7 +68,7 @@ export default {
             },
             sysMsg: '',
             loading: false,
-            isOrganize:false
+                isOrganize:false
         }
     },
      //计算属性
@@ -79,7 +79,7 @@ export default {
         })
     },
     created() {
-        
+
     },
     watch: {
         //监听password变化 ，(debounce)停留0.5s获取组织信息

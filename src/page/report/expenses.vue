@@ -1,4 +1,5 @@
 <template>
+   <div class="container">
     <div class="manageContent" v-loading="loading">
         <div class="reportBox">
         <div class="unionState flexPublic">
@@ -15,9 +16,9 @@
                             <!--value-format="yyyy-MM-dd">-->
                         <!--</el-date-picker>-->
                     <!--</div>-->
-                    <div>凭证：</div>
+                    <div>条件：</div>
                     <div  class="block selectContainer">
-                        <select class="el-input__inner" v-model="proofType">
+                        <select class="el-input__inner el-button--small" v-model="proofType">
                             <option value="1">包含未审核凭证</option>
                             <option value="0">不包含未审核凭证</option>
                         </select>
@@ -45,7 +46,7 @@
             <time-select-bar @item-click="dateChoose"></time-select-bar>
         </div>
     </div>
-
+   </div>
 </template>
 
 <script>
@@ -106,6 +107,17 @@
         },
         mounted(){
             this.getData(this.date1,this.proofType);
+        },
+        watch:{
+            // /*
+            // *监听日期选择，根据所选的日期以及凭证调用资产负债数据查询方法
+            // * */
+            // date1:function(){
+            //     this.getData(this.date1,this.proofType);
+            // },
+            proofType:function(){
+                this.getData(this.date1,this.proofType);
+            }
         },
         methods:{
             dateChoose:function(val){
@@ -294,7 +306,7 @@
     .timeSelectBox{
         position: fixed;
         right: 0;
-        top: 100px;
+        top: 110px;
         bottom:0;
         width: 60px;
     }
