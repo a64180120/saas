@@ -74,7 +74,9 @@ const actions = {
             let base=httpConfig.getAxiosBaseConfig();
             let url=httpConfig.baseurl;
 
-            httpajax.create(base).get('/SysToken/GetToken',{
+            httpajax.create({
+                baseURL: base.baseURL
+            }).get('/SysToken/GetToken',{
                 params: {
                     token: 'g6c'
                 },

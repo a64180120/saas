@@ -9,6 +9,7 @@ import setTheme from "@/util/setTheme"
 import Cookie from 'js-cookie'
 import Auth from "@/util/auth"
 
+
 export default {
     // TODO: 全局状态加载及变更。请根据实际情况改写
     beforeMount(){
@@ -28,9 +29,17 @@ export default {
         this.$nextTick(() => {
             setTheme("theme-default")
             this.$store.commit("setThemeColor", "theme-default")
+
             //加载token信息
             if(!Auth.getToken()){
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 this.$store.dispatch('user/getToken').then((res) => {
+                    loading.close();
                     console.log(res)
                 }).catch((error) =>{
                     alert('网络不通,请检查服务接口网络！.....')
