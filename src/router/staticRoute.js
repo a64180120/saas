@@ -10,6 +10,10 @@ const staticRoute = [
         component: () => import("../page/login")
     },
     {
+        path: "/register",
+        component: () => import("../page/register")
+    },
+    {
         path:'/indexfinance',
         component: () =>import("../page/finance/voucherAdd")
     },
