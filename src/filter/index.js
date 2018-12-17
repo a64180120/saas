@@ -7,7 +7,7 @@ Vue.filter('NumFormat', function(value) {
     var intPart =  Number(value)|0; //获取整数部分
     var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
 
-    debugger;
+
     var floatPart = ".00"; //预定义小数部分
     var value2Array = value.toString().split(".");
 

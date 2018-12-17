@@ -80,8 +80,8 @@
                 <li>贷方金额</li>
             </ul>
             <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
-                <li>
-                    <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
+                <li @dblclick="voucherDel(item)">
+                    <ul @click="voucherDel(item)" class="listIndex"><li>{{index+1}}</li></ul>
                     <ul>
                         <li>
                             <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
@@ -93,8 +93,8 @@
                         <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                             <div>{{dtl.Abstract}}</div>
                             <div>{{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}</div>
-                            <div>{{dtl.JSum==0?'':dtl.JSum}}</div>
-                            <div>{{dtl.DSum==0?'':dtl.DSum}}</div>
+                            <div>{{(dtl.JSum==0?'':dtl.JSum) | NumFormat}}</div>
+                            <div>{{(dtl.DSum==0?'':dtl.DSum) | NumFormat}}</div>
                         </li>
                         <li>
                             <div>合计:{{'sum' | sum(item.Dtls)}}</div>
@@ -629,6 +629,31 @@
             resetCodeMonth($event){
               this.month= this.month=parseInt($event.target.innerHTML);
             },
+            //数字转换******************
+            NUmTurn(){
+                if(!value) return '0.00';
+                /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                var intPart =  Number(value)|0; //获取整数部分
+                var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+
+
+                var floatPart = ".00"; //预定义小数部分
+                var value2Array = value.toString().split(".");
+
+                //=2表示数据有小数位
+                if(value2Array.length == 2) {
+                    floatPart = value2Array[1].toString(); //拿到小数部分
+
+                    if(floatPart.length == 1) { //补0,实际上用不着
+                        return intPartFormat + "." + floatPart + '0';
+                    } else {
+                        return intPartFormat + "." + floatPart;
+                    }
+
+                } else {
+                    return intPartFormat + floatPart;
+                }
+            },
             //凭证号重排确认***************
             resetCode(val){
                 if(val){
@@ -888,7 +913,7 @@
         width:20%;
         text-align: center;
         line-height: 30px;
-        background:#509edc;
+        background:#00B8EE;
         color:#fff;
         cursor:pointer;
     }
@@ -982,119 +1007,7 @@
                 }
             }
         }
-        .choosed{
-            background: #000;
-        }
-        .listContainer{
-            overflow-y: auto;
-            padding:5px;
-            margin-top:10px;
-            padding-bottom: 20px;
-            ul.listTitle{
-                display: flex;
-                background: #2780d1;
-                color:#fff;
-                li{
-                    text-align: center;
-                    height:40px;
-                    line-height: 40px;
-                }
-                li:first-of-type{
-                    width:5%;
-                }
-                li:nth-of-type(2){
-                    width:31%;
-                }
-                li:nth-of-type(3){
-                    width:26%;
-                }
-                li:nth-of-type(4){
-                    width:19%;
-                }
-                li:nth-of-type(5){
-                    width:19%;
-                }
-            }
-            ul.listContent{
-                border-top:1px solid #ccc;
-                margin-bottom: 20px;
-                background: #fff;
-                &.choosed{
-                    >li>dl{
-                        background: #2780d1;
-                    }
-                }
-                >li {
-                    width:100%;
-                    height:100%;
-                    display: flex;
-                    align-items: center;
-                    position: relative;
-                    > dl.listIndex{
-                        border:1px solid #ccc;
-                        border-top:0;
-                        height:100%;
-                        width:5%;
-                        cursor:pointer;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        position:absolute;
-                    }
-                    > ul {
-                        height:100%;
-                        width: 95%;
-                        margin-left:5%;
-                        >li{
-                            display: flex;
-                            justify-content: flex-start;
-                            height:30px;
-                            line-height: 30px;
-                            &:first-of-type{
-                                padding:0 10px;
-                                border:1px solid #ccc;
-                                border-top:0;
-                                border-left: 0;
-                                >span{
-                                    margin-right: 50px;
-                                }
-                            }
-                            >div{
-                                text-align: center;
-                                border:1px solid #ccc;
-                                border-top:0;
-                                border-left:0;
-                            }
-                            div:first-of-type{
-                                width:32%;
-                            }
-                            div:nth-of-type(2){
-                                width:28%;
-                            }
-                            div:nth-of-type(3){
-                                width:20%;
-                            }
-                            div:nth-of-type(4){
-                                width:20%;
-                            }
-                            &:last-of-type{
-                                >div{
-                                    text-align: center;
-                                    border:1px solid #ccc;
-                                    border-top:0;
-                                    border-left:0;
-                                    width:20%;
-                                    &:first-of-type{
-                                        width:60%;
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
+        
     }
     .codeResetContainer{
         background: rgba(0,0,0,0.5);
@@ -1280,6 +1193,133 @@
         bottom: 0;
         z-index: -1;
     }
+    .listContainer{
+        overflow-y: auto;
+        padding:5px;
+        margin-top:10px;
+        padding-bottom: 20px;
+    }
+    .listContainer ul.listTitle{
+        display: flex;
+        background: #00B8EE;
+        color:#fff;
+        
+    }
+    .listContainer ul.listTitle li{
+        text-align: center;
+        height:40px;
+        line-height: 40px;
+    }
+    .listContainer ul.listTitle li:first-of-type{
+        width:5%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(2){
+        width:31%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(3){
+        width:26%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(4){
+        width:19%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(5){
+        width:19%;
+    }
+    ul.listContent{
+        border-top:1px solid #ccc;
+        margin-bottom: 20px;
+        background: #fff;
+    }    
+    ul.listContent.choosed>li>ul.listIndex{
+        background: #2780d1;
+        color:#fff;
     
+    }
+    
+    ul.listContent>li {
+        width:100%;
+        height:100%;
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        position: relative;
+    }
+        ul.listContent>li> ul.listIndex{
+        margin:0;
+        border:1px solid #ccc;
+        border-top:0;
+        height:100%;
+        width:5%;
+        font-size: 18px;
+        cursor:pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position:absolute;
+            
+    }
+    ul.listContent>li> ul.listIndex>li:first-of-type{
+            border:0;
+            width:100%;
+            height:100%;
+            display: flex;
+            align-items: center;
+            justify-content:center;
+        }
+    ul.listContent>li> ul {
+        height:100%;
+        width: 95%;
+        margin-left:5%;
+        
+    }
+    ul.listContent>li> ul>li{
+        display: flex;
+        justify-content: flex-start;
+        height:30px;
+        line-height: 30px;
+    }
+    ul.listContent>li> ul>li:first-of-type{
+        padding:0 10px;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left: 0;
+    }
+    ul.listContent>li> ul>li:first-of-type>span{
+            margin-right: 50px;
+        }
+    ul.listContent>li> ul>li>div{
+        text-align: center;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left:0;
+    }
+    ul.listContent>li> ul>li div:first-of-type{
+        width:32%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(2){
+        width:28%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(3){
+        width:20%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(4){
+        width:20%;
+    }
+    
+    ul.listContent>li> ul>li:last-of-type>div{
+        text-align: center;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left:0;
+        width:20%;
+        
+    }
+    ul.listContent>li> ul>li:last-of-type>div:first-of-type{
+            width:60%;
+        }
+    
+            
 
+        
+    
 </style>

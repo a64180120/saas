@@ -15,22 +15,22 @@
             <ul class="flexPublic handle">
                 <a>
                     <li class="mode">
-                        <span>模板</span>
+                        <span style="background: #7790f7;color:#fff">模板</span>
                         <span @click.prevent="addVoucher('modelList')">引用模板</span>
                         <span @click.prevent="addVoucher('keepModel')">存为模板</span>
                     </li>
                 </a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li>保存</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li style="background:#FDBA6C;">保存</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li>修改</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li>保存并新增</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="background:#31CABD;">保存并新增</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li>审核</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li>反审核</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li>删除</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li>复制</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li>剪切</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li>冲红</li></a>
-                <a @click.prevent="addVoucher('print')"><li>保存并打印</li></a>
-                <a @click.prevent="addVoucher('reset')"><li>凭证号重排</li></a>
+                <a @click.prevent="addVoucher('print')"><li style="background:#FBD901;">保存并打印</li></a>
+                <a @click.prevent="addVoucher('reset')"><li style="background:#FBD901;">凭证号重排</li></a>
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -877,22 +877,16 @@
                     z-index: 9;
                     transition:all 0.2s linear;
                     >span{
-                        &:first-of-type:hover{
-                            background: #fff;
-                            color:#52bab5;
-                        }
-                        &:hover{
-                            background: #ff9900;
-                            color:#fff;
+                        &:first-of-type{
+                            
+                            border:0;
                         }
                     }
                     &:hover{
                         height:90px;
                         background: #fff;
-                        color:#52bab5;
-                        >span:first-of-type{
-                            border-bottom: 1px solid #ff9900;
-                        }
+                        color:#aaa;
+                        
                     }
                 }
             }
@@ -911,7 +905,7 @@
         >li{
             margin-left: 5px;
             padding:0 10px;
-            background:#509edc;
+            background:#00B8EE;
             color:#fff;
             height:30px;
             width:80px;
@@ -969,12 +963,13 @@
         min-width: 70px;
         text-align: center;
         line-height: 30px;
-        background:#509edc;
+        background:#00B8EE;
         color:#fff;
         cursor:pointer;
     }
     .unionState .handle>a>li{
-        border:1px solid #ff9900;
+        border:1px solid #ccc;
+        color:#fff;
         cursor:pointer;
         border-radius: 3px;
         text-align: center;
@@ -1004,7 +999,7 @@
             height:34px;
             line-height: 34px;
             text-align: center;
-            background: #ff9900;
+            background: #45c0f7;
             color:#fff;
             cursor: pointer;
             &:hover{
@@ -1016,7 +1011,8 @@
             height:30px;
             line-height: 30px;
             font-size: 18px;
-            background: #02a7e7;
+            background: #fff;
+            color:#04a9f4;
         }
         .monthsContainer{
             height:620px;
@@ -1050,49 +1046,53 @@
                        text-align: center;
                        margin:0 auto;
                        margin-top: 12px;
-                       border:1px solid #02a7e7;
+                       color: #45c0f7;
+                       border: #c7e8f7 1px solid;
                        border-radius: 50%;
                        cursor:pointer;
                        &.active.unchecked{
-                           color:#333;
-                           background: #6acccb;
-                           &:hover{
-                               background: #6acccb;
-                           }
+                           color:#fff;
+                           background: rgb(3, 169, 244);
                        }
                        &.active{
-                           background: #6acccb;
+                           background: rgb(3, 169, 244);
+                           box-shadow: 0px 2px 2px #dbf4ff;
+                           border: #c7e8f7 1px solid;
                            color:#fff;
                        }
                        &.unchecked{
                            background: #fff;
-                           border-color:#aaa;
+                           border-color:transparent;
+                           color: #CCC !important;
+                           border: #ececec 1px solid !important;
+                           box-shadow: 0px 2px 2px #e0e0e0 !important;
                            &:after{
                                background: #ccc;
                            }
-                           &:hover{
-                               border-color:#aaa;
-                               background: #ccc;
-                               color:#333;
-                           }
+                        //    &:hover{
+                        //        border-color:#aaa;
+                        //        background: #ccc;
+                        //        color:#333;
+                        //    }
                        }
-                       &.futureM.unchecked{
-                           border-color:#aaa;
-                           background: #ccc;
-                           cursor:default;
-                       }
-                       &:hover{
-                           background: #02a7e7;
-                           color:#fff;
-                       }
+                    //    &.futureM.unchecked{
+                    //        
+                    //        background: #ccc;
+                    //        cursor:default;
+                    //    }
+                    //    &:hover{
+                    //        background: #02a7e7;
+                    //        color:#fff;
+                    //    }
                        &:first-of-type{
                            border:0;
                            font-size: 15px;
                            font-weight: bold;
-                           &:hover{
-                               background: none;
-                               color:#333;
-                           }
+                           cursor:default;
+                        //    &:hover{
+                        //        background: none;
+                        //        color:#333;
+                        //    }
                        }
                        &:nth-of-type(2){
                            margin-top: 0;
@@ -1101,6 +1101,7 @@
                }
             }
         }
+        
         .yearsContainer{
             &:before{
                 position:absolute;
