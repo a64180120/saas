@@ -416,8 +416,10 @@
                                         this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
                     */
                 }else{
-                    if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
-                        this.deleteDtls.push(this.voucherInfo[index]);
+                    if(this.voucherInfo.length>1){
+                        if(this.voucherInfo[index].PhId){
+                            this.deleteDtls.push(this.voucherInfo[index]);
+                        }
                         this.voucherInfo.splice(index,1);
                         this.initMoneyCss();
                     }
@@ -1062,6 +1064,9 @@
         z-index:5;
         width:100%;
         height:100%;
+    }
+    .kemu>div:first-of-type>ul{
+        padding:5px 3px;
     }
     .kemu>div>ul{
         height:100%;
