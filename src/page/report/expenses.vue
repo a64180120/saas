@@ -35,15 +35,21 @@
                 :data="inMoney"
                 :expand-all="expandAll"
                 :columns="columns"
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                :header-cell-style="{background:'#2780d1',color:'#fff','text-align':'center'}"
                 v-loading="loading"
                 highlight-current-row
                 border>
             </tree-table>
+            <!--<ul>
+                <li v-for="item in columns">{{item.text}}</li>
+            </ul>
+            <ul v-for="">
+
+            </ul>-->
         </div>
         </div>
         <div class="timeSelectBox">
-            <time-select-bar @item-click="dateChoose"></time-select-bar>
+            <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
         </div>
     </div>
    </div>
@@ -70,19 +76,23 @@
                     {
                         text: "编码",
                         value: "KCode",
-                        width: 200
+                        width: 200,
+                        align:'center'
                     },
                     {
                         text: "名称",
-                        value: "KName"
+                        value: "KName",
+                        align:'center'
                     },
                     {
                         text: "本月数",
-                        value: "StartSum"
+                        value: "StartSum",
+                        align:'right'
                     },
                     {
                         text: "本年累计数",
-                        value: "EndSum"
+                        value: "EndSum",
+                        align:'right'
                     }
                 ],
                 //收入
@@ -106,6 +116,12 @@
 
         },
         mounted(){
+            let currentYear = new Date();
+            let currentyear=currentYear.getFullYear(currentYear);
+            let currentMonth=currentYear.getMonth()+1;
+            this.date1.choosedYear=currentyear;
+            this.date1.choosedMonth=currentMonth;
+            this.date1.choosedMonthEnd=currentMonth;
             this.getData(this.date1,this.proofType);
         },
         watch:{
@@ -120,6 +136,16 @@
             }
         },
         methods:{
+            changeData:function(res){
+                for(var i in res){
+                    res[i].StartSum=this.changeNum(res[i].StartSum);
+                    res[i].EndSum=this.changeNum(res[i].EndSum);
+                    if(res[i].children!=[]){
+                        this.changeData(res[i].children)
+                    }
+                }
+                return res;
+            },
             dateChoose:function(val){
                 console.log(val);
                 let time=val.choosedYear+'-'+ val.choosedMonth;
@@ -158,6 +184,7 @@
                         this.$message.error(res.Msg);
                         return
                     }
+                    res.Data=this.changeData(res.Data);
 
                     var data=res.Data;
                     var indata=data.filter((value,key,arr) => {
@@ -171,23 +198,23 @@
                     // indata[2].children[0].StartSum=22
                     // indata[2].children[0].EndSum=33
 
-                    var indata_StartSum=0;
-                    var indata_EndSum=0;
+                    var indata_StartSum=Math.floor(0);
+                    var indata_EndSum=Math.floor(0);
                     treeSum(indata).forEach(item =>{
-                        indata_StartSum +=item.StartSum;
-                        indata_EndSum +=item.EndSum
+                        indata_StartSum +=Math.floor(item.StartSum);
+                        indata_EndSum +=Math.floor(item.EndSum)
                     })
                     var outdata=data.filter((value,key,arr) => {
                         //1-资产,2-负债,3-净资产,4-收入,5-支出
                         return value.KType==="5"
                     })
 
-                    var outdata_StartSum=0;
-                    var outdata_EndSum=0;
+                    var outdata_StartSum=Math.floor(0);
+                    var outdata_EndSum=Math.floor(0);
                     //var listArry2=treeSum(outdata);
                     treeSum(outdata).forEach(item =>{
-                        outdata_StartSum +=item.StartSum;
-                        outdata_EndSum +=item.EndSum
+                        outdata_StartSum +=Math.floor(item.StartSum);
+                        outdata_EndSum +=Math.floor(item.EndSum)
                     })
 
                     var newdata=new Array();
@@ -200,8 +227,8 @@
                     }],indata,[{
                         KCode:'',
                         KName:'本期合计收入',
-                        StartSum:indata_StartSum,
-                        EndSum:indata_EndSum
+                        StartSum:this.changeNum(indata_StartSum),
+                        EndSum:this.changeNum(indata_EndSum)
                     }],[{
                         KCode:'二、支出',
                         KName:'',
@@ -210,8 +237,8 @@
                     }],outdata,[{
                         KCode:'',
                         KName:'本期合计支出',
-                        StartSum:outdata_StartSum,
-                        EndSum:outdata_EndSum
+                        StartSum:this.changeNum(outdata_StartSum),
+                        EndSum:this.changeNum(outdata_EndSum)
                     }])
 
                 }).catch(error =>{
@@ -219,6 +246,31 @@
                     this.loading = false;
                     this.$message({ showClose: true,  message: '收入科目获取错误',  type: 'error' })
                 })
+
+            },
+            changeNum:function(value) {
+                if(!value) return '0.00';
+
+                /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                var intPart =  Number(value)|0; //获取整数部分
+                var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+
+                var floatPart = ".00"; //预定义小数部分
+                var value2Array = value.toString().split(".");
+
+                //=2表示数据有小数位
+                if(value2Array.length == 2) {
+                    floatPart = value2Array[1].toString(); //拿到小数部分
+
+                    if(floatPart.length == 1) { //补0,实际上用不着
+                        return intPartFormat + "." + floatPart + '0';
+                    } else {
+                        return intPartFormat + "." + floatPart;
+                    }
+
+                } else {
+                    return intPartFormat + floatPart;
+                }
 
             },
             download(){
@@ -298,7 +350,11 @@
         }
     }
 </script>
-
+<!--<style>
+   .reportBox>formData> .el-table>.el-table__body-wrapper>table>tbody>tr>td:nth-of-type(4) .cell{
+        text-align: right;
+    }
+</style>-->
 <style scoped>
     .reportBox{
         margin-right: 60px;
@@ -318,30 +374,22 @@
         height:50px;
         line-height:50px;
         text-align: center;
-        width:20%;
+        width:35%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
     .formData>ul>li:nth-of-type(2){
-        width:25%;
+        width:20%;
     }
-    .formData>ul>li:nth-of-type(3){
-        width:25%;
-    }
-
     .formData>ul:first-child>li:last-of-type{
         /* border-right:1px solid #2780d1; */
     }
 
     .formData>ul>li:first-child{
-        width:50%;
+        width:10%;
         min-width: 70px;
         padding:0 2px;
-    }
-
-    .formDataItems{
-        border-bottom:1px solid #ddd;
     }
     .formData>ul.formDataItems>li{
         border-right:1px solid #ddd;

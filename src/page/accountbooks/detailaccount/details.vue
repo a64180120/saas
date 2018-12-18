@@ -60,10 +60,10 @@
                             <li>{{item.Pdate.slice(0,10)}}</li>
                             <li :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计'}">{{item.Abstract}}</li>
-                            <li>{{item.JSum}}</li>
-                            <li :title="item.DSum">{{item.DSum}}</li>
+                            <li>{{item.JSum | NumFormat}}</li>
+                            <li :title="item.DSum">{{item.DSum | NumFormat}}</li>
                             <li >{{JD[item.DType]}}</li>
-                            <li>{{item.Balance}}</li>
+                            <li>{{item.Balance | NumFormat}}</li>
                         </ul>
                         <!--
                             v-infinite-scroll:
@@ -79,7 +79,9 @@
                 </div>
             </div>
             <div class="timeSelectBox">
-                <time-select-bar @item-click="dateChoose"></time-select-bar>
+                <time-select-bar @item-click="dateChoose"
+                                :showtype="'doubleTime'"
+                ></time-select-bar>
             </div>
         </div>
 
@@ -116,7 +118,9 @@
                 busy:false,    //是否正在加载过程中
                 dataInfo: [],
                 selectSubject:'',  //选择科目
-                date1:'2018',
+                date1:{choosedYear:'',
+                       choosedMonth:'',
+                       choosedMonthEnd:''},
                 loading:false,
                 inputCode:'',//搜索框输入项目编码
                 focus:false,
@@ -129,7 +133,12 @@
             this.getSubjectData();
         },
         mounted() {
-
+                let currentYear = new Date();
+                let currentyear=currentYear.getFullYear(currentYear);
+                let currentMonth=currentYear.getMonth()+1;
+                this.date1.choosedYear=currentyear;
+                this.date1.choosedMonth=currentMonth;
+                this.date1.choosedMonthEnd=currentMonth;
         },
         watch: {
 
@@ -167,22 +176,25 @@
                 }
             },
             dateChoose:function(val){
-                let time=val.choosedYear;
+                let time=val;
                 this.date1=time;
+                console.log(this.date1.choosedMonth+','+this.date1.choosedMonthEnd);
                 this.getData();
             },
             getData(flag) {
+                let Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
                 var data = {
                     uid: this.uid,
                     orgid:this.orgid,
                     Kcode: this.selectSubject.KCode||'',
                     // Year: this.selectSubject.Uyear|| '',
-                    Year: this.date1,
+                    Year: this.date1.choosedYear,
                     OrgIds: this.orgid,
                     pageindex:this.testIndex,
                     pagesize:this.pageSize,
                     Title:this.selectSubject.KName,
-                    Verify:this.proofType
+                    Verify:this.proofType,
+                    Pmonth:Pmonth
                 };
 
                 this.loading = true;
@@ -392,6 +404,7 @@
         top: 110px;
         bottom:0;
         width: 60px;
+        z-index: 999;
     }
     .unionState>ul>li{
         width:100%;
