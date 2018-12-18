@@ -4,7 +4,7 @@
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
             <div class="monthsContainer">
-                <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)" @wheel.stop="monthsSel" id="scrollMonth" style="bottom: 0;" class="months">
+                <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)" style="bottom:0px;"  id="scrollMonth" class="months">
                     <li v-for="item of nowTime.getFullYear()-2000"  :key="item">
                         <ul>
                             <li>{{2000+item}}</li>
@@ -69,9 +69,10 @@
 export default { 
     mounted(){
          this.getChecked();
-         if (document.addEventListener){
-                var month= document.getElementById('scrollMonth');
-                month.addEventListener('DOMMouseScroll',this.foxMonthSel)
+         if (window.addEventListener){
+                //var month= document.getElementById('scrollMonth');
+                window.addEventListener('DOMMouseScroll',this.wheel,false);
+                window.onmousewheel=document.onmousewheel=this.wheel;
             }
     },
     data(){
@@ -124,7 +125,7 @@ export default {
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                        loading1.close();
+                                  
                         if(res.Record.length<=0){
                             this.$message('暂无新凭证');
                         } else{
@@ -138,8 +139,9 @@ export default {
                             // };
                             // this.resetVoucher();
                         }
+                        loading1.close();
                     })
-                    .catch(err=>{console.log(err);loading1.close();})
+                    .catch(err=>{this.$message.error(err);loading1.close();})
             },
          //选择会计期***************
             sideMonth(i,year){
@@ -149,17 +151,35 @@ export default {
                 this.getvoucherList('reset');
                 this.$emit("time-click",{sideDate:this.sideDate})
             },
+            //滚轮监听********************
+            wheel(event){
+                var delta = 0;
+                if(!event){
+                  event = window.event;
+                  if(event.whellDelta){
+                      delta=event.wheelDelta/120;
+                      if(window.opera){
+                          delta=-delta;
+                      }else if(event.detal){
+                          delta=-event.detail/3;
+                      }
+                      if(delta){
+                          this.monthsSel(delta);
+                      }
+                  }  
+                }
+            },
             //鼠标滚轮移动月份选择****************
-            monthsSel($event){
+            monthsSel(delta){
                 var month= document.getElementById('scrollMonth');
                 var bot=parseInt(month.style.bottom);
-                if($event.deltaY=='-100'){
+                if(delta<0){
                     if(parseInt(bot)>0){
                         return;
                     }else{
                         month.style.bottom=bot-100+'px';
                     }
-                }else if($event.deltaY=='100'){
+                }else{
                     if(bot>-100){
                         month.style.bottom='0px';
                     }else{
@@ -168,24 +188,24 @@ export default {
                 }
             },
             //火狐浏览鼠标滚轮移动****************
-            foxMonthSel($event){
-                var month= document.getElementById('scrollMonth');
-                var bot=parseInt(month.style.bottom);
+            // foxMonthSel($event){
+            //     var month= document.getElementById('scrollMonth');
+            //     var bot=parseInt(month.style.bottom);
 
-                if($event.detail=='-3'){
-                    if(parseInt(bot)>0){
-                        return;
-                    }else{
-                        month.style.bottom=bot-100+'px';
-                    }
-                }else if($event.detail=='3'){
-                    if(bot>-100){
-                        month.style.bottom='0px';
-                    }else{
-                        month.style.bottom=bot+100+'px';
-                    }
-                }
-            },
+            //     if($event.detail=='-3'){
+            //         if(parseInt(bot)>0){
+            //             return;
+            //         }else{
+            //             month.style.bottom=bot-100+'px';
+            //         }
+            //     }else if($event.detail=='3'){
+            //         if(bot>-100){
+            //             month.style.bottom='0px';
+            //         }else{
+            //             month.style.bottom=bot+100+'px';
+            //         }
+            //     }
+            // },
             //鼠标按下***************
             dragDown(bool,$event){
                 if(bool){
@@ -281,12 +301,13 @@ export default {
                 this.getvoucherList('reset');
                 this.$emit("time-click",{sideDate:this.sideDate})
             },
-        //会计期内容切换************************************
+            //会计期内容切换************************************
             checkOutSel(val){
                 this.monthsSelCss=val;
             },
             //会计期窗口弹出**************************
             yearSelShow(){
+                console.log( this.yearSelCss)
                 this.yearSelCss=!this.yearSelCss;
             },
             //会计期年份上下切换******
@@ -331,6 +352,7 @@ export default {
         height: 700px;
         border: 1px solid #ccc;
         background: #fff;
+        
         >div:first-of-type{
             height:34px;
             line-height: 34px;
@@ -352,11 +374,15 @@ export default {
         }
         .monthsContainer{
             height:620px;
+            //overflow-y:scroll;
             overflow: hidden;
             position: relative;
+            left:0px;
+           // width:70px;
             >ul.months{
                 position: absolute;
-                left:7px;
+                left:6px;
+                bottom:0px;
                 transition: all 0.8s linear;
                >li{
                    >ul> li{
@@ -424,10 +450,11 @@ export default {
                            border:0;
                            font-size: 15px;
                            font-weight: bold;
-                           &:hover{
-                               background: none;
-                               color:#333;
-                           }
+                           cursor:default;
+                        //    &:hover{
+                        //        background: none;
+                        //        color:#333;
+                        //    }
                        }
                        &:nth-of-type(2){
                            margin-top: 0;

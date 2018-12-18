@@ -26,38 +26,47 @@
                 <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
                 <div @click="searchVoucher" class="searcherBtn">搜索</div>
                 <div @click.stop="highGradeToggle(true)">高级</div>
-                <div v-show="highGradeCss" class="highGradeCss">
+                <div v-if="highGradeCss" class="highGradeCss">
                     <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
                     <ul>
                         <li>
                             <div>科目名称</div>
-                            <div class="inputContainer"><input type="text"></div>
+                            <div class="inputContainer"><input type="text" placeholder="科目名称" v-model="superSearchVal.keyword"></div>
                         </li>
                         <li>
                             <div>辅助核算</div>
                             <div class="flexPublic">
-                                <div class="selectContainer"><select></select></div>
-                                <div class="inputContainer"><input type="text"></div>
+                                <div class="selectContainer">
+                                    <select v-model="superSearchValPhId">
+                                        <option value="0"></option>
+                                        <option :value="item.PhId" v-for="(item,index) of superSearchVal.assistItemList.type" :key="index">{{item.BaseName}}</option>
+                                    </select>
+                                </div>
+                                <div class="searchSelectCon">
+                                    <span>{{superSearchVal.assistItem.BaseName}}</span>
+                                    <searchSelect v-if="superSearchVal.show" :itemlists="assistItemList" :placeholder="superSearchVal.placeholder"
+                                          :nodatatext="superSearchVal.nodatatext" @item-click="itemClick"></searchSelect>
+                                </div>
                             </div>
                         </li>
                         <li>
                             <div>合计金额</div>
                             <div class="flexPublic">
-                                <div class="inputContainer"><input type="text"></div>
+                                <div class="inputContainer"><input type="text" v-model="superSearchVal.sum1"></div>
                                 <span>至</span>
-                                <div class="inputContainer"><input type="text"></div>
+                                <div class="inputContainer"><input type="text" v-model="superSearchVal.sum2"></div>
                             </div>
                         </li>
                         <li>
                             <div>账期</div>
                             <div class="flexPublic">
                                 <div class="block">
-                                    <el-date-picker type="date" v-model="date3" placeholder="请选择日期">
+                                    <el-date-picker type="date" v-model="superSearchVal.date1" placeholder="请选择日期">
                                     </el-date-picker>
                                 </div>
                                 <span>至</span>
                                 <div class="block">
-                                    <el-date-picker type="date" v-model="date4" placeholder="请选择日期">
+                                    <el-date-picker type="date" v-model="superSearchVal.date2" placeholder="请选择日期">
                                     </el-date-picker>
                                 </div>
                             </div>
@@ -65,7 +74,7 @@
                     </ul>
                     <div>
                         <div>重置</div>
-                        <div>搜索</div>
+                        <div @click="getvoucherList">搜索</div>
                     </div>
                 </div>
             </div>
@@ -137,6 +146,7 @@
             </div>
         </div>
         <side-time @time-click="getSideDate" ref='sideDate'></side-time>
+        <!-- 弹出凭证********************* -->
         <div :class="{voucherMask:voucherMask}">
             <div class="voucherContainer">
                 <p v-if="voucherMask" class="title"><span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红</span><i @click="keepChoose(false)"></i></p>
@@ -154,6 +164,7 @@
     import {mapState, mapActions} from 'vuex'
     import sideTime from './sideTime'
     import voucher from './voucher'
+    import searchSelect from './searchList'
     export default {
         name: "voucher-list",
         mounted(){
@@ -162,16 +173,14 @@
             }else{
                 if(!this.sideDate){
                     this.getChecked();
-             }
+                }
             }
+            this.getAssist();
             this.$store.commit("tagNav/turnCachePage",true);
+           
         },
         data(){
-            return {
-                date1:'',
-                date2:'',
-                date3:'',
-                date4:'',
+            return {                 
                 sum1:'',
                 sum2:'',
                 chooseItem:'',
@@ -181,6 +190,20 @@
                 month:'',
                 year:'',
                 searchVal:'',
+                superSearchValPhId:'',
+                assistItemList:{id:0,kemu:[]},
+                superSearchVal:{
+                    assistItemList:{type:'',list:''},
+                    assistItem:'',
+                    sum1:'',
+                    sum2:'',
+                    date1:'',
+                    date2:'',
+                    keyword:'',
+                    placeholder:'选择辅助项',
+                    nodatatext:'',
+                    show:true
+                },
                 pickerOptions: {
                     disabledDate(time) {
                         return time.getTime() > Date.now();
@@ -290,8 +313,8 @@
                 }
             },
             //高级搜索显示隐藏****************
-            highGradeToggle(bool) {
-                this.highGradeCss = bool;
+            highGradeToggle(bool) {       
+                this.highGradeCss = bool; 
             },
             //凭证详情***************************
             voucherDel(item){
@@ -421,6 +444,7 @@
             //     //LODOP.PRINT();
             //     LODOP.PREVIEW();
             // },
+            
              // 打印
             printContent(e){
                 this.$print(this.$refs.printList) // 使用
@@ -555,7 +579,7 @@
             //接收voucher组件传值************
             voucherData(){
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
-                console.log(this.voucherDataList);debugger
+                console.log(this.voucherDataList);
             },
             //凭证搜索**************************
             searchVoucher(){
@@ -580,26 +604,50 @@
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
-            //凭证列表***************
+            //凭证列表***************高级搜索***********************
             getvoucherList(){
+                const loading1=this.$loading();
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
-                    pagesize:this.pagesize,
-                    pageindex:this.pageindex,
-                    keyword:this.searchValue,
-                    queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
+                    sum1:this.superSearchVal.sum1,
+                    sum2:this.superSearchVal.sum2,
+                    keyword:this.superSearchVal.keyword,
+                   // itemValuePhid:649181122000008,
+                    itemValuePhid:this.superSearchVal.assistItem.PhId,
+                    queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1,"PAccper*str*le*1":this.superSearchVal.date2}
                 }
-               
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                        this.voucherList= res.Record;
-                        if(this.voucherList.length<=0){
-                            this.$message('暂无新凭证');
+                        loading1.close();
+                        if(res.Record.length<=0){
+                            this.$message('无法找到该凭证!')
+                        } else{
+                            this.voucherList= res.Record;
                         }
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{console.log(err);loading1.close();})
             },
+            //凭证列表***************
+            // getvoucherList(){
+            //     var data={
+            //         uid:this.uid,
+            //         orgid:this.orgid,
+            //         pagesize:this.pagesize,
+            //         pageindex:this.pageindex,
+            //         keyword:this.searchValue,
+            //         queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
+            //     }
+               
+                // this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                //     .then(res=>{
+                //         this.voucherList= res.Record;
+                //         if(this.voucherList.length<=0){
+                //             this.$message('暂无新凭证');
+                //         }
+                //     })
+            //     //     .catch(err=>console.log(err))
+            // },
              //获取当前结账的最新月份************
             getChecked(){
                 var data={
@@ -613,6 +661,7 @@
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
+                        this.superSearchVal.date2=this.superSearchVal.date1=this.year+(this.month>9?this.month:('0'+this.month));
                         this.getvoucherList();
                         this.$forceUpdate();
                     })
@@ -623,6 +672,7 @@
                 this.sideDate=data.sideDate;
                 this.year=this.sideDate.split('-')[0];
                 this.month=this.sideDate.split('-')[1];
+                this.superSearchVal.date2=this.superSearchVal.date1=this.year+(this.month>9?this.month:('0'+this.month));
                 this.getvoucherList();
             },
              //凭证重排月份选择******************
@@ -687,6 +737,65 @@
                     this.resetShow=false;
                 }
             },
+            //  * 获取辅助项信息
+            //  * query:查询参数
+            //  *  */
+            getData(query){
+                let data = {
+                    uid: this.uid,
+                    orgid: this.orgid,
+                    typeId:query,
+                    CodeOrName:''
+                };
+                const loading=this.$loading();
+                this.$axios.get('/PVoucherAuxiliaryType/GetAuxiliaryQueryList',{params:data})
+                    .then(res=>{
+                        if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
+                        this.assistItemList.kemu=res.list;
+                        this.superSearchVal.show=true;
+                        console.log(this.assistItemList,res)
+                        //this.$forceUpdate();
+                        loading.close();
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                        loading.close();
+                        this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
+                    })
+            },
+            //获取辅助项***************
+            getAssist(){
+                let data = {
+                    uid: this.uid,//this.uid获取到store中的uid************
+                    orgid: this.orgid,//this.orgid获取到store中的orgid************
+                    infoData:null
+                };
+                const loading=this.$loading();
+                var vm=this;
+                this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
+                    .then(res=>{
+                         if(res.Status==='error'){
+                            this.$message.error(res.Msg);
+                            return
+                        }
+                        this.superSearchVal.assistItemList.type=res.type;
+                        this.assistItemList.kemu=res.list;
+                        loading.close();
+                        //this.userInfo=res.list;
+                        //this.navTab=res.type;
+                    })
+                    .catch(err=>{
+                        console.log(err);loading.close();
+                    })
+            },
+            //获取searchSelect辅助项搜索值******************
+            itemClick(childData){
+                this.superSearchVal.assistItem=childData.data;
+                this.superSearchVal.show=false;
+            }
         },
         computed:{
             ...mapState({
@@ -697,11 +806,41 @@
                 cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
             })
         },
+        watch:{
+            superSearchValPhId(val){
+                console.log(val)
+                this.superSearchVal.show=false;
+                this.getData(val);
+            }
+        },
         filters:{
             sum(val,dtl){
                 var sum=0;
+                var fu='';
                 if(!dtl){
                     dtl=[]
+                }
+                function Num(value) {
+                    if(!value) return '0.00';                    
+                    /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                    var intPart =  Number(value)|0; //获取整数部分
+                    var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+                    var floatPart = ".00"; //预定义小数部分
+                    var value2Array = value.toString().split(".");
+                    //=2表示数据有小数位
+                    if(value2Array.length == 2) {
+                        floatPart = value2Array[1].toString(); //拿到小数部分
+
+                        if(floatPart.length == 1) { //补0,实际上用不着
+                            return intPartFormat + "." + floatPart + '0';
+                        } else {
+                            return intPartFormat + "." + floatPart;
+                        }
+
+                    } else {
+                        return intPartFormat + floatPart;
+                    }
+
                 }
                 switch(val){
                     case 'jie':
@@ -710,7 +849,7 @@
                                 sum+=parseFloat(d.JSum);
                             }
                         }
-                        sum=sum.toFixed(2);
+                        sum=Num(sum);
                         break;
                     case 'dai':
                         for(var d of dtl){
@@ -718,13 +857,17 @@
                                 sum+=parseFloat(d.DSum);
                             }
                         }
-                        sum=sum.toFixed(2);
+                        sum=Num(sum);
                         break;
                     case 'sum':
                         for(var d of dtl){
                             if(d.JSum){
                                 sum+=parseFloat(d.JSum);
                             }
+                        }
+                        if(sum<0){
+                            sum=-1*sum;
+                            fu='负'
                         }
                         sum=sum.toFixed(2);
                         var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
@@ -781,14 +924,16 @@
                                 }
                             }
                         }
-                        sum=INT+dot;
+                        sum=fu+INT+dot;
                         break;
                 }
+                
                 return sum;
 
             }
         },
         components:{
+            searchSelect,
             sideTime,
             voucher
         }
@@ -1317,7 +1462,14 @@
     ul.listContent>li> ul>li:last-of-type>div:first-of-type{
             width:60%;
         }
-    
+    .searchSelectCon{
+        position: relative;
+        width:100%;
+        height:30px;
+        background: #fff;
+        border:1px solid #ddd;
+        padding:3px;
+    }
             
 
         

@@ -9,7 +9,7 @@
       <ul class="list-module" v-show="inputFocus">
         <li class="flexPublic" v-for ="(item,index) in datalist" @click.stop="appClick(item)"
             :key="index">
-          <span class="list-item-text">{{item.KCode}}{{item.KName}}</span>
+          <span class="list-item-text">{{item.KCode}} &nbsp;{{item.KName}}</span>
         </li>
       </ul>
       <div class="tip__nodata" v-show="inputFocus"><router-link to="/setting/subject">{{nodatatext}}</router-link></div>
