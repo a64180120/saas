@@ -42,7 +42,11 @@
                         <el-cascader
                             placeholder="可搜索"
                             :options="options"
+                            @active-item-change="handleItemChange"
                             filterable
+                            :clearable="clearable"
+                            @change ="changeArea"
+                            style="width: 90%"
                         ></el-cascader>
                     </div>
                     <div align="center">
@@ -172,38 +176,9 @@
                 }
             }
             return {
+                clearable:true,
+                aresId: [],
                 options:[],
-                // options: [{
-                //     value: 'zhinan',
-                //     label: '指南',
-                //     children: [{
-                //         value: 'shejiyuanze',
-                //         label: '设计原则',
-                //         children: [{
-                //             value: 'yizhi',
-                //             label: '一致'
-                //         }, {
-                //             value: 'fankui',
-                //             label: '反馈'
-                //         }, {
-                //             value: 'xiaolv',
-                //             label: '效率'
-                //         }, {
-                //             value: 'kekong',
-                //             label: '可控'
-                //         }]
-                //     }, {
-                //         value: 'daohang',
-                //         label: '导航',
-                //         children: [{
-                //             value: 'cexiangdaohang',
-                //             label: '侧向导航'
-                //         }, {
-                //             value: 'dingbudaohang',
-                //             label: '顶部导航'
-                //         }]
-                //     }]
-                // }],
                 loading: false,
                 data2: [],
                 qOrgId: "",
@@ -252,12 +227,12 @@
         },
         created() {
             this.getRoleData();
-            //this.getAreaData();
         },
         mounted: function () {
             this.getData('');
-
-            this.getOrgtree();
+            //this.getAreaData();
+            //this.getOrgtree();
+            this.getNodes();
         },
         //计算
         computed: {
@@ -295,23 +270,178 @@
                     this.$message({ showClose: true, message: '移交记录获取错误', type: 'error'});
                 });
             },
-            //获取行政地址信息
-            getAreaData(){
+            getNodes (val) {
+                this.aresId = val;
+                let idArea = '';
+                let sizeArea;
+                if (!val) {
+                    idArea = "0";
+                    sizeArea = 0
+                } else if (val.length === 1) {
+                    idArea = val[0];
+                    sizeArea = val.length // 3:一级 4:二级 6:三级
+                } else if (val.length === 2) {
+                    idArea = val[1];
+                    sizeArea = val.length // 3:一级 4:二级 6:三级
+                }else if (val.length === 3) {
+                    idArea = val[2];
+                    sizeArea = val.length;// 3:一级 4:二级 6:三级
+                }
+                console.log(idArea);
                 this.$axios.get("/SysArea/GetAreaList", {
                     params: {
-                        uid: userid,
+                        uid: "0",
                         orgid: this.qOrgId,
+                        id: idArea
                     }
-                }).then(
-                    res => {
-                        console.log(res);
-                        this.options = res;
-                    },
-                    error => {
-                        console.log(error);
+                }).then(response => {
+                    if (response) {
+                        let Items = response;
+                        console.log(Items.length);
+                        if (sizeArea === 0) { // 初始化 加载一级 省
+                            this.options = Items.map((value, i) => {
+                                return {
+                                    value: value.value,
+                                    label: value.label,
+                                    children: []
+                                }
+                            })
+                        } else if (sizeArea === 1) { // 点击一级 加载二级 市
+                            this.options.map((value, i) => {
+                                if (value.value === val[0]) {
+                                    if (!value.children.length) {
+                                        value.children = Items.map((value, i) => {
+                                            return {
+                                                value: value.value,
+                                                label: value.label,
+                                                children: []
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        } else if (sizeArea === 2) { // 点击二级 加载三级 区
+                            this.options.map((value, i) => {
+                                if (value.value === val[0]) {
+                                    value.children.map((value, i) => {
+                                        if (value.value === val[1]) {
+                                            if (!value.children.length) {
+                                                console.log(Items.length);
+                                                value.children = Items.map((value, i) => {
+                                                    return {
+                                                        value: value.value,
+                                                        label: value.label,
+                                                        children: []
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    })
+                                }
+                            })
+                        }else if(sizeArea === 3){
+                            this.options.map((value, i) => {
+                                if (value.value === val[0]) {
+                                    value.children.map((value, i) => {
+                                        if(value.value === val[1]){
+                                            value.children.map((value, i) => {
+                                                if (value.value === val[2]) {
+                                                    if (!value.children.length) {
+                                                        value.children = Items.map((value, i) => {
+                                                            return {
+                                                                value: value.value,
+                                                                label: value.label
+                                                            }
+
+                                                        })
+                                                    }
+                                                }
+                                            })
+                                        }
+
+                                    })
+                                }
+                            })
+
+                        }
+                    } else {
+                        console.log(response);
                     }
-                );
+                }, error => {
+                    console.log(error);
+                })
             },
+            handleItemChange (val) {
+                this.getNodes(val);
+            },
+            changeArea(val){
+                this.data2 = [];
+                this.tableData = [];
+                this.aresId = val;
+                console.log(this.aresId);
+                this.getOrgtree(this.aresId);
+            },
+            // getNodes(val) {
+            //     console.log('active item:', val);
+            //     this.aresId = val;
+            //     let idArea;
+            //     let sizeArea;
+            //     if (!val) {
+            //         idArea = "0";
+            //         sizeArea = 0
+            //     } else if (val.length === 1) {
+            //         idArea = val[0];
+            //         sizeArea = val.length // 3:一级 4:二级 6:三级
+            //     } else if (val.length === 2) {
+            //         idArea = val[1];
+            //         sizeArea = val.length // 3:一级 4:二级 6:三级
+            //     }else if (val.length === 3) {
+            //         idArea = val[2];
+            //         sizeArea = val.length;// 3:一级 4:二级 6:三级
+            //     }
+            //     this.$axios.get("/SysArea/GetAreaList", {
+            //         params: {
+            //             uid: "0",
+            //             orgid: this.qOrgId,
+            //             id: idArea
+            //         }
+            //     }).then(
+            //         res => {
+            //             console.log(res);
+            //             if(idArea == "0"){
+            //                 this.options = res;
+            //             }else{
+            //                 for(let i = 0; i < this.options.length; i++) {
+            //                     if(this.options[i].value == val[0]) {
+            //                         this.options[i].children = res;
+            //                     }
+            //                 }
+            //             }
+            //             //this.options[i].children = res;
+            //         },
+            //         error => {
+            //             console.log(error);
+            //         }
+            //     );
+            // },
+            //获取行政地址信息
+            // getAreaData(){
+            //     this.$axios.get("/SysArea/GetAreaList", {
+            //         params: {
+            //             uid: "0",
+            //             orgid: this.qOrgId,
+            //             id: "0"
+            //         }
+            //     }).then(
+            //         res => {
+            //             console.log(res);
+            //             this.options = res;
+            //         },
+            //         error => {
+            //             console.log(error);
+            //         }
+            //     );
+            // },
             //获取角色数据
             async getRoleData(){
                 var vm=this;
@@ -350,19 +480,24 @@
                 console.log(key);
             },
             //获取组织树
-            getOrgtree(){
+            getOrgtree(array){
                 this.loading = true;
+                console.log(array);
                 this.$axios.get("/SysOrganize/GetOrgListForUser", {
                     params: {
                         PageIndex: this.pageIndex - 1,
                         PageSize: this.pageSize,
                         uid: this.uid,
-                        orgid: this.qOrgId
+                        orgid: this.qOrgId,
+                        value: array[0] + ","+ array[1]+"," + array[2]+","+ array[3]
                     }
                 }).then(
                     res => {
+                        console.log(res);
                         this.loading = false;
                         this.data2 = res;
+
+                        console.log(this.data2);
                     },
                     error => {
                         console.log(error);
