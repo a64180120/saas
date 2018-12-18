@@ -16,6 +16,7 @@ ul{
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
+    position:relative;
 }
 .inputContainer{
     width:100%;
@@ -91,7 +92,7 @@ ul{
     border:0;
 }
 .searcherBtn{
-    height:30px;
+    height:32px;
     width:60px;
     text-align: center;
     line-height: 30px;
@@ -127,7 +128,7 @@ ul{
     font-size:13px;
 }
 .formData>ul:first-child{
-    background: #2780d1;
+    background: #00B8EE;
     color:#fff;
 }
 .datepick{
@@ -252,4 +253,10 @@ ul{
     background: #fff;
     color:#333;
 }
+.content{
+    height:100%;
+    overflow-y: auto;
+    margin-bottom: 500px;
+}
+
 

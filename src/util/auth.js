@@ -4,8 +4,8 @@ import { setStore, getStore, removeStore } from '@/util/storage'
 const authToken = {
     // 当Token超时后采取何种策略
     // jumpAuthPage  每次请求时判断Token是否超时，若超时则跳转到登录页面
-    // getNewToken  每次请求时判断Token是否超时，若超时则获取新Token (推荐)
-    tokenTimeoutMethod: 'getNewToken',
+    // getToken  每次请求时判断Token是否超时，若超时则获取新Token (推荐)
+    tokenTimeoutMethod: 'getToken',
     
     // 在Cookie中记录缓存的key
     //loginKey: 'isLogin',

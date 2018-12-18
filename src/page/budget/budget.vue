@@ -1,23 +1,24 @@
 <template>
-    <div class="manageContent">
+    <div class="container">
+    <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
                 <ul class="flexPublic">
                     <li class="flexPublic">
-                        <div>账期:</div>
-                        <div class="block selectContainer">
-                            <el-date-picker
-                                v-model="date1"
-                                type="date"
-                                placeholder="选择日期">
-                            </el-date-picker>
-                        </div>
+                        <!--<div>账期:</div>-->
+                        <!--<div class="block selectContainer">-->
+                            <!--<el-date-picker-->
+                                <!--v-model="date1"-->
+                                <!--type="date"-->
+                                <!--placeholder="选择日期">-->
+                            <!--</el-date-picker>-->
+                        <!--</div>-->
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="changeBtnC">{{changeBtn.title}}</el-button >
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                    <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-mail" @click="changeBtnC">{{changeBtn.title}}</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                    <el-button style='margin:0 0 0px 20px;' class="el-button--small" icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
                 </ul>
             </div>
             <div class="formData" id="form1" ref="printFrom">
@@ -73,7 +74,7 @@
                             <input disabled type="number" v-bind:value="item.BudgetTotal">
                         </li>
                         <li>
-                            其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-on:input="inputDicription">
+                            其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
                     </ul>
                 </template>
@@ -171,17 +172,17 @@
         </div>
 
     <div class="timeSelectBox">
-        <time-select-bar @item-click="dateChoose"></time-select-bar>
+        <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
     </div>
     </div>
-
+    </div>
 </template>
 
 <script>
     import * as axios from "axios";
-    import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+    import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import { mapState, mapGetters } from "vuex";
-    import { getLodop } from '@/plugins/Lodop/LodopFuncs'
+    //import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
 
     export default {
@@ -204,8 +205,9 @@
                 budgetList:[],//数据库查询的全部数据
                 code_firstCount:[],//一级科目数据对应的合计数
                 specialSubIndex:[],//特殊科目对应的下标数组，用于计算
-                date1:'',
-                proofType:'0'
+                date1:[],
+                proofType:'0',
+                loading: false,
             }
         },
         components: {TimeSelectBar},
@@ -223,8 +225,7 @@
         },
         methods:{
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.date1=time;
+                this.date1=val;
                 this.getBeginYear();
             },
             /*
@@ -246,7 +247,6 @@
             * 监听数据输入
             * */
             inputLis:function(val){
-                //alert(val);
                 let code = val.target.attributes.code.value;//当前修改数据的code
                 let index=val.target.attributes.index.value;//当前修改数据在列表中的下标
                 let in_value = parseFloat(val.target.value);//input数据转数字
@@ -309,18 +309,30 @@
             * 页面数据查询方法
             * */
             getBeginYear:function(){
-                //mapState.userid,mapState.orgid
+                let year='';
+                if(this.date1.choosedYear==undefined){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    year=currentyear;
+                }else{
+                    year=this.date1.choosedYear
+                }
                 let data={
                     "uid": this.userid,
                     "orgid":this.orgid,
-                    "Year":  this.getParamTime(this.date1).substring(0,4),
+                    "Year":  year,
                     "OrgIds": this.orgid,
-                }
+                };
+                this.loading=true;
                 this.$axios.get(
                     'PSubjectBudget/GetBeginYear',
                     {params:data}
                 ).then(res=>{
-                    console.log(res.Record);
+                    this.loading=false;
                     let  code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
                     //循环遍历，得到一级子目录一级对应的预算数
@@ -330,10 +342,8 @@
                     for(var i in res.Record){
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
-                        res.Record[i].Uyear=this.getParamTime(this.date1).substring(0,4);
-                        if(res.Record[i].k_name == 'BNSRHJ'){
-                            alert('BNSRHJ');
-                        }
+                        res.Record[i].Uyear=year;
+
                         if(res.Record[i].Layers=='0'){
                             code_firstCount[res.Record[i].SubjectCode]=res.Record[i].BudgetTotal;//本年一级科目预算数
                         }
@@ -351,10 +361,10 @@
                         }
                     }
                     this.budgetList=res.Record;
-                    console.log(this.budgetList[0].k_name);
                     this.code_firstCount = code_firstCount;
                     this.specialSubIndex = specialSubIndex;
                 }).catch(res=>{
+                    this.loading=false;
                     console.log(res);
                 })
             },
@@ -362,8 +372,8 @@
             * 修改保存
             * */
             saveChange:function(){
-                console.log('11111');
-                console.log(this.orgcode);
+                let that=this;
+                this.loading=true;
               this.$axios.post(
                   'PSubjectBudget/PostSave',
                   {
@@ -372,30 +382,14 @@
                       "infodata": this.budgetList
                   }
               ).then(function(res){
-                  alert(res.Msg);
+                  that.loading=false;
+                  that.$message({ showClose: true, message:res.Msg,type: 'success' })
               }).catch(function(err){
+                  that.loading=false;
                   console.log(err);
               })
 
             },
-            /*
-            *时间处理方法
-            *  */
-            getParamTime(param){
-                let nowtime ='';
-                if(param==null||param==undefined||param==''){
-                    nowtime = new Date();
-                }else{
-                    nowtime = new Date(param);
-                }
-                let year=nowtime.getFullYear();
-                let month=nowtime.getMonth()+1;
-                month<10?month='0'+month:month;
-                let day=nowtime.getDate();
-                day<10?day='0'+day:day;
-                return param=year+'-'+month+'-'+day;
-            },
-
             /*
             *author:hyz
             *导出Excel表格
@@ -406,8 +400,8 @@
                     'orgid':this.orgid,
                     'infoData': this.budgetList};
 
-                let baseheader = ajaxhttp.header;
-                let base = ajaxhttp.base;
+                //let baseheader = httpConfig.header;
+                let base = httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true
@@ -416,7 +410,6 @@
                     url: '/PsubjectBudget/PostExportBeginYear',
                     data: param
                 }).then(res => {
-                    console.log(res);
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
@@ -453,31 +446,21 @@
                 }
             },
             printLodop() {
-                const me = this
-                var html=this.$refs.printFrom.innerHTML;
-                let  LODOP = getLodop();
-                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
-                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
-                LODOP.SET_PRINT_STYLE("Bold", 1);
-                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
-                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
-                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
-                //LODOP.PRINT();
-                LODOP.PREVIEW();
+                // const me = this
+                // var html=this.$refs.printFrom.innerHTML;
+                // let  LODOP = getLodop();
+                // LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
+                // LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+                // LODOP.SET_PRINT_STYLE("Bold", 1);
+                // //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                // LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
+                // LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+                // //LODOP.PRINT();
+                // LODOP.PREVIEW();
             },
             // 打印
             printContent(e){
-                // let subOutputRankPrint = this.$refs.printFrom;
-                // console.log(subOutputRankPrint.innerHTML);
-                // let newContent =subOutputRankPrint.innerHTML;
-                // let oldContent = document.body.innerHTML;
-                // document.body.innerHTML = newContent;
-                // window.print();
-                // window.location.reload();
-                // document.body.innerHTML = oldContent;
-                // return false;
-
-                this.$print(this.$ref.printFrom) // 使用
+                this.$print(this.$refs.printFrom) // 使用
             }
 
         }
@@ -491,7 +474,7 @@
     .timeSelectBox{
         position: fixed;
         right: 0;
-        top: 100px;
+        top: 110px;
         bottom:0;
         width: 60px;
     }

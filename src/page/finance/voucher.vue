@@ -15,20 +15,12 @@
                     </div>
                 </li>
                 <li class="flexPublic">
-                    <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
-                    <el-upload
-                        class="upload-demo flexPublic"
-                        action="https://jsonplaceholder.typicode.com/posts/"
-                        :on-preview="handlePreview"
-                        :on-remove="handleRemove"
-                        :before-remove="beforeRemove"
-                        multiple
-                        :limit="3"
-                        :on-exceed="handleExceed"
-                        :file-list="fileList">
-                        <el-button size="small" type="primary">点击上传</el-button>
-                        <div title="只能上传jpg/png文件，且不超过500kb" slot="tip" class="el-upload__tip"></div>
-                    </el-upload>
+                    <div class="flexPublic">附单据&nbsp;<span class="fileCount"></span>&nbsp;张&nbsp;</div>
+                    <div @click.stop="testFile" class="uploaderTitle"></div>
+                    <!-- 附件弹出框 -->
+                    <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
+                        <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+                    </el-dialog>
                 </li>
             </ul>
         </div>
@@ -104,7 +96,7 @@
                                         <div :title="assist.BaseName">{{assist.BaseName}}</div>
                                         <div class="selectContainer">
                                             <select  v-model="assistSels[index2]">
-                                                <option :value="val" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
+                                                <option :value="val" v-for="(val,index) of assist.Children" :key="index">{{val.BaseName}}</option>
                                             </select>
                                         </div>
                                     </li>
@@ -115,9 +107,9 @@
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
-                                <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                                <input type="text"  v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                                <i class="inputCancle">X</i>
+                                <i @click.stop="moneyCancle(item,'jiefang')" class="inputCancle">X</i>
                              </span>
                             <div></div>
                             <div></div>
@@ -133,9 +125,9 @@
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
-                                <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
+                                <input type="number"  v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                                <i class="inputCancle">X</i>
+                                <i @click.stop="moneyCancle(item,'daifang')" class="inputCancle">X</i>
                             </span>
                             <div></div>
                             <div></div>
@@ -190,7 +182,7 @@
             <ul class="flexPublic ">
                 <li><label>财务主管: <span>{{PFinancePerson}}</span> </label></li>
                 <li><label>记账:<span>{{PKeepingPerson}}</span></label></li>
-                <li><label>审核: <span>{{PAuditor}}</span></label></li>
+                <li><label>审核: <span>{{Verify?'已审核':'未审核'}}</span></label></li>
                 <li><label>制单: <span>{{PMakePerson}}</span></label></li>
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
@@ -201,6 +193,10 @@
 <script>
     import searchSelect from './searchSelect'
     import {mapState, mapActions} from 'vuex'
+    import UserInfo from "@/util/auth";
+    import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
+    import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
+    import pictureUpload from "@/components/upload";
     export default {
         name: "voucher",
         props:{
@@ -223,6 +219,11 @@
             jiefang:'',
             daifang:'',
             PersistentState:'1',
+            //附件****************
+            Attachements:[],
+            loading: false,
+            fileVisible:false,
+            imglist:[],
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
@@ -236,10 +237,11 @@
             kemuSel:[],//科目选择框显示隐藏样式参数************
             assistItem:[],//辅助项显示隐藏样式参数********************
             assistItemMask:false,
-            assistCheck:true
+            assistCheck:true,
+            haveAttachements:false
         }},
-        created(){
-            if(!this.dataList.data.Mst){//没有传参时初始化页面
+        created(){console.log( this.dataList); 
+            if((!this.dataList.data.Mst)||typeof(this.dataList.data.Mst)=='string'){//没有传参时初始化页面
                 this.voucherInfo=[
                     this.initVoucherInfo(),
                     this.initVoucherInfo(),
@@ -251,8 +253,9 @@
                     PhId:'',
                     Dtls:[]
                 }
-            }else{
+            }else{   
                 this.getVoucherData(this.dataList.data.Mst);
+                this.getAttachements(this.dataList.data.Mst.PhId);
             }
             this.initInfoCss();
         },
@@ -267,14 +270,15 @@
                     alert('借方金额不等于贷方金额,请查看');
                     return;
                 }else{
+                    var dtls; 
                     if(!this.fatherData.PhId){
-                        this.fatherData.Dtls=[];
-                    } 
-                    var dtls = this.fatherData.Dtls;
+                        dtls=[];
+                    }else{
+                        dtls= this.fatherData.Dtls;
+                    }
                     var account;
                     var item;
                     for( var info of this.voucherInfo){
-                        console.log('jishu',1)
                         if(info.PhId){
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
@@ -317,7 +321,6 @@
                             }
                         }
                         else if(info.SubjectCode){
-                            console.log(2222222)
                             var newDtl={
                                 Abstract:info.Abstract,
                                 SubjectCode:info.SubjectCode,
@@ -345,7 +348,6 @@
                             dtls.push(newDtl);
                         }
                     }
-       
                     this.fatherData.Dtls=dtls;
                     for(var del of this.deleteDtls){
                         if(del.PhId){
@@ -375,10 +377,30 @@
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
-                    console.log(this.fatherData)
+                    for(var img in this.imglist ){
+                        if(this.imglist[img][0]){
+                            this.Attachements[this.Attachements.length]={
+                                PersistentState : 1,
+                                BTable : "gcw3_voucher_mst",
+                                BName : '123',
+                                BType : 'JPG',
+                                BSize : this.imglist[img][0].BSize,
+                                BFilebody : null
+                            };
+                            // this.Attachements[this.Attachements.length-1]
+                            // console.log(this.Attachements,this.Attachements[this.Attachements.length-1].PhId,this.imglist,img)
+                            // if(this.Attachements[this.Attachements.length-1].PhId==0){
+                            //     this.Attachements[this.Attachements.length-1].PersistentState=1;
+                            //     this.Attachements[this.Attachements.length-1].BTable='gcw3_voucher_mst';
+                            //     this.Attachements[this.Attachements.length-1].BusinessPrimaryKeys='';
+                            //     this.Attachements[this.Attachements.length-1].ForeignKeys='';
+                            // }
+                        }
+                        
+                    }
                     return {
                         Mst:this.fatherData,
-                        Attachements:this.fileList
+                        Attachements: this.Attachements
                     }
                 }
             },
@@ -394,8 +416,10 @@
                                         this.assistItems[this.voucherInfo.length-1]={id:this.voucherInfo.length-1,kemu:['1','2','3','4','5']}
                     */
                 }else{
-                    if(this.voucherInfo[index].PhId&&this.voucherInfo.length>1){
-                        this.deleteDtls.push(this.voucherInfo[index]);
+                    if(this.voucherInfo.length>1){
+                        if(this.voucherInfo[index].PhId){
+                            this.deleteDtls.push(this.voucherInfo[index]);
+                        }
                         this.voucherInfo.splice(index,1);
                         this.initMoneyCss();
                     }
@@ -418,6 +442,7 @@
             },
             //获取父组件传参*********************************
             getVoucherData(data){
+                console.log(data)
                 this.fatherData=data;
                 this.PhId=data.PhId;
                 this.PType=data.PType;
@@ -429,6 +454,7 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.Verify=data.Verify;
                 this.PDate=data.PDate;
                 var dtls=data.Dtls;
                 var reg=/^S[0-5][0-9]$/;
@@ -450,6 +476,29 @@
                         this.voucherInfo.push(this.initVoucherInfo());
                     }
                 }
+            },
+            //获取附件信息*******************
+            getAttachements(PhId){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    id:PhId
+                }
+                const loading=this.$loading();
+                this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
+                .then(res=>{
+                    console.log(res)
+                    if(res){
+                        this.haveAttachements=true;    
+                    }else{
+                        this.haveAttachements=false;
+                    }
+                    loading.close();
+                })
+                .catch(err=>{
+                        console.log(err);loading.close();
+                    }
+                )
             },
             //获取科目列表******************
             getSubject(){
@@ -533,6 +582,11 @@
                 this.voucherInfo[index].SubjectName='';
                 this.$forceUpdate();
             },
+            //
+            moneyCancle(item,val){
+                console.log(item,val)
+                item.money[val]='';
+            },
             //金额输入框键入*******************
             inputBlur($event,item,value){
                 if(!this.countJie||!this.countDai){
@@ -542,7 +596,10 @@
                     this.countJie++;
                     this.countDai++;
                 }
-                item.money[value]=parseFloat(item.money[value]);
+                if(item.money[value]){
+                    item.money[value]=parseFloat(item.money[value]);    
+                }
+                
                 var val=item.money[value];
                 item.moneyInput[value]=false;
                 var children = $event.target.parentNode.parentNode.children;
@@ -626,18 +683,108 @@
                 this.addIcon[index].checked=true;
                 this.$forceUpdate();
             },
-            handleRemove(file, fileList) {//预留文件上传**************************
-                console.log(file, fileList);
+            //附件上传************************************
+            //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
+            beforeAvatarUpload(file) {
+                console.log(1111)
+                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isRightType) {
+                    this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
+                    return false
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false
+                }
             },
-            handlePreview(file) {
-                console.log(file);
+            // uploadFileMethodEnterprise(param) {console.log(res,2);
+            //     let fileObject = param.file;
+            //     let formData = new FormData();
+            //     formData.append('id', this.orgForm.PhId)
+            //     formData.append("file", fileObject);
+            //     this.uploadFile(formData).then(res => {
+            //         console.log(res,2);
+            //         if(res.Status==='error'){
+            //             this.$message.error(res.Msg);
+            //             return
+            //         }
+                    
+            //         //回传的上传临时文件
+            //         if(res.Data[0]){
+            //             this.orgForm.EnterpriseAttachment = res.Data[0];
+            //             this.$message.success("上传成功");
+            //         }
+
+            //     }).catch(error => {      
+            //         console.log(error);
+            //         this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+            //     })
+            // },
+            // uploadFileMethodChairman(param){console.log(res,2);
+            //     let fileObject = param.file;
+            //     let formData = new FormData();
+            //     formData.append('id', this.orgForm.PhId)
+            //     formData.append("file", fileObject);
+
+            //     this.uploadFile(formData).then(res => {
+            //         console.log(res,1);
+            //         if(res.Status==='error'){
+            //             this.$message.error(res.Msg);
+            //             return
+            //         }
+
+            //         //回传的上传临时文件
+            //         if(res.Data[0]){
+            //             this.orgForm.ChairmanAttachment = res.Data[0];
+            //             this.$message.success("上传成功");
+            //         }
+
+            //     }).catch(error => {      
+            //         console.log(error);
+            //         this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+            //     })
+            // },
+            testFile(){
+                this.fileVisible=true;
             },
-            handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            removeimg(item,deleValue) {//
+               this.imglist=item;
+                // var urls=deleValue.imgPath.split('/');
+                // console.log(this.imglist,item,urls,deleValue)
+                // for(var i in item[0]){ 
+                //     console.log(item[0][i].BName,urls[4])
+                //     if(item[0][i].BName==urls[4]){
+                //             console.log(item)
+                //           item[0].splice(i,1);  
+                //     }
+                // } 
+                var param={
+                    PhId:deleValue.phid,
+                    BTable:'gcw3_voucher_mst',
+                    BUrlPath:deleValue.imgPath
+                };
+                this.$axios({
+                    url: '/PVoucherAttachment/PostDeleteFile',
+                    method: "post",
+                    data: param,
+                }).then(res => {
+                if(res.Status==="error"){
+                        this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                        return;
+                    }
+                }).catch(error => {
+                    this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
+                });
             },
-            beforeRemove(file, fileList) {
-                return this.$confirm(`确定移除 ${ file.name }？`);
-            }
+            uploadimg(item) {
+                console.log(item);
+                this.imglist.push(item);
+            },
+            ...mapActions({
+                uploadFile: 'uploadFile/Voucherupload'
+            }),
         },
         computed:{
             countJie:{
@@ -671,8 +818,12 @@
             },
             ...mapState({
                 orgid: state => state.user.orgid,
+                uid: state => state.user.userid,
                 orgcode: state => state.user.orgcode
-            })
+            }),
+            picUrl:function(){
+                return httpConfig.baseurl;
+            }
         },
         watch:{
             jiefang(){
@@ -682,10 +833,15 @@
             daifang(){
                 var dai=document.querySelector(".count>li:nth-child(3)");
                 this.moneyTurn(this.daifang,dai.children);
+            },
+            "orgForm.ServiceTime"(val){           
+                this.orgForm.ServiceStartTime=''
+                this.orgForm.ServiceEndTime=''
             }
         },
         components:{
             searchSelect,
+            pictureUpload
         }
     }
 </script>
@@ -893,6 +1049,7 @@
         height:25px;
         line-height: 25px;
         color:red;
+        cursor:pointer;
         border-radius: 50%;
         font-style: normal;
         position: absolute;
@@ -907,6 +1064,9 @@
         z-index:5;
         width:100%;
         height:100%;
+    }
+    .kemu>div:first-of-type>ul{
+        padding:5px 3px;
     }
     .kemu>div>ul{
         height:100%;
@@ -1008,5 +1168,54 @@
         color:#fff;
 
     }
+    .uploaderTitle{
+        position:relative;
+        width:40px;
+        height:30px;  
+        cursor:pointer; 
+        background: url("../../assets/icon/f90c871a-13a3-4900-9b6f-ff9edc5c98c5.svg") no-repeat;
+        background-size:40px 30px;
+    }
+    
+    .avatar-uploader{
+    position: absolute;
+    z-index: 1;
+    right: 61px;
+    top: -20px;
+}
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+.avatar-uploader .el-upload--text{
+    width: 80px;
+    height: 80px;
+}
 
+.avatar-uploader-icon {
+    font-size: 20px;
+    color: #8c939d;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+}
+.avatar {
+    width: 80px;
+    height: 80px;
+    display: block;
+}
+.orgform .el-form-item__label{
+    background: #00B8EE;
+}
+
+.orgform .el-form-item{
+    margin-bottom: 2px;
+}
 </style>

@@ -1,5 +1,6 @@
 import axios from "axios";
-import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig'
+
 
 
 //状态
@@ -23,8 +24,8 @@ const actions = {
     // 上传附件
     Orgupload({ commit }, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=ajaxhttp.header;
-            let base=ajaxhttp.base;
+            let baseheader=httpConfig.getHeaderConfig();
+            let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
             var new_header = Object.assign({},config_header, baseheader);
@@ -41,13 +42,15 @@ const actions = {
     // 凭证上传附件
     Voucherupload({ commit }, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=ajaxhttp.header;
-            let base=ajaxhttp.base;
+            let baseheader=httpConfig.getHeaderConfig();
+            let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
             var new_header = Object.assign({},config_header, baseheader);
+            console.log(data)
             axios.create(base).post('/PVoucherAttachment/PostUploadFile', data, { headers:new_header }).then(res => {
                 var response=JSON.parse(res.data);
+                console.log(response)
                 resolve(response);
 
         　　}).catch((error) =>{

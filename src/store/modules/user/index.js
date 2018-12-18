@@ -1,6 +1,9 @@
 import Cookies from "js-cookie";
 import axios from "@/util/ajax";
 import Auth from "@/util/auth";
+import httpajax from "axios";
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
+import qs from 'qs'
 
 
 //状态
@@ -68,34 +71,39 @@ const actions = {
     // 获取Token
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
-            
-            axios({
-                url: "/SysUser/GetToken",
-                method: "get",
+            let base=httpConfig.getAxiosBaseConfig();
+            let url=httpConfig.baseurl;
+
+            httpajax.create({
+                baseURL: base.baseURL
+            }).get('/SysToken/GetToken',{
                 params: {
-                    token: ''
+                    token: 'g6c'
+                },
+                headers:{
+                    'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
+                    'Accept': "application/json; charset=utf-8"
                 }
             }).then(res => {
-                
-                if(res){
-                    if (res.Status !== "error") {
-                        var object = {
-                            token: res.Token,
-                            appKey: res.AppKey,
-                            appSecret: res.AppSecret
-                        };
-                        //用户信息缓存
-                        commit("setToken", object);
-                    }
-                    
+                if (res.status === 200) {
+                    var response=JSON.parse(res.data);
+                    var object = {
+                        token: response.Token,
+                        appKey: response.AppKey,
+                        appSecret: response.AppSecret
+                    };
+                    //用户信息缓存
+                    commit("setToken", object);
                 }else{
-                    alert('网络不通,请检查服务接口网络！.....')
+                    alert('网络不通:'+ url +',请检查服务接口网络！.....')
                 }
+
                 resolve(res);
-                
-            }).catch(error =>{
+
+        　　}).catch((error) =>{
                 console.log(error)
-                reject(error)
+                //错误
+                reject(error);
             });
         });
     },
@@ -104,28 +112,57 @@ const actions = {
     loginByPhone({ commit }, userInfo) {
         return new Promise((resolve, reject) => {
 
-            axios({
+            let base=httpConfig.getAxiosBaseConfig();
+            //测试的Header
+            let headconfig=httpConfig.getTestHeaderConfig();
+
+            var data={
+                uname_login:userInfo.name,
+                orgid:userInfo.orgid,
+                password:userInfo.password
+            };
+
+            httpajax.create(base)({
                 url: "/SysUser/PostLogin",
                 method: "post",
-                data: {
-                    uname_login:userInfo.name,
-                    orgid:userInfo.orgid,
-                    password:userInfo.password
-                }
+                data: qs.stringify(data),
+                headers:headconfig
             }).then(res => {
-
-                if (res.Status === "success") {
-                    var user = res.Data;
+                var response=JSON.parse(res.data);
+                if (response.Status === "success") {
+                    var user = response.Data;
                     //用户信息缓存
                     commit("setUserInfo", user);
                 }
-                resolve(res);
+                resolve(response);
             }).catch(error =>{
                 console.log(error)
                 reject(error)
             });
         });
     },
+    // 获取当前用户的组织信息
+    GetOrgByUser({ commit, state }, parameters) {
+        return new Promise((resolve, reject) => {
+            let base=httpConfig.getAxiosBaseConfig();
+            //测试的Header
+            let headconfig=httpConfig.getTestHeaderConfig();
+
+            httpajax.create(base)({
+                url: "/SysUser/PostOrgByUNameOrUPhone",
+                method: "post",
+                data: qs.stringify(parameters),
+                headers:headconfig
+            }).then(res => {
+                var response=JSON.parse(res.data);
+                resolve(response);
+            }).catch(error =>{
+                console.log(error)
+                reject(error)
+            });
+        });
+    },
+
     // 获取用户信息
     GetInfo({ commit, state }) {
         return new Promise((resolve, reject) => {
@@ -157,7 +194,8 @@ const actions = {
             commit("setToken", "");  //token 
             commit("setUserInfo", ""); //用户信息
             commit('setNavList',''); //菜单
-            commit('tagNav/removeTagNav', '', {root: true})
+            //若需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可
+            commit('tagNav/delAllTagNav', '', {root: true})
             resolve();
         });
     },
@@ -172,49 +210,37 @@ const actions = {
             menuInfo = Auth.getMenuStatus();
 
             // 重新登录时校验Token是否存在，若不存在则获取
-            if (!tokenInfo && !userInfo) {
-                //token
-                dispatch("getNewToken").then(() => {
+
+            //token
+            if(!tokenInfo){
+                dispatch("getToken").then(() => {
                     //commit("setToken", state.token);
                 });
-                //用户
+            }else{
+                //设置用户 state ,重新加载用户缓存
+                commit("setToken", tokenInfo);
+            }
+            //用户
+            if(!userInfo){
                 dispatch("loginByPhone").then(() => {
 
                 });
+            }else{
+                //设置用户 state ,重新加载用户缓存
+                commit("setUserInfo", userInfo);
+            }
 
-                //菜单
+            //菜单
+            if(!menuInfo){
                 dispatch("getNavList").then(() => {
 
                 });
-
-            } else {
+            }else{
                 //设置用户 state ,重新加载用户缓存
-                commit("setToken", tokenInfo);
-                commit("setUserInfo", userInfo);
-                if(menuInfo){
-                    commit("setNavList", menuInfo);
-                }
+                commit("setNavList", menuInfo);
             }
+            
             resolve();
-        });
-    },
-
-    // 获取新Token
-    getNewToken({ commit, state }) {
-        return new Promise((resolve, reject) => {
-            axios({
-                url: "/SysUser/GetToken",
-                method: "get",
-                param: {
-                    token: state.token
-                }
-            }).then(res => {
-                commit("setToken", res.token);
-                resolve();
-            }).catch(error =>{
-                console.log(error)
-                reject(error)
-            });
         });
     },
 

@@ -20,7 +20,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
 //附件
 export default {
@@ -39,7 +39,8 @@ export default {
         fileList: [],
         upLoadData: { img: "" },
         dialogVisible: false,
-        dialogImageUrl: ""
+        dialogImageUrl: "",
+        curimgList:this.imgList
     };
   },
   //计算
@@ -49,36 +50,35 @@ export default {
         orgid: state => state.user.orgid
     }),
     picUrl:function(){
-        return ajaxhttp.url;
+        return httpConfig.baseurl;
     }
   },
   watch:{
-       imgList:{
-         handler(newValue, oldValue) {
-             if(newValue.length === 0) {
-                 this.fileList = [];
-                 return;
-             }
-             for (let i = 0; i < newValue.length; i++) {
-                 if (oldValue[i] != newValue[i]) {
-                    this.fileList = [];
-                    newValue.forEach(el=>{
-                         this.fileList.push({url: this.picUrl + el.BUrlPath,phid:el.PhId})
-                    })
-                    return;
-                 }
-             }
-         },
-         deep: true
-      }
+        // 'curimgList':function (newValue,oldValue) {
+        //      if(newValue.length === 0) {
+        //          this.fileList = [];
+        //          return;
+        //      }
+        //      for (let i = 0; i < newValue.length; i++) {
+        //          if (oldValue[i] != newValue[i]) {
+        //             this.fileList = [];
+        //             newValue.forEach(el=>{
+        //                  this.fileList.push({ phid:el.PhId,url: url+ el.BUrlPath })
+        //             })
+        //             return;
+        //          }
+        //      }
+        //     console.log(1);
+        //     console.log(this.fileList);
+        // }
   },
   created() {},
   //加载数据
   mounted(){
       var url=this.picUrl;
-      if (this.imgList.length != 0) {
-          this.imgList.forEach(el =>{
-              this.fileList.push({ phid:el.PhId,url: url+ el.BUrlPath });
+      if (this.curimgList.length != 0) {
+          this.curimgList.forEach(el =>{
+              this.fileList.push({ phid:el.PhId,url: url+ el.BUrlPath,name:el.BName });
           })
       }
   },
@@ -88,19 +88,29 @@ export default {
         }),
         //图片移除时处理数据
         handleRemove(file, fileList) {
-            let item = [];
+            var me=this;
             //删除文件对象 
             let deleValue={
                 phid:file.phid,
                 imgPath:file.url.replace(this.picUrl,'')
             };
 
-            //文件剩余对象
-            this.imgList.forEach(el =>{
-                if(el.BUrlPath!==deleValue.imgPath){
-                    item.push(el);
+            let item=this.curimgList.filter(function(el,index,array){
+                
+                var result= el.BName !== file.name;
+                if(!result){
+                    deleValue.phid=el.PhId
+                    deleValue.imgPath=el.BUrlPath
                 }
-            })
+
+                return result
+            });
+
+            this.curimgList=[];
+
+            if(item.length>0){
+                this.curimgList=item;
+            }
 
             this.$emit("removeimg", item, deleValue);
         },
@@ -124,26 +134,29 @@ export default {
             this.$message.warning(`当前限制选择 ${this.limit} 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
         },
         uploadFileMethod(param){
+            let me=this;
             let fileObject = param.file;
             let formData = new FormData();
             formData.append('RelPhid', '0')
             formData.append('BTable', 'gcw3_voucher_mst')
             formData.append("file", fileObject);
-
             this.uploadFile(formData).then(res => {
                 if(res.Status==='error'){
                     this.$message.error(res.Msg);
                     return
                 }
+
+               
                 //回传的上传临时文件
                 if(res.Data){
-                    this.$emit("uploadimg", res.Data);
-                    var attachment=res.Attachment
-                    var url_=this.picUrl
-                    attachment.forEach(t=>{
-                        this.fileList.push({url: url_+ t})
-                    });
                     
+                    var model=res.Data
+                    var url_=me.picUrl
+
+                    for (var i = 0; i < model.length; i++){
+                         me.curimgList.push(model[i]);
+                    }
+                    this.$emit("uploadimg", res.Data);
                 }
 
             }).catch(error => {      

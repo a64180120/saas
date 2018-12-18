@@ -8,7 +8,7 @@
                     <!--<li @click="unionTab('subject')" :class="{asideActive:asideActive=='subject'}">科目辅助项明细表</li>-->
                 <!--</ul>-->
             <!--</aside>-->
-            <detls v-if="asideActive=='details'"></detls>
+            <detailsAc v-if="asideActive=='details'"></detailsAc>
             <!--<subject v-if="asideActive=='subject'"></subject>-->
             <!--<auxiliary v-if="asideActive=='auxiliary'"></auxiliary>-->
         </section>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import detls from './details'
+    import detailsAc from './details'
     import subject from './subject'
     import auxiliary from './auxiliary'
     export default {
@@ -42,7 +42,7 @@
 
         },
         components:{
-            detls,
+            detailsAc,
             subject,
             auxiliary
         }

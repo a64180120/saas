@@ -6,6 +6,7 @@ import '@/assets/css/theme-default.scss'
 import '@/assets/css/icon/iconfont.css'
 import '@/assets/css/myStyle.css'//自定义样式*************************
 import store from './store'
+import filter from './filter'
 import axios from './util/ajax'
 import router from './router'
 import i18n from './util/i18n'
@@ -35,5 +36,6 @@ new Vue({
     axios,
     router,
     store,
+    filter,
     render: h => h(App)
 }).$mount('#app')

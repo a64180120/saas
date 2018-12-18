@@ -1,4 +1,5 @@
 <template>
+<!--17-->
     <div class="asideNav"><!--右侧时间选择组件-->
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
@@ -54,7 +55,7 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="yearsTrue('uncheck',checkVal)">确认</span>
+                        <span @click="yearsTrue('uncheck',unCheckVal)">确认</span>
                     </p>
                 </div>
 
@@ -97,12 +98,14 @@ export default {
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{
-                        
-                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                    .then(res=>{                     
+                        this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
+                        this.checkVal=this.checkedTime;
+                        this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
+                        this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
             },
@@ -130,10 +133,10 @@ export default {
                             this.totalRows=res.totalRows;
                             this.pagesize=res.size;
                             this.pageindex=res.index;
-                            this.voucherDataList.data={
-                                Mst:this.newAddList[this.count]
-                            };
-                            this.resetVoucher();
+                            // this.voucherDataList.data={
+                            //     Mst:this.newAddList[this.count]
+                            // };
+                            // this.resetVoucher();
                         }
                     })
                     .catch(err=>{console.log(err);loading1.close();})
@@ -144,6 +147,7 @@ export default {
                 this.year=year;
                 this.sideDate=year+'-'+i;
                 this.getvoucherList('reset');
+                this.$emit("time-click",{sideDate:this.sideDate})
             },
             //鼠标滚轮移动月份选择****************
             monthsSel($event){
@@ -231,7 +235,7 @@ export default {
                         this.$message('当前月份还未结账,无法反结账!');
                         return;
                     }
-                    url='/PBusinessConfig/UnUpdateBusinessConfig';
+                    url='/PBusinessConfig/GetUnUpdateBusinessConfig';
                 }
                 t=this.nowTime.getFullYear()+'-'+val
                 var data={
@@ -245,6 +249,7 @@ export default {
                         loading1.close();
                         if(res.Status=='success'){
                             this.$message('结账成功!');
+                            this.getChecked();
                         }else{
                             this.$message('结账失败!');
                         }
@@ -274,6 +279,7 @@ export default {
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
                 this.getvoucherList('reset');
+                this.$emit("time-click",{sideDate:this.sideDate})
             },
         //会计期内容切换************************************
             checkOutSel(val){
@@ -281,8 +287,6 @@ export default {
             },
             //会计期窗口弹出**************************
             yearSelShow(){
-                this.checkVal=this.checkedTime;
-                this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                 this.yearSelCss=!this.yearSelCss;
             },
             //会计期年份上下切换******
@@ -303,12 +307,10 @@ export default {
                 }
                 this[name]=val;
             },
-            //会计期弹窗年月份选择*****************
-            yearMonthClick($event){
-                this.month=parseInt($event.target.innerHTML)
-                this.sideDate=this.year+'-'+this.month;
-                this.getvoucherList('reset');
-            },
+            //ref调用会计期*************
+            refSideDate(){
+                return this.sideDate;
+            }
     },
     computed:{
          ...mapState({
@@ -333,7 +335,7 @@ export default {
             height:34px;
             line-height: 34px;
             text-align: center;
-            background: #ff9900;
+            background: #45c0f7;
             color:#fff;
             cursor: pointer;
             &:hover{
@@ -345,7 +347,8 @@ export default {
             height:30px;
             line-height: 30px;
             font-size: 18px;
-            background: #02a7e7;
+            background: #fff;
+            color:#04a9f4;
         }
         .monthsContainer{
             height:620px;
@@ -379,41 +382,44 @@ export default {
                        text-align: center;
                        margin:0 auto;
                        margin-top: 12px;
-                       border:1px solid #02a7e7;
+                       color: #45c0f7;
+                       border: #c7e8f7 1px solid;
                        border-radius: 50%;
                        cursor:pointer;
                        &.active.unchecked{
-                           color:#333;
-                           background: #6acccb;
-                           &:hover{
-                               background: #6acccb;
-                           }
+                           color:#fff;
+                           background: rgb(3, 169, 244);
                        }
                        &.active{
-                           background: #6acccb;
+                           background: rgb(3, 169, 244);
+                           box-shadow: 0px 2px 2px #dbf4ff;
+                           border: #c7e8f7 1px solid;
                            color:#fff;
                        }
                        &.unchecked{
                            background: #fff;
-                           border-color:#aaa;
+                           border-color:transparent;
+                           color: #CCC !important;
+                           border: #ececec 1px solid !important;
+                           box-shadow: 0px 2px 2px #e0e0e0 !important;
                            &:after{
                                background: #ccc;
                            }
-                           &:hover{
-                               border-color:#aaa;
-                               background: #ccc;
-                               color:#333;
-                           }
+                        //    &:hover{
+                        //        border-color:#aaa;
+                        //        background: #ccc;
+                        //        color:#333;
+                        //    }
                        }
-                       &.futureM.unchecked{
-                           border-color:#aaa;
-                           background: #ccc;
-                           cursor:default;
-                       }
-                       &:hover{
-                           background: #02a7e7;
-                           color:#fff;
-                       }
+                    //    &.futureM.unchecked{
+                    //        
+                    //        background: #ccc;
+                    //        cursor:default;
+                    //    }
+                    //    &:hover{
+                    //        background: #02a7e7;
+                    //        color:#fff;
+                    //    }
                        &:first-of-type{
                            border:0;
                            font-size: 15px;

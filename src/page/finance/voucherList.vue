@@ -3,18 +3,18 @@
     <div class="voucherList">
         <div class="voucherNav">
             <ul>
-                <a><li>新增</li></a>
-                <a><li>修改</li></a>
-                <a><li>删除</li></a>
-                <a><li>审核</li></a>
-                <a><li>反审核</li></a>
-                <a><li>复制</li></a>
-                <a><li>剪切</li></a>
-                <a><li>冲红</li></a>
-                <a><li>凭证重排</li></a>
-                <a><li>导入</li></a>
-                <a><li>导出</li></a>
-                <a><li>打印</li></a>
+                <router-link to="/finance/voucherAdd"><li>新增</li></router-link>
+                <a @click.prevent="handle('update')"><li>修改</li></a>
+                <a @click.prevent="handle('delete')"><li>删除</li></a>
+                <a @click.prevent="handle('audit')"><li>审核</li></a>
+                <a @click.prevent="handle('unaudit')"><li>反审核</li></a>
+                <a @click.prevent="handle('copy')"><li>复制</li></a>
+                <a @click.prevent="handle('cut')"><li>剪切</li></a>
+                <a @click.prevent="handle('chongh')"><li>冲红</li></a>
+                <a @click.prevent="handle('reset')"><li>凭证重排</li></a>
+                <a @click.prevent="handle('upload')"><li>导入</li></a>
+                <a @click.prevent="handle('download')"><li>导出</li></a>
+                <a @click.prevent="handle('print')"><li>打印</li></a>
             </ul>
         </div>
         <div class="voucherSelect">
@@ -71,7 +71,7 @@
             </div>
 
         </div>
-        <section class="listContainer">
+        <section ref="printList" class="listContainer">
             <ul class="listTitle">
                 <li>序号</li>
                 <li>摘要</li>
@@ -79,22 +79,22 @@
                 <li>借方金额</li>
                 <li>贷方金额</li>
             </ul>
-            <ul class="listContent" v-for="(item,index) of voucherList" :key="index">
-                <li>
-                    <dl @click="voucherDel(item)" class="listIndex">{{index+1}}</dl>
+            <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
+                <li @dblclick="voucherDel(item)">
+                    <ul @click="voucherDel(item)" class="listIndex"><li>{{index+1}}</li></ul>
                     <ul>
                         <li>
                             <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
                             <span>凭证字号 : {{item.PNo}}</span>
                             <span>附件数 : {{item.PAttachment}}</span>
                             <span>制单人 : {{item.PMakePerson}}</span>
-                            <span>审核 : {{item.PAuditor}}</span>
+                            <span>审核 : {{item.Verify?'已审核':'未审核'}}</span>
                         </li>
                         <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                             <div>{{dtl.Abstract}}</div>
                             <div>{{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}</div>
-                            <div>{{dtl.JSum==0?'':dtl.JSum}}</div>
-                            <div>{{dtl.DSum==0?'':dtl.DSum}}</div>
+                            <div>{{(dtl.JSum==0?'':dtl.JSum) | NumFormat}}</div>
+                            <div>{{(dtl.DSum==0?'':dtl.DSum) | NumFormat}}</div>
                         </li>
                         <li>
                             <div>合计:{{'sum' | sum(item.Dtls)}}</div>
@@ -105,23 +105,66 @@
                 </li>
             </ul>
         </section>
-        <side-time @time-click="getSideDate"></side-time>
+        <!--凭证重排****************************-->
+        <div v-if="resetShow" class="codeResetContainer">
+            <div>
+                <p class="flexPublic">
+                    <span>凭证重排</span>
+                    <i @click="resetCode(false)"></i>
+                </p>
+                <div  class="yearsContent">
+                    <p>请选择会计期</p>
+                    <div class="flexPublic">
+                        <div>{{year}}</div>
+                        <div class="flexPublic">
+                            <img @click="nextYear(false)" src="../../assets/icon/leftArr.svg" alt="">
+                            <img @click="nextYear(true)" src="../../assets/icon/leftArr.svg" alt="">
+                        </div>
+                    </div>
+                    <ul @click="resetCodeMonth" :class="{allActive:allReset}"  class="year-month">
+                        <li :class="{active:month==index}" v-for="index of 12" :key="index">{{index}}月</li>
+                    </ul>
+                    <div>
+                        <p>
+                            <label ><input type="checkbox" v-model="allReset">对所有会计期进行凭证号重排</label>
+                        </p>
+                        <div>
+                            <span @click="resetCode(false)" class="btn">取消</span>
+                            <span @click="resetCode(true)" class="btn">确认</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <side-time @time-click="getSideDate" ref='sideDate'></side-time>
+        <div :class="{voucherMask:voucherMask}">
+            <div class="voucherContainer">
+                <p v-if="voucherMask" class="title"><span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红</span><i @click="keepChoose(false)"></i></p>
+                <div v-if="voucherMask">
+                    <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
+                    <span class="btn" @click.stop="keepChoose(false)">取消</span>
+                </div>
+                <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+            </div>            
+        </div>
     </div>
 </template>
 
 <script>
     import {mapState, mapActions} from 'vuex'
     import sideTime from './sideTime'
+    import voucher from './voucher'
     export default {
-       // name: "voucher-list",
+        name: "voucher-list",
         mounted(){
             if(this.$route.query.voucherList){
                 this.voucherList= this.$route.query.voucherList;
             }else{
-                this.getvoucherList();
+                if(!this.sideDate){
+                    this.getChecked();
+             }
             }
             this.$store.commit("tagNav/turnCachePage",true);
-            this.getChecked();
         },
         data(){
             return {
@@ -131,9 +174,12 @@
                 date4:'',
                 sum1:'',
                 sum2:'',
+                chooseItem:'',
                 nowTime:new Date,
                 checkedTime:'',
                 sideDate:'',
+                month:'',
+                year:'',
                 searchVal:'',
                 pickerOptions: {
                     disabledDate(time) {
@@ -160,33 +206,357 @@
                         }
                     }]
                 },
+                voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
                 voucherList:[],
                 highGradeCss:false,
                 pagesize:100,
                 pageindex:0,
+                allReset:'',
+                resetShow:false,
+                voucherMask:false
             }
         },
         methods:{
+            //操作导航******************
+            handle(str){
+                switch(str){
+                    case 'update'://修改**********
+                        this.voucherDel(this.chooseItem);
+                        break;
+                    case 'audit'://审核**********  
+                        if(!this.chooseItem.PhId){
+                            this.$message("请先选择凭证!");
+                            return;
+                        }
+                        this.audit(true,this.chooseItem.PhId);
+                        break;
+                    case 'unaudit'://反审核************
+                        if(!this.chooseItem.PhId){
+                            this.$message("请先选择凭证!");
+                            return;
+                        }
+                        this.audit(false,this.chooseItem.PhId);
+                        break;
+                    case 'delete' :
+                        if(!this.chooseItem.PhId){
+                            this.$message("请先选择凭证!");
+                            return;
+                        }
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            id:this.chooseItem.PhId
+                        }
+                        this.delete(data1);
+                        break;
+                    case 'reset':
+                        if(confirm('凭证号重排过程中不允许取消、暂停操作。确定重排？')){
+                            this.resetShow=true;
+                        }
+                        break;
+                    case 'print':
+                        this.printContent();
+                        break;
+                    case 'copy':
+                        if(!this.chooseItem.PhId){
+                            this.$message("请先选择凭证!");
+                            return;
+                        }
+                        this.voucherDataList.data.Mst=this.chooseItem;
+                        this.voucherMaskShow('copy');
+                        this.voucherDataList.bool=true;
+                   
+                        break;
+                    case 'cut':
+                        if(!this.chooseItem.PhId){
+                            this.$message("请先选择凭证!");
+                            return;
+                        }
+                        this.voucherDataList.data.Mst=this.chooseItem;
+                        this.voucherMaskShow('cut');
+                        this.voucherDataList.bool=true;
+                    
+                        break;
+                    case 'chongh':
+                        if(!this.chooseItem.PhId){
+                            this.$message("请先选择凭证!");
+                            return;
+                        }
+                        this.voucherDataList.data.Mst=this.chooseItem;
+                        this.chongh();
+                        this.voucherMaskShow('chongh');
+                        this.voucherDataList.bool=true;    
+                        break;
+                }
+            },
+            //高级搜索显示隐藏****************
             highGradeToggle(bool) {
                 this.highGradeCss = bool;
             },
+            //凭证详情***************************
             voucherDel(item){
                 this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
             },
-            /*getvoucher(){
-                var data={
-                    uid:'0001',
-                    orgid:52118082000000,
-                    id:168181205000001
+            //凭证选择**********************
+            choose(item){
+                if(this.chooseItem.PhId==item.PhId){
+                   this.chooseItem=''; 
+                }else{
+                    this.chooseItem=item;
                 }
-                this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
-                    .then(res=>{
-
-                        console.log(res)
-
+            },
+             //审核*****************
+            audit(bool,PhId){
+                if(!this.chooseItem.PhId){
+                    this.$message("请先选择凭证!");
+                    return;
+                }
+                var data={
+                    orgid:this.orgid,
+                    uid:this.uid,
+                    realname:this.uname,
+                    infoData:[PhId]
+                }
+                var url='PVoucherMst/PostAudit';
+                if(!bool){
+                    url='PVoucherMst/PostUnAudit'
+                }
+                const loading=this.$loading();
+                this.$axios.post(url,data)
+                    .then(res=>{  
+                        loading.close();      
+                        if(res.Status=='success'){
+                            if(bool){ 
+                                this.$message('审核成功!')
+                            }else{
+                                this.$message('反审核成功!')
+                            }
+                             this.getvoucherList();
+                        }else{
+                            if(bool){
+                                this.$message('审核失败!')
+                            }else{
+                                this.$message('反审核失败!')
+                            }
+                        }
+                       this.getvoucherList(); 
                     })
-                    .catch(err=>console.log(err))
-            },*/
+                    .catch(err=>{console.log(err),loading.close();})
+            },
+            //删除***********************
+            delete(data){ 
+                 const loading=this.$loading();
+                this.$axios.post('PVoucherMst/PostDelete',data)
+                    .then(res=>{
+                        loading.close();      
+                        if(res.Status=='success'){
+                            this.$message('删除成功!');
+                        }else{
+                            this.$message('删除失败,请重试!')
+                        }
+                        this.getvoucherList(); 
+                    })
+                    .catch(err=>{console.log(err),loading.close();})
+            },
+             //冲红***********************
+            chongh(){
+                var vm=this;
+               //this.voucherData();  
+                var Mst=this.voucherDataList.data.Mst;
+                for(var dtl of Mst.Dtls){                    
+                    dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                   dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                    if(dtl.DtlAccounts){
+                        dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                        dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                    }
+                }
+                this.clearPhId(this.voucherDataList.data.Mst); 
+                //this.resetVoucher();        
+                this.$message("请查看凭证信息,确认无误点击保存!")                      
+            },
+            //清空凭证phid*****************
+            clearPhId(item){
+                item.PhId='';
+                if(item.PNo){
+                    item.PNo='';
+                }
+                item.PersistentState=1;
+                for(var dtl of item.Dtls){
+                    dtl.PhId='';
+                    dtl.PhidTransaction='';
+                    dtl.PhidVouchermst='';
+                    dtl.PersistentState=1;
+                    if(dtl.DtlAccounts){
+                        dtl.DtlAccounts[0].PhId='';
+                        dtl.DtlAccounts[0].PhidTransaction='';
+                        dtl.DtlAccounts[0].PhidVouchermst='';
+                        dtl.DtlAccounts[0].PhidVoucherDel='';
+                        dtl.DtlAccounts[0].PersistentState=1;
+                    }
+                }    
+            },
+             //手动刷新voucher组件**************************
+            resetVoucher(){
+                var vm=this;    
+                this.voucherDataList.bool=false;
+               
+                function delay(){
+                    vm.voucherDataList.bool=true
+                }
+                setTimeout(delay,5);
+            },
+            //打印******************
+            // printLodop() {
+            //     const me = this
+            //     var html=this.$refs.print.innerHTML; 
+            //     console.log(html) 
+            //     let  LODOP = getLodop();
+            //     LODOP.PRINT_INIT("凭证信息");      //首先一个初始化语句
+            //     LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+            //     LODOP.SET_PRINT_STYLE("Bold", 1);
+            //     //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+            //     LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "凭证信息");
+            //     LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+            //     //LODOP.PRINT();
+            //     LODOP.PREVIEW();
+            // },
+             // 打印
+            printContent(e){
+                this.$print(this.$refs.printList) // 使用
+            },
+            //保存凭证***********************
+             keepVoucher(str){
+                var url='Add';
+                var Vdata=this.voucherDataList.data; 
+               if(Vdata.Mst.Dtls.length<=0){
+                   this.$message('请输入内容!')
+                   return;
+               }
+               if(Vdata.Mst.PDate){
+                   if(typeof(Vdata.Mst.PDate)=='object'){
+                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
+                       Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+                       var date=Vdata.Mst.PDate.getDate();
+                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+                   }else {
+                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
+                   }
+               }else{
+                   this.$message('请输入凭证会计期!')
+                   return;
+               }
+               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                   var data = {
+                       uid: this.uid,
+                       orgid: this.orgid,
+                       orgcode: this.orgcode,
+                       infoData: this.voucherDataList.data
+                   }
+                   if (this.voucherDataList.data.Mst.PhId) {
+                       url = 'Update';
+                   }
+                   const loading=this.$loading();
+                   this.$axios.post('/PVoucherMst/Post' + url, data)
+                       .then(res => {
+                           loading.close();      
+                           if (res.Status == 'success') {
+                               this.$message('保存成功!')
+                               if(str=='print'){
+                                   this.printContent();
+                               }
+                           } else {
+                               this.$message('保存失败,请重试!')
+                           }
+                           this.getvoucherList(); 
+                       })
+                       .catch(err =>{console.log(err);loading.close()} )
+               }else{
+                   this.$message('当前月份已结账,无法修改凭证!')
+               }
+            },
+            //复制剪切******************************
+            voucherMaskShow(val){
+                this.voucherMask=val;
+            },
+            keepChoose(val){
+                if(val){
+                    this.voucherData();
+                    console.log(this.voucherDataList);
+                    var id = this.voucherDataList.data.Mst.PhId;
+                    if(val=='cut'){
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            id:id
+                        }
+                        this.cut(data1);
+                    }else{
+                        this.clearPhId(this.voucherDataList.data.Mst); 
+                        this.keepVoucher();
+                    }    
+                }
+                this.voucherMask=false; 
+                this.voucherDataList.bool=false; 
+                this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};
+            },
+            //剪切*****************
+            cut(data1){
+                 var url='Add';
+                var Vdata=this.voucherDataList.data; 
+               if(Vdata.Mst.Dtls.length<=0){
+                   this.$message('请输入内容!')
+                   return;
+               }
+               if(Vdata.Mst.PDate){
+                   if(typeof(Vdata.Mst.PDate)=='object'){
+                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
+                       Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+                       var date=Vdata.Mst.PDate.getDate();
+                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+                   }else {
+                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
+                   }
+               }else{
+                   this.$message('请输入凭证会计期!')
+                   return;
+               }
+               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                   var data = {
+                       uid: this.uid,
+                       orgid: this.orgid,
+                       orgcode: this.orgcode,
+                       infoData: this.voucherDataList.data
+                   }
+                   if (this.voucherDataList.data.Mst.PhId) {
+                       url = 'Update';
+                   }
+                   const loading=this.$loading();
+                   this.$axios.post('/PVoucherMst/Post' + url, data)
+                       .then(res => {
+                           loading.close();      
+                           if (res.Status == 'success') {
+                               this.$message('保存成功!')
+                               this.delete(data1);
+                               if(str=='print'){
+                                   this.printContent();
+                               }
+                           } else {
+                               this.$message('保存失败,请重试!')
+                           }
+                       })
+                       
+                       .catch(err =>{console.log(err);loading.close()} )
+               }else{
+                   this.$message('当前月份已结账,无法修改凭证!')
+               }
+                
+            },
+            //接收voucher组件传值************
+            voucherData(){
+                this.voucherDataList.data=this.$refs.voucher.voucherData();
+                console.log(this.voucherDataList);debugger
+            },
             //凭证搜索**************************
             searchVoucher(){
                 const loading1=this.$loading();
@@ -198,6 +568,7 @@
                     keyword:this.searchValue,
                     queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
                 }
+                console.log(data);
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         loading1.close();
@@ -209,6 +580,7 @@
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
+            //凭证列表***************
             getvoucherList(){
                 var data={
                     uid:this.uid,
@@ -218,6 +590,7 @@
                     keyword:this.searchValue,
                     queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
                 }
+               
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         this.voucherList= res.Record;
@@ -227,7 +600,7 @@
                     })
                     .catch(err=>console.log(err))
             },
-            //获取当前结账的最新月份************
+             //获取当前结账的最新月份************
             getChecked(){
                 var data={
                     uid:this.uid,
@@ -235,22 +608,92 @@
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{
-                        
-                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                    .then(res=>{                     
+                        this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                        this.year=this.sideDate.split('-')[0];
+                        this.month=this.sideDate.split('-')[1];
+                        this.getvoucherList();
+                        this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
             },
+            //获取time组件传参********************
             getSideDate(data){
                 this.sideDate=data.sideDate;
+                this.year=this.sideDate.split('-')[0];
+                this.month=this.sideDate.split('-')[1];
                 this.getvoucherList();
-            }
+            },
+             //凭证重排月份选择******************
+            resetCodeMonth($event){
+              this.month= this.month=parseInt($event.target.innerHTML);
+            },
+            //数字转换******************
+            NUmTurn(){
+                if(!value) return '0.00';
+                /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                var intPart =  Number(value)|0; //获取整数部分
+                var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+
+
+                var floatPart = ".00"; //预定义小数部分
+                var value2Array = value.toString().split(".");
+
+                //=2表示数据有小数位
+                if(value2Array.length == 2) {
+                    floatPart = value2Array[1].toString(); //拿到小数部分
+
+                    if(floatPart.length == 1) { //补0,实际上用不着
+                        return intPartFormat + "." + floatPart + '0';
+                    } else {
+                        return intPartFormat + "." + floatPart;
+                    }
+
+                } else {
+                    return intPartFormat + floatPart;
+                }
+            },
+            //凭证号重排确认***************
+            resetCode(val){
+                if(val){
+                    const loading5=this.$loading();
+                    var data={
+                        orgid:this.orgid,
+                        Year:this.sideDate.split('-')[0],
+                        Pmonth:this.sideDate.split('-')[1]
+                    }
+                    var url='/PVoucherMst/GetRebuilder';
+                    if(this.allReset){
+                        url='PVoucherMst/GetRebuilderForAllYear';
+                        data={
+                            orgid:this.orgid,
+                            Year:this.sideDate.split('-')[0],
+                        }
+                    }
+                    this.$axios.get(url,{params:data})
+                        .then(res=>{
+                            console.log(res)
+                            if(res.Status=='error'){
+                                this.$message(res.Msg);
+                            }else if(res.Status=='success'){
+                                this.$message('重排成功!');
+                                this.resetShow=false;
+                            }
+                            loading5.close();
+                        })
+                        .catch(err=>{console.log(err);loading5.close();})
+                }else{
+                    this.resetShow=false;
+                }
+            },
         },
         computed:{
             ...mapState({
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
+                uname: state => state.user.username,
+                orgcode:state => state.user.orgcode,
                 cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
             })
         },
@@ -347,12 +790,13 @@
         },
         components:{
             sideTime,
+            voucher
         }
     }
+    
 </script>
 
 <style lang="scss" scoped>
-
     .searcherCon{
         width:40%;
         min-width: 170px;
@@ -469,19 +913,18 @@
         width:20%;
         text-align: center;
         line-height: 30px;
-        background:#509edc;
+        background:#00B8EE;
         color:#fff;
         cursor:pointer;
     }
     .voucherList{
-        padding:8px 18px;
-        padding-right:70px;
+        padding:8px 70px 50px 18px;
         margin-right:10px;
+        margin-bottom: 50px;
         font-size:14px;
         position:relative;
         min-width: 1024px;
-        height:800px;
-        overflow-y: auto;
+        height:100%;
         .voucherNav>ul{
             display: flex;
             flex-flow: row nowrap;
@@ -564,110 +1007,319 @@
                 }
             }
         }
-        .listContainer{
-            overflow-y: auto;
-            padding:5px;
-            margin-top:10px;
-            padding-bottom: 20px;
-            ul.listTitle{
-                display: flex;
-                background: #2780d1;
-                color:#fff;
-                li{
-                    text-align: center;
-                    height:40px;
-                    line-height: 40px;
-                }
-                li:first-of-type{
-                    width:5%;
-                }
-                li:nth-of-type(2){
-                    width:31%;
-                }
-                li:nth-of-type(3){
-                    width:26%;
-                }
-                li:nth-of-type(4){
-                    width:19%;
-                }
-                li:nth-of-type(5){
-                    width:19%;
+        
+    }
+    .codeResetContainer{
+        background: rgba(0,0,0,0.5);
+        position: absolute;
+        z-index: 99;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        >div{
+            width:300px;
+            height:410px;
+            margin: 150px auto 0;
+            border-radius: 10px;
+            background: #fff;
+            padding:10px;
+            >p:first-of-type{
+                height:35px;
+                font-size: 18px;
+                font-weight: bold;
+                border-bottom: 1px solid #ccc;
+                padding:5px;
+                >i{
+                    width:25px;
+                    height:25px;
+                    background: url("../../assets/icon/close.svg");
+                    background-size: cover;
+                    cursor:pointer;
                 }
             }
-            ul.listContent{
-                border-top:1px solid #ccc;
-                margin-bottom: 20px;
-                background: #fff;
-                >li {
-                    width:100%;
-                    height:100%;
-                    display: flex;
-                    align-items: center;
-                    position: relative;
-                    > dl.listIndex{
-                        border:1px solid #ccc;
-                        border-top:0;
-                        height:100%;
-                        width:5%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        position:absolute;
-                    }
-                    > ul {
-                        height:100%;
-                        width: 95%;
-                        margin-left:5%;
-                        >li{
-                            display: flex;
-                            justify-content: flex-start;
-                            height:30px;
-                            line-height: 30px;
+            .yearsContent{
+                font-size: 15px;
+                >p:first-of-type{
+                    margin:10px 15px 5px;
+                    padding: 5px 0;
+                    font-size: 18px;
+                    font-weight: bold;
+                    border-bottom: 1px solid #ccc;
+                }
+                >div:first-of-type{
+                    font-size: 18px;
+                    font-weight: bold;
+                    padding:5px 0 0 15px;
+                    >div:nth-of-type(2){
+                        width:70px;
+                        margin-right: 20px;
+                        >img{
+                            width:20px;
+                            height:20px;
+                            transform: rotate(-90deg);
+                            position:relative;
+                            top:-8px;
+                            cursor:pointer;
                             &:first-of-type{
-                                padding:0 10px;
-                                border:1px solid #ccc;
-                                border-top:0;
-                                border-left: 0;
-                                >span{
-                                    margin-right: 50px;
-                                }
-                            }
-                            >div{
-                                text-align: center;
-                                border:1px solid #ccc;
-                                border-top:0;
-                                border-left:0;
-                            }
-                            div:first-of-type{
-                                width:32%;
-                            }
-                            div:nth-of-type(2){
-                                width:28%;
-                            }
-                            div:nth-of-type(3){
-                                width:20%;
-                            }
-                            div:nth-of-type(4){
-                                width:20%;
-                            }
-                            &:last-of-type{
-                                >div{
-                                    text-align: center;
-                                    border:1px solid #ccc;
-                                    border-top:0;
-                                    border-left:0;
-                                    width:20%;
-                                    &:first-of-type{
-                                        width:60%;
-                                    }
-                                }
+                                transform: rotate(90deg);
+                                top:0px;
                             }
                         }
-
                     }
+                }
+                >div:nth-of-type(2){
+                    margin:0 15px;
+                    >p{
+                        >label{
+                            display: flex;
+                            align-items: center;
+                            color:#000;
+                            font-weight: 400;
+                            font-size: 16px;
+                            input{
+                                margin-right: 10px;
+                            }
+                        }
+                        margin-bottom: 20px;
+                    }
+                    >div{
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding:0 15px;
+                        >span{
+                            height:40px;
+                            line-height: 40px;
+                        }
+                    }
+                }
+                >ul{
+                    display: flex;
+                    align-items: center;
+                    flex-flow: row wrap;
+                    justify-content: space-between;
+                    padding:5px 20px;
+                    width:100%;
+                    >li{
+                        width:60px;
+                        height:60px;
+                        line-height: 60px;
+                        text-align: center;
+                        cursor:pointer;
+                        font-size: 16px;
+                        &:hover{
+                            background:#2780d1 ;
+                            color:#fff;
+                        }
+                        &.active{
+                            background:#2780d1 ;
+                            color:#fff;
+                        }
+                    }
+                }
+                >p{
+                    display: flex;
+                    align-items: center;
+                    font-size: 15px;
+                    >span{
+                        width:80px;
+                        height:30px;
+                        line-height: 30px;
+                        text-align: center;
+                        margin-left: 40px;
+                        color:#3e8cbc;
+                        border:1px solid #3e8cbc;
+                        border-radius: 3px;
+                        cursor:pointer;
+                        &:hover{
+                            color:#fff;
+                            background: #3e8cbc;
+                        }
+                    }
+                }
+                .allActive>li{
+                    background:#2780d1 ;
+                    color:#fff;
                 }
             }
         }
-    }
 
+    }
+    .voucherMask{
+        position: absolute;
+        width:100%;
+        height:100%;
+        top:0;
+        left:0;
+        background: rgba(0,0,0,0.3);
+        .voucherContainer{
+          background: #fff;
+          width:80%;
+          position:absolute;
+          top:30px;
+          left:100px;
+          padding:10px;
+          >div:first-of-type{
+              display: flex;
+              justify-content: flex-end;
+              padding:5px 10px;
+              >span{
+                  margin-left: 20px;
+              }
+          }  
+        }
+    }
+    .title{
+        border-bottom: 1px solid #ccc;
+        padding:8px 3px;
+        display: flex;
+        justify-content: space-between;
+        width:100%;
+        font-family: Arial;
+        font-size: 14.0pt;
+        font-style: normal;
+        font-weight: 700;
+        i{
+            background: url("../../assets/icon/close.svg");
+            background-size:cover ;
+            width:20px;
+            height:20px;
+            cursor:pointer;
+        }
+    }
+    .voucherMaskActive{
+        position:absolute;
+        bottom: 0;
+        z-index: -1;
+    }
+    .listContainer{
+        overflow-y: auto;
+        padding:5px;
+        margin-top:10px;
+        padding-bottom: 20px;
+    }
+    .listContainer ul.listTitle{
+        display: flex;
+        background: #00B8EE;
+        color:#fff;
+        
+    }
+    .listContainer ul.listTitle li{
+        text-align: center;
+        height:40px;
+        line-height: 40px;
+    }
+    .listContainer ul.listTitle li:first-of-type{
+        width:5%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(2){
+        width:31%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(3){
+        width:26%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(4){
+        width:19%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(5){
+        width:19%;
+    }
+    ul.listContent{
+        border-top:1px solid #ccc;
+        margin-bottom: 20px;
+        background: #fff;
+    }    
+    ul.listContent.choosed>li>ul.listIndex{
+        background: #2780d1;
+        color:#fff;
+    
+    }
+    
+    ul.listContent>li {
+        width:100%;
+        height:100%;
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        position: relative;
+    }
+        ul.listContent>li> ul.listIndex{
+        margin:0;
+        border:1px solid #ccc;
+        border-top:0;
+        height:100%;
+        width:5%;
+        font-size: 18px;
+        cursor:pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position:absolute;
+            
+    }
+    ul.listContent>li> ul.listIndex>li:first-of-type{
+            border:0;
+            width:100%;
+            height:100%;
+            display: flex;
+            align-items: center;
+            justify-content:center;
+        }
+    ul.listContent>li> ul {
+        height:100%;
+        width: 95%;
+        margin-left:5%;
+        
+    }
+    ul.listContent>li> ul>li{
+        display: flex;
+        justify-content: flex-start;
+        height:30px;
+        line-height: 30px;
+    }
+    ul.listContent>li> ul>li:first-of-type{
+        padding:0 10px;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left: 0;
+    }
+    ul.listContent>li> ul>li:first-of-type>span{
+            margin-right: 50px;
+        }
+    ul.listContent>li> ul>li>div{
+        text-align: center;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left:0;
+    }
+    ul.listContent>li> ul>li div:first-of-type{
+        width:32%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(2){
+        width:28%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(3){
+        width:20%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(4){
+        width:20%;
+    }
+    
+    ul.listContent>li> ul>li:last-of-type>div{
+        text-align: center;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left:0;
+        width:20%;
+        
+    }
+    ul.listContent>li> ul>li:last-of-type>div:first-of-type{
+            width:60%;
+        }
+    
+            
+
+        
+    
 </style>

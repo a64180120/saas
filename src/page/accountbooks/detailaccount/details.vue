@@ -1,24 +1,36 @@
 <template>
-        <div class="manageContent">
+        <div class="manageContent" v-loading="loading">
             <div class="reportBox">
 
                 <div class="unionState flexPublic">
-
+                    <div class="flexPublic handle">
+                        <div class="searcherValue"><input type="text" placeholder="科目编码" v-model="inputCode"></div>
+                        <div  class="searcherBtn" @click="selectBtn">搜索</div>
+                    </div>
+                    <ul class="flexPublic">
                     <!--<div >
                         <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
                     </div>-->
-                    <div class="flexPublic handle">
-                        <div class="searcherValue"><input type="text" placeholder="组织编码/名称"></div>
-                        <div  class="searcherBtn">搜索</div>
-                    </div>
+
+                    </ul>
                     <ul class="flexPublic handle">
-                        <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                        <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                        <li class="flexPublic">
+
+                            <div>条件：</div>
+                            <div  class="block selectContainer">
+                                <select class="el-input__inner el-button--small" v-model="proofType">
+                                    <option value="0,1">包含未审核凭证</option>
+                                    <option value="1">不包含未审核凭证</option>
+                                </select>
+                            </div>
+                        </li>
+                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
                     </ul>
                 </div>
                 <div class="flexPublic  p0">
                     <div class="unionLists">
-                        <div class="cover"></div>
+
                         <div class="unionListsTitle">科目列表 &nbsp;
                         </div>
                         <div class="unionListsContent">
@@ -34,7 +46,7 @@
                             </el-tree>
                         </div>
                     </div>
-                    <div class="formData" > <!--v-loading.fullscreen.lock="loading"-->
+                    <div class="formData" ref="printFrom"> <!--v-loading.fullscreen.lock="loading"-->
                         <ul>
                             <li>凭证日期</li>
                             <li>凭证字号</li>
@@ -46,12 +58,12 @@
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
                             <li>{{item.Pdate.slice(0,10)}}</li>
-                            <li :title="item.Pno">{{item.Pno}}</li>
-                            <li>{{item.Abstract}}</li>
-                            <li>{{item.JSum}}</li>
-                            <li :title="item.DSum">{{item.DSum}}</li>
+                            <li :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
+                            <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计'}">{{item.Abstract}}</li>
+                            <li>{{item.JSum | NumFormat}}</li>
+                            <li :title="item.DSum">{{item.DSum | NumFormat}}</li>
                             <li >{{JD[item.DType]}}</li>
-                            <li>{{item.Balance}}</li>
+                            <li>{{item.Balance | NumFormat}}</li>
                         </ul>
                         <!--
                             v-infinite-scroll:
@@ -60,14 +72,16 @@
                             infinite-scroll-listen-for-event 当vue实例触发事件时立即再次检查
                             infinite-scroll-throttle-delay 两次检查之间的时间间隔(默认值= 200)
                           -->
-                        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-                            .....加载中
-                        </div>
+                        <!--<div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">-->
+                            <!--.....加载中-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
             <div class="timeSelectBox">
-                <time-select-bar @item-click="dateChoose"></time-select-bar>
+                <time-select-bar @item-click="dateChoose"
+                                :showtype="'doubleTime'"
+                ></time-select-bar>
             </div>
         </div>
 
@@ -93,7 +107,7 @@
                 selectItem:'',
                 defaultProps: {
                     children: 'children',
-                    label: 'KName'
+                    label: 'KNameC'
                 },
                 zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
                 auxiliary:0,  //显示辅助项
@@ -104,7 +118,13 @@
                 busy:false,    //是否正在加载过程中
                 dataInfo: [],
                 selectSubject:'',  //选择科目
-                date1:'2018'
+                date1:{choosedYear:'',
+                       choosedMonth:'',
+                       choosedMonthEnd:''},
+                loading:false,
+                inputCode:'',//搜索框输入项目编码
+                focus:false,
+                proofType:'0,1',
             }
         },
         created() {
@@ -113,12 +133,23 @@
             this.getSubjectData();
         },
         mounted() {
-
+                let currentYear = new Date();
+                let currentyear=currentYear.getFullYear(currentYear);
+                let currentMonth=currentYear.getMonth()+1;
+                this.date1.choosedYear=currentyear;
+                this.date1.choosedMonth=currentMonth;
+                this.date1.choosedMonthEnd=currentMonth;
         },
         watch: {
 
             filterText(val) {
                 this.$refs.subjectTree.filter(val);
+            },
+            inputCode(val){
+                this.inputCode=val;
+            },
+            proofType:function(){
+                this.getData(this.date1,this.proofType);
             }
         },
         components: {TimeSelectBar},
@@ -130,23 +161,40 @@
             })
         },
         methods: {
+            selectBtn:function(){
+                let flag=true;
+                for(let i in this.subjectLists){
+                    if(this.subjectLists[i].KCode==this.inputCode){
+                        this.selectSubject=this.subjectLists[i];
+                        this.getData();
+                        flag=false;
+                    }
+                }
+                if(flag){
+                    alert('您输入的科目编码有误');
+                    this.focus=true;
+                }
+            },
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
+                let time=val;
                 this.date1=time;
-                this.getBeginYear();
+                console.log(this.date1.choosedMonth+','+this.date1.choosedMonthEnd);
+                this.getData();
             },
             getData(flag) {
-                console.log(this.pageIndex);
+                let Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
                 var data = {
                     uid: this.uid,
                     orgid:this.orgid,
                     Kcode: this.selectSubject.KCode||'',
                     // Year: this.selectSubject.Uyear|| '',
-                    Year: this.date1,
+                    Year: this.date1.choosedYear,
                     OrgIds: this.orgid,
                     pageindex:this.testIndex,
                     pagesize:this.pageSize,
-                    Title:this.selectSubject.KName
+                    Title:this.selectSubject.KName,
+                    Verify:this.proofType,
+                    Pmonth:Pmonth
                 };
 
                 this.loading = true;
@@ -190,18 +238,19 @@
                         uid: this.uid,
                         orgid: this.orgid
                     }).then(res => {
-                    console.log(res);
                     this.loading = false;
 
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
                     }
+                    this.pingjie(res);
                     this.subjectLists=res;
 
                     if(res.length>0){
                         this.selectItem=res[0];
                         this.selectSubject=res[0];
+                        this.inputCode=res[0].KCode;
                         //加载第一个科目的明细
                         this.getData(res[0]);
                     }
@@ -216,6 +265,15 @@
                     })
                 })
 
+            },
+            pingjie:function(res){
+                for(var i in res){
+                    let KNameC=(res[i].KCode+' - '+res[i].KName)
+                    res[i]['KNameC']=KNameC;
+                    if(res[i].children!=[]){
+                        this.pingjie(res[i].children)
+                    }
+                }
             },
             // unionListOpen($event) {
             //     var e = $event.target;
@@ -237,6 +295,7 @@
             handleNodeClick(data){
                 this.selectSubject=data;
                 this.getData();
+                this.inputCode=data.KCode;
             },
             //当属性滚动的时候  加载  滚动加载
             loadMore(){
@@ -324,14 +383,17 @@
                 // document.body.innerHTML = oldContent;
                 // return false;
 
-                this.$print(this.$ref.printFrom) // 使用
+                this.$print(this.$refs.printFrom) // 使用
             }
 
-        },
+        }
     }
 </script>
 
 <style scoped>
+    .searcherValue {
+        border-radius: 15px 0 0 15px;
+    }
     .reportBox{
         margin-right: 60px;
         height: 100%;
@@ -339,9 +401,10 @@
     .timeSelectBox{
         position: fixed;
         right: 0;
-        top: 100px;
+        top: 110px;
         bottom:0;
         width: 60px;
+        z-index: 999;
     }
     .unionState>ul>li{
         width:100%;
@@ -408,6 +471,7 @@
         align-self: flex-start;
         margin-right: 10px;
         margin-top: 10px;
+        border: 1px solid #83c350;
     }
     .manageContent:before{
         content:"";
@@ -440,7 +504,6 @@
     }
     .unionListsContent{
         position: relative;
-        width: 210px;
     }
 
     .unionListsContent ul{
@@ -498,5 +561,7 @@
         content:"+";
         line-height: 8px;
     }
-
+    .bolder{
+        font-weight: bold;
+    }
 </style>

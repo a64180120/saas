@@ -73,7 +73,7 @@
                                         <div :title="assist.BaseName">{{assist.BaseName}}</div>
                                         <div class="selectContainer">
                                             <select  v-model="assistSels[index2]">
-                                                <option :value="val" v-for="(val,index) of assist.Children">{{val.BaseName}}</option>
+                                                <option :value="val" v-for="(val,index) of assist.Children" :key=index>{{val.BaseName}}</option>
                                             </select>
                                         </div>
                                     </li>
@@ -238,7 +238,6 @@
                     return;
                 }else{
                     var dtls = this.fatherData.Dtls;
-                    console.log(this.fatherData)
                     var account;
                     var item;
                     for( var info of this.voucherInfo){

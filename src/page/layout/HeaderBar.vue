@@ -25,7 +25,7 @@
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div>
                 <!-- 用户头像 -->
-                <div class="user-avator"><img src="@/assets/images/img.jpg"></div>
+                <div class="user-avator"><img src="static/img/22.png"></div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="userOperation">
                     <span class="el-dropdown-link">
@@ -60,6 +60,8 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import md5 from 'js-md5'
+import desHelper from "@/util/desHelper"
 
 export default {
   data() {
@@ -169,14 +171,17 @@ export default {
             console.log("新密码与确认新密码不一致!");
             this.$message.error("新密码与确认新密码不一致!");
             return;
-          } 
+          }           
           
+          var oldPwd = md5(this.editPaw.oldPaw);
+          var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);  
+
           //接口要包含3个参数： uid、 oldPwd、 newPwd 
           let data={
               uid:this.uid,
               orgid:this.orgid,
-              OldPwd: this.editPaw.oldPaw,
-              NewPwd: this.editPaw.newPaw
+              OldPwd: oldPwd, 
+              NewPwd: newPwd
           }; 
           this.$axios.post('/SysUser/PostUpdatePassword',data)
             .then(res=>{

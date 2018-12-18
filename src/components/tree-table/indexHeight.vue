@@ -40,11 +40,15 @@
 import treeToArray from './eval'
 export default {
   name: 'treeTable',
+  data() {
+    return {
+      tableHeight:500
+    }
+  },
   props: {
     data: {
       type: [Array, Object],
-      required: true,
-      tableHeight:500
+      required: true
     },
     columns: {
       type: Array,

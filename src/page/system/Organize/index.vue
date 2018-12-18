@@ -5,7 +5,8 @@
                 <el-header>
                     <div class="choose">
                         <ul class="flexPublic">
-                            <li @click="save">修改</li>
+                            <li v-show="!isedit"  @click="edit">修改</li>
+                            <li v-show="isedit" @click="save">保存</li>
                             <li @click="Backups">备份</li>
                             <li>恢复</li>
                             <li @click="testFile">附件</li>
@@ -14,7 +15,7 @@
                 </el-header>
                 <el-main>
                      <h4 class="addTitle">基层组织账套管理</h4>
-                    <div class="container">
+                    <div class="container" v-if='isedit'>
                         <el-form :model="orgForm" :rules="rules" ref="orgForm" class="orgform" label-width="200px" label-position="right" v-loading.fullscreen.lock="loading">
                             <el-form-item label="工会名称：" prop="OrgName">
                                 <el-input v-model="orgForm.OrgName" class="pic-input"></el-input>
@@ -82,11 +83,55 @@
                             </el-form-item>
                         </el-form>
                     </div>
+                    <div class="container" v-else>
+                        <ul>
+                            <li class="orgedit-linehight">
+                               <div class="orgedit-title"><span class="orgtitle-ringt">工会名称：</span></div>
+                               <div class="orgedit-value">{{orgForm.OrgName}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">统一社会信用代码：</span></div>
+                                <div class="orgedit-value">{{orgForm.EnterpriseCode}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">单位地址：</span></div>
+                                <div class="orgedit-value">{{orgForm.Address}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">联系电话：</span></div>
+                                <div class="orgedit-value">{{orgForm.TelePhone}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">隶属工会：</span></div>
+                                <div class="orgedit-value">{{orgForm.ParentName}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">会计制度：</span></div>
+                                <div class="orgedit-value">{{orgForm.AccountSystem}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">启用日期：</span></div>
+                                <div class="orgedit-value">{{orgForm.EnableTime}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">工会主席：</span></div>
+                                <div class="orgedit-value">{{orgForm.Chairman}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">经审会主任：</span></div>
+                                <div class="orgedit-value">{{orgForm.Director}}</div>
+                            </li> 
+                            <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">使用期限：</span></div>
+                                <div class="orgedit-value">{{orgForm.ServiceStartTime}}-{{orgForm.ServiceEndTime}}</div>
+                            </li> 
+                        </ul>
+                    </div>
                 </el-main>
             </el-container>
             <!-- 附件弹出框 -->
             <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
-                <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+                <picture-upload class="pictrueUpload" @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
             </el-dialog>
         </div>
     </div>
@@ -97,13 +142,14 @@
 import { mapState, mapActions } from "vuex";
 import UserInfo from "@/util/auth";
 import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
-import ajaxhttp from '@/util/ajaxConfig' //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 import pictureUpload from "@/components/upload";
 
 export default {
     name: 'demo',
     data(){
         return {
+            isedit:false,
             loading: false,
             fileVisible:false,
             imglist:[
@@ -117,7 +163,7 @@ export default {
                     BUrlPath:'/UpLoadFiles/Voucher/2018-12-07/62ad64e635a3435d82b6cc1c770124f7.jpg',
                     BRemark:'',
                     RelPhid:''
-                },
+                }
             ],
             orgForm:{
                 PhId:0,
@@ -159,10 +205,10 @@ export default {
         pictureUpload
     },
     created() {
-        this.getData();
+       
     },
     mounted(){
-        console.log(this.$store.state.user);
+         this.getData();
     },
     computed:{
         ...mapState({
@@ -170,7 +216,7 @@ export default {
             orgid: state => state.user.orgid
         }),
         picUrl:function(){
-             return ajaxhttp.url;
+             return httpConfig.baseurl;
         }
     },
     watch:{
@@ -183,6 +229,10 @@ export default {
         ...mapActions({
             uploadFile: 'uploadFile/Orgupload'
         }),
+        //修改编辑页显示
+        edit(){
+            this.isedit=true
+        },
         //修改保存
         save(){
            var route=this.$route;
@@ -197,11 +247,13 @@ export default {
               infoData: this.orgForm
           }).then(res => {
               this.loading = false;
-              if(res.Status=='success'){              
+              if(res.Status=='success'){
+                this.isedit=false
+                this.getData();              
                 //移除TagNav
-                this.$store.commit("tagNav/removeTagNav", route);
+                //this.$store.commit("tagNav/removeTagNav", route);
                 //跳转路由
-                this.$router.push('/system/organization');
+                //this.$router.push('/system/organization');
               }else{
                   this.$message.error('保存失败,请重试!');
               }
@@ -311,7 +363,7 @@ export default {
         },
         removeimg(item,deleValue) {
             this.imglist=item;
-            console.log(deleValue)
+            console.log(item)
 
             var param={
                 PhId:deleValue.phid,
@@ -372,6 +424,29 @@ export default {
     width: 80%;
     float: left;
 }
+.orgedit-linehight{
+    height: 40px;
+    border: 1px solid #d9d9d9;
+    line-height: 40px;
+}
+.orgedit-title{
+    height: 100%;
+    width: 30%;
+    float: left;
+    color: #fff;
+    font-size: 18px;
+    background: #00B8EE;
+}
+.orgtitle-ringt{
+    float: right;
+}
+.orgedit-value{
+    height: 100%;
+    width: 60%;
+    float: left;
+    font-size: 18px;
+    margin-left: 10px;
+}
 </style>
 <style>
 .avatar-uploader{
@@ -414,5 +489,9 @@ export default {
 
 .orgform .el-form-item{
     margin-bottom: 2px;
+}
+.pictrueUpload{
+    width:100%;
+    height:100%;
 }
 </style>
