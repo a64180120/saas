@@ -1,7 +1,8 @@
 <template>
     <div class="tag-nav">
         <scroll-bar ref="scrollBar">
-            <router-link ref="tag" class="tag-nav-item" 
+            <router-link ref="tag" 
+            class="tag-nav-item" 
             :class="isActive(item) ? 'cur' : ''" 
             v-for="(item, index) in tagNavList" 
             :to="item.path" 
@@ -52,12 +53,18 @@ export default {
     }
   },
   methods: {
+    openMenu(tag, e) {
+      this.selectedTag = tag
+      console.log("selectedTag")
+      console.log(this.selectedTag)
+    },
     addTagNav() {
       // 如果需要缓存则必须使用组件自身的name，而不是router的name
       this.$store.commit("tagNav/addTagNav", {
         name: this.$router.getMatchedComponents()[1].name,
         path: this.$route.path,
-        title: this.$route.meta.name
+        title: this.$route.meta.name,
+        noCache: this.$route.meta.noCache
       });
     },
     isActive(item) {
@@ -91,23 +98,31 @@ export default {
     handleTags(command){
         command === 'other' ? this.closeOther() : this.closeAll();
     }, 
+    moveToCurrentTag() {
+      const tags = this.$refs.tag
+      this.$nextTick(() => {
+        for (const tag of tags) {
+          if (tag.to === this.$route.path) {
+            this.$refs.scrollBar.moveToTarget(tag.$el)
+            break
+          }
+        }
+      })
+    },
     // 关闭全部标签     
     closeAll(){
-        // this.tagNavList = [];
-        // this.$router.push('/');
-        this.$router.push(this.selectedTag.path)
-        this.$store.dispatch('delOthersViews', this.selectedTag).then(() => {
+        this.$store.dispatch('tagNav/delAllTagNavViews').then(() => {
           //this.moveToCurrentTag()
         })
     },
     // 关闭其他标签  
     closeOther(){
         // 关闭其他标签
-        const curItem = this.tagsList.filter(item => {
+        const curItem = this.tagNavList.filter(item => {
             return item.path === this.$route.fullPath;
         })
-        this.tagNavList = curItem;
-        this.$store.dispatch('delOthersViews', curItem).then(() => {
+        //this.tagNavList = curItem;
+        this.$store.dispatch('tagNav/delOthersTagNavViews', curItem[0]).then(() => {
           //this.moveToCurrentTag()
         })
 

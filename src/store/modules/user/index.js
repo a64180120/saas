@@ -194,7 +194,8 @@ const actions = {
             commit("setToken", "");  //token 
             commit("setUserInfo", ""); //用户信息
             commit('setNavList',''); //菜单
-            commit('tagNav/removeTagNav', '', {root: true})
+            //若需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可
+            commit('tagNav/delAllTagNav', '', {root: true})
             resolve();
         });
     },

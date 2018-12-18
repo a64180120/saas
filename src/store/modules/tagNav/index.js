@@ -1,5 +1,8 @@
 const state = {
-    // 是否要缓存页面，默认不缓存
+    /**
+     * 是否要缓存Tag页面，默认缓存, 
+     * 在路由的meta中标识noCache=true 表示不缓存当前页面
+     *  */
     cachePage: true,
     // 已经打开的页面
     openedPageList: [],
@@ -13,41 +16,30 @@ const mutations = {
     },
     addTagNav(state, data){
         if (state.openedPageList.some(v => v.path === data.path)) return
-        if(state.cachedPageName.includes(data.name)){
-            console.error(`${data.name} 组件出现命名重复，请检查组件中的name字段。当前组件所在的路由地址为：${data.path}`)
-            return
-        }
-        state.openedPageList.push(data)
+        state.openedPageList.push({
+            name: data.name,
+            path: data.path,
+            title: data.title || 'no-name'
+        });
         if(state.cachePage){
-            state.cachedPageName.push(data.name)
+            if(state.cachedPageName.includes(data.name)){
+                //console.error(`${data.name} 组件出现命名重复，请检查组件中的name字段。当前组件所在的路由地址为：${data.path}`)
+                return
+            }
+            //data.noCache 加载tag是表示不缓存当前页面
+            if (!data.noCache) {
+                state.cachedPageName.push(data.name)
+            }
         }
     },
     removeTagNav(state, data){
-        if(data){
-            for(let [i, v] of state.openedPageList.entries()){
-                if(v.path === data.path){
-                    state.openedPageList.splice(i, 1)
-                }
+        for(let [i, v] of state.openedPageList.entries()){
+            if(v.path === data.path){
+                state.openedPageList.splice(i, 1)
+                break
             }
-            
-            if(state.cachePage){
-                let index = state.cachedPageName.indexOf(data.name)
-                if(index >= 0){
-                    state.cachedPageName.splice(index, 1)
-                }
-            }
-        } else{
-            state.openedPageList = []
-            state.cachedPageName = []
         }
-    },
-    delVisitedTagNav: (state, data) => {
-        for (let [i, v] of state.openedPageList.entries()) {
-          if (v.path === data.path) {
-            state.openedPageList.splice(i, 1)
-            break
-          }
-        }
+        
         if(state.cachePage){
             let index = state.cachedPageName.indexOf(data.name)
             if(index >= 0){
@@ -56,12 +48,15 @@ const mutations = {
         }
     },
     delOthersTagNav: (state, data) => {
+        debugger
         for (let [i, v] of state.openedPageList.entries()) {
           if (v.path === data.path) {
+              console.log(v.path)
             state.openedPageList = state.openedPageList.slice(i, i + 1)
             break
           }
         }
+        debugger
         if(state.cachePage){
             for (let i of state.cachedPageName) {
                 if (i === data.name) {
@@ -80,24 +75,24 @@ const mutations = {
 }
 
 const actions={
-    addVisitedViews({ commit }, view) {
-        commit('addTagNav', view)
+    addTagNavViews({ commit }, data) {
+        commit('addTagNav', data)
     },
-    delVisitedViews({ commit, state }, view) {
+    removeTagNavViews({ commit, state }, data) {
         return new Promise((resolve) => {
-            commit('delVisitedTagNav', view)
+            commit('removeTagNav', data)
             resolve([...state.openedPageList])
         })
     },
-    delOthersViews({ commit, state }, view) {
+    delOthersTagNavViews({ commit, state }, data) {
         return new Promise((resolve) => {
-            commit('delOthersTagNav', view)
+            commit('delOthersTagNav', data)
             resolve([...state.openedPageList])
         })
     },
-    delAllViews({ commit, state }) {
+    delAllTagNavViews({ commit, state }) {
         return new Promise((resolve) => {
-            commit('delAllTagNav')
+            commit('tagNav/delAllTagNav', '', {root: true})
             resolve([...state.openedPageList])
         })
     }

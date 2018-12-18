@@ -129,16 +129,15 @@
             </li>
             <li>
               <img src="@/assets/img/d4.png"  />
-              <p>www.gadta.com.cn</p>
+              <p>www.newgrand.cn</p>
             </li>
             <li>
               <img src="@/assets/img/d5.png"  />
-              <p>www.gadta.com.cn</p>
+              <p>www.gdata.cn</p>
             </li>
             <li>
               <img  src="@/assets/img/d6.png" />
-              <p>杭州市拱墅区祥园路88号中国
-                （杭州）智慧信息产业园N座6F</p>
+              <p>杭州市拱墅区祥园路88号中国（杭州）智慧信息产业园N座9F</p>
             </li>
           </ul>
         </div>
@@ -185,9 +184,9 @@
         </div>
       </div>
       <div class="footInfo">
-        <p>Copyrighe@ 1993-2018NEWGRADN.AII Rights Reserved</p>
-        <p>新中大科技有限公司  |  杭州政云数据技术有限公司  |  版权所有</p>
-        <p>浙ICP证05021872   浙公网安备   33010502000837号</p>
+        <p>Copyright  @ 1993-2018NEWGRAND.All Rights Reserved</p>
+        <p>新中大科技股份有限公司     杭州政云数据技术有限公司    版权所有</p>
+        <p>浙ICP证05021872    浙公网安备    33010502000837号</p>
       </div>
     </footer>
   </div>
