@@ -1,20 +1,15 @@
 <template>
+    <div class="container">
+
+
     <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
                 <ul class="flexPublic">
                     <li class="flexPublic">
-                        <!--<div>账期:</div>
-                        <div class="block selectContainer">
-                            <el-date-picker
-                                v-model="date1"
-                                type="date"
-                                placeholder="选择日期">
-                            </el-date-picker>
-                        </div>-->
-                        <div>凭证：</div>
+                        <div>条件：</div>
                         <div  class="block selectContainer">
-                            <select class="el-input__inner" v-model="proofType">
+                            <select class="el-input__inner el-button--small" v-model="proofType">
                                 <option value="1">包含未审核凭证</option>
                                 <option value="0">不包含未审核凭证</option>
                             </select>
@@ -215,6 +210,7 @@
         <div class="timeSelectBox">
             <time-select-bar @item-click="dateChoose"></time-select-bar>
         </div>
+    </div>
     </div>
 </template>
 
@@ -454,7 +450,7 @@
     .timeSelectBox{
         position: fixed;
         right: 0;
-        top: 100px;
+        top: 110px;
         bottom:0;
         width: 60px;
     }
@@ -483,7 +479,7 @@
     .formData>ul>li:nth-of-type(2){
         width:20%;
     }
-    .formData>ul>li:nth-of-type(6){
+    .formData>ul>li:nth-of-type(7){
         width:20%;
     }
     .formData>ul:first-child>li:last-of-type{

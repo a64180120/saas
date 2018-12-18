@@ -3,17 +3,29 @@
             <div class="reportBox">
 
                 <div class="unionState flexPublic">
-
-                    <!--<div >
-                        <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
-                    </div>-->
                     <div class="flexPublic handle">
                         <div class="searcherValue"><input type="text" placeholder="科目编码" v-model="inputCode"></div>
                         <div  class="searcherBtn" @click="selectBtn">搜索</div>
                     </div>
+                    <ul class="flexPublic">
+                    <!--<div >
+                        <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
+                    </div>-->
+
+                    </ul>
                     <ul class="flexPublic handle">
-                        <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                        <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                        <li class="flexPublic">
+
+                            <div>条件：</div>
+                            <div  class="block selectContainer">
+                                <select class="el-input__inner el-button--small" v-model="proofType">
+                                    <option value="0,1">包含未审核凭证</option>
+                                    <option value="1">不包含未审核凭证</option>
+                                </select>
+                            </div>
+                        </li>
+                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
                     </ul>
                 </div>
                 <div class="flexPublic  p0">
@@ -46,8 +58,8 @@
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
                             <li>{{item.Pdate.slice(0,10)}}</li>
-                            <li :title="item.Pno">{{item.Pno}}</li>
-                            <li>{{item.Abstract}}</li>
+                            <li :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
+                            <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计'}">{{item.Abstract}}</li>
                             <li>{{item.JSum}}</li>
                             <li :title="item.DSum">{{item.DSum}}</li>
                             <li >{{JD[item.DType]}}</li>
@@ -107,8 +119,8 @@
                 date1:'2018',
                 loading:false,
                 inputCode:'',//搜索框输入项目编码
-                focus:false
-
+                focus:false,
+                proofType:'0,1',
             }
         },
         created() {
@@ -126,6 +138,9 @@
             },
             inputCode(val){
                 this.inputCode=val;
+            },
+            proofType:function(){
+                this.getData(this.date1,this.proofType);
             }
         },
         components: {TimeSelectBar},
@@ -142,6 +157,7 @@
                 for(let i in this.subjectLists){
                     if(this.subjectLists[i].KCode==this.inputCode){
                         this.selectSubject=this.subjectLists[i];
+                        this.getData();
                         flag=false;
                     }
                 }
@@ -165,7 +181,8 @@
                     OrgIds: this.orgid,
                     pageindex:this.testIndex,
                     pagesize:this.pageSize,
-                    Title:this.selectSubject.KName
+                    Title:this.selectSubject.KName,
+                    Verify:this.proofType
                 };
 
                 this.loading = true;
@@ -372,7 +389,7 @@
     .timeSelectBox{
         position: fixed;
         right: 0;
-        top: 100px;
+        top: 110px;
         bottom:0;
         width: 60px;
     }
@@ -441,6 +458,7 @@
         align-self: flex-start;
         margin-right: 10px;
         margin-top: 10px;
+        border: 1px solid #83c350;
     }
     .manageContent:before{
         content:"";
@@ -530,5 +548,7 @@
         content:"+";
         line-height: 8px;
     }
-
+    .bolder{
+        font-weight: bold;
+    }
 </style>

@@ -335,7 +335,7 @@ export default {
             height:34px;
             line-height: 34px;
             text-align: center;
-            background: #ff9900;
+            background: #45c0f7;
             color:#fff;
             cursor: pointer;
             &:hover{
@@ -347,7 +347,8 @@ export default {
             height:30px;
             line-height: 30px;
             font-size: 18px;
-            background: #02a7e7;
+            background: #fff;
+            color:#04a9f4;
         }
         .monthsContainer{
             height:620px;
@@ -381,41 +382,44 @@ export default {
                        text-align: center;
                        margin:0 auto;
                        margin-top: 12px;
-                       border:1px solid #02a7e7;
+                       color: #45c0f7;
+                       border: #c7e8f7 1px solid;
                        border-radius: 50%;
                        cursor:pointer;
                        &.active.unchecked{
-                           color:#333;
-                           background: #6acccb;
-                           &:hover{
-                               background: #6acccb;
-                           }
+                           color:#fff;
+                           background: rgb(3, 169, 244);
                        }
                        &.active{
-                           background: #6acccb;
+                           background: rgb(3, 169, 244);
+                           box-shadow: 0px 2px 2px #dbf4ff;
+                           border: #c7e8f7 1px solid;
                            color:#fff;
                        }
                        &.unchecked{
                            background: #fff;
-                           border-color:#aaa;
+                           border-color:transparent;
+                           color: #CCC !important;
+                           border: #ececec 1px solid !important;
+                           box-shadow: 0px 2px 2px #e0e0e0 !important;
                            &:after{
                                background: #ccc;
                            }
-                           &:hover{
-                               border-color:#aaa;
-                               background: #ccc;
-                               color:#333;
-                           }
+                        //    &:hover{
+                        //        border-color:#aaa;
+                        //        background: #ccc;
+                        //        color:#333;
+                        //    }
                        }
-                       &.futureM.unchecked{
-                           border-color:#aaa;
-                           background: #ccc;
-                           cursor:default;
-                       }
-                       &:hover{
-                           background: #02a7e7;
-                           color:#fff;
-                       }
+                    //    &.futureM.unchecked{
+                    //        
+                    //        background: #ccc;
+                    //        cursor:default;
+                    //    }
+                    //    &:hover{
+                    //        background: #02a7e7;
+                    //        color:#fff;
+                    //    }
                        &:first-of-type{
                            border:0;
                            font-size: 15px;

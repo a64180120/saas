@@ -15,27 +15,34 @@
             <ul class="flexPublic handle">
                 <a>
                     <li class="mode">
-                        <span>模板</span>
+                        <span style="background: #7790f7;color:#fff">模板</span>
                         <span @click.prevent="addVoucher('modelList')">引用模板</span>
                         <span @click.prevent="addVoucher('keepModel')">存为模板</span>
                     </li>
                 </a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li>保存</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li style="background:#FDBA6C;">保存</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li>修改</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li>保存并新增</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="background:#31CABD;">保存并新增</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li>审核</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li>反审核</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li>删除</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li>复制</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('paste')"><li>剪切</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li>剪切</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li>冲红</li></a>
-                <a @click.prevent="addVoucher('print')"><li>保存并打印</li></a>
-                <a @click.prevent="addVoucher('reset')"><li>凭证号重排</li></a>
+                <a @click.prevent="addVoucher('print')"><li style="background:#FBD901;">保存并打印</li></a>
+                <a @click.prevent="addVoucher('reset')"><li style="background:#FBD901;">凭证号重排</li></a>
             </ul>
         </div>
         <!--凭证组件*******************-->
-        <div ref="print">
+        <div :class="{voucherMask:voucherMask}" ref="print">
+            <div class="voucherContainer">
+                <p v-if="voucherMask" class="title"><span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红</span><i @click="voucherMaskShow(false)"></i></p>
+                <div v-if="voucherMask">
+                    <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
+                    <span class="btn" @click.stop="keepChoose(false)">取消</span>
+                </div>
                 <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+            </div>            
         </div>
         <!--右侧时间选择组件-->
         <div class="asideNav">
@@ -133,7 +140,7 @@
         </div>
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <div class="footInfo">
+        <div class="footInfo" :class="{voucherMaskActive:voucherMask}">
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
@@ -172,13 +179,14 @@
             modelListCss:false,
             nextMonthCss:false,
             allReset:'',
-            resetShow:false
+            resetShow:false,
+            voucherMask:false
         }},
         created(){
             if(this.$route.query.list){
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
-            }
+            } console.log( this.voucherDataList)
         },
         mounted(){
             this.getChecked();
@@ -186,6 +194,7 @@
                 var month= document.getElementById('scrollMonth');
                 month.addEventListener('DOMMouseScroll',this.foxMonthSel)
             }
+            console.log( this.voucherDataList)
         },
         destroyed() {
             document.removeEventListener('scroll', this.handleScroll);   //  离开页面清除（移除）滚轮滚动事件
@@ -223,7 +232,14 @@
                         this.voucherData();
                         this.audit(false,this.voucherDataList.data.Mst.PhId);
                         break;
+                    case 'copy':
+                        this.voucherMaskShow('copy');
+                        break;
+                    case 'cut':
+                        this.voucherMaskShow('cut');
+                        break;
                     case 'chongh':
+                        this.voucherMaskShow('chongh');
                         this.chongh();
                         break;
                     case 'delete' :
@@ -307,7 +323,6 @@
             //手动刷新voucher组件**************************
             resetVoucher(){
                 var vm=this;    
-                console.log('rest')
                 this.voucherDataList.bool=false;
                
                 function delay(){
@@ -737,8 +752,7 @@
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
                 //var oldData=JSON.stringify(Mst);
-                for(var dtl of Mst.Dtls){
-                    
+                for(var dtl of Mst.Dtls){                    
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
                     if(dtl.DtlAccounts){
@@ -754,17 +768,23 @@
             //清空凭证phid*****************
             clearPhId(item){
                 item.PhId='';
-                    for(var dtl of item.Dtls){
-                        dtl.PhId='';
-                        dtl.PhidTransaction='';
-                        dtl.PhidVouchermst='';
-                        if(dtl.DtlAccounts){
-                            dtl.DtlAccounts[0].PhId='';
-                            dtl.DtlAccounts[0].PhidTransaction='';
-                            dtl.DtlAccounts[0].PhidVouchermst='';
-                            dtl.DtlAccounts[0].PhidVoucherDel='';
-                        }
-                    }    
+                if(item.PNo){
+                    item.PNo='';
+                }
+                item.PersistentState=1;
+                for(var dtl of item.Dtls){
+                    dtl.PhId='';
+                    dtl.PhidTransaction='';
+                    dtl.PhidVouchermst='';
+                    dtl.PersistentState=1;
+                    if(dtl.DtlAccounts){
+                        dtl.DtlAccounts[0].PhId='';
+                        dtl.DtlAccounts[0].PhidTransaction='';
+                        dtl.DtlAccounts[0].PhidVouchermst='';
+                        dtl.DtlAccounts[0].PhidVoucherDel='';
+                        dtl.DtlAccounts[0].PersistentState=1;
+                    }
+                }    
             },
             //打印******************
             // printLodop() {
@@ -784,7 +804,29 @@
              // 打印
             printContent(e){
                 this.$print(this.$refs.print) // 使用
+            },
+            //复制剪切******************************
+            voucherMaskShow(val){
+                this.voucherMask=val;
+            },
+            keepChoose(val){
+                if(val){
+                    this.voucherData();
+                    var id = this.voucherDataList.data.Mst.PhId;
+                    if(val=='cut'){
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            id:id
+                        }
+                        this.delete(data1);
+                    }
+                    this.clearPhId(this.voucherDataList.data.Mst);
+                    this.keepVoucher();
+                }
+                this.voucherMask=false;      
             }
+
         },
         computed:{
             ...mapState({
@@ -835,22 +877,16 @@
                     z-index: 9;
                     transition:all 0.2s linear;
                     >span{
-                        &:first-of-type:hover{
-                            background: #fff;
-                            color:#52bab5;
-                        }
-                        &:hover{
-                            background: #ff9900;
-                            color:#fff;
+                        &:first-of-type{
+                            
+                            border:0;
                         }
                     }
                     &:hover{
                         height:90px;
                         background: #fff;
-                        color:#52bab5;
-                        >span:first-of-type{
-                            border-bottom: 1px solid #ff9900;
-                        }
+                        color:#aaa;
+                        
                     }
                 }
             }
@@ -869,7 +905,7 @@
         >li{
             margin-left: 5px;
             padding:0 10px;
-            background:#509edc;
+            background:#00B8EE;
             color:#fff;
             height:30px;
             width:80px;
@@ -927,12 +963,13 @@
         min-width: 70px;
         text-align: center;
         line-height: 30px;
-        background:#509edc;
+        background:#00B8EE;
         color:#fff;
         cursor:pointer;
     }
     .unionState .handle>a>li{
-        border:1px solid #ff9900;
+        border:1px solid #ccc;
+        color:#fff;
         cursor:pointer;
         border-radius: 3px;
         text-align: center;
@@ -962,7 +999,7 @@
             height:34px;
             line-height: 34px;
             text-align: center;
-            background: #ff9900;
+            background: #45c0f7;
             color:#fff;
             cursor: pointer;
             &:hover{
@@ -974,7 +1011,8 @@
             height:30px;
             line-height: 30px;
             font-size: 18px;
-            background: #02a7e7;
+            background: #fff;
+            color:#04a9f4;
         }
         .monthsContainer{
             height:620px;
@@ -1008,49 +1046,53 @@
                        text-align: center;
                        margin:0 auto;
                        margin-top: 12px;
-                       border:1px solid #02a7e7;
+                       color: #45c0f7;
+                       border: #c7e8f7 1px solid;
                        border-radius: 50%;
                        cursor:pointer;
                        &.active.unchecked{
-                           color:#333;
-                           background: #6acccb;
-                           &:hover{
-                               background: #6acccb;
-                           }
+                           color:#fff;
+                           background: rgb(3, 169, 244);
                        }
                        &.active{
-                           background: #6acccb;
+                           background: rgb(3, 169, 244);
+                           box-shadow: 0px 2px 2px #dbf4ff;
+                           border: #c7e8f7 1px solid;
                            color:#fff;
                        }
                        &.unchecked{
                            background: #fff;
-                           border-color:#aaa;
+                           border-color:transparent;
+                           color: #CCC !important;
+                           border: #ececec 1px solid !important;
+                           box-shadow: 0px 2px 2px #e0e0e0 !important;
                            &:after{
                                background: #ccc;
                            }
-                           &:hover{
-                               border-color:#aaa;
-                               background: #ccc;
-                               color:#333;
-                           }
+                        //    &:hover{
+                        //        border-color:#aaa;
+                        //        background: #ccc;
+                        //        color:#333;
+                        //    }
                        }
-                       &.futureM.unchecked{
-                           border-color:#aaa;
-                           background: #ccc;
-                           cursor:default;
-                       }
-                       &:hover{
-                           background: #02a7e7;
-                           color:#fff;
-                       }
+                    //    &.futureM.unchecked{
+                    //        
+                    //        background: #ccc;
+                    //        cursor:default;
+                    //    }
+                    //    &:hover{
+                    //        background: #02a7e7;
+                    //        color:#fff;
+                    //    }
                        &:first-of-type{
                            border:0;
                            font-size: 15px;
                            font-weight: bold;
-                           &:hover{
-                               background: none;
-                               color:#333;
-                           }
+                           cursor:default;
+                        //    &:hover{
+                        //        background: none;
+                        //        color:#333;
+                        //    }
                        }
                        &:nth-of-type(2){
                            margin-top: 0;
@@ -1059,6 +1101,7 @@
                }
             }
         }
+        
         .yearsContainer{
             &:before{
                 position:absolute;
@@ -1365,7 +1408,7 @@
 
     }
     .footInfo{
-        margin-top: 50px;
+        margin: 50px 0;
         height:70px;
         line-height: 70px;
         background: #2b3245;
@@ -1380,6 +1423,52 @@
                 border:0;
             }
         }
+    }
+    .voucherMask{
+        position: absolute;
+        width:100%;
+        height:100%;
+        background: rgba(0,0,0,0.3);
+        .voucherContainer{
+          background: #fff;
+          width:80%;
+          position:absolute;
+          top:30px;
+          left:100px;
+          padding:10px;
+          >div:first-of-type{
+              display: flex;
+              justify-content: flex-end;
+              padding:5px 10px;
+              >span{
+                  margin-left: 20px;
+              }
+          }  
+        }
+    }
+    
+    .title{
+        border-bottom: 1px solid #ccc;
+        padding:8px 3px;
+        display: flex;
+        justify-content: space-between;
+        width:100%;
+        font-family: Arial;
+        font-size: 14.0pt;
+        font-style: normal;
+        font-weight: 700;
+        i{
+            background: url("../../assets/icon/close.svg");
+            background-size:cover ;
+            width:20px;
+            height:20px;
+            cursor:pointer;
+        }
+    }
+    .voucherMaskActive{
+        position:absolute;
+        bottom: 0;
+        z-index: -1;
     }
 
 </style>
