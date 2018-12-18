@@ -48,7 +48,6 @@ const mutations = {
         }
     },
     delOthersTagNav: (state, data) => {
-        debugger
         for (let [i, v] of state.openedPageList.entries()) {
           if (v.path === data.path) {
               console.log(v.path)
@@ -56,7 +55,6 @@ const mutations = {
             break
           }
         }
-        debugger
         if(state.cachePage){
             for (let i of state.cachedPageName) {
                 if (i === data.name) {
