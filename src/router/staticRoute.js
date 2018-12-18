@@ -28,7 +28,7 @@ const staticRoute = [
             {
                 path: "",
                 component: () =>import("../page/home/index"),
-                meta:{ requireAuth:true,type:'page',isMenu:true,name:'首页' }
+                meta:{ requireAuth:true,type:'page',name:'首页', noCache: true }
             }
         ]
     },
@@ -42,7 +42,7 @@ const staticRoute = [
                 path: "orgin",
                 component: () => import("../page/admin/organize/manage"),
                 //redirect: "/admin/orgin/union",
-                meta:{ requireAuth:true,type:'page',isMenu:true}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //组织管理 -新增
@@ -60,19 +60,19 @@ const staticRoute = [
                 //角色管理
                 path: "role",
                 component: () =>import("../page/admin/role"),
-                meta:{ requireAuth:true ,isMenu:true}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //用户管理
                 path: "user",
                 component: () =>import("../page/admin/user"),
-                meta:{ requireAuth:true ,isMenu:true}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //菜单管理
                 path: "menu",
                 component: () =>import("../page/admin/menu"),
-                meta:{ requireAuth:true ,isMenu:true}
+                meta:{ requireAuth:true ,type:'page'}
             }
         ]
     },
@@ -85,13 +85,13 @@ const staticRoute = [
                 //新增凭证
                 path: "voucherAdd",
                 component: () =>import( "../page/finance/voucherAdd"),
-                meta:{ requireAuth:true,isMenu:true,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //凭证管理
                 path: "voucherList",
                 component: () =>import("../page/finance/voucherList"),
-                meta:{ requireAuth:true,isMenu:true,type:'page',name:'凭证管理'}
+                meta:{ requireAuth:true,type:'page',name:'凭证管理'}
             }
             // {
             //     //查看凭证
@@ -111,37 +111,37 @@ const staticRoute = [
                 //科目设置
                 path: "subject",
                 component: () =>import( "../page/basicSetting/subjectSetting"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //科目期初
                 path: "subjectstart",
                 component: () =>import("../page/basicSetting/subjectInit"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //辅助核算
                 path: "auxiliary",
                 component: () =>import("../page/basicSetting/auxiliary/auxiliary"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //凭证模板
                 path: "vouchertemp",
                 component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //套打格式
                 path: "print",
                 component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //参数设置
                 path: "config",
                 component: () =>import("../page/basicSetting/config/index"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             }
         ]
     },
@@ -154,25 +154,25 @@ const staticRoute = [
                 //科目余额
                 path: "subjectbalance",
                 component: () =>import( "../page/message"),
-                meta:{ requireAuth:true,isMenu:true,type:'page' }
+                meta:{ requireAuth:true,type:'page' }
             },
             {
                 //总分账
                 path: "totalaccounts",
                 component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true,type:'page' }
+                meta:{ requireAuth:true,type:'page' }
             },
             {
                 //明细账
                 path: "detailaccount",
                 component: () =>import("../page/accountbooks/detailaccount/index"),
-                meta:{ requireAuth:true,isMenu:true,type:'page' }
+                meta:{ requireAuth:true,type:'page' }
             },
             {
                 //多栏账
                 path: "multiaccount",
                 component: () =>import("../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             }
         ]
     },
@@ -185,19 +185,19 @@ const staticRoute = [
                 //资产负债表
                 path: "assets",
                 component: () =>import( "../page/report/assets"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //收入支出表
                 path: "expenses",
                 component: () =>import("../page/report/expenses"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //往来明细款项表
                 path: "intercourse",
                 component: () =>import("../page/report/intercourse"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             }
         ]
     },
@@ -210,13 +210,13 @@ const staticRoute = [
                 //期末结转
                 path: "end",
                 component: () =>import( "../page/checkOut/end"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //结账
                 path: "checkout",
                 component: () =>import("../page/checkOut/checkOut"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             }
         ]
     },
@@ -229,31 +229,31 @@ const staticRoute = [
                 //预算编制
                 path: "plan",
                 component: () =>import( "../page/budget/plan"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //预算执行
                 path: "execute",
                 component: () =>import("../page/budget/execute"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //收支预算表
                 path: "budget",
                 component: () =>import( "../page/budget/budget"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //收支调整表
                 path: "adjustbudget",
                 component: () =>import( "../page/budget/adjustbudget"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             },
             {
                 //收支决算表
                 path: "actualbudget",
                 component: () =>import( "../page/budget/actualbudget"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
         ]
     },
@@ -266,7 +266,7 @@ const staticRoute = [
                 //上报任务
                 path: "reporting",
                 component: () =>import( "../page/message"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             }
         ]
     },
@@ -279,13 +279,13 @@ const staticRoute = [
                 //工作账号管理
                 path: "account",
                 component: () =>import( "../page/system/user"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true,type:'page'}
             },
             {
                 //组织账套管理
                 path: "organization",
                 component: () =>import( "../page/system/Organize"),
-                meta:{ requireAuth:true,isMenu:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page'}
             }
         ]
     },
@@ -304,36 +304,34 @@ const staticRoute = [
         component: () => import(/* webpackChunkName: 'error' */ "../page/error"),
         meta:{
             title:'错误页面',
-            icon:'el-icon-lx-home',
-            permission:[],
-            roles:['admin','kuaiji']
+            icon:'el-icon-lx-home'
         },
         children: [
             {
                 path: "401",
-                component: () =>
-                    import(/* webpackChunkName: 'error' */ "../page/error/401")
+                component: () =>import(/* webpackChunkName: 'error' */ "../page/error/401"), 
+                name: 'page401', 
+                meta: { title: 'page401', noCache: true }
             },
             {
                 path: "403",
-                component: () =>
-                    import(/* webpackChunkName: 'error' */ "../page/error/403")
+                component: () => import(/* webpackChunkName: 'error' */ "../page/error/403"),
+                name: 'page403', 
+                meta: { title: 'page403', noCache: true }
             },
             {
                 path: "404",
-                component: () =>
-                    import(/* webpackChunkName: 'error' */ "../page/error/404")
+                component: () => import(/* webpackChunkName: 'error' */ "../page/error/404"),
+                name: 'page404', 
+                meta: { title: 'page404', noCache: true }
             },
             {
                 path: "500",
-                component: () =>
-                    import(/* webpackChunkName: 'error' */ "../page/error/500")
+                component: () =>import(/* webpackChunkName: 'error' */ "../page/error/500"),
+                name: 'page500', 
+                meta: { title: 'page500', noCache: true }
             }
         ]
-    },
-    {
-        path: "*",
-        redirect: "/error/404"
     }
 ];
 

@@ -39,10 +39,14 @@
                 <el-table-column prop="Name" label="角色名称" width="120"></el-table-column>
                 <el-table-column label="角色状态" width="100">
                     <template slot-scope="scope">
-                        <span v-if="scope.row.EnabledMark===0">启用</span>
-                        <span v-else-if="scope.row.EnabledMark===1">停用</span>
-                        <span v-else>啦啦</span>
+                        <el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini" circle></el-button>
+                        <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>
                     </template>
+                    <!--<template slot-scope="scope">-->
+                        <!--<span v-if="scope.row.EnabledMark===0">启用</span>-->
+                        <!--<span v-else-if="scope.row.EnabledMark===1">停用</span>-->
+                        <!--<span v-else>啦啦</span>-->
+                    <!--</template>-->
                 </el-table-column>
                 <el-table-column prop="Description" label="备注"></el-table-column>
             </el-table>
@@ -386,6 +390,7 @@
             },
             //选择行
             handleClickRow(row) {
+                this.singleSelection = [];
                 this.singleSelection.push(row);
 
                 console.log(row);

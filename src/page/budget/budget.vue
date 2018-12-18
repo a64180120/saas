@@ -172,7 +172,7 @@
         </div>
 
     <div class="timeSelectBox">
-        <time-select-bar @item-click="dateChoose"></time-select-bar>
+        <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
     </div>
     </div>
     </div>
@@ -205,7 +205,7 @@
                 budgetList:[],//数据库查询的全部数据
                 code_firstCount:[],//一级科目数据对应的合计数
                 specialSubIndex:[],//特殊科目对应的下标数组，用于计算
-                date1:'',
+                date1:[],
                 proofType:'0',
                 loading: false,
             }
@@ -225,8 +225,7 @@
         },
         methods:{
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.date1=time;
+                this.date1=val;
                 this.getBeginYear();
             },
             /*
@@ -248,7 +247,6 @@
             * 监听数据输入
             * */
             inputLis:function(val){
-                //alert(val);
                 let code = val.target.attributes.code.value;//当前修改数据的code
                 let index=val.target.attributes.index.value;//当前修改数据在列表中的下标
                 let in_value = parseFloat(val.target.value);//input数据转数字
@@ -311,11 +309,22 @@
             * 页面数据查询方法
             * */
             getBeginYear:function(){
-                //mapState.userid,mapState.orgid
+                let year='';
+                if(this.date1.choosedYear==undefined){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    year=currentyear;
+                }else{
+                    year=this.date1.choosedYear
+                }
                 let data={
                     "uid": this.userid,
                     "orgid":this.orgid,
-                    "Year":  this.getParamTime(this.date1).substring(0,4),
+                    "Year":  year,
                     "OrgIds": this.orgid,
                 };
                 this.loading=true;
@@ -324,7 +333,6 @@
                     {params:data}
                 ).then(res=>{
                     this.loading=false;
-                    console.log(res.Record);
                     let  code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
                     //循环遍历，得到一级子目录一级对应的预算数
@@ -334,10 +342,8 @@
                     for(var i in res.Record){
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
-                        res.Record[i].Uyear=this.getParamTime(this.date1).substring(0,4);
-                        if(res.Record[i].k_name == 'BNSRHJ'){
-                            alert('BNSRHJ');
-                        }
+                        res.Record[i].Uyear=year;
+
                         if(res.Record[i].Layers=='0'){
                             code_firstCount[res.Record[i].SubjectCode]=res.Record[i].BudgetTotal;//本年一级科目预算数
                         }
@@ -355,7 +361,6 @@
                         }
                     }
                     this.budgetList=res.Record;
-                    console.log(this.budgetList[0].k_name);
                     this.code_firstCount = code_firstCount;
                     this.specialSubIndex = specialSubIndex;
                 }).catch(res=>{
@@ -378,31 +383,13 @@
                   }
               ).then(function(res){
                   that.loading=false;
-                  alert(res.Msg);
+                  that.$message({ showClose: true, message:res.Msg,type: 'success' })
               }).catch(function(err){
                   that.loading=false;
                   console.log(err);
               })
 
             },
-            /*
-            *时间处理方法
-            *  */
-            getParamTime(param){
-                let nowtime ='';
-                if(param==null||param==undefined||param==''){
-                    nowtime = new Date();
-                }else{
-                    nowtime = new Date(param);
-                }
-                let year=nowtime.getFullYear();
-                let month=nowtime.getMonth()+1;
-                month<10?month='0'+month:month;
-                let day=nowtime.getDate();
-                day<10?day='0'+day:day;
-                return param=year+'-'+month+'-'+day;
-            },
-
             /*
             *author:hyz
             *导出Excel表格
@@ -423,7 +410,6 @@
                     url: '/PsubjectBudget/PostExportBeginYear',
                     data: param
                 }).then(res => {
-                    console.log(res);
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {

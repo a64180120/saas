@@ -35,9 +35,9 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="align-center bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
                             <li>
-                                {{item.ThisaccountsTotal}}
+                                {{item.ThisaccountsTotal | NumFormat}}
                             </li>
                             <li>
                                 <div class="progressContainer" >
@@ -63,9 +63,9 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="align-center bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
                             <li>
-                                {{item.ThisaccountsTotal}}
+                                {{item.ThisaccountsTotal | NumFormat}}
                             </li>
                             <li>
                                 <div class="progressContainer" >
@@ -83,8 +83,8 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
-                            <li>{{item.ThisaccountsTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                            <li>{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
                                 其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:placeholder="item.Description" v-on:input="inputDicription">
@@ -96,8 +96,8 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
-                            <li>{{item.ThisaccountsTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                            <li>{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
                                 其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -109,8 +109,8 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
-                            <li>{{item.ThisaccountsTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                            <li>{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
                                 <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -122,8 +122,8 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
-                            <li>{{item.ThisaccountsTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                            <li>{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
                                 <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -135,8 +135,8 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
-                            <li>{{item.ThisaccountsTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                            <li>{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
                                 <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -148,8 +148,8 @@
                         <ul class="formDataItems flexPublic">
                             <li></li>
                             <li class="bolder">{{item.k_name}}</li>
-                            <li>{{item.ApprovedBudgetTotal}}</li>
-                            <li>{{item.ThisaccountsTotal}}</li>
+                            <li>{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                            <li>{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li>
                                 <div class="progressContainer" >
                                     <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
@@ -166,9 +166,9 @@
                         <ul class="formDataItems flexPublic">
                             <li v-bind:class="{'align-center':item.Layers==1}">{{item.SubjectCode}}</li>
                             <li v-bind:class="{'align-center':item.Layers==1}">{{item.k_name}}</li>
-                            <li>{{item.BudgetTotal}}</li>
+                            <li>{{item.BudgetTotal | NumFormat}}</li>
                             <li>
-                                {{item.ThisaccountsTotal}}
+                                {{item.ThisaccountsTotal | NumFormat}}
                             </li>
                             <li>
                                 <div class="progressContainer" >
@@ -197,7 +197,7 @@
         </div>
 
         <div class="timeSelectBox">
-            <time-select-bar @item-click="dateChoose"></time-select-bar>
+            <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
         </div>
     </div>
     </div>
@@ -224,7 +224,7 @@
                 //     {PhId:1,PDate:'2018-03-01',Abstract:'test3', PNo:'0001',JSum:'',DSum:'333',JD:'0',money:'4444'}
                 // ],
 
-                date1:'',
+                date1:[],
                 proofType:'0',
                 dataInfo:[{zhixing:30}],
                 infoStyle:[`#ff9900`],
@@ -249,11 +249,9 @@
             this.getEndYear();
         },
         methods:{
-
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.date1=time;
-                this.getData(time,this.proofType);
+                this.date1=val;
+                this.getEndYear();
             },
             /*
            * 监听编辑按钮事件
@@ -276,9 +274,7 @@
             inputDicription:function(val){
                 let index=val.target.attributes.index.value;//当前修改数据在列表中的下标
                 let in_value = val.target.value;//input数据转数字
-                console.log(in_value);
                 this.budgetList[index].Description=in_value;
-                console.log(this.budgetList[index].Description);
             },
             getInfoStyle(){
                 var infos=this.dataInfo;
@@ -316,10 +312,22 @@
                 return param=year+'-'+month+'-'+day;
             },
             getEndYear:function(){
+                let year='';
+                if(this.date1.choosedYear==undefined){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    year=currentyear;
+                }else{
+                    year=this.date1.choosedYear
+                }
                 let data={
                     "uid": this.userid,
                     "orgid":this.orgid,
-                    "Year":  this.getParamTime(this.date1).substring(0,4),
+                    "Year":  year,
                     "OrgIds": this.orgid,
                 };
                 this.loading=true;
@@ -334,13 +342,11 @@
                     for(var i in res.Record){
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
-                        res.Record[i].Uyear=this.getParamTime(this.date1).substring(0,4);
-                       // console.log(res.Record[i].ApprovedBudgetTotal==0);
+                        res.Record[i].Uyear=year;
                         if(res.Record[i].ApprovedBudgetTotal==0||res.Record[i].ApprovedBudgetTotal==''||res.Record[i].ApprovedBudgetTotal==null){
                             let anwser=0;
                             dataInfo.push({zhixing:anwser})
                         }else{
-                            console.log(parseFloat(res.Record[i].ThisaccountsTotal));
                             let anwser=parseFloat(res.Record[i].ThisaccountsTotal)/parseFloat(res.Record[i].ApprovedBudgetTotal)*100;
                             dataInfo.push({zhixing:anwser});
 
@@ -371,7 +377,7 @@
                     }
                 ).then(function(res){
                     that.loading=false;
-                    alert(res.Msg);
+                    that.$message({ showClose: true, message:res.Msg,type: 'success' })
                 }).catch(function(err){
                     that.loading=false;
                     console.log(err);
@@ -412,7 +418,6 @@
                     url: '/PsubjectBudget/PostExportMiddleYear',
                     data: param
                 }).then(res => {
-                    console.log(res);
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {

@@ -36,10 +36,11 @@ a {
 .content {
     width: auto;
     height: 100%;
-    padding: 0 10px;
+    padding: 0 10px 30px 10px;
     margin-top: 50px;
     /* overflow-y: scroll; */
     box-sizing: border-box;
+    margin-right: 10px;
 }
 
 .content-collapse {

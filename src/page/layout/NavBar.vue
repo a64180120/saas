@@ -52,11 +52,9 @@ export default {
   watch: {
     // 当通过TagNav来激活页面时也执行一次selectMenu
     $route() {
-      if(this.$route.isMenu){
-        let path = this.$route.path;
-        let indexPath = this.$refs.navbar.items[path].indexPath;
-        this.selectMenu(path, indexPath);
-      }
+      let path = this.$route.path;
+      let indexPath = this.$refs.navbar.items[path].indexPath;
+      this.selectMenu(path, indexPath);
     }
   },
   methods: {
