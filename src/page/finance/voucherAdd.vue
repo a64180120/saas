@@ -3,34 +3,34 @@
     <div class="addVoucher">
         <div class="unionState flexPublic">
             <div class="flexPublic searcherCon">
-                <div class="searcherValue"><input @keyup.13="searchVoucher" type="text" v-model="searchVal" placeholder="科目/摘要/凭证号"></div>
+                <div class="searcherValue" style="width:200px"><input @keyup.13="searchVoucher" type="text" v-model="searchVal" placeholder="科目/摘要/凭证号"></div>
                 <div @click="searchVoucher"  class="searcherBtn">凭证定位</div>
                 <ul class="fastGps">
                     <li @click="getvoucher('pre')"></li>
                     <li @click="getvoucher('next')"></li>
-                    <li  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
+                    <li  @click.prevent="addVoucher('moreVoucher')" style="width:80px">更多凭证</li>
                     <li @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
             <ul class="flexPublic handle">
                 <a>
-                    <li class="mode">
-                        <span style="background: #7790f7;color:#fff">模板</span>
+                    <li class="mode" style="width:60px;">
+                        <span style="background: #04cc41;color:#fff">模板</span>
                         <span @click.prevent="addVoucher('modelList')" >引用模板</span>
                         <span @click.prevent="addVoucher('keepModel')">存为模板</span>
                     </li>
                 </a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li style="background:#FDBA6C;">保存</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li style="background:#31CABD;">修改</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="background:#31CABD;">保存并新增</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li style="background:#31CABD;">审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li style="background:#31CABD;">反审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li style="background:#31CABD;">删除</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li style="background:#31CABD;">复制</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li style="background:#31CABD;">剪切</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li style="background:#31CABD;">冲红</li></a>
-                <a @click.prevent="addVoucher('print')"><li style="background:#FBD901;">保存并打印</li></a>
-                <a @click.prevent="addVoucher('reset')"><li style="background:#FBD901;">凭证号重排</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li style="background:#d85cb6;">保存</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li style="background:#dbbfdd;">修改</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="background:#ff9300;width:80px">保存并新增</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li style="background:#f89486;">审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li style="background:#fcb980;">反审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li style="background:#fdc087;">删除</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li style="background:#d2e29b;">复制</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li style="background:#9fd29f;">剪切</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li style="background:#78cfd3;">冲红</li></a>
+                <a @click.prevent="addVoucher('print')"><li style="background:#cccd35;width:80px">保存并打印</li></a>
+                <a @click.prevent="addVoucher('reset')"><li style="background:#48bbd8;width:80px">凭证号重排</li></a>
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -233,7 +233,7 @@
                         this.keepModel();
                         break;
                     case 'moreVoucher':
-                        this.$store.commit("tagNav/turnCachePage",false);
+                        //this.$store.commit("tagNav/turnCachePage",false);
                         this.$router.push({path:'/finance/voucherList'})
                         break;
                     case 'audit':
@@ -286,6 +286,7 @@
             //保存凭证*******************
             keepVoucher(str){
                 var url='Add';
+                var oldPhId=this.voucherDataList.data.Mst.PhId;
                 var Vdata=this.voucherDataList.data;
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
@@ -330,7 +331,7 @@
                                if(str=='print'){
                                    this.printContent();
                                }
-                               this.getVoucherData(this.voucherDataList.data.Mst.PhId);
+                               this.getVoucherData(oldPhId);
                                 
                            } else {
                                this.$message('保存失败,请重试!')
@@ -340,8 +341,10 @@
                        .catch(err =>{
                            console.log(err);loading1.close();
                        } )
-               }else{
+               }else if(url=='update'){
                    this.$message('当前月份已结账,无法修改凭证!')
+               }else{
+                   this.$message('当前月份已结账,无法新增凭证!')
                }
             },
             //手动刷新voucher组件**************************
@@ -437,6 +440,7 @@
                         dtl.DtlAccounts[0].PersistentState=1;
                     }
                 }
+                data.PDate=new Date;
                 this.voucherDataList.data.Mst=data;
                 console.log(222,data);
                 this.resetVoucher(); 
@@ -596,6 +600,7 @@
                     sum1:this.superSearchVal.sum1,
                     sum2:this.superSearchVal.sum2,
                     keyword:this.superSearchVal.keyword,
+                    sort:['PDate DESC','PNo DESC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
@@ -932,19 +937,27 @@
         >ul{
             >a:first-of-type{
                 position:relative;
-                width:80px;
+                width:70px;
                 height:30px;
-                margin-right: 10px;
+               
                 .mode{
-                    width:80px;
+                    width:60px;
                     display: flex;
                     flex-flow: column;
-                    height:30px;
+                    height:30px;       
                     overflow: hidden;
                     position:absolute;
                     z-index: 9;
                     transition:all 0.2s linear;
+                    border:1px solid #04cc41;
                     >span{
+                        display: block;
+                        width:100%;
+                        margin-right:10px;
+                        &:hover{
+                            background: #ccc;
+                            color:#fff;
+                        }
                         &:first-of-type{
                             
                             border:0;
@@ -952,6 +965,7 @@
                     }
                     &:hover{
                         height:90px;
+                        border:1px solid #ccc;
                         background: #fff;
                         color:#aaa;
                         
@@ -971,8 +985,11 @@
         align-items: center;
         width:290px;
         >li{
+            &:hover{
+                opacity: 0.8;
+            }
             margin-left: 5px;
-            padding:0 10px;
+            padding:0 5px;
             background:#00B8EE;
             color:#fff;
             height:30px;
@@ -981,7 +998,7 @@
             text-align: center;
             cursor:pointer;
             &:first-of-type,&:nth-of-type(2){
-                width:40px;
+                width:30px;
                 position:relative;
                 &:before{
                     content:"";
@@ -989,7 +1006,7 @@
                     width:10px;
                     height:10px;
                     top:10px;
-                    left:15px;
+                    left:10px;
                     border:2px solid #ddd;
                     border-width: 0 0 2px 2px ;
                     -webkit-transform: rotate(45deg);
@@ -1001,7 +1018,7 @@
             }
             &:nth-of-type(2):before{
                 border-width:2px 2px 0 0  ;
-                left:12px;
+                left:8px;
             }
             &:nth-of-type(4){
                 background: #6acccb;
@@ -1036,17 +1053,20 @@
         cursor:pointer;
     }
     .unionState .handle>a>li{
-        border:1px solid #ccc;
+        border:0;
         color:#fff;
         cursor:pointer;
         border-radius: 3px;
         text-align: center;
-        min-width:70px;
-        font-size:13px;
+        min-width:60px;
+        font-size:14px;
         height:30px;
         line-height: 30px;
         margin-left:10px;
         margin-right: 0;
+        &:hover{
+            opacity: 0.8;
+        }
     }
     .unionState .handle>a:nth-of-type(4)>li{
         min-width: 60px;

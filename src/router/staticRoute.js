@@ -91,7 +91,7 @@ const staticRoute = [
                 //凭证管理
                 path: "voucherList",
                 component: () =>import("../page/finance/voucherList"),
-                meta:{ requireAuth:true,type:'page',name:'凭证管理'}
+                meta:{ requireAuth:true,type:'page',name:'凭证管理',noCache:true}
             }
             // {
             //     //查看凭证

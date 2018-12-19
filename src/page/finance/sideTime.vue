@@ -106,49 +106,51 @@ export default {
                         this.month=this.sideDate.split('-')[1];
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
+                        //this.getvoucherList('reset');
+                        this.$emit("time-click",{sideDate:this.sideDate})
                         this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
             },
         //获取会计期凭证列表****************
-         getvoucherList(val){
-                if(val=='reset'){
-                    this.pageindex=0;
-                }
-                const loading1=this.$loading();
-                var data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    pagesize:this.pagesize,
-                    pageindex:this.pageindex,
-                    queryfilter:{"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1]),"OrgId*num*eq*1":this.orgid}
-                }
-                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
-                    .then(res=>{
+        // //  getvoucherList(val){
+        //         if(val=='reset'){
+        //             this.pageindex=0;
+        //         }
+        //         const loading1=this.$loading();
+        //         var data={
+        //             uid:this.uid,
+        //             orgid:this.orgid,
+        //             pagesize:this.pagesize,
+        //             pageindex:this.pageindex,
+        //             queryfilter:{"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1]),"OrgId*num*eq*1":this.orgid}
+        //         }
+        //         this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+        //             .then(res=>{
                                   
-                        if(res.Record.length<=0){
-                            this.$message('暂无新凭证');
-                        } else{
-                            this.newAddList=res.Record;
-                            this.count=val=='pre'?this.newAddList.length-1:0;
-                            this.totalRows=res.totalRows;
-                            this.pagesize=res.size;
-                            this.pageindex=res.index;
-                            // this.voucherDataList.data={
-                            //     Mst:this.newAddList[this.count]
-                            // };
-                            // this.resetVoucher();
-                        }
-                        loading1.close();
-                    })
-                    .catch(err=>{this.$message.error(err);loading1.close();})
-            },
+        //                 if(res.Record.length<=0){
+        //                     this.$message('暂无新凭证');
+        //                 } else{
+        //                     this.newAddList=res.Record;
+        //                     this.count=val=='pre'?this.newAddList.length-1:0;
+        //                     this.totalRows=res.totalRows;
+        //                     this.pagesize=res.size;
+        //                     this.pageindex=res.index;
+        //                     // this.voucherDataList.data={
+        //                     //     Mst:this.newAddList[this.count]
+        //                     // };
+        //                     // this.resetVoucher();
+        //                 }
+        //                 loading1.close();
+        //             })
+        //             .catch(err=>{this.$message.error(err);loading1.close();})
+            //},
          //选择会计期***************
             sideMonth(i,year){
                 this.month=i;
                 this.year=year;
                 this.sideDate=year+'-'+i;
-                this.getvoucherList('reset');
+                //this.getvoucherList('reset');
                 this.$emit("time-click",{sideDate:this.sideDate})
             },
             //滚轮监听********************
@@ -298,7 +300,7 @@ export default {
             yearMonthClick($event){
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
-                this.getvoucherList('reset');
+                //this.getvoucherList('reset');
                 this.$emit("time-click",{sideDate:this.sideDate})
             },
             //会计期内容切换************************************

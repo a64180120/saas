@@ -10,7 +10,7 @@
 *{padding:0; margin:0;box-sizing: border-box;font-family: myFont,Arial, Helvetica, sans-serif}
 @font-face {
     font-family: 'myFont'; 
-    src: url('/assets/css/font/pingfang.ttf'); 
+    src: url('./font/pingfang.ttf'); 
     font-weight: normal;
     font-style:normal;
 }

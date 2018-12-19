@@ -74,17 +74,17 @@
                         </div>
                         <li>
                             <div class="inputContainer">
-                                <textarea v-model="item.Abstract" @focus="showAddIcon(index)" maxlength="50"></textarea>
+                                <textarea v-model="item.Abstract" @focus="showAddIcon(index)" ></textarea>
                             </div>
                         </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
                             <div>
                                 <ul>
-                                    <li class="flexPublic">
-                                        <span>{{item.SubjectCode}}&nbsp;{{item.SubjectName}}</span>
-                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.AuxiliaryName}}{{assist.BaseName}}</span>
+                                    <li  >
+                                        <div>{{item.SubjectCode}}&nbsp;{{item.SubjectName}}<span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">.{{assist.BaseName}}</span>
+                                        </div>
                                     </li>
-                                    <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
+                                    <li v-show="item.SubjectCode"><span>余额:</span><span>{{item.balance}}</span></li>
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
@@ -206,7 +206,7 @@
             fatherData:'',
             fileList:[],
             PhId:'',
-            PDate:'',
+            PDate:new Date,
             PNo:'',
             PAttachment:'0',
             PMakePerson:'',
@@ -224,6 +224,7 @@
             loading: false,
             fileVisible:false,
             imglist:[],
+            balance:'',
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
@@ -256,7 +257,9 @@
                 }
             }else{   
                 this.getVoucherData(this.dataList.data.Mst);
-                this.getAttachements(this.dataList.data.Mst.PhId);
+                if(this.dataList.data.Mst.PhId){
+                    this.getAttachements(this.dataList.data.Mst.PhId);
+                }   
             }
             this.initInfoCss();
         },
@@ -478,23 +481,24 @@
                 }
             },
             //获取附件信息*******************
-            getAttachements(PhId){
-                var data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    id:PhId
-                }
-                const loading=this.$loading();
-                this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
-                .then(res=>{
-                    this.imglist=res.Record;
-                    console.log(this.imglist)
-                    loading.close();
-                })
-                .catch(err=>{
-                        console.log(err);loading.close();
+            getAttachements(PhId){                 
+                    var data={
+                        uid:this.uid,
+                        orgid:this.orgid,
+                        id:PhId
                     }
-                )
+                    const loading=this.$loading();
+                    this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
+                    .then(res=>{
+                        
+                        this.imglist=res.Record;
+                        console.log(this.imglist)
+                        loading.close();
+                    })
+                    .catch(err=>{
+                            console.log(err);loading.close();
+                        }
+                    )
             },
             //获取科目列表******************
             getSubject(){
@@ -506,6 +510,7 @@
                 this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
                     .then(res=>{
                         this.subjectlist=res;
+                        console.log(res)
                         loading1.close();
                         for(var i in this.voucherInfo){
                             this.itemlists[i]={
@@ -519,7 +524,8 @@
             //ajax获取科目下的辅助项***************************
             getAssist(val){
                 var data={
-                    id:val.data.PhId
+                    id:val.data.PhId,
+                    orgid:this.orgid,
                 } 
                 const loading1=this.$loading();
                 this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
@@ -558,7 +564,7 @@
             itemClick(childMsg){
                 console.log(childMsg) ;
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
-                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
+                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
@@ -570,16 +576,16 @@
                 var nowTime=this.nowTime;
                 var data={
                     Year:nowTime.getFullYear(),
-                    StartTime:nowTime.getFullYear()+'01'+'01',
-                    EndTime:nowTime.getFullYear().toString()+(nowTime.getMonth()>9?nowTime.getMonth():('0'+nowTime.getMonth()))+(nowTime.getDate()>9?nowTime.getDate():('0'+nowTime.getDate())),
                     OrgIds:this.orgid,
                     Kcode:Kcode
                 } 
                 const loading5=this.$loading();
-                console.log(data);
-                this.$axios.get('/PSubject/GetKmBalanceByTime',{params:data})
+                this.$axios.get('/PVoucherMst/GetSubjectBalance',{params:data})
                     .then(res=>{
-                        console.log(res)
+                        if(res.Status=='error'){
+                            this.$message(res.Msg)
+                        }
+                        this.balance=res.Record[0].j_sum-res.Record[0].d_sum;
                         loading5.close();
                     })
                     .catch(err=>{
@@ -1102,6 +1108,14 @@
     .kemu>div:first-of-type>ul{
         padding:5px 3px;
     }
+     .kemu>div:first-of-type>ul>li:first-of-type{
+         height:30px;
+         overflow-y: auto;         
+     }
+     .kemu>div:first-of-type>ul>li:first-of-type>div:first-of-type{
+         white-space: pre-wrap;
+         width:100%;
+     }   
     .kemu>div>ul{
         height:100%;
         display: flex;

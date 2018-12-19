@@ -1,20 +1,20 @@
 <template>
 
-    <div class="voucherList">
+    <div class="voucherList">               
         <div class="voucherNav">
             <ul>
-                <router-link to="/finance/voucherAdd"><li>新增</li></router-link>
-                <a @click.prevent="handle('update')"><li>修改</li></a>
-                <a @click.prevent="handle('delete')"><li>删除</li></a>
-                <a @click.prevent="handle('audit')"><li>审核</li></a>
-                <a @click.prevent="handle('unaudit')"><li>反审核</li></a>
-                <a @click.prevent="handle('copy')"><li>复制</li></a>
-                <a @click.prevent="handle('cut')"><li>剪切</li></a>
-                <a @click.prevent="handle('chongh')"><li>冲红</li></a>
-                <a @click.prevent="handle('reset')"><li>凭证重排</li></a>
-                <a @click.prevent="handle('upload')"><li>导入</li></a>
-                <a @click.prevent="handle('download')"><li>导出</li></a>
-                <a @click.prevent="handle('print')"><li>打印</li></a>
+                <router-link to="/finance/voucherAdd"><li style="background:#ed7c6a">新增</li></router-link>
+                <a @click.prevent="handle('update')"><li style="background:#dbbfdd">修改</li></a>
+                <a @click.prevent="handle('delete')"><li style="background:#fdc087">删除</li></a>
+                <a @click.prevent="handle('audit')"><li style="background:#f89486">审核</li></a>
+                <a @click.prevent="handle('unaudit')"><li style="background:#f89486">反审核</li></a>
+                <a @click.prevent="handle('copy')"><li style="background:#d2e29b">复制</li></a>
+                <a @click.prevent="handle('cut')"><li style="background:#9fd29f">剪切</li></a>
+                <a @click.prevent="handle('chongh')"><li style="background:#78cfd3">冲红</li></a>
+                <a @click.prevent="handle('reset')"><li style="background:#48bbd8">凭证重排</li></a>
+                <a @click.prevent="handle('upload')"><li style="background:#ab86b9">导入</li></a>
+                <a @click.prevent="handle('download')"><li style="background:#84c75d">导出</li></a>
+                <a @click.prevent="handle('print')"><li style="background:#99d1d2">打印</li></a>
             </ul>
         </div>
         <div class="voucherSelect">
@@ -24,7 +24,7 @@
             </div>
             <div class="flexPublic searcherCon">
                 <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
-                <div @click="searchVoucher" class="searcherBtn">搜索</div>
+                <div @click="getvoucherList('search')" class="searcherBtn">搜索</div>
                 <div @click.stop="highGradeToggle(true)">高级</div>
                 <div v-if="highGradeCss" class="highGradeCss">
                     <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
@@ -101,7 +101,15 @@
                         </li>
                         <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                             <div>{{dtl.Abstract}}</div>
-                            <div>{{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}</div>
+                            <div class="wrapKemu"> 
+                                <div> 
+                                    {{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}
+                                    <span 
+                                        v-for="(item,index) of dtl.DtlAccounts?dtl.DtlAccounts[0].NameValueDtls:0" :key="index">
+                                        .{{item.AuxiliaryName}}
+                                    </span> 
+                                </div>
+                            </div>
                             <div>{{(dtl.JSum==0?'':dtl.JSum) | NumFormat}}</div>
                             <div>{{(dtl.DSum==0?'':dtl.DSum) | NumFormat}}</div>
                         </li>
@@ -154,13 +162,17 @@
                     <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
                     <span class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
-                <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                <div class="voucherDisabledCon">
+                    <div :class="{voucherDisabled:voucherDisabled}"></div>
+                    <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                </div>
             </div>            
         </div>
     </div>
 </template>
 
 <script>
+    import httpConfig from '@/util/ajaxConfig'
     import {mapState, mapActions} from 'vuex'
     import sideTime from './sideTime'
     import voucher from './voucher'
@@ -176,7 +188,7 @@
                 }
             }
             this.getAssist();
-            this.$store.commit("tagNav/turnCachePage",true);
+            //this.$store.commit("tagNav/turnCachePage",true);
            
         },
         data(){
@@ -236,7 +248,8 @@
                 pageindex:0,
                 allReset:'',
                 resetShow:false,
-                voucherMask:false
+                voucherMask:false,
+                voucherDisabled:true
             }
         },
         methods:{
@@ -310,6 +323,9 @@
                         this.voucherMaskShow('chongh');
                         this.voucherDataList.bool=true;    
                         break;
+                    case 'download':
+                        this.getvoucherList('yes');
+                        break;
                 }
             },
             //高级搜索显示隐藏****************
@@ -345,6 +361,7 @@
                 }else{
                     this.chooseItem=item;
                 }
+                console.log(item);
             },
              //审核*****************
             audit(bool,PhId){
@@ -386,6 +403,7 @@
             },
             //删除***********************
             delete(data){ 
+
                  const loading=this.$loading();
                 this.$axios.post('PVoucherMst/PostDelete',data)
                     .then(res=>{
@@ -404,15 +422,23 @@
                 var vm=this;
                //this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
-                for(var dtl of Mst.Dtls){                    
+                var month;
+                var date1;
+                var oldPhId=this.voucherDataList.data.Mst.PhId;
+                month=Mst.PDate.slice(5,7);
+                date1=Mst.PDate.slice(8,10);
+                console.log(month,date1);
+                for(var dtl of Mst.Dtls){
+                    dtl.Abstract=`注销${month}月${date1}号${Mst.PNo}号凭证`;                    
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
-                   dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
                     if(dtl.DtlAccounts){
                         dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
                         dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
                     }
                 }
                 this.clearPhId(this.voucherDataList.data.Mst); 
+                this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 //this.resetVoucher();        
                 this.$message("请查看凭证信息,确认无误点击保存!")                      
             },
@@ -495,10 +521,11 @@
                        orgcode: this.orgcode,
                        infoData: this.voucherDataList.data
                    }
-                   if (this.voucherDataList.data.Mst.PhId) {
+                   if(this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
                    const loading=this.$loading();
+                   console.log(data)
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            loading.close();      
@@ -524,7 +551,6 @@
             keepChoose(val){
                 if(val){
                     this.voucherData();
-                    console.log(this.voucherDataList);
                     var id = this.voucherDataList.data.Mst.PhId;
                     if(val=='cut'){
                         var data1={
@@ -538,60 +564,62 @@
                         this.keepVoucher();
                     }    
                 }
+                this.getvoucherList(); 
                 this.voucherMask=false; 
                 this.voucherDataList.bool=false; 
                 this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};
             },
             //剪切*****************
             cut(data1){
-                 var url='Add';
-                var Vdata=this.voucherDataList.data; 
-               if(Vdata.Mst.Dtls.length<=0){
-                   this.$message('请输入内容!')
-                   return;
-               }
-               if(Vdata.Mst.PDate){
-                   if(typeof(Vdata.Mst.PDate)=='object'){
-                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
-                       Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
-                       var date=Vdata.Mst.PDate.getDate();
-                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
-                   }else {
-                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
-                   }
-               }else{
-                   this.$message('请输入凭证会计期!')
-                   return;
-               }
-               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
-                   var data = {
-                       uid: this.uid,
-                       orgid: this.orgid,
-                       orgcode: this.orgcode,
-                       infoData: this.voucherDataList.data
-                   }
-                   if (this.voucherDataList.data.Mst.PhId) {
-                       url = 'Update';
-                   }
-                   const loading=this.$loading();
-                   this.$axios.post('/PVoucherMst/Post' + url, data)
-                       .then(res => {
-                           loading.close();      
-                           if (res.Status == 'success') {
-                               this.$message('保存成功!')
-                               this.delete(data1);
-                               if(str=='print'){
-                                   this.printContent();
-                               }
-                           } else {
-                               this.$message('保存失败,请重试!')
-                           }
-                       })
+                this.$message('功能暂未开放!')
+            //      var url='Add';
+            //     var Vdata=this.voucherDataList.data; 
+            //    if(Vdata.Mst.Dtls.length<=0){
+            //        this.$message('请输入内容!')
+            //        return;
+            //    }
+            //    if(Vdata.Mst.PDate){
+            //        if(typeof(Vdata.Mst.PDate)=='object'){
+            //            Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
+            //            Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+            //            var date=Vdata.Mst.PDate.getDate();
+            //            Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+            //        }else {
+            //            Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
+            //        }
+            //    }else{
+            //        this.$message('请输入凭证会计期!')
+            //        return;
+            //    }
+            //    if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+            //        var data = {
+            //            uid: this.uid,
+            //            orgid: this.orgid,
+            //            orgcode: this.orgcode,
+            //            infoData: this.voucherDataList.data
+            //        }
+            //        if (this.voucherDataList.data.Mst.PhId) {
+            //            url = 'Update';
+            //        }
+            //        const loading=this.$loading();
+            //        this.$axios.post('/PVoucherMst/Post' + url, data)
+            //            .then(res => {
+            //                loading.close();      
+            //                if (res.Status == 'success') {
+            //                    this.$message('保存成功!')
+            //                    this.delete(data1);
+            //                    if(str=='print'){
+            //                        this.printContent();
+            //                    }
+            //                } else {
+            //                    this.$message('保存失败,请重试!')
+            //                }
+            //            })
                        
-                       .catch(err =>{console.log(err);loading.close()} )
-               }else{
-                   this.$message('当前月份已结账,无法修改凭证!')
-               }
+            //            .catch(err =>{console.log(err);loading.close()} )
+            //    }else{
+            //        this.$message('当前月份已结账,无法修改凭证!')
+            //    }
                 
             },
             //接收voucher组件传值************
@@ -599,29 +627,7 @@
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
                 console.log(this.voucherDataList);
             },
-            //凭证搜索**************************
-            searchVoucher(){
-                const loading1=this.$loading();
-                var data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    sum1:this.sum1,
-                    sum2:this.sum2,
-                    keyword:this.searchValue,
-                    queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
-                }
-                console.log(data);
-                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
-                    .then(res=>{
-                        loading1.close();
-                        if(res.Record.length<=0){
-                            this.$message('无法找到该凭证!')
-                        } else{
-                            this.voucherList= res.Record;
-                        }
-                    })
-                    .catch(err=>{console.log(err);loading1.close();})
-            },
+           
             //搜索日期转换*************
             dateTurn(val){
                 var str;
@@ -633,9 +639,10 @@
                 return val;
             },
             //凭证列表***************高级搜索***********************
-            getvoucherList(){
+            getvoucherList(str){
+                let base=httpConfig.getAxiosBaseConfig();
                 this.superSearchVal.date1=this.dateTurn(this.superSearchVal.date1)
-                 this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
+                this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
                 const loading1=this.$loading();
                 var data={
                     uid:this.uid,
@@ -643,15 +650,27 @@
                     sum1:this.superSearchVal.sum1,
                     sum2:this.superSearchVal.sum2,
                     keyword:this.superSearchVal.keyword,
+                    export2excel:str,
+                    sort:['PDate DESC','PNo DESC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
+                }
+                if(str=='search'){
+                    data.sum1=this.sum1,
+                    data.sum2=this.sum2,
+                    data.keyword=this.searchValue
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         if(res.Status=='success'){
                             this.$message(res.Msg);
                         }
+                       
+                        if(str=='yes'){
+                            window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
+                            return;
+                        } 
                         if(res.Record.length<=0){
                             this.$message('无法找到该凭证!')
                         } else{
@@ -661,27 +680,6 @@
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
-            //凭证列表***************
-            // getvoucherList(){
-            //     var data={
-            //         uid:this.uid,
-            //         orgid:this.orgid,
-            //         pagesize:this.pagesize,
-            //         pageindex:this.pageindex,
-            //         keyword:this.searchValue,
-            //         queryfilter:{"OrgId*num*eq*1":this.orgid,"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1])}
-            //     }
-               
-                // this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
-                //     .then(res=>{
-                //         this.voucherList= res.Record;
-                //         if(this.voucherList.length<=0){
-                //             this.$message('暂无新凭证');
-                //         }
-                //     })
-            //     //     .catch(err=>console.log(err))
-            // },
-             //获取当前结账的最新月份************
             getChecked(){
                 var data={
                     uid:this.uid,
@@ -1118,15 +1116,18 @@
             align-items: center;
             margin-bottom: 10px;
             li{
-                border:1px solid #ff9900;
+                border:0;
+                color:#fff;
                 border-radius: 3px;
-                padding:2px 8px;
-                height:25px;
+                height:30px;
+                line-height: 30px;
                 margin-left:10px;
                 cursor:pointer;
+                width:60px;
+                text-align: center;
                 &:hover{
-                    background: #ff9900;
-                    color:#fff;
+                    opacity: 0.8;
+                   
                 }
             }
         }
@@ -1474,7 +1475,8 @@
             margin-right: 50px;
         }
     ul.listContent>li> ul>li>div{
-        text-align: center;
+        text-align: left;
+        padding:0 10px;
         border:1px solid #ccc;
         border-top:0;
         border-left:0;
@@ -1493,7 +1495,7 @@
     }
     
     ul.listContent>li> ul>li:last-of-type>div{
-        text-align: center;
+        text-align: left;
         border:1px solid #ccc;
         border-top:0;
         border-left:0;
@@ -1511,8 +1513,34 @@
         border:1px solid #ddd;
         padding:3px;
     }
-            
+    .voucherDisabledCon{
+         position:relative;    
+        .voucherDisabled{
+            position:absolute;
+            background: none;
+            z-index: 99;
+            width:100%;
+            height:100%;
+            >div{
+                position:relative;
+                z-index:89;
+            }
+        }     
 
-        
+    }
+      .wrapKemu{
+          height:30px;
+          font-size: 14px;
+         
+      }
+      ul.listContent > li > ul > li div.wrapKemu>div{
+          width:100%;
+          height:30px;
+          overflow-y: auto;         
+      }  
+      
+       .ul.listContent > li > ul > li > div{
+           text-align: left;
+       } 
     
 </style>
