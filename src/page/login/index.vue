@@ -21,7 +21,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <p class="textL width50" style="float:left;">注册</p>
+                    <router-link to="/register"><p class="textL width50" style="float:left;">注册</p></router-link>
                     <p class="textR width50" style="float:left;">忘记密码？</p>
 
                     <a class="btn-login" type="primary" @click="submitForm('loginForm')">登录</a>

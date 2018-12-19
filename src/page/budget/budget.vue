@@ -34,9 +34,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input disabled type="number" v-bind:value="item.BudgetTotal">
+                        <li class="align-right">{{item.FinalaccountsTotal| NumFormat}}</li>
+                        <li class="align-right">
+                            <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                         </li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -55,9 +55,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input disabled type="number" v-bind:value="item.BudgetTotal">
+                        <li class="align-right">{{item.FinalaccountsTotal| NumFormat}}</li>
+                        <li class="align-right">
+                            <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                         </li>
                         <li>
                             <input type="text" v-bind:disabled="changeBtn.disable" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -69,9 +69,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input disabled type="number" v-bind:value="item.BudgetTotal">
+                        <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
+                        <li class="align-right">
+                            <input disabled v-bind:value="item.BudgetTotal">
                         </li>
                         <li>
                             其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -83,9 +83,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input disabled type="number" v-bind:value="item.BudgetTotal">
+                        <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
+                        <li class="align-right">
+                            <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
                         </li>
                         <li>
                             其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -97,9 +97,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input v-bind:disabled="changeBtn.disable" type="number" v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
+                        <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
+                        <li class="align-right">
+                            <input v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
                         </li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -111,9 +111,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input  v-bind:disabled="changeBtn.disable" type="number" v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
+                        <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
+                        <li class="align-right">
+                            <input  v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
                         </li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -125,9 +125,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input disabled type="number" v-bind:value="item.BudgetTotal">
+                        <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
+                        <li class="align-right">
+                            <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
                         </li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -139,9 +139,9 @@
                     <ul class="formDataItems flexPublic">
                         <li></li>
                         <li class="align-center bolder">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
-                            <input disabled type="number" v-bind:value="item.BudgetTotal" >
+                        <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
+                        <li class="align-right">
+                            <input disabled  v-bind:value="item.BudgetTotal | NumFormat" >
                         </li>
                         <li>
                             其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -153,13 +153,13 @@
                     <ul class="formDataItems flexPublic">
                         <li v-bind:class="{'align-center':item.Layers==1}">{{item.SubjectCode}}</li>
                         <li v-bind:class="{'align-center':item.Layers==1}">{{item.k_name}}</li>
-                        <li>{{item.FinalaccountsTotal}}</li>
-                        <li>
+                        <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
+                        <li class="align-right">
                             <template v-if="item.Layers==0">
-                                <input disabled type="number" v-bind:code="item.SubjectCode" v-bind:value="code_firstCount[item.SubjectCode]">
+                                <input disabled  v-bind:code="item.SubjectCode" v-bind:value="code_firstCount[item.SubjectCode] | NumFormat">
                             </template>
                             <template v-else>
-                                <input  v-bind:disabled="changeBtn.disable" type="number" v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" v-bind:value="item.BudgetTotal">
+                                <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" v-bind:value="item.BudgetTotal">
                             </template>
                         </li>
                         <li>
@@ -599,6 +599,9 @@
         //text-align: center;
         padding:0;
         text-indent: 40px;
+    }
+    .formData>ul.formDataItems>li.align-right{
+        text-align: right;
     }
     .formData>ul.bottomForm>li{
         border:none;
