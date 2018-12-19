@@ -142,12 +142,7 @@
             this.getSubjectData();
         },
         mounted() {
-                let currentYear = new Date();
-                let currentyear=currentYear.getFullYear(currentYear);
-                let currentMonth=currentYear.getMonth()+1;
-                this.date1.choosedYear=currentyear;
-                this.date1.choosedMonth=currentMonth;
-                this.date1.choosedMonthEnd=currentMonth;
+
         },
         watch: {
 
@@ -187,17 +182,31 @@
             dateChoose:function(val){
                 let time=val;
                 this.date1=time;
-                console.log(this.date1.choosedMonth+','+this.date1.choosedMonthEnd);
                 this.getData();
             },
             getData(flag) {
-                let Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
+                let year='';
+                let Pmonth='';
+                if(this.date1.choosedYear==''){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    year=currentyear;
+                    Pmonth=currentMonth+','+currentMonth;
+                }else{
+                    year=this.date1.choosedYear;
+                    Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
+                }
+
                 var data = {
                     uid: this.uid,
                     orgid:this.orgid,
                     Kcode: this.selectSubject.KCode||'',
                     // Year: this.selectSubject.Uyear|| '',
-                    Year: this.date1.choosedYear,
+                    Year: year,
                     OrgIds: this.orgid,
                     pageindex:this.testIndex,
                     pagesize:this.pageSize,
@@ -210,7 +219,6 @@
                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
                         this.loading = false;
-                        console.log(res);
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
                             this.dataInfo=[]
@@ -308,7 +316,6 @@
             },
             //当属性滚动的时候  加载  滚动加载
             loadMore(){
-                console.log(this.pageIndex);
                 this.busy=true  //将无限滚动给禁用
                 setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
                     this.pageIndex++;  //滚动之后加载第二页
@@ -332,7 +339,6 @@
                     url: '/PsubjectBudget/PostExportMiddleYear',
                     data: param
                 }).then(res => {
-                    console.log(res);
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
