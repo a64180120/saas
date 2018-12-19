@@ -3,29 +3,34 @@
             <div class="reportBox">
 
                 <div class="unionState flexPublic">
-                    <div class="flexPublic handle">
-                        <div class="searcherValue"><input type="text" placeholder="科目编码" v-model="inputCode"></div>
-                        <div  class="searcherBtn" @click="selectBtn">搜索</div>
-                    </div>
                     <ul class="flexPublic">
-                    <!--<div >
-                        <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
-                    </div>-->
+                    <li class="flexPublic">
+                        <div>条件：</div>
+                        <div  class="block selectContainer">
+                            <select class="el-input__inner el-button--small" v-model="proofType">
+                                <option value="0,1">包含未审核凭证</option>
+                                <option value="1">不包含未审核凭证</option>
+                            </select>
+                        </div>
 
+                    </li>
                     </ul>
-                    <ul class="flexPublic handle">
-                        <li class="flexPublic">
 
-                            <div>条件：</div>
-                            <div  class="block selectContainer">
-                                <select class="el-input__inner el-button--small" v-model="proofType">
-                                    <option value="0,1">包含未审核凭证</option>
-                                    <option value="1">不包含未审核凭证</option>
-                                </select>
-                            </div>
-                        </li>
-                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+
+                    <!--<ul class="flexPublic">-->
+                    <!--<div >-->
+                        <!--<el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>-->
+                    <!--</div>-->
+
+                    <!--</ul>-->
+                    <ul class="flexPublic handle">
+                        <div class="flexPublic handle">
+                            <div class="searcherValue"><input type="text" placeholder="科目编码" v-model="inputCode"></div>
+                            <div  class="searcherBtn" @click="selectBtn">搜索</div>
+                        </div>
                         <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+
                     </ul>
                 </div>
                 <div class="flexPublic  p0">
@@ -33,6 +38,10 @@
 
                         <div class="unionListsTitle">科目列表 &nbsp;
                         </div>
+                        <div class="el-icon-lx-search">
+                            <input type="text" placeholder="科目编码" v-model="inputCode">
+                        </div>
+
                         <div class="unionListsContent">
                             <el-tree
                                 class="filter-tree"
@@ -58,12 +67,12 @@
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
                             <li>{{item.Pdate.slice(0,10)}}</li>
-                            <li :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
-                            <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计'}">{{item.Abstract}}</li>
-                            <li>{{item.JSum | NumFormat}}</li>
-                            <li :title="item.DSum">{{item.DSum | NumFormat}}</li>
-                            <li >{{JD[item.DType]}}</li>
-                            <li>{{item.Balance | NumFormat}}</li>
+                            <li class="align-center" :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
+                            <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
+                            <li class="align-right">{{item.JSum | NumFormat}}</li>
+                            <li class="align-right" :title="item.DSum">{{item.DSum | NumFormat}}</li>
+                            <li>{{JD[item.DType]}}</li>
+                            <li class="align-right">{{item.Balance | NumFormat}}</li>
                         </ul>
                         <!--
                             v-infinite-scroll:
@@ -563,5 +572,14 @@
     }
     .bolder{
         font-weight: bold;
+    }
+    .formData>ul.formDataItems>li.align-center{
+        padding:0;
+        text-indent: 30px;
+        text-align: left;
+    }
+    .formData>ul.formDataItems>li.align-right{
+        text-align: right;
+        padding-right: 10px;
     }
 </style>
