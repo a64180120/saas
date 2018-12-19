@@ -7,7 +7,14 @@
 .el-input__icon{
     line-height:30px;
 }
-*{padding:0; margin:0;box-sizing: border-box;}
+*{padding:0; margin:0;box-sizing: border-box;font-family: myFont,Arial, Helvetica, sans-serif}
+@font-face {
+    font-family: 'myFont'; 
+    src: url('/assets/css/font/pingfang.ttf'); 
+    font-weight: normal;
+    font-style:normal;
+}
+
 ul{
     list-style: none;
 }
@@ -128,7 +135,7 @@ ul{
     font-size:13px;
 }
 .formData>ul:first-child{
-    background: #00B8EE;
+    background: #2780d1;
     color:#fff;
 }
 .datepick{

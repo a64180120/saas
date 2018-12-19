@@ -16,19 +16,19 @@
                 <a>
                     <li class="mode">
                         <span style="background: #7790f7;color:#fff">模板</span>
-                        <span @click.prevent="addVoucher('modelList')">引用模板</span>
+                        <span @click.prevent="addVoucher('modelList')" >引用模板</span>
                         <span @click.prevent="addVoucher('keepModel')">存为模板</span>
                     </li>
                 </a>
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li style="background:#FDBA6C;">保存</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li>修改</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li style="background:#31CABD;">修改</li></a>
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="background:#31CABD;">保存并新增</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li>审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li>反审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li>删除</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li>复制</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li>剪切</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li>冲红</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li style="background:#31CABD;">审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li style="background:#31CABD;">反审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li style="background:#31CABD;">删除</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li style="background:#31CABD;">复制</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li style="background:#31CABD;">剪切</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li style="background:#31CABD;">冲红</li></a>
                 <a @click.prevent="addVoucher('print')"><li style="background:#FBD901;">保存并打印</li></a>
                 <a @click.prevent="addVoucher('reset')"><li style="background:#FBD901;">凭证号重排</li></a>
             </ul>
@@ -161,6 +161,18 @@
             year:'',
             month:'',
             searchVal:'',
+            superSearchVal:{//高级搜索参数******************
+                    assistItemList:{type:'',list:''},
+                    assistItem:'',
+                    sum1:'',
+                    sum2:'',
+                    date1:'',
+                    date2:'',
+                    keyword:'',
+                    placeholder:'选择辅助项',
+                    nodatatext:'',
+                    show:true
+                },
             userState:0,
             checkVal:'',
             unCheckVal:'',
@@ -210,7 +222,7 @@
                         break;
                     case 'keepAdd':
                         this.voucherData();
-                        this.keepVoucher();
+                        this.keepVoucher('keepAdd');
                         this.resetVoucher();
                         break;
                     case 'modelList':
@@ -302,20 +314,32 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                   console.log(data,url)
+                   const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            console.log(res)
                            if (res.Status == 'success') {
                                this.$message('保存成功!')
+                               if(str=='keepAdd'){
+                                   this.voucherDataList.data={
+                                        Mst:{},
+                                        Attachements:[]
+                                    }
+                                    this.resetVoucher();
+                                }
                                if(str=='print'){
                                    this.printContent();
                                }
+                               this.getVoucherData(this.voucherDataList.data.Mst.PhId);
+                                
                            } else {
                                this.$message('保存失败,请重试!')
                            }
+                           loading1.close();
                        })
-                       .catch(err => console.log(err))
+                       .catch(err =>{
+                           console.log(err);loading1.close();
+                       } )
                }else{
                    this.$message('当前月份已结账,无法修改凭证!')
                }
@@ -323,8 +347,7 @@
             //手动刷新voucher组件**************************
             resetVoucher(){
                 var vm=this;    
-                this.voucherDataList.bool=false;
-               
+                this.voucherDataList.bool=false;    
                 function delay(){
                     vm.voucherDataList.bool=true
                 }
@@ -458,14 +481,19 @@
                     orgid:this.orgid,
                     id:PhId
                 }
+                const loading2=this.$loading();
                 this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
-                    .then(res=>{
+                    .then(res=>{console.log(res)
                         if(res.Status=='success'){
+                            
                             this.voucherDataList.data.Mst=res.Data;
                             this.resetVoucher();
-                        }                            
+                        }  
+                        loading2.close();                          
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>{
+                        console.log(err);loading2.close();
+                        })
             },
             //获取当前结账的最新月份************
             getChecked(){
@@ -482,6 +510,8 @@
                         this.month=this.sideDate.split('-')[1];
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
+                        console.log(this.year,this.month)
+                        this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                         this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
@@ -521,28 +551,64 @@
                 }
             },
             //获取会计期凭证列表****************
+            // getvoucherList(val){
+            //     if(val=='reset'){
+            //         this.pageindex=0;
+            //     }
+            //     const loading1=this.$loading();
+            //     var data={
+            //         uid:this.uid,
+            //         orgid:this.orgid,
+            //         pagesize:this.pagesize,
+            //         pageindex:this.pageindex,
+            //         queryfilter:{"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1]),"OrgId*num*eq*1":this.orgid}
+            //     }
+            //     this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+            //         .then(res=>{
+            //             loading1.close();
+            //             if(res.Record.length<=0){
+            //                 this.$message('暂无新凭证');
+            //                 this.voucherDataList.data={
+            //                             Mst:{},
+            //                             Attachements:[]
+            //                 }
+            //                 this.resetVoucher();
+            //             } else{
+            //                 this.newAddList=res.Record;
+            //                 this.count=val=='pre'?this.newAddList.length-1:0;
+            //                 this.totalRows=res.totalRows;
+            //                 this.pagesize=res.size;
+            //                 this.pageindex=res.index;
+            //                 this.voucherDataList.data={
+            //                     Mst:this.newAddList[this.count]
+            //                 };
+            //                 this.resetVoucher();
+            //             }
+            //         })
+            //         .catch(err=>{console.log(err);loading1.close();})
+            // },
+            //凭证列表***************高级搜索***********************
             getvoucherList(val){
-                if(val=='reset'){
-                    this.pageindex=0;
-                }
                 const loading1=this.$loading();
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
-                    pagesize:this.pagesize,
-                    pageindex:this.pageindex,
-                    queryfilter:{"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1]),"OrgId*num*eq*1":this.orgid}
+                    sum1:this.superSearchVal.sum1,
+                    sum2:this.superSearchVal.sum2,
+                    keyword:this.superSearchVal.keyword,
+                   // itemValuePhid:649181122000008,
+                    itemValuePhid:this.superSearchVal.assistItem.PhId,
+                    queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                        loading1.close();
                         if(res.Record.length<=0){
-                            this.$message('暂无新凭证');
+                            this.$message('无法找到该凭证!')
                             this.voucherDataList.data={
-                                        Mst:{},
-                                        Attachements:[]
-                            }
-                            this.resetVoucher();
+                                         Mst:{},
+                                         Attachements:[]
+                             }
+                             
                         } else{
                             this.newAddList=res.Record;
                             this.count=val=='pre'?this.newAddList.length-1:0;
@@ -552,8 +618,9 @@
                             this.voucherDataList.data={
                                 Mst:this.newAddList[this.count]
                             };
-                            this.resetVoucher();
                         }
+                        this.resetVoucher();
+                        loading1.close();
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
@@ -562,6 +629,7 @@
                 this.month=i;
                 this.year=year;
                 this.sideDate=year+'-'+i;
+                this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                 this.getvoucherList('reset');
             },
             //鼠标滚轮移动月份选择****************

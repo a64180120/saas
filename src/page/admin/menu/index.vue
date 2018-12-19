@@ -379,6 +379,7 @@
             },
             handleClickRow(row) {
                 console.log(row);
+                this.singleSelection = [];
                 this.singleSelection.push(row);
 
                 console.log(this.singleSelection);
