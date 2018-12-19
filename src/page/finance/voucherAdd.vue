@@ -511,8 +511,7 @@
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                         console.log(this.year,this.month)
-                        this.superSearchVal.date2=this.superSearchVal.date1=this.year+(this.month>9?this.month:('0'+this.month));
-                        this.getvoucherList();
+                        this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                         this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))
@@ -599,7 +598,7 @@
                     keyword:this.superSearchVal.keyword,
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
-                    queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1,"PAccper*str*le*1":this.superSearchVal.date2}
+                    queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
@@ -630,8 +629,7 @@
                 this.month=i;
                 this.year=year;
                 this.sideDate=year+'-'+i;
-                this.superSearchVal.date2=this.superSearchVal.date1=this.year.toString()+(this.month>9?this.month:('0'+this.month));
-                console.log(this.year,this.month)
+                this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                 this.getvoucherList('reset');
             },
             //鼠标滚轮移动月份选择****************

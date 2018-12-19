@@ -238,6 +238,7 @@
             assistItem:[],//辅助项显示隐藏样式参数********************
             assistItemMask:false,
             assistCheck:true,
+            nowTime:new Date,
             haveAttachements:false
         }},
         created(){console.log( this.dataList); 
@@ -561,7 +562,30 @@
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
+                this.getBalance(childMsg.data.KCode);
                 this.$forceUpdate();
+            },
+            //科目余额*******************
+            getBalance(Kcode){
+                var nowTime=this.nowTime;
+                var data={
+                    Year:nowTime.getFullYear(),
+                    StartTime:nowTime.getFullYear()+'01'+'01',
+                    EndTime:nowTime.getFullYear().toString()+(nowTime.getMonth()>9?nowTime.getMonth():('0'+nowTime.getMonth()))+(nowTime.getDate()>9?nowTime.getDate():('0'+nowTime.getDate())),
+                    OrgIds:this.orgid,
+                    Kcode:Kcode
+                } 
+                const loading5=this.$loading();
+                console.log(data);
+                this.$axios.get('/PSubject/GetKmBalanceByTime',{params:data})
+                    .then(res=>{
+                        console.log(res)
+                        loading5.close();
+                    })
+                    .catch(err=>{
+                        this.$message.error(err);
+                        loading5.close();
+                    })  
             },
             //选择框显示********************
             handleKemuSel(index){

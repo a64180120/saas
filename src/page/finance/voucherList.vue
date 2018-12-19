@@ -73,7 +73,7 @@
                         </li>
                     </ul>
                     <div>
-                        <div>重置</div>
+                        <div @click.stop="highGradeToggle('reset')">重置</div>
                         <div @click="getvoucherList">搜索</div>
                     </div>
                 </div>
@@ -313,8 +313,26 @@
                 }
             },
             //高级搜索显示隐藏****************
-            highGradeToggle(bool) {       
-                this.highGradeCss = bool; 
+            highGradeToggle(bool) {   
+                if(bool=='reset'){
+                    this.superSearchValPhId='',
+                    this.assistItemList={id:0,kemu:[]},
+                    this.superSearchVal={
+                        assistItemList:{type:'',list:''},
+                        assistItem:'',
+                        sum1:'',
+                        sum2:'',
+                        date1:this.year+'-'+(this.month>9?this.month:('0'+this.month)),
+                        date2:this.year+'-'+(this.month>9?this.month:('0'+this.month)),
+                        keyword:'',
+                        placeholder:'选择辅助项',
+                        nodatatext:'',
+                        show:true
+                    }       
+                }else{
+                    this.highGradeCss = bool; 
+                }   
+                
             },
             //凭证详情***************************
             voucherDel(item){
@@ -604,8 +622,20 @@
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
+            //搜索日期转换*************
+            dateTurn(val){
+                var str;
+                if(typeof(val)=='object'){
+                    str=val.getMonth()+1;
+                    val=val.getFullYear();         
+                    val=val.toString()+'-'+(str>9?str:('0'+str))
+                }
+                return val;
+            },
             //凭证列表***************高级搜索***********************
             getvoucherList(){
+                this.superSearchVal.date1=this.dateTurn(this.superSearchVal.date1)
+                 this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
                 const loading1=this.$loading();
                 var data={
                     uid:this.uid,
@@ -615,16 +645,19 @@
                     keyword:this.superSearchVal.keyword,
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
-                    queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1,"PAccper*str*le*1":this.superSearchVal.date2}
+                    queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                        loading1.close();
+                        if(res.Status=='success'){
+                            this.$message(res.Msg);
+                        }
                         if(res.Record.length<=0){
                             this.$message('无法找到该凭证!')
                         } else{
                             this.voucherList= res.Record;
                         }
+                         loading1.close();
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
@@ -661,7 +694,7 @@
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
-                        this.superSearchVal.date2=this.superSearchVal.date1=this.year+(this.month>9?this.month:('0'+this.month));
+                        this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                         this.getvoucherList();
                         this.$forceUpdate();
                     })
@@ -782,6 +815,7 @@
                             return
                         }
                         this.superSearchVal.assistItemList.type=res.type;
+                        this.superSearchValPhId=res.type[0].PhId;
                         this.assistItemList.kemu=res.list;
                         loading.close();
                         //this.userInfo=res.list;
@@ -808,9 +842,16 @@
         },
         watch:{
             superSearchValPhId(val){
-                console.log(val)
-                this.superSearchVal.show=false;
+                console.log(val);
+                if(val==0){
+                    this.superSearchVal.show=false;
+                    this.assistItemList.kemu=[];
+                    this.superSearchVal.assistItem='';
+                }else{
+                    this.superSearchVal.show=false;
                 this.getData(val);
+                }
+                
             }
         },
         filters:{
