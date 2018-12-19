@@ -25,25 +25,25 @@
 
         <div class="formData" ref="printFrom">
             <ul>
-                <li></li>
+                <li>编码</li>
                 <li>资产</li>
-                <li>年初数</li>
-                <li>期末数</li>
+                <li>年初数(元)</li>
+                <li>期末数(元)</li>
                 <li></li>
-                <li></li>
+                <li>编码</li>
                 <li>资产与净资产</li>
-                <li>年初数</li>
-                <li>期末数</li>
+                <li>年初数(元)</li>
+                <li>期末数(元)</li>
             </ul>
 
                 <ul class="formDataItems flexPublic">
                     <li></li>
-                    <li class="align-center">一、资产</li>
+                    <li class="align-center bolder">一、资产</li>
                     <li></li>
                     <li></li>
                     <li></li>
                     <li></li>
-                    <li class="align-center">二、负债</li>
+                    <li class="align-center bolder">二、负债</li>
                     <li></li>
                     <li></li>
                 </ul>
@@ -69,7 +69,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+2">
                                 <li></li>
-                                <li class="align-center">负债合计</li>
+                                <li class="align-center bolder">负债合计</li>
                                 <li class="align-right">{{cashCounts}}</li>
                                 <li class="align-right">{{cashCountsQ}}</li>
                             </template>
@@ -81,7 +81,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+4">
                                 <li></li>
-                                <li class="align-center">三、净资产类</li>
+                                <li class="align-center bolder">三、净资产类</li>
                                 <li></li>
                                 <li></li>
                             </template>
@@ -93,7 +93,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+cashData.length+6">
                                 <li></li>
-                                <li class="align-center">净资产合计</li>
+                                <li class="align-center bolder">净资产合计</li>
                                 <li class="align-right">{{cashCounts}}</li>
                                 <li class="align-right">{{cashCountsQ}}</li>
                             </template>
@@ -136,7 +136,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+2">
                                 <li></li>
-                                <li class="align-center">负债合计</li>
+                                <li class="align-center bolder">负债合计</li>
                                 <li class="align-right">{{cashOutCounts | NumFormat}}</li>
                                 <li class="align-right">{{cashOutCountsQ | NumFormat}}</li>
                             </template>
@@ -148,7 +148,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+4">
                                 <li></li>
-                                <li class="align-center">三、净资产类</li>
+                                <li class="align-center bolder">三、净资产类</li>
                                 <li></li>
                                 <li></li>
                             </template>
@@ -166,7 +166,7 @@
                             </template>
                             <template v-if="index == cashOutData.length+cashData.length+6">
                                 <li></li>
-                                <li class="align-center">净资产合计</li>
+                                <li class="align-center bolder">净资产合计</li>
                                 <li class="align-right">{{cashCounts | NumFormat}}</li>
                                 <li class="align-right">{{cashCountsQ | NumFormat}}</li>
                             </template>
@@ -186,12 +186,12 @@
                 </ul>
                 <ul class="formDataItems flexPublic">
                     <li></li>
-                    <li class="align-center">资产总计</li>
+                    <li class="align-center bolder">资产总计</li>
                     <li class="align-right">{{cashInCounts | NumFormat}}</li>
                     <li class="align-right">{{cashInCountsQ | NumFormat}}</li>
                     <li></li>
                     <li></li>
-                    <li class="align-center">负债与净资产总计</li>
+                    <li class="align-center bolder">负债与净资产总计</li>
                     <li class="align-right">{{cashOutCounts+cashCounts | NumFormat}}</li>
                     <li class="align-right">{{cashOutCountsQ+cashCountsQ | NumFormat}}</li>
                 </ul>
@@ -574,6 +574,9 @@
     .formData>ul.formDataItems>li{
         text-align: left;
         padding:0 15px;
+    }
+    .formData>ul.formDataItems>li.bolder{
+        font-weight: bold;
     }
     .formData>ul.formDataItems>li.align-center{
         text-align: center;

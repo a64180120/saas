@@ -225,7 +225,7 @@
                             return
                         }
                         if(flag){//如果flag为true则表示分页
-                            this.dataInfo=this.dataInfo.concat(res.Record);  //concat数组串联进行合并
+                            this.dataInfo=res.Record;  //concat数组串联进行合并
 
                             if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
                                 this.busy=true;

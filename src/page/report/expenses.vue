@@ -156,7 +156,7 @@
                     this.date1.choosedMonthEnd=currentMonth;
                     param=currentyear+'-'+currentMonth;
                 }else{
-                    param=this.date1.choosedYear+this.date1.choosedMonth;
+                    param=this.date1.choosedYear+'-'+this.date1.choosedMonth;
                 }
                 this.loading=true;
                 //收入科目的数据
