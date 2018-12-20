@@ -86,7 +86,7 @@ const staticRoute = [
                 path: "voucherAdd",
                 name:"voucherAdd",
                 component: () =>import( "../page/finance/voucherAdd"),
-                meta:{ requireAuth:true,type:'page',name:'凭证新增1111'}
+                meta:{ requireAuth:true,type:'page',name:'凭证新增',}
             },
             {
                 //凭证管理

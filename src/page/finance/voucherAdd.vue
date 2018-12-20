@@ -36,12 +36,16 @@
         <!--凭证组件*******************-->
         <div :class="{voucherMask:voucherMask}" ref="print">
             <div class="voucherContainer">
-                <p v-if="voucherMask" class="title"><span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红</span><i @click="voucherMaskShow(false)"></i></p>
+                <p v-if="voucherMask" class="title">
+                    <span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红凭证</span><span v-if="voucherMask=='gengz'">更正凭证</span><i @click="voucherMaskShow(false)"></i></p>
                 <div v-if="voucherMask">
                     <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
                     <span class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
-                <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                <div class="voucherDisabledCon">
+                    <div :class="{voucherDisabled:voucherMask=='chongh'}"></div>
+                    <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                </div>
             </div>            
         </div>
         <!--右侧时间选择组件-->
@@ -140,7 +144,7 @@
         </div>
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <div class="footInfo" :class="{voucherMaskActive:voucherMask}">
+        <div class="footInfo " :class="{voucherMaskActive:voucherMask}">
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
@@ -196,19 +200,19 @@
             voucherMask:false
         }},
         created(){ 
+            //this.$store.commit("tagNav/turnCachePage",true);
+            console.log(11,this.$route.query)
             if(this.$route.query.list){
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
-            } console.log( this.voucherDataList)
+            } 
         },
-        mounted(){
-            console.log(111)
+        mounted(){  
             this.getChecked();
             if (document.addEventListener){
                 var month= document.getElementById('scrollMonth');
                 month.addEventListener('DOMMouseScroll',this.foxMonthSel)
             }
-            console.log( this.voucherDataList)
         },
         destroyed() {
             document.removeEventListener('scroll', this.handleScroll);   //  离开页面清除（移除）滚轮滚动事件
@@ -290,6 +294,10 @@
                 var url='Add';
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
                 var Vdata=this.voucherDataList.data;
+                if(str=='gengz'){
+                    this.clearPhId(Vdata.Mst);
+                    Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
+                }
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
                    return;
@@ -332,7 +340,8 @@
                                 }
                                if(str=='print'){
                                    this.printContent();
-                               }
+                               }   
+                                this.voucherMask=false;  
                                this.getVoucherData(oldPhId);
                                 
                            } else {
@@ -374,6 +383,7 @@
                         if(res.Status=='success'){
                             this.$message('保存成功!')
                             this.voucherDataList.bool=false;
+                            this.voucherMask=false;
                             var vm=this;
                             function delay(){
                                 vm.voucherDataList.bool=true
@@ -826,8 +836,13 @@
                 var vm=this;
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
-                //var oldData=JSON.stringify(Mst);
-                for(var dtl of Mst.Dtls){                    
+                var month;
+                var date1;
+                var oldPhId=this.voucherDataList.data.Mst.PhId;
+                month=Mst.PDate.slice(5,7);
+                date1=Mst.PDate.slice(8,10);
+                for(var dtl of Mst.Dtls){   
+                    dtl.Abstract=`注销${month}月${date1}号${Mst.PNo}号凭证`;                   
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
                     if(dtl.DtlAccounts){
@@ -837,6 +852,8 @@
                 }
                 console.log(this.voucherDataList.data);
                 this.clearPhId(this.voucherDataList.data.Mst); 
+                this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
+                this.voucherDataList.data.Mst.PSource='冲红'
                 this.resetVoucher();        
                 this.$message("请查看凭证信息,确认无误点击保存!")                      
             },
@@ -885,6 +902,7 @@
                 this.voucherMask=val;
             },
             keepChoose(val){
+                var vm=this;
                 if(val){
                     this.voucherData();
                     var id = this.voucherDataList.data.Mst.PhId;
@@ -894,14 +912,65 @@
                             orgid:this.orgid,
                             id:id
                         }
-                        this.delete(data1);
-                    }
-                    this.clearPhId(this.voucherDataList.data.Mst);
-                    this.keepVoucher();
-                }
-                this.voucherMask=false;      
-            }
+                        this.cut(data1);
+                    }else if(val=='chongh'){
+                        var data = {
+                            uid: this.uid,
+                            orgid: this.orgid,
+                            orgcode: this.orgcode,
+                            infoData: this.voucherDataList.data
+                        }
+                        var oldPhId=this.voucherDataList.data.Mst.PhidTransaction;
+                        var oldData=this.voucherDataList.data.Mst;
+                        const loading=this.$loading();
+                        //this.voucherMask=false; 
+                        this.voucherDataList.bool=false; 
+                        this.$axios.post('/PVoucherMst/PostAdd', data)
+                            .then(res => {
+                                if (res.Status == 'success') {
+                                    if(confirm('保存成功，是否生成【更正凭证】？')){
+                                        this.voucherMask=true;
+                                        vm.voucherDataList.bool=true; 
+                                        vm.voucherDataList.data.Mst=oldData
+                                        vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
+                                        vm.voucherDataList.data.Mst.PSource='更正';
+                                        for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                                            if(dtl.SubjectCode){
+                                                dtl.Abstract=dtl.Abstract.replace("注销",'更正错账')
+                                            }                                            
+                                        }
+                                        vm.voucherMask='gengz'; 
+                                    }else{
 
+                                    }
+                                } else {
+                                    this.$message('保存失败,请重试!')
+                                }
+                                loading.close();
+                            })
+                            .catch(err=>{
+                                this.$message(err)
+                                loading.close();    
+                            })      
+                    }
+                    else{
+                        //this.clearPhId(this.voucherDataList.data.Mst); 
+                        this.keepVoucher(val);
+                        //this.voucherMask=false; 
+                        this.voucherDataList.bool=false; 
+                        this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
+                    } 
+                }else{
+                    this.voucherMask=false; 
+                    this.voucherDataList.bool=false; 
+                    this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};   
+                }
+                    
+            },
+            //剪切*****************
+            cut(data1){
+                this.$message('功能暂未开放!')
+            }
         },
         computed:{
             ...mapState({
@@ -1497,6 +1566,11 @@
         }
 
     }
+    .voucherMaskActive{
+        position:fixed;
+        bottom: 0;
+        z-index: -1;
+    }
     .footInfo{
         margin: 50px 0;
         height:70px;
@@ -1555,10 +1629,21 @@
             cursor:pointer;
         }
     }
-    .voucherMaskActive{
-        position:absolute;
-        bottom: 0;
-        z-index: -1;
-    }
+    
 
+     .voucherDisabledCon{
+         position:relative;    
+        .voucherDisabled{
+            position:absolute;
+            background: none;
+            z-index: 99;
+            width:100%;
+            height:100%;
+            >div{
+                position:relative;
+                z-index:89;
+            }
+        }     
+
+    }
 </style>

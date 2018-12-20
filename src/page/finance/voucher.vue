@@ -15,7 +15,7 @@
                     </div>
                 </li>
                 <li class="flexPublic">
-                    <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{imglist.length}}</span>&nbsp;张&nbsp;</div>
+                    <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
                     <div @click.stop="testFile" class="uploaderTitle"></div>
                     <!-- 附件弹出框 -->
                     <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
@@ -208,7 +208,7 @@
             PhId:'',
             PDate:new Date,
             PNo:'',
-            PAttachment:'0',
+            
             PMakePerson:'',
             PFinancePerson:'',
             PKeepingPerson:'',
@@ -242,7 +242,7 @@
             nowTime:new Date,
             haveAttachements:false
         }},
-        created(){console.log( this.dataList); 
+        created(){
             if((!this.dataList.data.Mst)||typeof(this.dataList.data.Mst)=='string'){//没有传参时初始化页面
                 this.voucherInfo=[
                     this.initVoucherInfo(),
@@ -283,8 +283,12 @@
                     }
                     var account;
                     var item;
+
+
                     for( var info of this.voucherInfo){
                         if(info.PhId){
+                            console.log(dtls)
+                             debugger
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
                                     dtl.SubjectCode=info.SubjectCode;
@@ -384,14 +388,6 @@
                     this.fatherData.PAuditor=this.PAuditor;
                     for(var img in this.imglist ){
                         if(this.imglist[img]){
-                            // this.Attachements[this.Attachements.length]={
-                            //     PersistentState : 1,
-                            //     BTable : "gcw3_voucher_mst",
-                            //     BName : this.imglist[img][0].BName,
-                            //     BType : this.imglist[img][0].BType.replace(".",''),
-                            //     BSize : this.imglist[img][0].BSize,
-                            //     BFilebody : null
-                            // };
                             this.Attachements[this.Attachements.length]=this.imglist[img];
                             if(this.Attachements[this.Attachements.length-1].PhId==0){
                                 this.Attachements[this.Attachements.length-1].PersistentState=1;
@@ -402,6 +398,7 @@
                         }
                         
                     }
+                
                     return {
                         Mst:this.fatherData,
                         Attachements: this.Attachements
@@ -480,6 +477,7 @@
                         this.voucherInfo.push(this.initVoucherInfo());
                     }
                 }
+                console.log(this.fatherData)
             },
             //获取附件信息*******************
             getAttachements(PhId){                 
@@ -875,6 +873,14 @@
             }),
             picUrl:function(){
                 return httpConfig.baseurl;
+            },
+            PAttachment:{
+                get(){
+                    return this.imglist.length;
+                },
+                set(){
+
+                }
             }
         },
         watch:{
