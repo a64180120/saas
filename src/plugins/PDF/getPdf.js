@@ -3,13 +3,13 @@ import JsPDF from 'jspdf'
 import axios from 'axios' //把pdf传给后台
 import qs from 'qs'//需要转换 用JOSN.stringify()不行
 
+// 注册获取PDF的组件
 export default {
     install(Vue, options) {
-        Vue.prototype.getPdf= function (dom) {
-            // var title = this.htmlTitle
-            html2Canvas(document.querySelector(dom),{
+        Vue.prototype.getPdf= function (html) {
+            html2Canvas(html,{
                 allowTaint: true
-            }).then(function (canvas) {
+            }).then((canvas) => {
                 let contentWidth = canvas.width
                 let contentHeight = canvas.height
 
@@ -51,28 +51,26 @@ export default {
 
                 PDF.save(`方案配置.pdf`);
 
-                var instance = axios.create({
-                    timeout: 10000,
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'}
-                });
+                // var instance = axios.create({
+                //     timeout: 10000,
+                //     headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'}
+                // });
         
-                nstance.post(axios.defaults.baseURL+'/file/savepdf',qs.stringify({
-                    //这个有毒，output输出文件流，PDF.output('datauristring')输出base64文件流。
-                    file:PDF.output('datauristring')//base64的文件流
-                })).then(res => {
-                    //在新的窗口打开
-                    window.open(axios.defaults.baseURL+'/file/showpdf/'+res.data.data.uri)
+                // nstance.post(axios.defaults.baseURL+'/file/savepdf',qs.stringify({
+                //     //这个有毒，output输出文件流，PDF.output('datauristring')输出base64文件流。
+                //     file:PDF.output('datauristring')//base64的文件流
+                // })).then(res => {
+                //     //在新的窗口打开
+                //     window.open(axios.defaults.baseURL+'/file/showpdf/'+res.data.data.uri)
         
-                    // let dom=document.createElement('a');
-                    // dom.setAttribute('href',axios.defaults.baseURL+'/file/showpdf/'+res.data.data.uri);          
-                    // dom.setAttribute('target','_blank');         
-                    // dom.click();//模拟新的窗口打开
-                }).catch(error =>{
-                    console.log(error);
-                })
+                //     // let dom=document.createElement('a');
+                //     // dom.setAttribute('href',axios.defaults.baseURL+'/file/showpdf/'+res.data.data.uri);          
+                //     // dom.setAttribute('target','_blank');         
+                //     // dom.click();//模拟新的窗口打开
+                // }).catch(error =>{
+                //     console.log(error);
+                // })
             })
-
-
         }
     }
 }

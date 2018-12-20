@@ -152,7 +152,7 @@ export default {
                         if(res.Status==="success"){
                             this.$router.push('home') //跳转主页
                         } else {
-                            this.sysMsg = res.Msg
+                            this.$message({ showClose: true, message: res.Msg, type: 'error' })
                         }
                     }).catch(error => {
                         loading.close();

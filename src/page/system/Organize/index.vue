@@ -359,7 +359,8 @@ export default {
         },
 
         testFile(){
-            this.fileVisible=true;
+            //this.fileVisible=true;
+           
         },
         removeimg(item,deleValue) {
             this.imglist=item;
