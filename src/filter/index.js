@@ -31,7 +31,7 @@ Vue.filter('NumFormat', function(value) {
 /**
  * 数字转为中文大写金额
  */
-Vue.filter('toChies', function(value) {
+Vue.filter('NumtoCHN', function(value) {
     var values=value.toString()
     let len=values.length//统计出长度
     let arr=[];
