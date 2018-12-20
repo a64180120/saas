@@ -12,7 +12,7 @@
             <tag-nav></tag-nav>
             <div class="content">
                 <transition name="move" mode="out-in">
-                    <keep-alive :include="tagNavList">
+                    <keep-alive :include="tagNavList" :exclude="excludeList">
                         <router-view></router-view>
                     </keep-alive>
                 </transition>
@@ -33,6 +33,9 @@ export default {
         },
         tagNavList(){
             return this.$store.state.tagNav.cachedPageName
+        },
+        excludeList(){
+            return this.$store.state.tagNav.excludeName
         }
     },
     data () {

@@ -25,7 +25,7 @@
                     <!--</ul>-->
                     <ul class="flexPublic handle">
                         <div class="flexPublic handle">
-                            <div class="searcherValue"><input type="text" placeholder="科目编码" v-model="inputCode"></div>
+                            <div class="searcherValue"><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></div>
                             <div  class="searcherBtn" @click="selectBtn">搜索</div>
                         </div>
                         <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
@@ -38,10 +38,14 @@
 
                         <div class="unionListsTitle">科目列表 &nbsp;
                         </div>
-                        <div class="el-icon-lx-search">
-                            <input type="text" placeholder="科目编码" v-model="inputCode">
-                        </div>
+                        <div class="el-input el-input--prefix" style="text-align: center; padding: 3px 10px;height: 35px;overflow: hidden">
+                            <div style="width: 158px;height: 26px;line-height: 26px;margin: auto">
+                                <input type="text" autocomplete="off" placeholder="搜索科目编码/名称" class="el-input__inner" style="width: 158px;height: 26px;line-height: 26px;font-size: 10pt;" @change="searchCode">
+                                <i class="el-input__icon el-icon-lx-search" style="position: relative; left: -60px;z-index: 14; height: 26px;top: -28px;color: #dcdfe6;"></i>
 
+                            </div>
+
+                        </div>
                         <div class="unionListsContent">
                             <el-tree
                                 class="filter-tree"
@@ -134,6 +138,7 @@
                 inputCode:'',//搜索框输入项目编码
                 focus:false,
                 proofType:'0,1',
+                inputKvalue:''//顶部搜索框输入凭证字号或摘要Kno Abstract
             }
         },
         created() {
@@ -165,28 +170,38 @@
             })
         },
         methods: {
+            searchCode:function(val){
+                this.selectSubject.KCode=val.target.value;
+                //let que='{"[or-dictionary0]*dictionary*or",{"KCode*str*like":"'+val.target.value+'" , "KName*str*like":"'+val.target.value+'"}}';
+                this.getSubjectData(val.target.value);
+            },
+
             selectBtn:function(){
-                let flag=true;
-                for(let i in this.subjectLists){
-                    if(this.subjectLists[i].KCode==this.inputCode){
-                        this.selectSubject=this.subjectLists[i];
-                        this.getData();
-                        flag=false;
-                    }
-                }
-                if(flag){
-                    alert('您输入的科目编码有误');
-                    this.focus=true;
-                }
+                 let que='{"[or-dictionary0]*dictionary*or",{"Pno*str*like":"'+this.inputKvalue+'" , "Abstract*str*like":"'+this.inputKvalue+'"}}';
+                this.getData(this.inputKvalue);
+
+                // let flag=true;
+                // for(let i in this.subjectLists){
+                //     if(this.subjectLists[i].KCode==this.inputCode){
+                //         this.selectSubject=this.subjectLists[i];
+                //         this.getData();
+                //         flag=false;
+                //     }
+                // }
+                // if(flag){
+                //     alert('您输入的科目编码有误');
+                //     this.focus=true;
+                // }
             },
             dateChoose:function(val){
                 let time=val;
                 this.date1=time;
                 this.getData();
             },
-            getData(flag) {
+            getData(queryf) {
                 let year='';
                 let Pmonth='';
+                let query=(queryf==undefined?'':queryf);
                 if(this.date1.choosedYear==''){
                     let currentYear = new Date();
                     let currentyear=currentYear.getFullYear(currentYear);
@@ -212,7 +227,8 @@
                     pagesize:this.pageSize,
                     Title:this.selectSubject.KName,
                     Verify:this.proofType,
-                    Pmonth:Pmonth
+                    Pmonth:Pmonth,
+                    value:query
                 };
 
                 this.loading = true;
@@ -224,19 +240,21 @@
                             this.dataInfo=[]
                             return
                         }
-                        if(flag){//如果flag为true则表示分页
-                            this.dataInfo=res.Record;  //concat数组串联进行合并
-
-                            if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
-                                this.busy=true;
-                            }else{
-                                this.busy=false;
-                            }
-                        }else{
-                            //第一次进入页面 完全不需要数据拼接的
-                            this.dataInfo=res.Record;
-                            this.totalCount=res.totalRows;
-                        }
+                        this.dataInfo=res.Record;
+                        this.totalCount=res.totalRows;
+                        // if(flag){//如果flag为true则表示分页
+                        //     this.dataInfo=res.Record;  //concat数组串联进行合并
+                        //
+                        //     if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
+                        //         this.busy=true;
+                        //     }else{
+                        //         this.busy=false;
+                        //     }
+                        // }else{
+                        //     //第一次进入页面 完全不需要数据拼接的
+                        //     this.dataInfo=res.Record;
+                        //     this.totalCount=res.totalRows;
+                        // }
                     })
                     .catch(err=>{
                         console.log(err)
@@ -246,17 +264,20 @@
 
 
             },
-            async getSubjectData(){
+            async getSubjectData(queryfil){
                     var vm=this;
                     this.loading = true;
-
+                    let queryfilter={
+                        KCode:queryfil,
+                        KName:queryfil
+                    };
                     //科目列表
                     SubjectList(vm,{
                         uid: this.uid,
-                        orgid: this.orgid
+                        orgid: this.orgid,
+                        infoData:queryfilter
                     }).then(res => {
                     this.loading = false;
-
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
@@ -406,6 +427,10 @@
 </script>
 
 <style scoped>
+    .selectContainer>select {
+        background-color: transparent;
+        line-height: 30px;
+    }
     .searcherValue {
         border-radius: 15px 0 0 15px;
     }
