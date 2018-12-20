@@ -58,8 +58,14 @@
                             <div>
                                 <ul>
                                     <li class="flexPublic">
-                                        <span>{{item.SubjectCode}}{{item.SubjectName}}</span>
-                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.BaseName}}</span>
+                                        <div>
+                                            {{item.SubjectCode}}{{item.SubjectName}}
+                                            <span v-show="item.DtlAccounts.assistItem"  
+                                                    v-for="(assist,index) of item.DtlAccounts.assistItem" 
+                                                    :key="index">-{{assist.BaseName}}
+                                            </span>
+                                        </div>
+                                        
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle(index)"><i></i></li>
@@ -221,6 +227,7 @@
                     PhId:'',
                     Dtls:[]
                 }
+                this.PMakePerson=this.username;
             }else{
                 this.getVoucherData(this.dataList.data.Mst);
             }
@@ -871,6 +878,14 @@
     .kemu>.inputContainer>input{
         border:0;
     }
+     .kemu>div:first-of-type>ul>li:first-of-type{
+         height:30px;
+         overflow-y: auto;         
+     }
+     .kemu>div:first-of-type>ul>li:first-of-type>div:first-of-type{
+         white-space: pre-wrap;
+         width:100%;
+     }  
     .kemu>div{
         position:relative;
         z-index:5;

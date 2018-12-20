@@ -28,7 +28,7 @@ const staticRoute = [
             {
                 path: "",
                 component: () =>import("../page/home/index"),
-                meta:{ requireAuth:true,type:'page',name:'首页', noCache: true }
+                meta:{ requireAuth:true,type:'page',name:'首页', }
             }
         ]
     },
@@ -84,14 +84,15 @@ const staticRoute = [
             {
                 //新增凭证
                 path: "voucherAdd",
+                name:"voucherAdd",
                 component: () =>import( "../page/finance/voucherAdd"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'凭证新增1111'}
             },
             {
                 //凭证管理
                 path: "voucherList",
                 component: () =>import("../page/finance/voucherList"),
-                meta:{ requireAuth:true,type:'page',name:'凭证管理'}
+                meta:{ requireAuth:true,type:'page',name:'凭证管理',}
             }
             // {
             //     //查看凭证
