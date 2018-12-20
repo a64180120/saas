@@ -227,6 +227,7 @@
                     PhId:'',
                     Dtls:[]
                 }
+                this.PMakePerson=this.username;
             }else{
                 this.getVoucherData(this.dataList.data.Mst);
             }

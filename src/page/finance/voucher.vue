@@ -255,6 +255,7 @@
                     PhId:'',
                     Dtls:[]
                 }
+                this.PMakePerson=this.username;
             }else{   
                 this.getVoucherData(this.dataList.data.Mst);
                 if(this.dataList.data.Mst.PhId){
@@ -510,7 +511,6 @@
                 this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
                     .then(res=>{
                         this.subjectlist=res;
-                        console.log(res)
                         loading1.close();
                         for(var i in this.voucherInfo){
                             this.itemlists[i]={
@@ -643,6 +643,17 @@
                 this.moneyInputMask=false;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
+                console.log(item)
+                //清空另一个金额框的值*************
+                if(value=='jiefang'){
+                    item.money.daifang='';
+                    children = input.parentNode.parentNode.nextElementSibling.children;
+                    this.moneyTurn(0,children);
+                }else{
+                    item.money.jiefang='';
+                    children = input.parentNode.parentNode.previousElementSibling.children;
+                    this.moneyTurn(0,children);
+                }
             },
             initMoneyCss(){  //金额输入框样式初始化***************
                 for(var i in this.voucherInfo){
@@ -859,6 +870,7 @@
             ...mapState({
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
+                username:state => state.user.username,
                 orgcode: state => state.user.orgcode
             }),
             picUrl:function(){

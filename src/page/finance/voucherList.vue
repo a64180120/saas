@@ -163,7 +163,7 @@
                     <span class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
                 <div class="voucherDisabledCon">
-                    <div :class="{voucherDisabled:voucherDisabled}"></div>
+                    <div :class="{voucherDisabled:voucherMask=='chongh'}"></div>
                     <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                 </div>
             </div>            
@@ -299,6 +299,7 @@
                             return;
                         }
                         this.voucherDataList.data.Mst=this.chooseItem;
+                        this.clearPhId(this.voucherDataList.data.Mst);
                         this.voucherMaskShow('copy');
                         this.voucherDataList.bool=true;
                    
@@ -417,6 +418,26 @@
                     })
                     .catch(err=>{console.log(err),loading.close();})
             },
+              //打印******************
+            // printLodop() {
+            //     const me = this
+            //     var html=this.$refs.print.innerHTML; 
+            //     console.log(html) 
+            //     let  LODOP = getLodop();
+            //     LODOP.PRINT_INIT("凭证信息");      //首先一个初始化语句
+            //     LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
+            //     LODOP.SET_PRINT_STYLE("Bold", 1);
+            //     //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+            //     LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "凭证信息");
+            //     LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
+            //     //LODOP.PRINT();
+            //     LODOP.PREVIEW();
+            // },
+            
+             // 打印
+            printContent(e){
+                this.$print(this.$refs.printList) // 使用
+            },
              //冲红***********************
             chongh(){
                 var vm=this;
@@ -439,8 +460,10 @@
                 }
                 this.clearPhId(this.voucherDataList.data.Mst); 
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
+                this.voucherDataList.data.Mst.PSource='冲红'
                 //this.resetVoucher();        
-                this.$message("请查看凭证信息,确认无误点击保存!")                      
+                this.$message("请查看凭证信息,确认无误点击保存!")
+                              
             },
             //清空凭证phid*****************
             clearPhId(item){
@@ -472,26 +495,6 @@
                     vm.voucherDataList.bool=true
                 }
                 setTimeout(delay,5);
-            },
-            //打印******************
-            // printLodop() {
-            //     const me = this
-            //     var html=this.$refs.print.innerHTML; 
-            //     console.log(html) 
-            //     let  LODOP = getLodop();
-            //     LODOP.PRINT_INIT("凭证信息");      //首先一个初始化语句
-            //     LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
-            //     LODOP.SET_PRINT_STYLE("Bold", 1);
-            //     //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
-            //     LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "凭证信息");
-            //     LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
-            //     //LODOP.PRINT();
-            //     LODOP.PREVIEW();
-            // },
-            
-             // 打印
-            printContent(e){
-                this.$print(this.$refs.printList) // 使用
             },
             //保存凭证***********************
              keepVoucher(str){
@@ -534,10 +537,10 @@
                                if(str=='print'){
                                    this.printContent();
                                }
+                               this.getvoucherList(); 
                            } else {
                                this.$message('保存失败,请重试!')
-                           }
-                           this.getvoucherList(); 
+                           }   
                        })
                        .catch(err =>{console.log(err);loading.close()} )
                }else{
@@ -559,12 +562,40 @@
                             id:id
                         }
                         this.cut(data1);
-                    }else{
-                        this.clearPhId(this.voucherDataList.data.Mst); 
+                    }else if(val=='chongh'){
+                        var data = {
+                            uid: this.uid,
+                            orgid: this.orgid,
+                            orgcode: this.orgcode,
+                            infoData: this.voucherDataList.data
+                        }
+                        var oldPhId=this.voucherDataList.data.Mst.PhidTransaction;
+                        const loading=this.$loading();
+                        console.log(data);debugger
+                        this.$axios.post('/PVoucherMst/PostAdd', data)
+                            .then(res => {
+                                if (res.Status == 'success') {
+                                    if(confirm('保存成功，是否生成【更正凭证】？')){
+                                        this.voucherMask='copy';    
+                                    }else{
+
+                                    }
+                                } else {
+                                    this.$message('保存失败,请重试!')
+                                }
+                                loading.close();
+                            })
+                            .catch(err=>{
+                                this.$message(err)
+                                loading.close();    
+                            })      
+                    }
+                    else{
+                        //this.clearPhId(this.voucherDataList.data.Mst); 
                         this.keepVoucher();
                     }    
                 }
-                this.getvoucherList(); 
+                 
                 this.voucherMask=false; 
                 this.voucherDataList.bool=false; 
                 this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};

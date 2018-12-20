@@ -194,13 +194,14 @@
             resetShow:false,
             voucherMask:false
         }},
-        created(){
-            if(this.$route.query.list){
+        created(){ 
+            if(this.$route.query.list){console.log(22221)
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
             } console.log( this.voucherDataList)
         },
         mounted(){
+            console.log(111)
             this.getChecked();
             if (document.addEventListener){
                 var month= document.getElementById('scrollMonth');
