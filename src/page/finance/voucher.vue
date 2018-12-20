@@ -73,15 +73,18 @@
                             <div @click="handleContent(false,index)" class="deleteIcon"></div>
                         </div>
                         <li>
-                            <div class="inputContainer">
-                                <textarea v-model="item.Abstract" @focus="showAddIcon(index)" ></textarea>
+                            <div class="inputContainer" >
+                                <textarea :class="{chongHcss:AbstractCss=='冲红'}" v-model="item.Abstract" @focus="showAddIcon(index)" ></textarea>
                             </div>
                         </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
                             <div>
                                 <ul>
-                                    <li  >
-                                        <div>{{item.SubjectCode}}&nbsp;{{item.SubjectName}}<span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">.{{assist.BaseName}}</span>
+                                    <li >
+                                        <div>
+                                            {{item.SubjectCode}}&nbsp;{{item.SubjectName}}
+                                            <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
+                                                    :key="index">.{{assist.BaseName}}</span>
                                         </div>
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span>{{item.balance}}</span></li>
@@ -182,7 +185,7 @@
             <ul class="flexPublic ">
                 <li><label>财务主管: <span>{{PFinancePerson}}</span> </label></li>
                 <li><label>记账:<span>{{PKeepingPerson}}</span></label></li>
-                <li><label>审核: <span>{{Verify?'已审核':'未审核'}}</span></label></li>
+                <li><label>审核人: <span>{{PAuditorName}}</span></label></li>
                 <li><label>制单: <span>{{PMakePerson}}</span></label></li>
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
@@ -208,7 +211,7 @@
             PhId:'',
             PDate:new Date,
             PNo:'',
-            
+            PAuditorName:'',
             PMakePerson:'',
             PFinancePerson:'',
             PKeepingPerson:'',
@@ -240,7 +243,7 @@
             assistItemMask:false,
             assistCheck:true,
             nowTime:new Date,
-            haveAttachements:false
+            AbstractCss:false
         }},
         created(){
             if((!this.dataList.data.Mst)||typeof(this.dataList.data.Mst)=='string'){//没有传参时初始化页面
@@ -287,8 +290,6 @@
 
                     for( var info of this.voucherInfo){
                         if(info.PhId){
-                            console.log(dtls)
-                             debugger
                             for(var dtl of  dtls){
                                 if(dtl.PhId==info.PhId){
                                     dtl.SubjectCode=info.SubjectCode;
@@ -443,7 +444,6 @@
             },
             //获取父组件传参*********************************
             getVoucherData(data){
-                console.log(data)
                 this.fatherData=data;
                 this.PhId=data.PhId;
                 this.PType=data.PType;
@@ -455,6 +455,7 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.PAuditorName=data.PAuditorName;
                 this.Verify=data.Verify;
                 this.PDate=data.PDate;
                 var dtls=data.Dtls;
@@ -477,7 +478,9 @@
                         this.voucherInfo.push(this.initVoucherInfo());
                     }
                 }
-                console.log(this.fatherData)
+                this.AbstractCss=data.PSource?data.PSource:'';//摘要样式******************
+                console.log(this.AbstractCss,data)
+                
             },
             //获取附件信息*******************
             getAttachements(PhId){                 
@@ -491,7 +494,6 @@
                     .then(res=>{
                         
                         this.imglist=res.Record;
-                        console.log(this.imglist)
                         loading.close();
                     })
                     .catch(err=>{
@@ -560,7 +562,6 @@
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
-                console.log(childMsg) ;
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
@@ -643,11 +644,11 @@
                 this.moneyTurn(val,children);
                 console.log(item)
                 //清空另一个金额框的值*************
-                if(value=='jiefang'){
+                if(value=='jiefang'&&item.money[value]){
                     item.money.daifang='';
                     children = input.parentNode.parentNode.nextElementSibling.children;
                     this.moneyTurn(0,children);
-                }else{
+                }else if(value=='daifang'&&item.money[value]){
                     item.money.jiefang='';
                     children = input.parentNode.parentNode.previousElementSibling.children;
                     this.moneyTurn(0,children);
@@ -733,10 +734,8 @@
             //附件上传************************************
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
             beforeAvatarUpload(file) {
-                console.log(1111)
                 const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
                 const isLt2M = file.size / 1024 / 1024 < 2;
-
                 if (!isRightType) {
                     this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
                     return false
@@ -944,7 +943,7 @@
         width:100%;
         height:100%;
         border: 0;
-
+        padding:2px 5px;
     }
     .addIcon,.deleteIcon{
         width:25px;
@@ -1283,5 +1282,8 @@
 
 .orgform .el-form-item{
     margin-bottom: 2px;
+}
+.chongHcss{
+    color:red;
 }
 </style>
