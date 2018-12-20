@@ -569,14 +569,21 @@
                             orgcode: this.orgcode,
                             infoData: this.voucherDataList.data
                         }
+                        debugger
                         var oldPhId=this.voucherDataList.data.Mst.PhidTransaction;
+                        var oldData=this.voucherDataList.data.Mst;
                         const loading=this.$loading();
-                        console.log(data);debugger
                         this.$axios.post('/PVoucherMst/PostAdd', data)
                             .then(res => {
                                 if (res.Status == 'success') {
                                     if(confirm('保存成功，是否生成【更正凭证】？')){
-                                        this.voucherMask='copy';    
+                                        debugger
+                                        console.log(this.voucherDataList.data) 
+                                        this.voucherDataList.data.Mst=oldData
+                                        console.log(this.voucherDataList.data) 
+                                        this.voucherDataList.data.Mst.PhId=id;
+                                        this.voucherMask='copy';  
+                                        console.log(this.voucherDataList.data)  
                                     }else{
 
                                     }
@@ -593,12 +600,13 @@
                     else{
                         //this.clearPhId(this.voucherDataList.data.Mst); 
                         this.keepVoucher();
+                        this.voucherMask=false; 
+                        this.voucherDataList.bool=false; 
+                        this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
                     }    
                 }
                  
-                this.voucherMask=false; 
-                this.voucherDataList.bool=false; 
-                this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};
+                
             },
             //剪切*****************
             cut(data1){

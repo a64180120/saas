@@ -155,6 +155,7 @@
     import voucherTemp from './vouchertemp'
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs';
     export default {
+        name:'voucherAdd',
         data(){return {
             val1:'',
             sideDate:'',
@@ -195,7 +196,7 @@
             voucherMask:false
         }},
         created(){ 
-            if(this.$route.query.list){console.log(22221)
+            if(this.$route.query.list){
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
             } console.log( this.voucherDataList)
