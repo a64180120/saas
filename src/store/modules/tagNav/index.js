@@ -7,13 +7,12 @@ const state = {
     // 已经打开的页面
     openedPageList: [],
     // 缓存的页面
-    cachedPageName: []
+    cachedPageName: [],
+    //不缓存页面：
+    excludeName:['home']
 }
 
 const mutations = {
-    turnCachePage(state,data){//改变路由是否缓存12-13*****
-        state.cachePage=data;
-    },
     addTagNav(state, data){
         if (state.openedPageList.some(v => v.path === data.path)) return
         state.openedPageList.push({
@@ -70,6 +69,11 @@ const mutations = {
     delAllTagNav: (state,data) => {
         state.openedPageList = []
         state.cachedPageName = []
+    },
+    //修改
+    upexcludeArr(state, data){
+
+        state.excludeName=data
     }
 }
 
