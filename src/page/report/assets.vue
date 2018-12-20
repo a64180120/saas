@@ -18,8 +18,8 @@
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                    <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                    <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
+                    <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                 </ul>
             </div>
 
@@ -226,15 +226,6 @@
         name: "assets",
         data(){
             return{
-                userState:0,
-                downloadLoading: false,
-                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
-                dataInfo:[
-                    {PhId:1,PDate:'2018-01-01',Abstract:'test1', PNo:'0001',JSum:'1111',DSum:'1111',JD:'1',money:'2222'},
-                    {PhId:1,PDate:'2018-02-01',Abstract:'test2', PNo:'0001',JSum:'333',DSum:'',JD:'2',money:'3333'},
-                    {PhId:1,PDate:'2018-03-01',Abstract:'test3', PNo:'0001',JSum:'',DSum:'333',JD:'0',money:'4444'}
-                ],
-
                 cashInData:[         ],
                 cashOutData:[         ],
                 cashData:[         ],
@@ -453,6 +444,7 @@
         top: 110px;
         bottom:0;
         width: 60px;
+        z-index: 2;
     }
     .pinzheng{
         margin-left: 120px;
@@ -601,7 +593,10 @@
         width:15%;
         text-align: left;
     }
-
+    .selectContainer>select {
+        background-color: transparent;
+        line-height: 30px;
+    }
 
 
 </style>

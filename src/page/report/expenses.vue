@@ -26,8 +26,8 @@
                 </li>
             </ul>
             <ul class="flexPublic handle">
-                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</el-button >
-                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</el-button>
+                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
+                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
             </ul>
         </div>
         <div class="formData" ref="printFrom">
@@ -353,6 +353,7 @@
         top: 110px;
         bottom:0;
         width: 60px;
+        z-index: 2;
     }
     .unionState>ul>li{
         width:100%;
@@ -466,6 +467,9 @@
     }
     .align-center{
         text-align: center!important;
-    }
+    }.selectContainer>select {
+         background-color: transparent;
+         line-height: 30px;
+     }
 
 </style>

@@ -1,124 +1,141 @@
 <template>
-    <div class="manageContent">
-        <div class="unionState flexPublic">
-            <ul class="flexPublic">
-                <li class="flexPublic">
-                    <div>年度:</div>
-                    <div class="selectContainer">
-                        <select  v-model="userState">
-                            <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                        </select>
+    <div class="container">
+        <div class="manageContent" v-loading="loading">
+            <div class="reportBox">
+                <div class="unionState flexPublic">
+                    <ul class="flexPublic">
+                        <li class="flexPublic">
+                            <div>年度:</div>
+                            <div class="selectContainer">
+                                <select  v-model="userState">
+                                    <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
+                                </select>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="flexPublic handle">
+                        <a href=""><li>打印</li></a>
+                        <a href=""><li>导出</li></a>
+                    </ul>
+                </div>
+                    <div class="formData">
+                        <ul>
+                            <li>资产类科目</li>
+                            <li>具体内容</li>
+                            <li>金额(元)</li>
+                            <li>负债类科目</li>
+                            <li>具体内容</li>
+                            <li>余额(元)</li>
+                        </ul>
+                        <ul class="formDataItems flexPublic">
+                            <li>借出款</li>
+                            <li ></li>
+                            <li></li>
+                            <li>借出款</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic">
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic" >
+                            <li>应收上级经费</li>
+                            <li ></li>
+                            <li></li>
+                            <li>应收上级经费</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic">
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic">
+                            <li>应收下级经费</li>
+                            <li ></li>
+                            <li></li>
+                            <li>应收下级经费</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic" >
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic" >
+                            <li>其他应收款</li>
+                            <li ></li>
+                            <li></li>
+                            <li>其他应收款</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic" >
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                            <li>(按明细项目列)</li>
+                            <li ></li>
+                            <li></li>
+                        </ul>
+
+
                     </div>
-                </li>
-            </ul>
-            <ul class="flexPublic handle">
-                <a href=""><li>打印</li></a>
-                <a href=""><li>导出</li></a>
-            </ul>
-        </div>
-            <div class="formData">
-                <ul>
-                    <li>资产类科目</li>
-                    <li>具体内容</li>
-                    <li>金额(元)</li>
-                    <li>负债类科目</li>
-                    <li>具体内容</li>
-                    <li>余额(元)</li>
-                </ul>
-                <ul class="formDataItems flexPublic">
-                    <li>借出款</li>
-                    <li ></li>
-                    <li></li>
-                    <li>借出款</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic">
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic" >
-                    <li>应收上级经费</li>
-                    <li ></li>
-                    <li></li>
-                    <li>应收上级经费</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic">
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic">
-                    <li>应收下级经费</li>
-                    <li ></li>
-                    <li></li>
-                    <li>应收下级经费</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic" >
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic" >
-                    <li>其他应收款</li>
-                    <li ></li>
-                    <li></li>
-                    <li>其他应收款</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic" >
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                    <li>(按明细项目列)</li>
-                    <li ></li>
-                    <li></li>
-                </ul>
-
-
             </div>
+        </div>
+        <div class="timeSelectBox">
+            <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
+        </div>
     </div>
 </template>
 
 <script>
+    import TimeSelectBar from "../../components/TimeSelectBar/index";
     export default {
         name: "user",
         data(){
             return{
-                JD:['平','借','贷'],
-                userState:0,
-                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
-                dataInfo:[
-                    {PhId:1,PDate:'2018-01-01',Abstract:'test1', PNo:'0001',JSum:'1111',DSum:'1111',JD:'1',money:'2222'},
-                    {PhId:1,PDate:'2018-02-01',Abstract:'test2', PNo:'0001',JSum:'333',DSum:'',JD:'2',money:'3333'},
-                    {PhId:1,PDate:'2018-03-01',Abstract:'test3', PNo:'0001',JSum:'',DSum:'333',JD:'0',money:'4444'}
-                ]
+                date1:[],
             }
         },
         mounted(){
 
         },
+        components: { TimeSelectBar },
         methods:{
+            dateChoose:function(val){
+                this.date1=val;
+                // this.getData(time,this.proofType);
+            },
         }
     }
 </script>
 
 <style scoped>
+    .reportBox{
+        margin-right: 60px;
+    }
+    .timeSelectBox{
+        position: fixed;
+        right: 0;
+        top: 110px;
+        bottom:0;
+        width: 60px;
+        z-index: 2;
+    }
     .unionState>ul>li{
         width:100%;
     }
@@ -159,8 +176,8 @@
 
 
     .formDataItems{
-
         border-bottom:1px solid #ddd;
+        background-color: white;
     }
     .formData>ul.formDataItems>li{
         border-right:1px solid #ddd;

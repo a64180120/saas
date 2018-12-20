@@ -28,8 +28,8 @@
                             <div class="searcherValue"><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></div>
                             <div  class="searcherBtn" @click="selectBtn">搜索</div>
                         </div>
-                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
-                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
+                        <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li></a>
+                        <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li></a>
 
                     </ul>
                 </div>
@@ -114,7 +114,6 @@
             return {
                 downloadLoading: false,
                 loading: false,
-                JD: ['平', '借', '贷'],
                 filterText:'',
                 subjectLists: [],
                 selectItem:'',
