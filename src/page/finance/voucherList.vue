@@ -157,7 +157,11 @@
         <!-- 弹出凭证********************* -->
         <div :class="{voucherMask:voucherMask}">
             <div class="voucherContainer">
-                <p v-if="voucherMask" class="title"><span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红</span><i @click="keepChoose(false)"></i></p>
+                <p v-if="voucherMask" class="title"><span v-if="voucherMask=='copy'">复制凭证</span>
+                        <span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红凭证</span>
+                        <span v-if="voucherMask=='gengz'">更正凭证</span>
+                        <i @click="keepChoose(false)"></i>
+                </p>
                 <div v-if="voucherMask">
                     <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
                     <span class="btn" @click.stop="keepChoose(false)">取消</span>
@@ -188,7 +192,7 @@
                 }
             }
             this.getAssist();
-            //this.$store.commit("tagNav/turnCachePage",true);
+            
            
         },
         data(){
@@ -249,7 +253,7 @@
                 allReset:'',
                 resetShow:false,
                 voucherMask:false,
-                voucherDisabled:true
+                voucherDisabled:true,
             }
         },
         methods:{
@@ -353,6 +357,10 @@
             },
             //凭证详情***************************
             voucherDel(item){
+                //this.$store.commit("tagNav/turnCachePage",false);
+               // var route=this.$route;debugger;
+                    //移除TagNav
+                //this.$store.commit("tagNav/removeTagNav", route);
                 this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
             },
             //凭证选择**********************
@@ -362,7 +370,6 @@
                 }else{
                     this.chooseItem=item;
                 }
-                console.log(item);
             },
              //审核*****************
             audit(bool,PhId){
@@ -500,6 +507,10 @@
              keepVoucher(str){
                 var url='Add';
                 var Vdata=this.voucherDataList.data; 
+                if(str=='gengz'){
+                    this.clearPhId(Vdata.Mst);
+                    Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
+                }
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
                    return;
@@ -522,9 +533,9 @@
                        uid: this.uid,
                        orgid: this.orgid,
                        orgcode: this.orgcode,
-                       infoData: this.voucherDataList.data
+                       infoData: Vdata
                    }
-                   if(this.voucherDataList.data.Mst.PhId) {
+                   if(Vdata.Mst.PhId) {
                        url = 'Update';
                    }
                    const loading=this.$loading();
@@ -547,11 +558,12 @@
                    this.$message('当前月份已结账,无法修改凭证!')
                }
             },
-            //复制剪切******************************
+            //复制剪切冲红******************************
             voucherMaskShow(val){
                 this.voucherMask=val;
             },
             keepChoose(val){
+                var vm=this;
                 if(val){
                     this.voucherData();
                     var id = this.voucherDataList.data.Mst.PhId;
@@ -569,21 +581,25 @@
                             orgcode: this.orgcode,
                             infoData: this.voucherDataList.data
                         }
-                        debugger
                         var oldPhId=this.voucherDataList.data.Mst.PhidTransaction;
                         var oldData=this.voucherDataList.data.Mst;
                         const loading=this.$loading();
+                        this.voucherMask=false; 
+                        this.voucherDataList.bool=false; 
                         this.$axios.post('/PVoucherMst/PostAdd', data)
                             .then(res => {
                                 if (res.Status == 'success') {
                                     if(confirm('保存成功，是否生成【更正凭证】？')){
-                                        debugger
-                                        console.log(this.voucherDataList.data) 
-                                        this.voucherDataList.data.Mst=oldData
-                                        console.log(this.voucherDataList.data) 
-                                        this.voucherDataList.data.Mst.PhId=id;
-                                        this.voucherMask='copy';  
-                                        console.log(this.voucherDataList.data)  
+                                        vm.voucherDataList.bool=true; 
+                                        vm.voucherDataList.data.Mst=oldData
+                                        vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
+                                        vm.voucherDataList.data.Mst.PSource='更正';
+                                        for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                                            if(dtl.SubjectCode){
+                                                dtl.Abstract=dtl.Abstract.replace("注销",'更正错账')
+                                            }                                            
+                                        }
+                                        vm.voucherMask='gengz'; 
                                     }else{
 
                                     }
@@ -599,14 +615,16 @@
                     }
                     else{
                         //this.clearPhId(this.voucherDataList.data.Mst); 
-                        this.keepVoucher();
+                        this.keepVoucher(val);
                         this.voucherMask=false; 
                         this.voucherDataList.bool=false; 
                         this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
                     }    
-                }
-                 
-                
+                }else{
+                    this.voucherMask=false; 
+                        this.voucherDataList.bool=false; 
+                        this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};   
+                }                   
             },
             //剪切*****************
             cut(data1){
@@ -664,7 +682,7 @@
             //接收voucher组件传值************
             voucherData(){
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
-                console.log(this.voucherDataList);
+                console.log(this.voucherDataList);debugger;
             },
            
             //搜索日期转换*************
