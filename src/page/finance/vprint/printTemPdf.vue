@@ -1,14 +1,15 @@
 <template>
   <div class="sys-page" ref="printVoucher">
-      <div class="container">
+
         <div class="manageContent" v-for="(item, n) in tableData" :key="n">
             <div class="title">
                 <strong>{{item.mst.voucherTitle}}</strong>
+                <div>附单据数：{{item.mst.billNum}}张</div>
             </div>
             <ul class="formDataItemsA flexPublic">
-                <li>核算单位：{{item.mst.orgName}}</li>
-                <li>日期：{{ item.mst.orgName}}</li>
-                <li>凭证号：{{item.mst.voucherNum}}</li>
+                <li>单位：{{item.mst.orgName}}</li>
+                <li>日期：{{ item.mst.billdate}}</li>
+                <li>凭证号：{{item.mst.voucherNum}}({{Math.floor(n+1)+'/'+(Math.floor(tableData.length))}})</li>
             </ul>
             <div class="formData" ref="printFrom">
                 <ul>
@@ -20,19 +21,25 @@
                 <ul class="formDataItems flexPublic" v-for="(del, k) in item.list" :key="k">
                       <li>{{del.abstract}}</li>
                       <li>{{del.subject}}</li>
-                      <li>{{del.deVal}}</li>
-                      <li>{{del.crVal}}</li>
+                      <li class="align-right">{{del.deVal}}</li>
+                      <li class="align-right">{{del.crVal}}</li>
                 </ul>
                 <ul class="formDataItems flexPublic">
+<<<<<<< HEAD
                     <li style="width: 70%;">
                         合计： <span class="bolder"> {{item.mst.lotal}}</span>
+=======
+                    <li style="width: 737px;min-width: 737px;max-width: 737px;">
+                        合计： <span class="bolder"> {{item.mst.lotal | NumtoCHN}}</span>
+>>>>>>> 9a36846b5b89d80f50e6a27081147641f35fc5de
                     </li>
                     <li style="display: none"></li>
-                    <li>{{item.mst.lotal}}</li>
-                    <li>{{item.mst.lotal}}</li>
+                    <li class="align-right">{{item.mst.lotal}}</li>
+                    <li class="align-right">{{item.mst.lotal}}</li>
                 </ul>
             </div>
             <ul class="formDataItemsB flexPublic">
+                <li>主管：{{item.mst.chager}}</li>
                 <li>记账：{{item.mst.supervisor}}</li>
                 <li>审核：{{item.mst.auditor}}</li>
                 <li>出纳：{{item.mst.cashier}}</li>
@@ -40,7 +47,7 @@
             </ul>
         </div>
       </div>
-  </div>
+
 </template>
 
 <script>
@@ -124,15 +131,23 @@ export default {
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>
    .manageContent{
-       margin: 60px 0 0px 0;
+       margin: 110px 0 0px 0;
        font-size:17px;
+       padding-bottom: 0;
     .title{
-        font-size: 23px;
+        font-size: 25px;
         text-align: center;
         padding-bottom: 40px;
         font-weight: 600;
-
     }
+       .title div{
+           font-size: 17px;
+           text-align: right;
+           font-weight: 100;
+           position: relative;
+           right: 10px;
+           top: -20px;
+       }
     .formData{
         margin-bottom: 5px;
     }
@@ -152,19 +167,22 @@ export default {
         border-right:1px solid #2780d1;
     }
     .formData>ul>li:nth-of-type(1){
-        width:30%;
-        min-width: 70px;
+        width:305px;
+        min-width: 305px;
+        max-width: 305px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(2){
-        width:40%;
-        min-width: 70px;
+        width:407px;
+        min-width: 407px;
+        max-width: 407px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(3),
     .formData>ul>li:nth-of-type(4){
-        width:15%;
-        min-width: 70px;
+        width:152px;
+        min-width: 152px;
+        max-width: 152px;
         padding:0 2px;
     }
 
