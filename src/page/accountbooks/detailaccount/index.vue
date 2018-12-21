@@ -39,7 +39,6 @@
             if(sessionStorage.getItem("asideActive")){
                 this.asideActive=sessionStorage.getItem("asideActive");
             }
-
         },
         components:{
             detailsAc,
