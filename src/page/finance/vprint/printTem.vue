@@ -117,28 +117,33 @@ export default {
   }
 }
 </script>
-</script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>
    .manageContent{
+       margin: 60px 0 0px 0;
+       font-size:17px;
     .title{
-        font-size: 18px;
+        font-size: 23px;
         text-align: center;
-        padding-bottom: 20px;
+        padding-bottom: 40px;
         font-weight: 600;
+
     }
     .formData{
         margin-bottom: 5px;
     }
     .formData>ul>li{
         border-right:1px solid #ebeef5;;
-        height:50px;
-        line-height:50px;
+        height:69px;
+        line-height:69px;
         text-align: center;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+       .formData>ul:first-child{
+           font-size: 17px;
+       }
     .formData>ul:first-child>li:last-of-type{
         border-right:1px solid #2780d1;
     }
@@ -175,9 +180,8 @@ export default {
         border-left:0;
         border-bottom:0;
         text-align: center;
-        line-height: 40px;
-        height:40px;
-        font-size: 13px;
+        line-height: 69px;
+        height:69px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -203,8 +207,8 @@ export default {
     .formData>ul.bottomForm>li{
         border:none;
         text-align: right;
-        height:55px;
-        line-height: 55px;
+        height:100px;
+        line-height:100px;
     }
     .formData>ul.bottomForm>li:last-child{
         border-right:1px solid #ddd;
