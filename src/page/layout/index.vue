@@ -25,6 +25,7 @@
 import HeaderBar from './HeaderBar'
 import NavBar from './NavBar'
 import TagNav from './TagNav'
+import Auth from "@/util/auth"
 
 export default {
     computed: {
@@ -42,6 +43,14 @@ export default {
       return {
         collapsevule: this.collapse
       }
+    },
+    created() {
+        var config=Auth.getPConfigStatus();
+        if (!config) {
+            this.$store.dispatch('config/getBusinessConfig').then((res)=>{
+                console.log(res);
+            })
+        }
     },
     methods: {
       collapseChange: function (childValue) {

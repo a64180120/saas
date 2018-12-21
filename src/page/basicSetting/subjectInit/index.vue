@@ -13,7 +13,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import Auth from "@/util/auth";
-import printTem from "@/page/finance/vprint/printTem"
+import printTem from "@/page/finance/vprint/printTemPdf"
 
 //科目期初
 export default {

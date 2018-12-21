@@ -24,7 +24,7 @@
                       <li>{{del.crVal}}</li>
                 </ul>
                 <ul class="formDataItems flexPublic">
-                    <li style="width: 716px;">
+                    <li style="width: 70%;">
                         合计： <span class="bolder"> {{item.mst.lotal}}</span>
                     </li>
                     <li style="display: none"></li>
@@ -72,11 +72,15 @@ export default {
   },
   methods: {
     printvoucher(){
-      this.voucher5tr(
-        setTimeout(()=>{
-          this.getPdf(this.$refs.printVoucher);
-        })
-      )
+        //数据制空初始化
+        this.tableData=[];
+
+        this.voucher5tr(
+            setTimeout(()=>{
+            //打印web页面
+            this.$print(this.$refs.printVoucher)
+            })
+        )
     },
     //每5列切成一张凭证
     voucher5tr(){
@@ -120,44 +124,41 @@ export default {
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>
    .manageContent{
-       margin: 100px 0 80px 0;
-       font-size:17px;
     .title{
-        font-size: 23px;
+        font-size: 18px;
         text-align: center;
-        padding-bottom: 40px;
+        padding-bottom: 20px;
         font-weight: 600;
-
     }
     .formData{
         margin-bottom: 5px;
     }
     .formData>ul>li{
         border-right:1px solid #ebeef5;;
-        height:72px;
-        line-height:72px;
+        height:50px;
+        line-height:50px;
         text-align: center;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-       .formData>ul:first-child{
-           font-size: 17px;
-       }
     .formData>ul:first-child>li:last-of-type{
         border-right:1px solid #2780d1;
     }
     .formData>ul>li:nth-of-type(1){
-        width:305px;
+        width:30%;
+        min-width: 70px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(2){
-        width:407px;
+        width:40%;
+        min-width: 70px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(3),
     .formData>ul>li:nth-of-type(4){
-        width:152px;
+        width:15%;
+        min-width: 70px;
         padding:0 2px;
     }
 
@@ -177,8 +178,9 @@ export default {
         border-left:0;
         border-bottom:0;
         text-align: center;
-        line-height: 72px;
-        height:72px;
+        line-height: 40px;
+        height:40px;
+        font-size: 13px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -204,8 +206,8 @@ export default {
     .formData>ul.bottomForm>li{
         border:none;
         text-align: right;
-        height:100px;
-        line-height:100px;
+        height:55px;
+        line-height: 55px;
     }
     .formData>ul.bottomForm>li:last-child{
         border-right:1px solid #ddd;

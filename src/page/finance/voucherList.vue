@@ -15,7 +15,7 @@
                 <a @click.prevent="handle('upload')"><li style="background:#ab86b9">导入</li></a>
                 <a @click.prevent="handle('download')"><li style="background:#84c75d">导出</li></a>
                 <a @click.prevent="handle('print')"><li style="background:#99d1d2">打印</li></a>
-                <a @click.prevent="handle('fresh')"><li>刷新</li></a>
+                <a @click.prevent="handle('fresh')"><li style="width:30px;min-width:30px;border-radius:50%;"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
                 
             </ul>
         </div>
@@ -25,8 +25,8 @@
                 <label >至:&nbsp;<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
             </div>
             <div class="flexPublic searcherCon">
-                <div class="searcherValue"><input @keyup.13="searchVoucher" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
-                <div @click="getvoucherList('search')" class="searcherBtn">搜索</div>
+                <div class="searcherValue"><input @keyup.13="getvoucherList('search')" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
+                <div  @click="getvoucherList('search')" class="searcherBtn">搜索</div>
                 <div @click.stop="highGradeToggle(true)">高级</div>
                 <div v-if="highGradeCss" class="highGradeCss">
                     <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
@@ -187,6 +187,7 @@
         name: "voucher-list",
         mounted(){
             if(this.$route.query.voucherList){
+                this.$store.commit("tagNav/upexcludeArr", []);
                 this.voucherList= this.$route.query.voucherList;
             }else{
                 if(!this.sideDate){
@@ -413,7 +414,7 @@
                         }
                        this.getvoucherList(); 
                     })
-                    .catch(err=>{console.log(err),loading.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
             //删除***********************
             delete(data){ 
@@ -429,7 +430,7 @@
                         }
                         this.getvoucherList(); 
                     })
-                    .catch(err=>{console.log(err),loading.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
               //打印******************
             // printLodop() {
@@ -614,7 +615,7 @@
                                 loading.close();
                             })
                             .catch(err=>{
-                                this.$message(err)
+                                this.$message({ showClose: true,message: err, type: "error"});
                                 loading.close();    
                             })      
                     }
@@ -699,7 +700,7 @@
                 return val;
             },
             //凭证列表***************高级搜索***********************
-            getvoucherList(str){
+            getvoucherList(str){console.log(1111)
                 let base=httpConfig.getAxiosBaseConfig();
                 this.superSearchVal.date1=this.dateTurn(this.superSearchVal.date1)
                 this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
@@ -740,7 +741,7 @@
                         }
                          loading1.close();
                     })
-                    .catch(err=>{console.log(err);loading1.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
             },
             getChecked(){
                 var data={
@@ -758,7 +759,7 @@
                         this.getvoucherList();
                         this.$forceUpdate();
                     })
-                    .catch(err=>console.log(err))
+                    .catch(this.$message({ showClose: true,message: err, type: "error"}))
             },
             //获取time组件传参********************
             getSideDate(data){
@@ -801,7 +802,7 @@
                             }
                             loading5.close();
                         })
-                        .catch(err=>{console.log(err);loading5.close();})
+                        .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
                 }else{
                     this.resetShow=false;
                 }
@@ -855,7 +856,7 @@
                         //this.navTab=res.type;
                     })
                     .catch(err=>{
-                        console.log(err);loading.close();
+                        this.$message({ showClose: true,message: err, type: "error"});loading.close();
                     })
             },
             //获取searchSelect辅助项搜索值******************
@@ -1187,6 +1188,9 @@
                 &:hover{
                     opacity: 0.8;
                    
+                }
+                >img{
+                    height:100%;
                 }
             }
         }
