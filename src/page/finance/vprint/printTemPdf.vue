@@ -24,7 +24,7 @@
                       <li>{{del.crVal}}</li>
                 </ul>
                 <ul class="formDataItems flexPublic">
-                    <li style="width: 716px;">
+                    <li style="width: 70%;">
                         合计： <span class="bolder"> {{item.mst.lotal}}</span>
                     </li>
                     <li style="display: none"></li>
@@ -124,7 +124,7 @@ export default {
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>
    .manageContent{
-       margin: 100px 0 80px 0;
+       margin: 60px 0 0px 0;
        font-size:17px;
     .title{
         font-size: 23px;
@@ -138,8 +138,8 @@ export default {
     }
     .formData>ul>li{
         border-right:1px solid #ebeef5;;
-        height:72px;
-        line-height:72px;
+        height:69px;
+        line-height:69px;
         text-align: center;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -152,16 +152,19 @@ export default {
         border-right:1px solid #2780d1;
     }
     .formData>ul>li:nth-of-type(1){
-        width:305px;
+        width:30%;
+        min-width: 70px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(2){
-        width:407px;
+        width:40%;
+        min-width: 70px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(3),
     .formData>ul>li:nth-of-type(4){
-        width:152px;
+        width:15%;
+        min-width: 70px;
         padding:0 2px;
     }
 
@@ -181,8 +184,8 @@ export default {
         border-left:0;
         border-bottom:0;
         text-align: center;
-        line-height: 72px;
-        height:72px;
+        line-height: 69px;
+        height:69px;
         overflow: hidden;
         text-overflow: ellipsis;
     }

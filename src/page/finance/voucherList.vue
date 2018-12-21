@@ -174,7 +174,7 @@
                 </div>
             </div>            
         </div>
-        <print-tem ref="print" :printData="printdata"></print-tem>
+        <print-tem style="width:20px;height:20px;" ref="print" :printData="printdata"></print-tem>
     </div>
 </template>
 
@@ -452,10 +452,10 @@
             // },
             
              // 打印
-            printContent(e){
+            // printContent(e){
                 
-                this.$print(this.$refs.printList) // 使用
-            },
+            //     this.$print(this.$refs.printList) // 使用
+            // },
             //获取打印凭证数据***************
             printVoucher() {
             //日期
@@ -595,7 +595,7 @@
                                this.$message('保存失败,请重试!')
                            }   
                        })
-                       .catch(err =>{console.log(err);loading.close()} )
+                       .catch(err =>{this.$message({ showClose: true,message: err, type: "error"});loading.close()} )
                }else{
                    this.$message('当前月份已结账,无法修改凭证!')
                }
@@ -795,7 +795,7 @@
                         this.getvoucherList();
                         this.$forceUpdate();
                     })
-                    .catch(this.$message({ showClose: true,message: err, type: "error"}))
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"})})
             },
             //获取time组件传参********************
             getSideDate(data){
@@ -1070,7 +1070,8 @@
         components:{
             searchSelect,
             sideTime,
-            voucher
+            voucher,
+            printTem
         }
     }
     

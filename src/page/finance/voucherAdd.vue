@@ -1130,7 +1130,7 @@
         right:20px;
         top:10px;
         height: 700px;
-        border: 1px solid #ccc;
+         box-shadow:0 0 20px 2px #ccc;
         background: #fff;
         >div:first-of-type{
             height:34px;

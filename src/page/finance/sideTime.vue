@@ -349,12 +349,11 @@ export default {
    .asideNav{
         width:55px;
         position:absolute;
-        right:10px;
+        right:4px;
         top:10px;
         height: 700px;
-        border: 1px solid #ccc;
-        background: #fff;
-        
+        background: #fff;  
+        box-shadow:0 0 20px 2px #ccc;
         >div:first-of-type{
             height:34px;
             line-height: 34px;
