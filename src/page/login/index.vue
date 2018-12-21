@@ -151,6 +151,17 @@ export default {
                         loading.close();
                         if(res.Status==="success"){
                             this.$router.push('home') //跳转主页
+
+
+                            var para={
+                                userid:'',
+                                orgid:this.loginForm.orgid,
+                                year:''
+                            }
+                            this.$store.dispatch('Pconfig/getBusinessConfig',para).then((res)=>{
+                                console.log(res);
+                            })
+                                
                         } else {
                             this.$message({ showClose: true, message: res.Msg, type: 'error' })
                         }

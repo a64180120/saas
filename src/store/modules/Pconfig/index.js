@@ -63,7 +63,7 @@ const actions = {
     //获取当前账务的基础配置信息
     getBusinessConfig({ commit, state }, parameters){
         return new Promise((resolve, reject) => {
-            
+
             axios({
                 url: "/PBusinessConfig/GetPBusinessConfigByOrg",
                 methods: "get",
@@ -73,7 +73,7 @@ const actions = {
                     Ryear:parameters.year   //会计年度
                 }
             }).then(res => {
-                if (res.Status === "success") {
+                if (res &&res.Status === "success") {
                     //用户信息缓存
                     
                     commit("setPConfig", res.Data);
