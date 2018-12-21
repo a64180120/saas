@@ -32,6 +32,10 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item class="header-user">
+                            <div>{{userInfoHead.RealName}}</div>
+                            <div>({{userInfoHead.MobilePhone}})</div>
+                        </el-dropdown-item>
                         <el-dropdown-item command="editPaw">修改密码</el-dropdown-item>
                         <el-dropdown-item divided  command="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
@@ -45,10 +49,10 @@
                     <el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="新密码" prop="newPaw" id="newPaw">
-                    <el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>                    
+                    <el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="确认新密码" prop="confirmNewPaw" >
-                    <el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>            
+                    <el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div class="textC">
@@ -62,7 +66,7 @@
 import { mapState, mapActions } from "vuex";
 import md5 from 'js-md5'
 import desHelper from "@/util/desHelper"
-
+import auth from "@/util/auth.js"
 export default {
   data() {
     return {
@@ -108,7 +112,7 @@ export default {
           },
           {
             // eslint-disable-next-line
-            validator(rule, value, callback, source, options) {              
+            validator(rule, value, callback, source, options) {
               var errors = [];
 
               if (!/^[a-z0-9]+$/.test(value)) {
@@ -120,16 +124,21 @@ export default {
           }
         ]
       },
-       message: 2
+       message: 2,
+        userInfoHead:{}
     };
   },
+    mounted(){
+        this.userinfoget()
+    },
   computed: {
     ...mapState({
-      username: state => state.user.name,
-      lang: state => state.lang,
-      orgid:state=>state.user.orgid,
-      orgcode:state=>state.user.orgcode,
-      uid:state=>state.user.userid
+        username: state => state.user.username,
+        lang: state => state.lang,
+        orgid:state=>state.user.orgid,
+        orgcode:state=>state.user.orgcode,
+        uid:state=>state.user.userid,
+        phone:state=>state.user.username
     }),
     collapse() {
       return this.$store.state.isCollapse;
@@ -139,15 +148,19 @@ export default {
     ...mapActions({
       sysLogout: "user/logout"
     }),
+      userinfoget:function(){
+          this.userInfoHead=auth.getUserInfoData().userInfo;
+      },
     userOperation(command) {
         // 用户名下拉菜单选择事件
       switch (command) {
         case "logout":
           this.logout();
           break;
-        case "editPaw":          
+        case "editPaw":
           this.dialog.editPaw.show = true;
           console.log("编辑密码");
+          console.log(this.uphone);
           break;
       }
     },
@@ -156,8 +169,8 @@ export default {
       this.sysLogout().then(() => {
         this.$router.push("/login");
       });
-    },   
-    collapseChage() {       
+    },
+    collapseChage() {
       // 侧边栏折叠
       this.collapseprop = !this.collapseprop;
       // childByValue是在父组件on监听的方法
@@ -171,18 +184,18 @@ export default {
             console.log("新密码与确认新密码不一致!");
             this.$message.error("新密码与确认新密码不一致!");
             return;
-          }           
-          
-          var oldPwd = md5(this.editPaw.oldPaw);
-          var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);  
+          }
 
-          //接口要包含3个参数： uid、 oldPwd、 newPwd 
+          var oldPwd = md5(this.editPaw.oldPaw);
+          var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);
+
+          //接口要包含3个参数： uid、 oldPwd、 newPwd
           let data={
               uid:this.uid,
               orgid:this.orgid,
-              OldPwd: oldPwd, 
+              OldPwd: oldPwd,
               NewPwd: newPwd
-          }; 
+          };
           this.$axios.post('/SysUser/PostUpdatePassword',data)
             .then(res=>{
                 if (res.Status=='success'){
@@ -199,8 +212,8 @@ export default {
                     return false;
                 }
             })
-            .catch(err=>console.log(err));   
-          
+            .catch(err=>console.log(err));
+
         } else {
           console.log("error submit!!");
           return false;
@@ -289,5 +302,12 @@ export default {
 .header-title{
     font-size: 30px;
     font-weight: 600;
+}
+.header-user{
+    border-bottom: 1px solid #ebeef5;
+    line-height: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
 }
 </style>

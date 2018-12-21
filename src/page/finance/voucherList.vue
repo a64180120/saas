@@ -15,6 +15,8 @@
                 <a @click.prevent="handle('upload')"><li style="background:#ab86b9">导入</li></a>
                 <a @click.prevent="handle('download')"><li style="background:#84c75d">导出</li></a>
                 <a @click.prevent="handle('print')"><li style="background:#99d1d2">打印</li></a>
+                <a @click.prevent="handle('fresh')"><li>刷新</li></a>
+                
             </ul>
         </div>
         <div class="voucherSelect">
@@ -85,8 +87,8 @@
                 <li>序号</li>
                 <li>摘要</li>
                 <li>科目</li>
-                <li>借方金额</li>
-                <li>贷方金额</li>
+                <li>借方金额(元)</li>
+                <li>贷方金额(元)</li>
             </ul>
             <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
                 <li @dblclick="voucherDel(item)">
@@ -97,7 +99,7 @@
                             <span>凭证字号 : {{item.PNo}}</span>
                             <span>附件数 : {{item.PAttachment}}</span>
                             <span>制单人 : {{item.PMakePerson}}</span>
-                            <span>审核 : {{item.Verify?'已审核':'未审核'}}</span>
+                            <span>审核人 : {{item.PAuditorName}}</span>
                         </li>
                         <li v-for="(dtl,ind) of item.Dtls" :key="ind">
                             <div>{{dtl.Abstract}}</div>
@@ -110,8 +112,8 @@
                                     </span> 
                                 </div>
                             </div>
-                            <div>{{(dtl.JSum==0?'':dtl.JSum) | NumFormat}}</div>
-                            <div>{{(dtl.DSum==0?'':dtl.DSum) | NumFormat}}</div>
+                            <div>{{(dtl.JSum==0?'':dtl.JSum) | NUmTurn}}</div>
+                            <div>{{(dtl.DSum==0?'':dtl.DSum) | NUmTurn}}</div>
                         </li>
                         <li>
                             <div>合计:{{'sum' | sum(item.Dtls)}}</div>
@@ -259,33 +261,35 @@
         methods:{
             //操作导航******************
             handle(str){
+                var chooseItem=JSON.stringify(this.chooseItem);
+                var item=JSON.parse(chooseItem);    
                 switch(str){
                     case 'update'://修改**********
-                        this.voucherDel(this.chooseItem);
+                        this.voucherDel(item);
                         break;
                     case 'audit'://审核**********  
-                        if(!this.chooseItem.PhId){
+                        if(!item.PhId){
                             this.$message("请先选择凭证!");
                             return;
                         }
-                        this.audit(true,this.chooseItem.PhId);
+                        this.audit(true,item.PhId);
                         break;
                     case 'unaudit'://反审核************
-                        if(!this.chooseItem.PhId){
+                        if(!item.PhId){
                             this.$message("请先选择凭证!");
                             return;
                         }
-                        this.audit(false,this.chooseItem.PhId);
+                        this.audit(false,item.PhId);
                         break;
                     case 'delete' :
-                        if(!this.chooseItem.PhId){
+                        if(!item.PhId){
                             this.$message("请先选择凭证!");
                             return;
                         }
                         var data1={
                             uid:this.uid,
                             orgid:this.orgid,
-                            id:this.chooseItem.PhId
+                            id:item.PhId
                         }
                         this.delete(data1);
                         break;
@@ -298,38 +302,41 @@
                         this.printContent();
                         break;
                     case 'copy':
-                        if(!this.chooseItem.PhId){
+                        if(!item.PhId){
                             this.$message("请先选择凭证!");
                             return;
                         }
-                        this.voucherDataList.data.Mst=this.chooseItem;
+                        this.voucherDataList.data.Mst=item;
                         this.clearPhId(this.voucherDataList.data.Mst);
                         this.voucherMaskShow('copy');
                         this.voucherDataList.bool=true;
                    
                         break;
                     case 'cut':
-                        if(!this.chooseItem.PhId){
+                        if(!item.PhId){
                             this.$message("请先选择凭证!");
                             return;
                         }
-                        this.voucherDataList.data.Mst=this.chooseItem;
+                        this.voucherDataList.data.Mst=item;
                         this.voucherMaskShow('cut');
                         this.voucherDataList.bool=true;
                     
                         break;
                     case 'chongh':
-                        if(!this.chooseItem.PhId){
+                        if(!item.PhId){
                             this.$message("请先选择凭证!");
                             return;
                         }
-                        this.voucherDataList.data.Mst=this.chooseItem;
+                        this.voucherDataList.data.Mst=item;
                         this.chongh();
                         this.voucherMaskShow('chongh');
                         this.voucherDataList.bool=true;    
                         break;
                     case 'download':
                         this.getvoucherList('yes');
+                        break;
+                    case 'fresh':
+                        this.getvoucherList();
                         break;
                 }
             },
@@ -357,10 +364,7 @@
             },
             //凭证详情***************************
             voucherDel(item){
-                //this.$store.commit("tagNav/turnCachePage",false);
-               // var route=this.$route;debugger;
-                    //移除TagNav
-                //this.$store.commit("tagNav/removeTagNav", route);
+                this.$store.commit("tagNav/upexcludeArr", ['voucherAdd']);
                 this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
             },
             //凭证选择**********************
@@ -373,14 +377,16 @@
             },
              //审核*****************
             audit(bool,PhId){
-                if(!this.chooseItem.PhId){
+                var chooseItem=JSON.stringify(this.chooseItem);
+                var item=JSON.parse(chooseItem);              
+                if(!item.PhId){
                     this.$message("请先选择凭证!");
                     return;
                 }
                 var data={
                     orgid:this.orgid,
                     uid:this.uid,
-                    realname:this.uname,
+                    uname:this.uname,
                     infoData:[PhId]
                 }
                 var url='PVoucherMst/PostAudit';
@@ -455,7 +461,6 @@
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
                 month=Mst.PDate.slice(5,7);
                 date1=Mst.PDate.slice(8,10);
-                console.log(month,date1);
                 for(var dtl of Mst.Dtls){
                     dtl.Abstract=`注销${month}月${date1}号${Mst.PNo}号凭证`;                    
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
@@ -539,7 +544,7 @@
                        url = 'Update';
                    }
                    const loading=this.$loading();
-                   console.log(data)
+        
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            loading.close();      
@@ -617,13 +622,12 @@
                         //this.clearPhId(this.voucherDataList.data.Mst); 
                         this.keepVoucher(val);
                         this.voucherMask=false; 
-                        this.voucherDataList.bool=false; 
-                        this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
+                        //this.voucherDataList.bool=false; 
+                        //this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
                     }    
                 }else{
-                    this.voucherMask=false; 
-                        this.voucherDataList.bool=false; 
-                        this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};   
+                    this.voucherMask=false;
+                    this.chooseItem=''; 
                 }                   
             },
             //剪切*****************
@@ -682,7 +686,6 @@
             //接收voucher组件传值************
             voucherData(){
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
-                console.log(this.voucherDataList);debugger;
             },
            
             //搜索日期转换*************
@@ -716,10 +719,12 @@
                 if(str=='search'){
                     data.sum1=this.sum1,
                     data.sum2=this.sum2,
-                    data.keyword=this.searchValue
+                    data.keyword=this.searchVal
                 }
+                
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
+                        console.log(res)
                         if(res.Status=='success'){
                             this.$message(res.Msg);
                         }
@@ -767,31 +772,7 @@
             resetCodeMonth($event){
               this.month= this.month=parseInt($event.target.innerHTML);
             },
-            //数字转换******************
-            NUmTurn(){
-                if(!value) return '0.00';
-                /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
-                var intPart =  Number(value)|0; //获取整数部分
-                var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
-
-
-                var floatPart = ".00"; //预定义小数部分
-                var value2Array = value.toString().split(".");
-
-                //=2表示数据有小数位
-                if(value2Array.length == 2) {
-                    floatPart = value2Array[1].toString(); //拿到小数部分
-
-                    if(floatPart.length == 1) { //补0,实际上用不着
-                        return intPartFormat + "." + floatPart + '0';
-                    } else {
-                        return intPartFormat + "." + floatPart;
-                    }
-
-                } else {
-                    return intPartFormat + floatPart;
-                }
-            },
+            
             //凭证号重排确认***************
             resetCode(val){
                 if(val){
@@ -844,12 +825,9 @@
                         }
                         this.assistItemList.kemu=res.list;
                         this.superSearchVal.show=true;
-                        console.log(this.assistItemList,res)
-                        //this.$forceUpdate();
                         loading.close();
                     })
                     .catch(err=>{
-                        console.log(err)
                         loading.close();
                         this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
                     })
@@ -897,7 +875,6 @@
         },
         watch:{
             superSearchValPhId(val){
-                console.log(val);
                 if(val==0){
                     this.superSearchVal.show=false;
                     this.assistItemList.kemu=[];
@@ -917,7 +894,7 @@
                     dtl=[]
                 }
                 function Num(value) {
-                    if(!value) return '0.00';                    
+                    if(!value||(value==0)) return '';                    
                     /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
                     var intPart =  Number(value)|0; //获取整数部分
                     var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
@@ -963,7 +940,7 @@
                         }
                         if(sum<0){
                             sum=-1*sum;
-                            fu='负'
+                            fu='(负数)'
                         }
                         sum=sum.toFixed(2);
                         var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
@@ -1026,7 +1003,32 @@
                 
                 return sum;
 
-            }
+            },
+            //数字转换******************
+            NUmTurn(value){
+                if(!value) return '';
+                /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                var intPart =  Number(value)|0; //获取整数部分
+                var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+
+
+                var floatPart = ".00"; //预定义小数部分
+                var value2Array = value.toString().split(".");
+
+                //=2表示数据有小数位
+                if(value2Array.length == 2) {
+                    floatPart = value2Array[1].toString(); //拿到小数部分
+
+                    if(floatPart.length == 1) { //补0,实际上用不着
+                        return intPartFormat + "." + floatPart + '0';
+                    } else {
+                        return intPartFormat + "." + floatPart;
+                    }
+
+                } else {
+                    return intPartFormat + floatPart;
+                }
+            },
         },
         components:{
             searchSelect,
@@ -1562,6 +1564,13 @@
     ul.listContent>li> ul>li:last-of-type>div:first-of-type{
             width:60%;
         }
+        ul.listContent>li> ul:nth-of-type(2)>li>div:nth-last-of-type(1),ul.listContent>li> ul:nth-of-type(2)>li>div:nth-last-of-type(2){
+            text-align: right;
+        }
+    
+         ul.listContent>li> ul:nth-of-type(2)>li:last-of-type>div{
+             padding-left:10%;
+         }
     .searchSelectCon{
         position: relative;
         width:100%;
