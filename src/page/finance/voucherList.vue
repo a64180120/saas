@@ -82,7 +82,7 @@
             </div>
 
         </div>
-        <section ref="printList" class="listContainer">
+        <section  class="listContainer">
             <ul class="listTitle">
                 <li>序号</li>
                 <li>摘要</li>
@@ -174,10 +174,12 @@
                 </div>
             </div>            
         </div>
+        <print-tem ref="print" :printData="printdata"></print-tem>
     </div>
 </template>
 
 <script>
+    import printTem from "@/page/finance/vprint/printTemPdf"
     import httpConfig from '@/util/ajaxConfig'
     import {mapState, mapActions} from 'vuex'
     import sideTime from './sideTime'
@@ -257,6 +259,7 @@
                 resetShow:false,
                 voucherMask:false,
                 voucherDisabled:true,
+                printdata:{}
             }
         },
         methods:{
@@ -450,7 +453,40 @@
             
              // 打印
             printContent(e){
+                
                 this.$print(this.$refs.printList) // 使用
+            },
+            //获取打印凭证数据***************
+            printVoucher() {
+            //日期
+
+            //拼凑数据供打印使用,凭证头，尾信息
+                var mst = {
+                    voucherTitle: "记账凭证", //记账凭证
+                    billNum: 4, //附件数
+                    orgName: "测试单位", //核算单位
+                    billdate:"2018-12-20", //日期
+                    voucherNum: "记-0001", //凭证号：记-0001
+                    lotal: '23987.20', //合计
+                    supervisor: "张三", //记账
+                    auditor: "张伟", //审核
+                    cashier: "王五", //出纳
+                    producer: this.username //制单
+                };
+
+                var list=[
+                    { abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  deVal: '5071.00',  crVal: ''},
+                    { abstract: "代理收入",  subject: "11220002 应收账款_陕西咸阳佳佳",  deVal: '18916.20',  crVal: ''},
+                    { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '4783.96'},
+                    { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '17845.47'},
+                    { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
+                    { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'}
+                ];
+
+                this.printdata={
+                    mst:mst,
+                    list:list
+                };
             },
              //冲红***********************
             chongh(){
