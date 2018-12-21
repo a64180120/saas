@@ -200,9 +200,8 @@
             voucherMask:false
         }},
         created(){ 
-            //this.$store.commit("tagNav/turnCachePage",true);
-            console.log(11,this.$route.query)
             if(this.$route.query.list){
+                this.$store.commit("tagNav/upexcludeArr", ['voucherAdd']);
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
             } 
@@ -328,7 +327,7 @@
                    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
-                           console.log(res)
+                          
                            if (res.Status == 'success') {
                                this.$message('保存成功!')
                                if(str=='keepAdd'){
@@ -369,6 +368,9 @@
             },
             //保存模板**********************
             keepModel(){
+                if(this.voucherDataList.data.Mst.PhId ){
+                    this.clearPhId(this.voucherDataList.data.Mst); 
+                }
                 if(this.voucherDataList.data.Mst.Dtls.length<=0){
                     this.$message('请输入内容!')
                     return;
@@ -526,7 +528,6 @@
                         this.month=this.sideDate.split('-')[1];
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
-                        console.log(this.year,this.month)
                         this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                         this.$forceUpdate();
                     })
@@ -549,14 +550,14 @@
                             this.$message("已到当前月份第一张!")
                         }
                     }
-                }else if(str=='next'){console.log(2222,this.totalRows,this.pageindex,this.pagesize,this.count)
+                }else if(str=='next'){
                     if(this.count<this.newAddList.length-1){
                         this.count++;
                         this.voucherDataList.data={
                             Mst:this.newAddList[this.count]
                         };
                         this.resetVoucher();
-                    }else{console.log(333,this.totalRows-this.pageindex*this.pagesize-this.count,this.totalRows-this.pageindex*this.pagesize<=this.count)
+                    }else{
                         if(this.totalRows-this.pageindex*this.pagesize<=this.count+1){
                             this.$message("已到当前月份最后一张!")
                         }else{
@@ -636,6 +637,7 @@
                                 Mst:this.newAddList[this.count]
                             };
                         }
+                        console.log(this.voucherDataList.data)
                         this.resetVoucher();
                         loading1.close();
                     })
@@ -803,7 +805,7 @@
                     }
                     this.$axios.get(url,{params:data})
                         .then(res=>{
-                            console.log(res)
+                            
                             if(res.Status=='error'){
                                 this.$message(res.Msg);
                             }else if(res.Status=='success'){
@@ -850,7 +852,7 @@
                         dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
                     }
                 }
-                console.log(this.voucherDataList.data);
+               
                 this.clearPhId(this.voucherDataList.data.Mst); 
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 this.voucherDataList.data.Mst.PSource='冲红'
@@ -956,14 +958,14 @@
                     else{
                         //this.clearPhId(this.voucherDataList.data.Mst); 
                         this.keepVoucher(val);
-                        //this.voucherMask=false; 
-                        this.voucherDataList.bool=false; 
-                        this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
+                        this.voucherMask=false; 
+                        //this.voucherDataList.bool=false; 
+                        //this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
                     } 
                 }else{
                     this.voucherMask=false; 
-                    this.voucherDataList.bool=false; 
-                    this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};   
+                    //this.voucherDataList.bool=false; 
+                    //this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};   
                 }
                     
             },
@@ -1025,6 +1027,8 @@
                         display: block;
                         width:100%;
                         margin-right:10px;
+                        background: #fff;
+                        opacity: 1;
                         &:hover{
                             background: #ccc;
                             color:#fff;
@@ -1038,8 +1042,8 @@
                         height:90px;
                         border:1px solid #ccc;
                         background: #fff;
-                        color:#aaa;
-                        
+                        opacity: 1;
+                        color:#aaa;    
                     }
                 }
             }
