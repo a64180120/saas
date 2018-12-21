@@ -265,12 +265,19 @@
 
             },
             async getSubjectData(queryfil){
-                    var vm=this;
+                console.log('查询科目');
+                    let vm=this;
                     this.loading = true;
                     let queryfilter={
-                        KCode:queryfil,
-                        KName:queryfil
+                        KCode:'',
+                        KName:''
                     };
+                    if(queryfil==''||queryfil==undefined){
+
+                    }else{
+                        queryfilter.KCode=queryfil,
+                        queryfilter.KName=queryfil
+                    }
                     //科目列表
                     SubjectList(vm,{
                         uid: this.uid,
@@ -294,7 +301,6 @@
                     }
 
                 }).catch(error =>{
-                    console.log(error);
                     this.loading = false;
                     this.$message({
                         showClose: true,

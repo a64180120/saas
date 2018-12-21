@@ -125,10 +125,14 @@ export default {
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>
+    .manageContent:nth-of-type(1){
+        border:none
+    }
    .manageContent{
        margin: 110px 0 0px 0;
        font-size:17px;
        padding-bottom: 0;
+       border-top:1px solid grey;
     .title{
         font-size: 25px;
         text-align: center;
