@@ -6,7 +6,7 @@
                     <div>隶属工会:</div>
                     <div class="selectContainer">
                         <select v-model="unionName">
-                            <option value="0">全部</option>
+                            <option value="">全部</option>
                             <option v-for="item in unionNameValues" :key="item.PhId" :value="item.PhId">{{item.OrgName}}
                             </option>
                         </select>
@@ -18,7 +18,8 @@
                         <el-date-picker
                             v-model="date1"
                             type="date"
-                            placeholder="选择日期">
+                            placeholder="选择日期"
+                            value-format="yyyy-MM-dd">
                         </el-date-picker>
                     </div>
                 </li>
@@ -133,8 +134,8 @@
             return {
                 date1: '',
                 unionSearchValue: '',
-                unionState: '0',
-                unionName: '0',
+                unionState: '',
+                unionName: '',
                 PhIdList: '',
                 pageIndex: 1,
                 pageSize: '15',
@@ -145,9 +146,9 @@
                     // {id: 2, name: '相符工会'}
                 ],
                 unionStateValues: [
-                    {id: 0, name: '全部'},
-                    {id: 1, name: '激活'},
-                    {id: 2, name: '未激活'}
+                    {id: "", name: '全部'},
+                    {id: "0", name: '激活'},
+                    {id: "1", name: '未激活'}
                 ],
                 userInfoCssList: [],
                 userInfo: [],
@@ -199,31 +200,46 @@
                     })
             },
             unionSearch() {
-                var data = {
-                    uid: "0",
-                    orgid: "0",
-                    pagesize: this.pageSize,
-                    pageindex: this.pageIndex - 1,
-                    parames: ['OrgName*eq*' + this.unionSearchValue, 'EnterpriseCode*eq*' + this.unionSearchValue],
-                    logics: ['OrgName*eq*' + this.unionSearchValue + '%OR%EnterpriseCode*eq*' + this.unionSearchValue]
+                console.log(this.date1);
+                if(this.date1 == null){
+                    this.date1 = '';
                 }
-                this.$axios.get('/SysOrganize/GetSysOrganizeList', {params: data})
-                    .then(res => {
+                if(this.unionName =='' && this.date1 =='' && this.unionState =='' && this.unionSearchValue == ''){
+                    this.ajaxMode('');
+                }else{
+                    // var queryfilter={
+                    //     ParentId:this.unionName,
+                    //     ServiceEndTime:this.date1,
+                    //     EnabledMark:this.unionState,
+                    //     EnCode : this.unionSearchValue,
+                    //     OrgName : this.unionSearchValue
+                    // }
+                    var data = {
+                        uid: "0",
+                        orgid: "0",
+                        pagesize: this.pageSize,
+                        pageindex: this.pageIndex - 1,
+                        value: "Basic" +","+this.unionName+","+this.date1+","+this.unionState+","+this.unionSearchValue
+                    }
+                    this.$axios.get('/SysOrganize/GetOrganizesBy', {params: data})
+                        .then(res => {
+                            console.log(res)
+                            this.userInfo = res.Record;
+                            for (var i = 0; i < this.userInfo.length; i++) {
+                                this.userInfoCssList[i] = {checked: false};
+                            }
+                            this.pageIndex = res.index + 1;
+                            this.pageSize = res.size;
+                            var newArr = [];
+                            var maxP = Math.ceil(res.totalRows / res.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
+                            // maxP = Math.ceil(res.totalRows / daresta.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
+                            for (var i = 0; i < maxP; i++) {
+                                newArr = i + 1;
+                            }
+                            this.pageCount = newArr;
+                        })
+                }
 
-                        console.log(res)
-                        this.userInfo = res.Record;
-                        for (var i = 0; i < this.userInfo.length; i++) {
-                            this.userInfoCssList[i] = {checked: false};
-                        }
-                        this.pageIndex = res.index + 1;
-                        this.pageSize = res.size;
-                        var newArr = [];
-                        var maxP = Math.ceil(res.totalRows / daresta.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
-                        for (var i = 0; i < maxP; i++) {
-                            newArr = i + 1;
-                        }
-                        this.pageCount = newArr;
-                    })
             },
             changeEnable(PhId, EnabledMark) {
                 this.PhIdList = PhId;
@@ -282,20 +298,32 @@
                 this.PhIdList = PhId;
             },
             routerTo(url) {
-                if (url != '/admin/orgin/add' && this.PhIdList.length == 0) {
-                    alert('请点击你要修改的组织')
-                    return;
-                } else {
-                    this.$router.push({path: url, query: {PhId: this.PhIdList}});
+                if(url == '/admin/orgin/add'){
+                    this.$router.push({path: url, query: {showFlam:true}});
+                }else{
+                    if(this.PhIdList.length == 0){
+                        alert('请点击你要修改的组织');
+                        return;
+                    }else{
+                        this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:true}});
+                    }
                 }
+
+                // if (url != '/admin/orgin/add' && this.PhIdList.length == 0) {
+                //     alert('请点击你要修改的组织')
+                //     return;
+                // } else {
+                //     this.$router.push({path: url, query: {PhId: this.PhIdList}});
+                // }
             },
-            ajaxMode() {
+            ajaxMode(query) {
                 const loading1 = this.$loading();
                 let data = {
                     uid: "0",
                     orgid: "0",
                     pagesize: this.pageSize,
                     pageindex: this.pageIndex - 1,
+                    infoData:query
                 };
 
                 this.$axios.get('/SysOrganize/GetSysOrganizeList', {params: data})
