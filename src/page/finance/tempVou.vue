@@ -3,7 +3,7 @@
     <div class="voucher">
         <div  class="voucherContent">
             <div @click.stop="moneyInputHide" v-show="moneyInputMask" class="moneyInputMask"></div>
-
+            <div  v-show="assistItemMask" class="assistItemMask"></div>
             <ul>
                 <li>
                     <ul class="flexPublic voucherContentItem">
@@ -57,12 +57,15 @@
                         <li @click.stop="handleKemuSel(index)" class="kemu">
                             <div>
                                 <ul>
-                                    <li class="flexPublic">
-                                        <span>{{item.SubjectCode}}{{item.SubjectName}}</span>
-                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.BaseName}}</span>
+                                    <li >
+                                        <div>
+                                            <span>{{item.SubjectCode}}&nbsp;{{item.SubjectName}}</span>
+                                            <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
+                                                    :key="index">.{{assist.BaseName}}</span>
+                                        </div>     
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
-                                    <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle(index)"><i></i></li>
+                                    <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
                             <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
@@ -87,7 +90,7 @@
                             <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
                                 <input type="number" v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                                <i class="inputCancle">X</i>
+                                <i  @click.stop="moneyCancle(item,'jiefang')" class="inputCancle">X</i>
                              </span>
                             <div></div>
                             <div></div>
@@ -105,7 +108,7 @@
                             <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
                                 <input type="number" v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
-                                <i class="inputCancle">X</i>
+                                <i @click.stop="moneyCancle(item,'daifang')" class="inputCancle">X</i>
                             </span>
                             <div></div>
                             <div></div>
@@ -197,8 +200,8 @@
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
             assistList:[],//科目下辅助项列表******************
-            itemlistText:'输入科目',
-            assistItemText:'输入辅助项',
+            itemlistText:'选择科目',
+            itemText:'添加科目',
             moneyInputMask:false,
             assistSels:[],//选中的辅助项列表************
             subjectlist:[],//所有科目列表*****************
@@ -206,7 +209,8 @@
             kemuSel:[],//科目选择框显示隐藏样式参数************
             assistItem:[],//辅助项显示隐藏样式参数********************
             assistItemMask:false,
-            assistCheck:true
+            assistCheck:true,
+            nowTime:new Date
         }},
         created(){
             if(!this.dataList.data.Mst){//没有传参时初始化页面
@@ -334,7 +338,7 @@
                         this.fatherData.PhId=this.PhId;
                     }
                     this.fatherData.PAttachment=this.PAttachment;
-                    this.fatherData.PMakePerson=this.PMakePerson;
+                    this.fatherData.PMakePerson=this.username;
                     this.fatherData.PFinancePerson=this.PFinancePerson;
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
                     this.fatherData.PCashier=this.PCashier;
@@ -447,10 +451,11 @@
             },
             //ajax获取科目下的辅助项***************************
             getAssist(val){
-                const loading1=this.$loading();
                 var data={
-                    id:val.data.PhId
-                }
+                    id:val.data.PhId,
+                    orgid:this.orgid,
+                } 
+                const loading1=this.$loading();
                 this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
                     .then(res=>{
                         if(res.length>0){
@@ -465,15 +470,17 @@
                             this.assistList=[]
                         }
                         loading1.close();
+                        this.moneyInputMask=false;
                     })
-                    .catch(err=>{console.log(err);loading1.close();})
+                    .catch(err=>{console.log(err);loading1.close();this.moneyInputMask=false;})
 
             },
             //辅助项选择完成********************
             assistOk(bool,item,index){
+                console.log(item)
                 if(bool){
                     item.DtlAccounts.assistItem=this.assistSels;
-                    console.log(this.assistSels)
+                    console.log( item.DtlAccounts.assistItem)
                 }else{
                     item.SubjectCode='';
                     item.SubjectName='';
@@ -484,8 +491,9 @@
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
+               
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
-                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
+                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
@@ -501,15 +509,30 @@
                 this.moneyInputMask=true;
                 this.$forceUpdate();
             },
-            kemuCancle(index){
+            kemuCancle($event,index,item){
                 this.voucherInfo[index].DtlAccounts.assistItem=[];
                 this.voucherInfo[index].SubjectCode='';
                 this.voucherInfo[index].SubjectName='';
+                item.money={jiefang:'',daifang:''};
+                var input=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[0]; 
+                this.inputBlur(input,item,'jiefang');
+                this.inputBlur(input,item,'daifang');
+                this.moneyInputMask=false;
                 this.$forceUpdate();
             },
+            //
+            moneyCancle(item,val){
+                console.log(item,val)
+                item.money[val]='';
+            },
             //金额输入框键入*******************
-            inputBlur($event,item,value){console.log(item,111)
-
+            inputBlur($event,item,value){
+                var input;
+                if($event.target){
+                    input=$event.target;
+                }else{
+                    input=$event;
+                }
                 if(!this.countJie||!this.countDai){
                     this.countJie=0;
                     this.countDai=0;
@@ -517,12 +540,26 @@
                     this.countJie++;
                     this.countDai++;
                 }
-                item.money[value]=parseFloat(item.money[value]);
+                if(item.money[value]){
+                    item.money[value]=parseFloat(item.money[value]);    
+                }               
                 var val=item.money[value];
                 item.moneyInput[value]=false;
-                var children = $event.target.parentNode.parentNode.children;
+                var children = input.parentNode.parentNode.children;
+                this.moneyInputMask=false;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
+                console.log(item)
+                //清空另一个金额框的值*************
+                if(value=='jiefang'&&item.money[value]){
+                    item.money.daifang='';
+                    children = input.parentNode.parentNode.nextElementSibling.children;
+                    this.moneyTurn(0,children);
+                }else if(value=='daifang'&&item.money[value]){
+                    item.money.jiefang='';
+                    children = input.parentNode.parentNode.previousElementSibling.children;
+                    this.moneyTurn(0,children);
+                }
             },
             initMoneyCss(){  //金额输入框样式初始化***************
                 for(var i in this.voucherInfo){
@@ -672,6 +709,12 @@
         padding:8px 18px;
         font-size:18px;
     }
+    .assistItemMask{
+        position: absolute;
+        width:100%;
+        height:100%;
+        z-index: 9;
+    }
 
     .voucherContent{
         margin-top:20px;
@@ -700,7 +743,7 @@
         width:100%;
         height:100%;
         border: 0;
-
+         padding:2px 5px;
     }
     .addIcon,.deleteIcon{
         width:25px;
@@ -877,6 +920,20 @@
         width:100%;
         height:100%;
     }
+    .kemu>div:first-of-type>ul{
+        padding:5px 3px;
+    }
+     .kemu>div:first-of-type>ul>li:first-of-type{
+         height:30px;
+         width:100%;
+         overflow-y: auto;         
+     }
+     .kemu>div:first-of-type>ul>li:first-of-type>div:first-of-type{
+         white-space: pre-wrap;
+         text-align: left;
+         width:100%;
+     }  
+   
     .kemu>div>ul{
         height:100%;
         display: flex;
@@ -942,6 +999,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom:5px;
+        width:100%;
     }
     .kemu>.assistContainer>ul>li>div:first-of-type{
         margin-right: 15px;

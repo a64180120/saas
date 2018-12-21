@@ -8,6 +8,7 @@
 
 <script>
 export default {
+    name: 'scrollBar',
     data(){
         return {
             left: 0,

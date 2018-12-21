@@ -18,32 +18,32 @@
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                    <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+                    <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
+                    <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                 </ul>
             </div>
 
         <div class="formData" ref="printFrom">
             <ul>
-                <li></li>
+                <li>编码</li>
                 <li>资产</li>
-                <li>年初数</li>
-                <li>期末数</li>
+                <li>年初数(元)</li>
+                <li>期末数(元)</li>
                 <li></li>
-                <li></li>
+                <li>编码</li>
                 <li>资产与净资产</li>
-                <li>年初数</li>
-                <li>期末数</li>
+                <li>年初数(元)</li>
+                <li>期末数(元)</li>
             </ul>
 
                 <ul class="formDataItems flexPublic">
                     <li></li>
-                    <li class="align-center">一、资产</li>
+                    <li class="align-center bolder">一、资产</li>
                     <li></li>
                     <li></li>
                     <li></li>
                     <li></li>
-                    <li class="align-center">二、负债</li>
+                    <li class="align-center bolder">二、负债</li>
                     <li></li>
                     <li></li>
                 </ul>
@@ -69,7 +69,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+2">
                                 <li></li>
-                                <li class="align-center">负债合计</li>
+                                <li class="align-center bolder">负债合计</li>
                                 <li class="align-right">{{cashCounts}}</li>
                                 <li class="align-right">{{cashCountsQ}}</li>
                             </template>
@@ -81,7 +81,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+4">
                                 <li></li>
-                                <li class="align-center">三、净资产类</li>
+                                <li class="align-center bolder">三、净资产类</li>
                                 <li></li>
                                 <li></li>
                             </template>
@@ -93,7 +93,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+cashData.length+6">
                                 <li></li>
-                                <li class="align-center">净资产合计</li>
+                                <li class="align-center bolder">净资产合计</li>
                                 <li class="align-right">{{cashCounts}}</li>
                                 <li class="align-right">{{cashCountsQ}}</li>
                             </template>
@@ -136,7 +136,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+2">
                                 <li></li>
-                                <li class="align-center">负债合计</li>
+                                <li class="align-center bolder">负债合计</li>
                                 <li class="align-right">{{cashOutCounts | NumFormat}}</li>
                                 <li class="align-right">{{cashOutCountsQ | NumFormat}}</li>
                             </template>
@@ -148,7 +148,7 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+4">
                                 <li></li>
-                                <li class="align-center">三、净资产类</li>
+                                <li class="align-center bolder">三、净资产类</li>
                                 <li></li>
                                 <li></li>
                             </template>
@@ -166,7 +166,7 @@
                             </template>
                             <template v-if="index == cashOutData.length+cashData.length+6">
                                 <li></li>
-                                <li class="align-center">净资产合计</li>
+                                <li class="align-center bolder">净资产合计</li>
                                 <li class="align-right">{{cashCounts | NumFormat}}</li>
                                 <li class="align-right">{{cashCountsQ | NumFormat}}</li>
                             </template>
@@ -186,12 +186,12 @@
                 </ul>
                 <ul class="formDataItems flexPublic">
                     <li></li>
-                    <li class="align-center">资产总计</li>
+                    <li class="align-center bolder">资产总计</li>
                     <li class="align-right">{{cashInCounts | NumFormat}}</li>
                     <li class="align-right">{{cashInCountsQ | NumFormat}}</li>
                     <li></li>
                     <li></li>
-                    <li class="align-center">负债与净资产总计</li>
+                    <li class="align-center bolder">负债与净资产总计</li>
                     <li class="align-right">{{cashOutCounts+cashCounts | NumFormat}}</li>
                     <li class="align-right">{{cashOutCountsQ+cashCountsQ | NumFormat}}</li>
                 </ul>
@@ -226,15 +226,7 @@
         name: "assets",
         data(){
             return{
-                userState:0,
                 downloadLoading: false,
-                userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
-                dataInfo:[
-                    {PhId:1,PDate:'2018-01-01',Abstract:'test1', PNo:'0001',JSum:'1111',DSum:'1111',JD:'1',money:'2222'},
-                    {PhId:1,PDate:'2018-02-01',Abstract:'test2', PNo:'0001',JSum:'333',DSum:'',JD:'2',money:'3333'},
-                    {PhId:1,PDate:'2018-03-01',Abstract:'test3', PNo:'0001',JSum:'',DSum:'333',JD:'0',money:'4444'}
-                ],
-
                 cashInData:[         ],
                 cashOutData:[         ],
                 cashData:[         ],
@@ -453,6 +445,7 @@
         top: 110px;
         bottom:0;
         width: 60px;
+        z-index: 2;
     }
     .pinzheng{
         margin-left: 120px;
@@ -575,6 +568,9 @@
         text-align: left;
         padding:0 15px;
     }
+    .formData>ul.formDataItems>li.bolder{
+        font-weight: bold;
+    }
     .formData>ul.formDataItems>li.align-center{
         text-align: center;
         padding:0;
@@ -598,7 +594,10 @@
         width:15%;
         text-align: left;
     }
-
+    .selectContainer>select {
+        background-color: transparent;
+        line-height: 30px;
+    }
 
 
 </style>

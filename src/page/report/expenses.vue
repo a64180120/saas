@@ -26,8 +26,8 @@
                 </li>
             </ul>
             <ul class="flexPublic handle">
-                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</el-button >
-                <el-button style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</el-button>
+                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
+                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
             </ul>
         </div>
         <div class="formData" ref="printFrom">
@@ -100,7 +100,7 @@
                 userState:0,
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
                 proofType:'1',
-                date1:'',
+                date1:[],
                 loading:false
             }
         },
@@ -116,13 +116,7 @@
 
         },
         mounted(){
-            let currentYear = new Date();
-            let currentyear=currentYear.getFullYear(currentYear);
-            let currentMonth=currentYear.getMonth()+1;
-            this.date1.choosedYear=currentyear;
-            this.date1.choosedMonth=currentMonth;
-            this.date1.choosedMonthEnd=currentMonth;
-            this.getData(this.date1,this.proofType);
+            this.getData();
         },
         watch:{
             // /*
@@ -147,34 +141,28 @@
                 return res;
             },
             dateChoose:function(val){
-                console.log(val);
                 let time=val.choosedYear+'-'+ val.choosedMonth;
                 this.getData(time,this.proofType);
             },
-            /*
-            *时间处理方法
-            *  */
-            getParamTime(param){
-                let nowtime ='';
-                if(param==null||param==undefined||param==''){
-                    nowtime = new Date();
+
+            getData:function(){
+                let param='';
+                if(this.date1.choosedYear==undefined||this.date1.choosedYear==''){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    param=currentyear+'-'+currentMonth;
                 }else{
-                    nowtime = new Date(param);
+                    param=this.date1.choosedYear+'-'+this.date1.choosedMonth;
                 }
-                let year=nowtime.getFullYear();
-                let month=nowtime.getMonth()+1;
-                month<10?month='0'+month:month;
-                let day=nowtime.getDate();
-                day<10?day='0'+day:day;
-                return param=year+'-'+month+'-'+day;
-            },
-            getData:function(param,proofType){
-                param = this.getParamTime(param);
                 this.loading=true;
                 //收入科目的数据
                 var data = {
                     accountPeriod: param, //账期
-                    isContainUncheck: proofType,      //是否包含未审核的凭证(1=包含，0=不包含)
+                    isContainUncheck: this.proofType,      //是否包含未审核的凭证(1=包含，0=不包含)
                     orgid:this.orgid
                 };
                 var vm=this;
@@ -365,6 +353,7 @@
         top: 110px;
         bottom:0;
         width: 60px;
+        z-index: 2;
     }
     .unionState>ul>li{
         width:100%;
@@ -478,6 +467,9 @@
     }
     .align-center{
         text-align: center!important;
-    }
+    }.selectContainer>select {
+         background-color: transparent;
+         line-height: 30px;
+     }
 
 </style>

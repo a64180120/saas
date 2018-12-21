@@ -12,7 +12,7 @@
             <tag-nav></tag-nav>
             <div class="content">
                 <transition name="move" mode="out-in">
-                    <keep-alive :include="tagNavList">
+                    <keep-alive :include="tagNavList" :exclude="excludeList">
                         <router-view></router-view>
                     </keep-alive>
                 </transition>
@@ -25,6 +25,7 @@
 import HeaderBar from './HeaderBar'
 import NavBar from './NavBar'
 import TagNav from './TagNav'
+import Auth from "@/util/auth"
 
 export default {
     computed: {
@@ -33,12 +34,23 @@ export default {
         },
         tagNavList(){
             return this.$store.state.tagNav.cachedPageName
+        },
+        excludeList(){
+            return this.$store.state.tagNav.excludeName
         }
     },
     data () {
       return {
         collapsevule: this.collapse
       }
+    },
+    created() {
+        var config=Auth.getPConfigStatus();
+        if (!config) {
+            this.$store.dispatch('config/getBusinessConfig').then((res)=>{
+                console.log(res);
+            })
+        }
     },
     methods: {
       collapseChange: function (childValue) {

@@ -13,7 +13,7 @@
                 </li>
                 <li v-if="checkCss">
                     <ul>
-                        <li :class="{checkFaile:checkFaile[0].StartBalance}">期初余额试算{{checkFaile.StartBalance?'不':''}}平衡</li>
+                        <li :class="{checkFaile:checkFaile[0]}">期初余额试算{{checkFaile.StartBalance?'不':''}}平衡</li>
                     </ul>
                 </li>
                 <li>
@@ -22,7 +22,7 @@
                 </li>
                 <li v-if="checkCss">
                     <ul>
-                        <li :class="{checkFaile:checkFaile[1].CkeckAudio}">本期存在未审核凭证 {{CkeckAudioRes.all-CkeckAudioRes.already}} 张{{CkeckAudioRes.res==0?'':',请处理'}}</li>
+                        <li :class="{checkFaile:checkFaile[1]}">本期存在未审核凭证 {{CkeckAudioRes.all-CkeckAudioRes.already}} 张{{CkeckAudioRes.res==0?'':',请处理'}}</li>
                         <li>本期凭证数 : {{CkeckAudioRes.all}}</li>
                         <li>本期已审核凭证数 : {{CkeckAudioRes.already}}</li>
                     </ul>
@@ -33,8 +33,8 @@
                 </li>
                 <li v-if="checkCss">
                     <ul>
-                        <li :class="{checkFaile:checkFaile[2].CkeckInTime}">本期凭证{{checkFaile[2].CkeckInTime?'':'不'}}存在断号</li>
-                        <li :class="{checkFaile:checkFaile[3].CkeckAudio}">本期凭证号{{checkFaile.CkeckAudio?'未':'已'}}按凭证日期排序</li>
+                        <li :class="{checkFaile:checkFaile[2]}">本期凭证{{checkFaile[2]?'':'不'}}存在断号</li>
+                        <li :class="{checkFaile:checkFaile[3]}">本期凭证号{{checkFaile[3]?'未':'已'}}按凭证日期排序</li>
                     </ul>
                 </li>
             </ul>
@@ -58,10 +58,7 @@
           nowTime:new Date,
           checkedTime:'',
           checkFaile:[
-                {StartBalance:true},
-                {CkeckAudio:true},
-                {CkeckInTime:true},
-                {CkeckBreakNo:true}
+                'true','true','true','true'
           ],
           CkeckAudioRes:'',
           checkOutCss:false,
@@ -81,11 +78,10 @@
                     this.checkCss=true;
                     break;
                 case 'check':
-                    this.checkOut('check',this.checkedTime);
+                    this.checkOut('check',this.checkedTime);                    
                     this.$emit('child-click',false);
                     break;
             }
-
         },
          matchBegin(){
             var data={
@@ -100,37 +96,35 @@
              }
              //期初余额检查************
              this.$axios.get('/PVoucherMst/GetStartBalance',{params:data2})
-                 .then(res=>{console.log(res)
+                 .then(res=>{
                      if(res.Status=='success'){
-                         this.checkFaile[0].StartBalance=false;
-
+                         this.checkFaile[0]=false;
                      }
                      //凭证数及审核情况**************
                      this.$axios.get('/PVoucherMst/GetCkeckAudio',{params:data})
-                             .then(res=>{console.log(res)
+                             .then(res=>{
                                  this.CkeckAudioRes=res;
                                  if(res.res==0){
-                                     this.checkFaile[1].CkeckAudio=false;
+                                     this.checkFaile[1]=false;
                                  }
                                  //时序检查*****************************
                                  this.$axios.get('/PVoucherMst/GetCkeckInTime',{params:data})
-                                         .then(res=>{console.log(res)
+                                         .then(res=>{
                                              if(res.Status=='success'){
-                                                 this.checkFaile[2].CkeckInTime=false;
+                                                 this.checkFaile[2]=false;
                                              }
                                              //断号检查********************
                                              this.$axios.get('/PVoucherMst/GetCkeckBreakNo',{params:data})
-                                                 .then(res=>{console.log(res)
+                                                 .then(res=>{
                                                      if(res.Status=='success'){
-                                                         this.checkFaile[3].CkeckBreakNo = false;
+                                                         this.checkFaile[3] = false;
                                                      }
                                                      this.checkOutCss=true;
-                                                     for(var che of this.checkFaile){
-                                                         if(che){
-                                                             this.checkOutCss=false;
-                                                         }
+                                                     for(var che of  this.checkFaile){
+                                                        if(che){
+                                                            this.checkOutCss=false;
+                                                        }  
                                                      }
-                                                     this.checkOutCss=true;
                                                      this.$message("检查结束!")
                                                  })
 
@@ -139,7 +133,7 @@
                              })
 
                  })
-                 .catch(err=>console.log(err))
+                 .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
 
           },
           //获取当前结账的最新月份************
@@ -149,12 +143,13 @@
                   orgid:this.orgid,
                   queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
               }
+              const loading=this.$loading();
               this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                   .then(res=>{
-                      console.log(res);
-                      this.checkedTime=res.Record[0].JEnableMonth+1;
+                      this.checkedTime=res.Record[0].JAccountPeriod+1;
+                      loading.close();
                   })
-                  .catch(err=>console.log(err))
+                  .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close()})
           },
           //结账功能**********************
           checkOut(str,val){
@@ -182,10 +177,10 @@
                       if(res.Status=='success'){
                           this.$message('结账成功!');
                       }else{
-                          this.$message('结账失败!');
+                          this.$message({ showClose: true,message: res.Msg, type: "error"});
                       }
                   })
-                  .catch(err=>{console.log(err);loading1.close();})
+                  .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
           },
       },
       computed:{

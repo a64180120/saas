@@ -16,6 +16,8 @@ const authToken = {
     //菜单权限
     menuKey:'menus',
 
+    zwcnfig:'zwcnfig',
+
     getCookies:function(key){
         let item=Cookies.get(key);
         // 这点要判断是字符串还是对象
@@ -39,6 +41,7 @@ const authToken = {
         }
     },
 
+    /*******************Token************************** */
     // 获取Token
     getToken: function() {
 
@@ -55,6 +58,8 @@ const authToken = {
     removeToken: function(){
         Cookies.remove(this.TokenKey)
     },
+
+     /*******************UserInfo************************** */
 
     // 获取用户缓存信息
     getUserInfoData: function() {
@@ -74,6 +79,7 @@ const authToken = {
         Cookies.remove(this.loginKey);
     },
 
+    /*******************Menu************************** */
     // 当前是菜单
     getMenuStatus: function(){
         //return this.getCookies(this.menuKey)
@@ -95,7 +101,29 @@ const authToken = {
         removeStore({
             name: this.menuKey
         })
+    },
+
+     /*******************PConfig************************** */
+
+    // 获取财务配置信息
+    getPConfigStatus: function(){
+        return  getStore({ name: this.zwcnfig })
+    },
+    // 设置当前账务配置信息
+    setPConfigStatus: function(data){
+        setStore({
+            name: this.zwcnfig,
+            content: data,
+            type: 'session'
+        })
+    },
+    // 移除当前账务配置信息
+    removePConfigStatus: function(){
+        removeStore({
+            name: this.zwcnfig
+        })
     }
+
 }
 
 export default authToken

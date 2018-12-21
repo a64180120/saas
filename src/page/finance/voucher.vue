@@ -15,7 +15,7 @@
                     </div>
                 </li>
                 <li class="flexPublic">
-                    <div class="flexPublic">附单据&nbsp;<span class="fileCount"></span>&nbsp;张&nbsp;</div>
+                    <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
                     <div @click.stop="testFile" class="uploaderTitle"></div>
                     <!-- 附件弹出框 -->
                     <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
@@ -73,19 +73,22 @@
                             <div @click="handleContent(false,index)" class="deleteIcon"></div>
                         </div>
                         <li>
-                            <div class="inputContainer">
-                                <textarea v-model="item.Abstract" @focus="showAddIcon(index)" maxlength="50"></textarea>
+                            <div class="inputContainer" >
+                                <textarea :class="{chongHcss:AbstractCss=='冲红'}" v-model="item.Abstract" @focus="showAddIcon(index)" ></textarea>
                             </div>
                         </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
                             <div>
                                 <ul>
-                                    <li class="flexPublic">
-                                        <span>{{item.SubjectCode}}{{item.SubjectName}}</span>
-                                        <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" :key="index">-{{assist.AuxiliaryName}}{{assist.BaseName}}</span>
+                                    <li >
+                                        <div >
+                                           <span>{{item.SubjectCode}} &nbsp;{{item.SubjectName}}</span> 
+                                            <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
+                                                    :key="index">.{{assist.BaseName}}</span>
+                                        </div>
                                     </li>
-                                    <li v-show="item.SubjectCode"><span>余额:</span><span></span></li>
-                                    <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle(index)"><i></i></li>
+                                    <li v-show="item.SubjectCode"><span>余额:</span><span>{{item.balance}}</span></li>
+                                    <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
                             <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
@@ -125,7 +128,7 @@
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
-                                <input type="number"  v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
+                                <input type="text"  v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i @click.stop="moneyCancle(item,'daifang')" class="inputCancle">X</i>
                             </span>
@@ -182,7 +185,7 @@
             <ul class="flexPublic ">
                 <li><label>财务主管: <span>{{PFinancePerson}}</span> </label></li>
                 <li><label>记账:<span>{{PKeepingPerson}}</span></label></li>
-                <li><label>审核: <span>{{Verify?'已审核':'未审核'}}</span></label></li>
+                <li><label>审核人: <span>{{PAuditorName}}</span></label></li>
                 <li><label>制单: <span>{{PMakePerson}}</span></label></li>
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
@@ -201,6 +204,7 @@
         name: "voucher",
         props:{
             'dataList':Object,
+            'sideDate':String
         },
         data(){return{
             fatherData:'',
@@ -208,7 +212,7 @@
             PhId:'',
             PDate:'',
             PNo:'',
-            PAttachment:'0',
+            PAuditorName:'',
             PMakePerson:'',
             PFinancePerson:'',
             PKeepingPerson:'',
@@ -224,6 +228,7 @@
             loading: false,
             fileVisible:false,
             imglist:[],
+            balance:'',
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
@@ -238,9 +243,10 @@
             assistItem:[],//辅助项显示隐藏样式参数********************
             assistItemMask:false,
             assistCheck:true,
-            haveAttachements:false
+            nowTime:new Date,
+            AbstractCss:false
         }},
-        created(){console.log( this.dataList); 
+        created(){
             if((!this.dataList.data.Mst)||typeof(this.dataList.data.Mst)=='string'){//没有传参时初始化页面
                 this.voucherInfo=[
                     this.initVoucherInfo(),
@@ -253,15 +259,19 @@
                     PhId:'',
                     Dtls:[]
                 }
+                this.PMakePerson=this.username;
+                this.getFreshVoucher();
             }else{   
                 this.getVoucherData(this.dataList.data.Mst);
-                this.getAttachements(this.dataList.data.Mst.PhId);
+                if(this.dataList.data.Mst.PhId){
+                    this.getAttachements(this.dataList.data.Mst.PhId);
+                }   
             }
             this.initInfoCss();
         },
         mounted(){
             this.initMoneyCss();
-            this.getSubject();
+            this.getSubject();         
         },
         methods:{
             //voucher组件要返回数据的函数********************
@@ -278,6 +288,8 @@
                     }
                     var account;
                     var item;
+
+
                     for( var info of this.voucherInfo){
                         if(info.PhId){
                             for(var dtl of  dtls){
@@ -378,23 +390,14 @@
                     this.fatherData.PCashier=this.PCashier;
                     this.fatherData.PAuditor=this.PAuditor;
                     for(var img in this.imglist ){
-                        if(this.imglist[img][0]){
-                            this.Attachements[this.Attachements.length]={
-                                PersistentState : 1,
-                                BTable : "gcw3_voucher_mst",
-                                BName : '123',
-                                BType : 'JPG',
-                                BSize : this.imglist[img][0].BSize,
-                                BFilebody : null
-                            };
-                            // this.Attachements[this.Attachements.length-1]
-                            // console.log(this.Attachements,this.Attachements[this.Attachements.length-1].PhId,this.imglist,img)
-                            // if(this.Attachements[this.Attachements.length-1].PhId==0){
-                            //     this.Attachements[this.Attachements.length-1].PersistentState=1;
-                            //     this.Attachements[this.Attachements.length-1].BTable='gcw3_voucher_mst';
-                            //     this.Attachements[this.Attachements.length-1].BusinessPrimaryKeys='';
-                            //     this.Attachements[this.Attachements.length-1].ForeignKeys='';
-                            // }
+                        if(this.imglist[img]){
+                            this.Attachements[this.Attachements.length]=this.imglist[img];
+                            if(this.Attachements[this.Attachements.length-1].PhId==0){
+                                this.Attachements[this.Attachements.length-1].PersistentState=1;
+                                this.Attachements[this.Attachements.length-1].BTable='gcw3_voucher_mst';
+                                this.Attachements[this.Attachements.length-1].BusinessPrimaryKeys='';
+                                this.Attachements[this.Attachements.length-1].ForeignKeys='';
+                            }
                         }
                         
                     }
@@ -440,9 +443,40 @@
                     }
                 }
             },
+            //获取最新一个凭证
+            getFreshVoucher(){
+                const loading1=this.$loading();
+                
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    sum1:'',
+                    sum2:'',
+                    keyword:'',
+                    pagesize:1,
+                    pageindex:0,
+                    sort:['PDate DESC','PNo DESC'],
+                   // itemValuePhid:649181122000008,
+                    itemValuePhid:'',
+                    queryfilter:{"PAccper*str*ge*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1]),
+                                    "PAccper*str*le*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1])}
+                }
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                    .then(res=>{
+                        
+                        if(res.Record.length<=0){
+                            this.PDate=nowTime;                            
+                        } else{                         
+                            this.PDate=res.Record[0].PDate;
+                        }   
+                        loading1.close();
+                    })
+                    .catch(err=>{
+                        this.$message({ showClose: true,message: err, type: "error"});loading1.close();
+                    })
+            },
             //获取父组件传参*********************************
             getVoucherData(data){
-                console.log(data)
                 this.fatherData=data;
                 this.PhId=data.PhId;
                 this.PType=data.PType;
@@ -454,6 +488,7 @@
                 this.PKeepingPerson=data.PKeepingPerson;
                 this.PCashier=data.PCashier;
                 this.PAuditor=data.PAuditor;
+                this.PAuditorName=data.PAuditorName;
                 this.Verify=data.Verify;
                 this.PDate=data.PDate;
                 var dtls=data.Dtls;
@@ -476,29 +511,27 @@
                         this.voucherInfo.push(this.initVoucherInfo());
                     }
                 }
+                this.AbstractCss=data.PSource?data.PSource:'';//摘要样式******************
+                
             },
             //获取附件信息*******************
-            getAttachements(PhId){
-                var data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    id:PhId
-                }
-                const loading=this.$loading();
-                this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
-                .then(res=>{
-                    console.log(res)
-                    if(res){
-                        this.haveAttachements=true;    
-                    }else{
-                        this.haveAttachements=false;
+            getAttachements(PhId){                 
+                    var data={
+                        uid:this.uid,
+                        orgid:this.orgid,
+                        id:PhId
                     }
-                    loading.close();
-                })
-                .catch(err=>{
-                        console.log(err);loading.close();
-                    }
-                )
+                    const loading=this.$loading();
+                    this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
+                    .then(res=>{
+                        
+                        this.imglist=res.Record;
+                        loading.close();
+                    })
+                    .catch(err=>{
+                            this.$message({ showClose: true,message: err, type: "error"});loading.close();
+                        }
+                    )
             },
             //获取科目列表******************
             getSubject(){
@@ -518,14 +551,15 @@
                             }
                         }
                     })
-                    .catch(err=>{console.log(err);loading1.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
             },
             //ajax获取科目下的辅助项***************************
             getAssist(val){
-                const loading1=this.$loading();
                 var data={
-                    id:val.data.PhId
-                }
+                    id:val.data.PhId,
+                    orgid:this.orgid,
+                } 
+                const loading1=this.$loading();
                 this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
                     .then(res=>{
                         if(res.length>0){
@@ -540,8 +574,9 @@
                             this.assistList=[]
                         }
                         loading1.close();
+                        this.moneyInputMask=false;
                     })
-                    .catch(err=>{console.log(err);loading1.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();this.moneyInputMask=false;})
 
             },
             //辅助项选择完成********************
@@ -559,12 +594,36 @@
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
+               
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
-                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
+                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
+                this.getBalance(childMsg.data.KCode);
                 this.$forceUpdate();
+            },
+            //科目余额*******************
+            getBalance(Kcode){
+                var nowTime=this.nowTime;
+                var data={
+                    Year:nowTime.getFullYear(),
+                    OrgIds:this.orgid,
+                    Kcode:Kcode
+                } 
+                const loading5=this.$loading();
+                this.$axios.get('/PVoucherMst/GetSubjectBalance',{params:data})
+                    .then(res=>{
+                        if(res.Status=='error'){
+                            this.$message(res.Msg)
+                        }
+                        this.balance=res.Record[0].j_sum-res.Record[0].d_sum;
+                        loading5.close();
+                    })
+                    .catch(err=>{
+                        this.$message({ showClose: true,message: err, type: "error"})
+                        loading5.close();
+                    })  
             },
             //选择框显示********************
             handleKemuSel(index){
@@ -576,10 +635,15 @@
                 this.moneyInputMask=true;
                 this.$forceUpdate();
             },
-            kemuCancle(index){
+            kemuCancle($event,index,item){
                 this.voucherInfo[index].DtlAccounts.assistItem=[];
                 this.voucherInfo[index].SubjectCode='';
                 this.voucherInfo[index].SubjectName='';
+                item.money={jiefang:'',daifang:''};
+                var input=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[0]; 
+                this.inputBlur(input,item,'jiefang');
+                this.inputBlur(input,item,'daifang');
+                this.moneyInputMask=false;
                 this.$forceUpdate();
             },
             //
@@ -589,6 +653,12 @@
             },
             //金额输入框键入*******************
             inputBlur($event,item,value){
+                var input;
+                if($event.target){
+                    input=$event.target;
+                }else{
+                    input=$event;
+                }
                 if(!this.countJie||!this.countDai){
                     this.countJie=0;
                     this.countDai=0;
@@ -598,13 +668,24 @@
                 }
                 if(item.money[value]){
                     item.money[value]=parseFloat(item.money[value]);    
-                }
-                
+                }               
                 var val=item.money[value];
                 item.moneyInput[value]=false;
-                var children = $event.target.parentNode.parentNode.children;
+                var children = input.parentNode.parentNode.children;
+                this.moneyInputMask=false;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
+                console.log(item)
+                //清空另一个金额框的值*************
+                if(value=='jiefang'&&item.money[value]){
+                    item.money.daifang='';
+                    children = input.parentNode.parentNode.nextElementSibling.children;
+                    this.moneyTurn(0,children);
+                }else if(value=='daifang'&&item.money[value]){
+                    item.money.jiefang='';
+                    children = input.parentNode.parentNode.previousElementSibling.children;
+                    this.moneyTurn(0,children);
+                }
             },
             initMoneyCss(){  //金额输入框样式初始化***************
                 for(var i in this.voucherInfo){
@@ -686,10 +767,8 @@
             //附件上传************************************
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
             beforeAvatarUpload(file) {
-                console.log(1111)
                 const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
                 const isLt2M = file.size / 1024 / 1024 < 2;
-
                 if (!isRightType) {
                     this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
                     return false
@@ -698,6 +777,7 @@
                     this.$message.error('上传图片大小不能超过 2MB!');
                     return false
                 }
+                
             },
             // uploadFileMethodEnterprise(param) {console.log(res,2);
             //     let fileObject = param.file;
@@ -751,6 +831,10 @@
             },
             removeimg(item,deleValue) {//
                this.imglist=item;
+                if(item.length<1){
+                    return;
+                }
+                console.log(item,deleValue,this.imglist);
                 // var urls=deleValue.imgPath.split('/');
                 // console.log(this.imglist,item,urls,deleValue)
                 // for(var i in item[0]){ 
@@ -779,8 +863,9 @@
                 });
             },
             uploadimg(item) {
-                console.log(item);
-                this.imglist.push(item);
+                //this.imglist.push(item);
+                
+                console.log(this.imglist);
             },
             ...mapActions({
                 uploadFile: 'uploadFile/Voucherupload'
@@ -819,10 +904,19 @@
             ...mapState({
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
+                username:state => state.user.username,
                 orgcode: state => state.user.orgcode
             }),
             picUrl:function(){
                 return httpConfig.baseurl;
+            },
+            PAttachment:{
+                get(){
+                    return this.imglist.length;
+                },
+                set(){
+
+                }
             }
         },
         watch:{
@@ -886,7 +980,7 @@
         width:100%;
         height:100%;
         border: 0;
-
+        padding:2px 5px;
     }
     .addIcon,.deleteIcon{
         width:25px;
@@ -1068,6 +1162,16 @@
     .kemu>div:first-of-type>ul{
         padding:5px 3px;
     }
+     .kemu>div:first-of-type>ul>li:first-of-type{
+         width:100%;
+         height:30px;
+         overflow-y: auto;         
+     }
+     .kemu>div:first-of-type>ul>li:first-of-type>div:first-of-type{
+         white-space: pre-wrap;
+         width:100%;
+         text-align: left;
+     }   
     .kemu>div>ul{
         height:100%;
         display: flex;
@@ -1217,5 +1321,8 @@
 
 .orgform .el-form-item{
     margin-bottom: 2px;
+}
+.chongHcss{
+    color:red;
 }
 </style>

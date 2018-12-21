@@ -3,35 +3,48 @@
             <div class="reportBox">
 
                 <div class="unionState flexPublic">
-                    <div class="flexPublic handle">
-                        <div class="searcherValue"><input type="text" placeholder="科目编码" v-model="inputCode"></div>
-                        <div  class="searcherBtn" @click="selectBtn">搜索</div>
-                    </div>
                     <ul class="flexPublic">
-                    <!--<div >
-                        <el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>
-                    </div>-->
+                    <li class="flexPublic">
+                        <div>条件：</div>
+                        <div  class="block selectContainer">
+                            <select class="el-input__inner el-button--small" v-model="proofType">
+                                <option value="0,1">包含未审核凭证</option>
+                                <option value="1">不包含未审核凭证</option>
+                            </select>
+                        </div>
 
+                    </li>
                     </ul>
-                    <ul class="flexPublic handle">
-                        <li class="flexPublic">
 
-                            <div>条件：</div>
-                            <div  class="block selectContainer">
-                                <select class="el-input__inner el-button--small" v-model="proofType">
-                                    <option value="0,1">包含未审核凭证</option>
-                                    <option value="1">不包含未审核凭证</option>
-                                </select>
-                            </div>
-                        </li>
-                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</el-button >
-                        <el-button class="el-button--small" style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</el-button >
+
+                    <!--<ul class="flexPublic">-->
+                    <!--<div >-->
+                        <!--<el-input placeholder="输入关键字进行过滤" v-model="filterText"> </el-input>-->
+                    <!--</div>-->
+
+                    <!--</ul>-->
+                    <ul class="flexPublic handle">
+                        <div class="flexPublic handle">
+                            <div class="searcherValue"><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></div>
+                            <div  class="searcherBtn" @click="selectBtn">搜索</div>
+                        </div>
+                        <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li></a>
+                        <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li></a>
+
                     </ul>
                 </div>
                 <div class="flexPublic  p0">
                     <div class="unionLists">
 
                         <div class="unionListsTitle">科目列表 &nbsp;
+                        </div>
+                        <div class="el-input el-input--prefix" style="text-align: center; padding: 3px 10px;height: 35px;overflow: hidden">
+                            <div style="width: 158px;height: 26px;line-height: 26px;margin: auto">
+                                <input type="text" autocomplete="off" placeholder="搜索科目编码/名称" class="el-input__inner" style="width: 158px;height: 26px;line-height: 26px;font-size: 10pt;" @change="searchCode">
+                                <i class="el-input__icon el-icon-lx-search" style="position: relative; left: -60px;z-index: 14; height: 26px;top: -28px;color: #dcdfe6;"></i>
+
+                            </div>
+
                         </div>
                         <div class="unionListsContent">
                             <el-tree
@@ -58,12 +71,12 @@
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
                             <li>{{item.Pdate.slice(0,10)}}</li>
-                            <li :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
-                            <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计'}">{{item.Abstract}}</li>
-                            <li>{{item.JSum | NumFormat}}</li>
-                            <li :title="item.DSum">{{item.DSum | NumFormat}}</li>
-                            <li >{{JD[item.DType]}}</li>
-                            <li>{{item.Balance | NumFormat}}</li>
+                            <li class="align-center" :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
+                            <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
+                            <li class="align-right">{{item.JSum | NumFormat}}</li>
+                            <li class="align-right" :title="item.DSum">{{item.DSum | NumFormat}}</li>
+                            <li>{{JD[item.DType]}}</li>
+                            <li class="align-right">{{item.Balance | NumFormat}}</li>
                         </ul>
                         <!--
                             v-infinite-scroll:
@@ -99,9 +112,9 @@
         name: "detailsAc",
         data() {
             return {
+                JD:['平','借','贷'],
                 downloadLoading: false,
                 loading: false,
-                JD: ['平', '借', '贷'],
                 filterText:'',
                 subjectLists: [],
                 selectItem:'',
@@ -125,6 +138,7 @@
                 inputCode:'',//搜索框输入项目编码
                 focus:false,
                 proofType:'0,1',
+                inputKvalue:''//顶部搜索框输入凭证字号或摘要Kno Abstract
             }
         },
         created() {
@@ -133,12 +147,7 @@
             this.getSubjectData();
         },
         mounted() {
-                let currentYear = new Date();
-                let currentyear=currentYear.getFullYear(currentYear);
-                let currentMonth=currentYear.getMonth()+1;
-                this.date1.choosedYear=currentyear;
-                this.date1.choosedMonth=currentMonth;
-                this.date1.choosedMonthEnd=currentMonth;
+
         },
         watch: {
 
@@ -161,65 +170,91 @@
             })
         },
         methods: {
+            searchCode:function(val){
+                this.selectSubject.KCode=val.target.value;
+                //let que='{"[or-dictionary0]*dictionary*or",{"KCode*str*like":"'+val.target.value+'" , "KName*str*like":"'+val.target.value+'"}}';
+                this.getSubjectData(val.target.value);
+            },
+
             selectBtn:function(){
-                let flag=true;
-                for(let i in this.subjectLists){
-                    if(this.subjectLists[i].KCode==this.inputCode){
-                        this.selectSubject=this.subjectLists[i];
-                        this.getData();
-                        flag=false;
-                    }
-                }
-                if(flag){
-                    alert('您输入的科目编码有误');
-                    this.focus=true;
-                }
+                 let que='{"[or-dictionary0]*dictionary*or",{"Pno*str*like":"'+this.inputKvalue+'" , "Abstract*str*like":"'+this.inputKvalue+'"}}';
+                this.getData(this.inputKvalue);
+
+                // let flag=true;
+                // for(let i in this.subjectLists){
+                //     if(this.subjectLists[i].KCode==this.inputCode){
+                //         this.selectSubject=this.subjectLists[i];
+                //         this.getData();
+                //         flag=false;
+                //     }
+                // }
+                // if(flag){
+                //     alert('您输入的科目编码有误');
+                //     this.focus=true;
+                // }
             },
             dateChoose:function(val){
                 let time=val;
                 this.date1=time;
-                console.log(this.date1.choosedMonth+','+this.date1.choosedMonthEnd);
                 this.getData();
             },
-            getData(flag) {
-                let Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
+            getData(queryf) {
+                let year='';
+                let Pmonth='';
+                let query=(queryf==undefined?'':queryf);
+                if(this.date1.choosedYear==''){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    year=currentyear;
+                    Pmonth=currentMonth+','+currentMonth;
+                }else{
+                    year=this.date1.choosedYear;
+                    Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
+                }
+
                 var data = {
                     uid: this.uid,
                     orgid:this.orgid,
                     Kcode: this.selectSubject.KCode||'',
                     // Year: this.selectSubject.Uyear|| '',
-                    Year: this.date1.choosedYear,
+                    Year: year,
                     OrgIds: this.orgid,
                     pageindex:this.testIndex,
                     pagesize:this.pageSize,
                     Title:this.selectSubject.KName,
                     Verify:this.proofType,
-                    Pmonth:Pmonth
+                    Pmonth:Pmonth,
+                    value:query
                 };
 
                 this.loading = true;
                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
                         this.loading = false;
-                        console.log(res);
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
                             this.dataInfo=[]
                             return
                         }
-                        if(flag){//如果flag为true则表示分页
-                            this.dataInfo=this.dataInfo.concat(res.Record);  //concat数组串联进行合并
-
-                            if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
-                                this.busy=true;
-                            }else{
-                                this.busy=false;
-                            }
-                        }else{
-                            //第一次进入页面 完全不需要数据拼接的
-                            this.dataInfo=res.Record;
-                            this.totalCount=res.totalRows;
-                        }
+                        this.dataInfo=res.Record;
+                        this.totalCount=res.totalRows;
+                        // if(flag){//如果flag为true则表示分页
+                        //     this.dataInfo=res.Record;  //concat数组串联进行合并
+                        //
+                        //     if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
+                        //         this.busy=true;
+                        //     }else{
+                        //         this.busy=false;
+                        //     }
+                        // }else{
+                        //     //第一次进入页面 完全不需要数据拼接的
+                        //     this.dataInfo=res.Record;
+                        //     this.totalCount=res.totalRows;
+                        // }
                     })
                     .catch(err=>{
                         console.log(err)
@@ -229,17 +264,20 @@
 
 
             },
-            async getSubjectData(){
+            async getSubjectData(queryfil){
                     var vm=this;
                     this.loading = true;
-
+                    let queryfilter={
+                        KCode:queryfil,
+                        KName:queryfil
+                    };
                     //科目列表
                     SubjectList(vm,{
                         uid: this.uid,
-                        orgid: this.orgid
+                        orgid: this.orgid,
+                        infoData:queryfilter
                     }).then(res => {
                     this.loading = false;
-
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
@@ -299,7 +337,6 @@
             },
             //当属性滚动的时候  加载  滚动加载
             loadMore(){
-                console.log(this.pageIndex);
                 this.busy=true  //将无限滚动给禁用
                 setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
                     this.pageIndex++;  //滚动之后加载第二页
@@ -323,7 +360,6 @@
                     url: '/PsubjectBudget/PostExportMiddleYear',
                     data: param
                 }).then(res => {
-                    console.log(res);
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
@@ -391,6 +427,10 @@
 </script>
 
 <style scoped>
+    .selectContainer>select {
+        background-color: transparent;
+        line-height: 30px;
+    }
     .searcherValue {
         border-radius: 15px 0 0 15px;
     }
@@ -563,5 +603,14 @@
     }
     .bolder{
         font-weight: bold;
+    }
+    .formData>ul.formDataItems>li.align-center{
+        padding:0;
+        text-indent: 30px;
+        text-align: left;
+    }
+    .formData>ul.formDataItems>li.align-right{
+        text-align: right;
+        padding-right: 10px;
     }
 </style>

@@ -79,11 +79,9 @@
             let data = {
                 uid: this.uid,
                 orgid: this.orgid,
-                pageindex:0,
-                pagesize:100,
                 queryfilter:'',
             };
-            this.$axios.get('/POrganizeConfig/GetPOrganizeConfigList',{params:data})
+            this.$axios.get('/POrganizeConfig/GetOrganizeConfigList',{params:data})
                 .then(res=>{
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
