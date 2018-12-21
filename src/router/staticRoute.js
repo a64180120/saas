@@ -57,6 +57,12 @@ const staticRoute = [
                 meta:{ requireAuth:true,type:'button',name:'组织编辑'}
             },
             {
+                //组织审核 -编辑
+                path: "orgin/ver",
+                component: () => import("../page/admin/organize/manageVerify"),
+                meta:{ requireAuth:true,type:'button',name:'组织审核'}
+            },
+            {
                 //角色管理
                 path: "role",
                 component: () =>import("../page/admin/role"),
