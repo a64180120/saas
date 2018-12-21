@@ -143,11 +143,16 @@
                 </div>
             </div>
         </div>
+        <div>
+            <countdownpop></countdownpop>
+        </div>
     </div>
+
 </template>
 
 <script>
-
+    import countdownpop from "../../components/countDownPop/index";
+    // import TimeSelectBar from "../../components/TimeSelectBar/index";
     export default {
         name: "index",
         data(){
@@ -255,6 +260,7 @@
                 showArea:'selectArea'
             }
         },
+        components: {countdownpop},
         mounted(){
             this.searchArea(0,0);
         },
