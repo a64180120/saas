@@ -196,6 +196,10 @@ const actions = {
             commit('setNavList',''); //菜单
             //若需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可
             commit('tagNav/delAllTagNav', '', {root: true})
+
+            //清除配置文件
+            commit('config/setPConfig', '', {root: true})
+
             resolve();
         });
     },
@@ -207,7 +211,8 @@ const actions = {
             // 根据Token进行重新登录
             let tokenInfo = Auth.getToken(), 
             userInfo = Auth.getUserInfoData(),
-            menuInfo = Auth.getMenuStatus();
+            menuInfo = Auth.getMenuStatus(),
+            config = Auth.getPConfigStatus();
 
             // 重新登录时校验Token是否存在，若不存在则获取
 
@@ -238,6 +243,16 @@ const actions = {
             }else{
                 //设置用户 state ,重新加载用户缓存
                 commit("setNavList", menuInfo);
+            }
+
+            //配置信息
+            if(!config){
+                dispatch("config/getBusinessConfig").then(() => {
+
+                });
+            }else{
+                //设置用户 state ,重新加载用户缓存
+                commit("config/setPConfig", config);
             }
             
             resolve();

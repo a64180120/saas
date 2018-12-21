@@ -28,7 +28,8 @@
 
 
 <script>
-import ScrollBar from "sysComponents/ScrollBar";
+import ScrollBar from "@/Components/ScrollBar";
+//import ScrollPane from "@/Components/ScrollBar/scrollPane";
 
 export default {
   data() {
@@ -112,7 +113,7 @@ export default {
     // 关闭全部标签     
     closeAll(){
         this.$store.dispatch('tagNav/delAllTagNavViews').then(() => {
-          //this.moveToCurrentTag()
+          this.$router.push('/home') //跳转主页
         })
     },
     // 关闭其他标签  
