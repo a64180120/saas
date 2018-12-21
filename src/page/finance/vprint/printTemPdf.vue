@@ -1,6 +1,6 @@
 <template>
   <div class="sys-page" ref="printVoucher">
-      <div class="container">
+
         <div class="manageContent" v-for="(item, n) in tableData" :key="n">
             <div class="title">
                 <strong>{{item.mst.voucherTitle}}</strong>
@@ -24,7 +24,7 @@
                       <li>{{del.crVal}}</li>
                 </ul>
                 <ul class="formDataItems flexPublic">
-                    <li style="width: 716px;">
+                    <li style="width: 737px;min-width: 737px;max-width: 737px;">
                         合计： <span class="bolder"> {{item.mst.lotal}}</span>
                     </li>
                     <li style="display: none"></li>
@@ -40,7 +40,7 @@
             </ul>
         </div>
       </div>
-  </div>
+
 </template>
 
 <script>
@@ -124,8 +124,9 @@ export default {
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>
    .manageContent{
-       margin: 100px 0 80px 0;
+       margin: 120px 0 0px 0;
        font-size:17px;
+       padding-bottom: 0;
     .title{
         font-size: 23px;
         text-align: center;
@@ -153,15 +154,21 @@ export default {
     }
     .formData>ul>li:nth-of-type(1){
         width:305px;
+        min-width: 305px;
+        max-width: 305px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(2){
         width:407px;
+        min-width: 407px;
+        max-width: 407px;
         padding:0 2px;
     }
     .formData>ul>li:nth-of-type(3),
     .formData>ul>li:nth-of-type(4){
         width:152px;
+        min-width: 152px;
+        max-width: 152px;
         padding:0 2px;
     }
 
