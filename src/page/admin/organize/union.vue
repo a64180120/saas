@@ -4,11 +4,20 @@
             <ul class="flexPublic">
                 <li class="flexPublic">
                     <div>地区:</div>
-                    <div class="selectContainer">
-                        <select v-model="unionName">
-                            <option v-for="item in unionNameValues" :key="item.id" :value="item.id">{{item.name}}
-                            </option>
-                        </select>
+                    <div>
+                        <el-cascader
+                            placeholder=""
+                            :options="options"
+                            @active-item-change="handleItemChange"
+                            filterable
+                            :clearable="clearable"
+                            @change ="changeArea"
+                            style="width: 90%; margin-top: 10px"
+                        ></el-cascader>
+                        <!--<select v-model="unionName">-->
+                            <!--<option v-for="item in unionNameValues" :key="item.id" :value="item.id">{{item.name}}-->
+                            <!--</option>-->
+                        <!--</select>-->
                     </div>
                 </li>
                 <li class="flexPublic datepick">
@@ -17,7 +26,8 @@
                         <el-date-picker
                             v-model="date1"
                             type="date"
-                            placeholder="选择日期">
+                            placeholder="选择日期"
+                            value-format="yyyy-MM-dd">
                         </el-date-picker>
                     </div>
                 </li>
@@ -40,7 +50,7 @@
                 <a @click.prevent="routerTo('/admin/orgin/add')">
                     <li>新增</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/update')">
+                <a @click.prevent="routerTo('/admin/orgin/edit')">
                     <li>修改</li>
                 </a>
                 <a @click.prevent="routerTo('/admin/orgin/add')">
@@ -108,9 +118,13 @@
             return {
                 date1: '',
                 unionSearchValue: '',
-                unionState: '0',
-                unionName: '0',
+                unionState: '',
+                iiii:2,
+                areaId:[],
+                unionName: '',
                 ng_insert_dt: '',
+                options:[],
+                clearable:true,
                 PhIdList: '',
                 orgname: '',
                 pageIndex: 1,
@@ -122,9 +136,9 @@
                     {id: 2, name: '相符工会'}
                 ],
                 unionStateValues: [
-                    {id: 0, name: '全部'},
-                    {id: 1, name: '激活'},
-                    {id: 2, name: '未激活'}
+                    {id: "", name: '全部'},
+                    {id: "0", name: '激活'},
+                    {id: "1", name: '未激活'}
                 ],
                 userInfoCssList: [],
                 userInfo: [],
@@ -159,8 +173,157 @@
             }
         },
         methods: {
+            getNodes (val) {
+                let idArea = '';
+                let sizeArea;
+                if (!val) {
+                    idArea = "0";
+                    sizeArea = 0
+                } else if (val.length === 1) {
+                    idArea = val[0];
+                    sizeArea = val.length // 3:一级 4:二级 6:三级
+                } else if (val.length === 2) {
+                    idArea = val[1];
+                    sizeArea = val.length // 3:一级 4:二级 6:三级
+                }else if (val.length === 3) {
+                    idArea = val[2];
+                    sizeArea = val.length;// 3:一级 4:二级 6:三级
+                }
+                console.log(idArea);
+                this.$axios.get("/SysArea/GetAreaList", {
+                    params: {
+                        uid: "0",
+                        orgid: this.qOrgId,
+                        id: idArea
+                    }
+                }).then(response => {
+                    if (response) {
+                        let Items = response;
+                        console.log(Items.length);
+                        if (sizeArea === 0) { // 初始化 加载一级 省
+                            this.options = Items.map((value, i) => {
+                                return {
+                                    value: value.value,
+                                    label: value.label,
+                                    children: []
+                                }
+                            })
+                        } else if (sizeArea === 1) { // 点击一级 加载二级 市
+                            this.options.map((value, i) => {
+                                if (value.value === val[0]) {
+                                    if (!value.children.length) {
+                                        value.children = Items.map((value, i) => {
+                                            return {
+                                                value: value.value,
+                                                label: value.label,
+                                                children: []
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        } else if (sizeArea === 2) { // 点击二级 加载三级 区
+                            this.options.map((value, i) => {
+                                if (value.value === val[0]) {
+                                    value.children.map((value, i) => {
+                                        if (value.value === val[1]) {
+                                            if (!value.children.length) {
+                                                console.log(Items.length);
+                                                value.children = Items.map((value, i) => {
+                                                    return {
+                                                        value: value.value,
+                                                        label: value.label,
+                                                        children: []
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    })
+                                }
+                            })
+                        }else if(sizeArea === 3){
+                            this.options.map((value, i) => {
+                                if (value.value === val[0]) {
+                                    value.children.map((value, i) => {
+                                        if(value.value === val[1]){
+                                            value.children.map((value, i) => {
+                                                if (value.value === val[2]) {
+                                                    if (!value.children.length) {
+                                                        value.children = Items.map((value, i) => {
+                                                            return {
+                                                                value: value.value,
+                                                                label: value.label
+                                                            }
+
+                                                        })
+                                                    }
+                                                }
+                                            })
+                                        }
+
+                                    })
+                                }
+                            })
+
+                        }
+                    } else {
+                        console.log(response);
+                    }
+                }, error => {
+                    console.log(error);
+                })
+            },
+            handleItemChange (val) {
+                this.getNodes(val);
+            },
+            changeArea(val){
+                this.areaId = val;
+            },
             unionSearch() {
-                alert('输入的是:' + this.unionSearchValue)
+                console.log(this.areaId);
+                console.log(this.date1);
+                if(this.date1 == null){
+                    this.date1 = '';
+                }
+                if(this.areaId.length < 1){
+                    this.areaId = ["","","",""];
+                }
+                if(this.areaId =='' && this.date1 =='' && this.unionState =='' && this.unionSearchValue == ''){
+                    this.ajaxMode('');
+                }else{
+                    // var queryfilter={
+                    //     ParentId:this.unionName,
+                    //     ServiceEndTime:this.date1,
+                    //     EnabledMark:this.unionState,
+                    //     EnCode : this.unionSearchValue,
+                    //     OrgName : this.unionSearchValue
+                    // }
+                    var data = {
+                        uid: "0",
+                        orgid: "0",
+                        pagesize: this.pageSize,
+                        pageindex: this.pageIndex - 1,
+                        value: "union" +","+this.areaId[0]+","+this.areaId[1]+","+this.areaId[2]+','+this.areaId[3]+','+this.date1+","
+                            +this.unionState+","+this.unionSearchValue
+                    }
+                    this.$axios.get('/SysOrganize/GetOrganizesBy', {params: data})
+                        .then(res => {
+                            console.log(res)
+                            this.userInfo = res.Record;
+                            for (var i = 0; i < this.userInfo.length; i++) {
+                                this.userInfoCssList[i] = {checked: false};
+                            }
+                            this.pageIndex = res.index + 1;
+                            this.pageSize = res.size;
+                            var newArr = [];
+                            var maxP = Math.ceil(res.totalRows / res.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
+                            // maxP = Math.ceil(res.totalRows / daresta.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
+                            for (var i = 0; i < maxP; i++) {
+                                newArr = i + 1;
+                            }
+                            this.pageCount = newArr;
+                        })
+                }
             },
             newPage(val) {//分页展示****************************************
                 console.log()
@@ -191,11 +354,21 @@
                 this.PhIdList = PhId;
             },
             routerTo(url) {
-                if (url == '/admin/orgin/add') {
-                    this.$router.push({path: url, query: {type: 'add'}});
-                } else {
-                    this.$router.push({path: url, query: {PhId: this.PhIdList}});
+                if(url == '/admin/orgin/add'){
+                    this.$router.push({path: url, query: {showFlam:false}});
+                }else{
+                    if(this.PhIdList.length == 0){
+                        alert('请点击你要修改的组织');
+                        return;
+                    }else{
+                        this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:false}});
+                    }
                 }
+                // if (url == '/admin/orgin/add') {
+                //     this.$router.push({path: url, query: {type: 'add'}});
+                // } else {
+                //     this.$router.push({path: url, query: {PhId: this.PhIdList}});
+                // }
             },
             ajaxMode() {
 
@@ -231,6 +404,7 @@
         },
         mounted() {
             this.ajaxMode();
+            this.getNodes();
         },
 
     }

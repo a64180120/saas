@@ -753,7 +753,7 @@
                                 vm.$message({ showClose: true,message: "密码重置错误", type: "error"});
                             })
                         }).catch(() => {
-                            this.$message({ type: 'info',message: '已取消删除' });
+                            this.$message({ type: 'info',message: '已取消密码重置！' });
                         });
                         this.singleSelection = [];
                     } else {

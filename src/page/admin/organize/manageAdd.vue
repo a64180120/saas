@@ -18,9 +18,21 @@
                 </li>
                 <li>
                     <div class="addFormItemTitle">统一社会信用代码</div>
-                    <div class="inputContainer"><input @blur="unionInput(false)" type="text" placeholder="必填"
+                    <div class="inputContainer"><input @blur="unionInput(false)" type="text" placeholder="必填" style="width: 90%"
                                                        v-model="EnterpriseCode"></div>
                     <div v-show="unionCss.id">请输入信用代码</div>
+                    <div style="position: relative">
+                        <el-upload
+                            ref="uploadEnterprise"
+                            class="avatar-uploader"
+                            action=""
+                            :show-file-list="false"
+                            :before-upload="beforeAvatarUpload"
+                            :http-request='uploadFileMethodEnterprise'>
+                            <img v-if="EnterpriseAttachment" :src="picUrl+EnterpriseAttachment" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </div>
                 </li>
                 <li>
                     <div class="addFormItemTitle">单位地址</div>
@@ -53,6 +65,7 @@
                             </select>
                         </div>
                         <div>街道</div>
+                    </div>
                             <!--<el-cascader-->
                                 <!--expand-trigger="hover"-->
                                 <!--:options="options"-->
@@ -62,7 +75,6 @@
                                 <!--v-model="address"-->
                                 <!--@change="handleChange">-->
                             <!--</el-cascader>-->
-                    </div>
                     <div></div>
                 </li>
                 <li>
@@ -91,14 +103,14 @@
                 <li>
                     <div class="addFormItemTitle">隶属工会</div>
                     <div class="selectContainer">
-                        <select name="unionOwner" v-model="ParentName">
-                            <option v-for="item of ParentNameValues" :key="item.EnCode" :value="item.EnCode">{{item.OrgName}}
+                        <select name="unionOwner" v-model="Parent" @change="changeParentOrg">
+                            <option v-for="item of ParentNameValues" :key="item.PhId" :value="item">{{item.OrgName}}
                             </option>
                         </select>
                     </div>
                     <div></div>
                 </li>
-                <li>
+                <li v-show="showFlam">
                     <div class="addFormItemTitle">会计制度</div>
                     <div class="selectContainer">
                         <select name="unionOwner" v-model="AccountSystem">
@@ -108,7 +120,7 @@
                     </div>
                     <div></div>
                 </li>
-                <li>
+                <li v-show="showFlam">
                     <div class="addFormItemTitle">启用日期</div>
                     <div>
                         <el-date-picker
@@ -122,9 +134,23 @@
                 <li>
                     <div class="addFormItemTitle">工会主席</div>
                     <div>
-                        <div class="inputContainer"><input type="text" v-model="Chairman" disabled></div>
-                        <input @change="getFile($event)" type="file"></div>
-                    <div></div>
+                        <div class="inputContainer"><input style="width: 90%" type="text" v-model="Chairman" disabled></div>
+                        <!--<div @click="testFile">附件</div>-->
+                        <!--<el-button type="primary" round @click="testFile">附件</el-button>-->
+                        <!--<input @change="getFile($event)" type="file">-->
+                        <div style="position: relative; top: -20px">
+                            <el-upload
+                                ref="uploadChairman"
+                                class="avatar-uploader"
+                                action=""
+                                :show-file-list="false"
+                                :before-upload="beforeAvatarUpload"
+                                :http-request='uploadFileMethodChairman'>
+                                <img v-if="ChairmanAttachment" :src="picUrl+ChairmanAttachment" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </div>
+                    </div>
                 </li>
                 <li>
                     <div class="addFormItemTitle">经审会主任</div>
@@ -150,12 +176,20 @@
                 </li>
             </ul>
         </div>
+        <!-- 附件弹出框 -->
+        <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
+            <picture-upload class="pictrueUpload" @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import md5 from 'js-md5'
-    import qs from 'qs'
+import { mapState, mapActions,store } from "vuex";
+import pictureUpload from "@/components/upload";
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
+import md5 from 'js-md5';
+import qs from 'qs';
+
 
     export default {
         name: "manage-add",
@@ -165,17 +199,24 @@
                 file: '1',
                 OrgName: '',
                 EnterpriseCode: '',
+                EnterpriseAttachment:'',
+                ChairmanAttachment:'',
                 Address: '',
                 address: [],
+                fileVisible:false,
                 clearable: true,
                 phoneHead: '1',
                 MobilePhone: '',
                 Telephone: '',
+                showFlam: true,
                 Chairman: '工会主席',
                 Director: '',
                 EnableTime: '',
                 ServiceStartTime: '',
                 ServiceEndTime: '',
+                ParentId: '',
+                ParentCode:'',
+                Parent:'',
                 ParentName: '',
                 AccountSystem: '',
                 ParentNameValues: [],
@@ -187,6 +228,19 @@
                 CityValue:[],
                 CountyValue:[],
                 StreetValue:[],
+                imglist:[
+                    // {
+                    //     PhId:0,
+                    //     BTable:'gcw3_voucher_mst',
+                    //     BName:'aa.jpg',
+                    //     BType:'.jpg',
+                    //     BSize:'203',
+                    //     BFilebody:'',
+                    //     BUrlPath:'/UpLoadFiles/Voucher/2018-12-07/62ad64e635a3435d82b6cc1c770124f7.jpg',
+                    //     BRemark:'',
+                    //     RelPhid:''
+                    // }
+                ],
                 AccountSystemValues: [{id: '0', name: '工会会计制度2009版'}, {id: '1', name: '工会会计制度2008版'}],
                 phoneHeadValues: [{id: '0', name: '手机号'}, {id: '1', name: '0571'}, {id: '2', name: '010'}, {
                     id: '3',
@@ -224,12 +278,29 @@
                 //options: []
             };
         },
+        components: {
+            pictureUpload
+        },
+        computed:{
+            ...mapState({
+                userid: state => state.user.userid,
+                orgid: state => state.user.orgid
+            }),
+            picUrl:function(){
+                return httpConfig.baseurl;
+            }
+        },
         mounted: function () {
             //this.getNodes();
             this.selectParentName();
             this.selectArea("0", 0);
+            console.log(this.showFlam);
+            this.showFlam = this.$route.query.showFlam;
         },
         methods: {
+            ...mapActions({
+                uploadFile: 'uploadFile/Orgupload'
+            }),
             handleChange(value) {//地址选择器的值******************
                 this.address = value;
                 console.log(this.address);
@@ -249,6 +320,105 @@
                         this.unionCss.id = false;
                     }
                 }
+            },
+            //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
+            beforeAvatarUpload(file) {
+                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isRightType) {
+                    this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
+                    return false
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false
+                }
+            },
+            uploadFileMethodEnterprise(param) {
+                let fileObject = param.file;
+                let formData = new FormData();
+                //formData.append('id', this.PhId)
+                formData.append("file", fileObject);
+
+                this.uploadFile(formData).then(res => {
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    //回传的上传临时文件
+                    if(res.Data[0]){
+                        this.EnterpriseAttachment = res.Data[0];
+                        this.$message.success("上传成功");
+                    }
+
+                }).catch(error => {
+                    console.log(error);
+                    this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+                })
+            },
+            uploadFileMethodChairman(param){
+                let fileObject = param.file;
+                let formData = new FormData();
+                //formData.append('id', this.orgForm.PhId)
+                formData.append("file", fileObject);
+
+                this.uploadFile(formData).then(res => {
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return
+                    }
+
+                    //回传的上传临时文件
+                    if(res.Data[0]){
+                        this.ChairmanAttachment = res.Data[0];
+                        this.$message.success("上传成功");
+                    }
+
+                }).catch(error => {
+                    console.log(error);
+                    this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
+                })
+            },
+            testFile(){
+                this.fileVisible=true;
+            },
+            removeimg(item,deleValue) {
+                this.imglist=item;
+                console.log(item)
+
+                var param={
+                    PhId:deleValue.phid,
+                    BTable:'gcw3_voucher_mst',
+                    BUrlPath:deleValue.imgPath
+                };
+
+                this.$axios({
+                    url: '/PVoucherAttachment/PostDeleteFile',
+                    method: "post",
+                    data: param,
+                }).then(res => {
+                    if(res.Status==="error"){
+                        this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                        return;
+                    }
+
+                }).catch(error => {
+                    console.log(error);
+                    this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
+                });
+            },
+            uploadimg(item) {
+                //console.log(item)
+                this.imglist.push(item);
+            },
+            changeParentOrg(){
+                console.log(this.Parent);
+                this.ParentId = this.Parent.PhId;
+                this.ParentName = this.Parent.OrgName;
+                this.ParentCode = this.Parent.EnCode;
+                console.log(this.ParentId);
+                console.log(this.ParentCode);
             },
             changeProvince(){
                 console.log(this.Province);
@@ -307,48 +477,102 @@
             },
             addFinished(bool) {//添加文件上传**************************
                 if (!bool) {
-                    this.$router.go(-1);
+                    //移除TagNav
+                    this.$store.commit("tagNav/removeTagNav", this.$route);
+                    this.$router.push({path: "/admin/orgin"});
+                    //this.$router.go(-1);
                 } else {
-                    var page = {
-                        'Province': this.Province,
-                        'City': this.City,
-                        'County': this.County,
-                        'Street': this.Street,
-                        'file': this.file,
-                        'OrgName': this.OrgName,
-                        'EnterpriseCode': this.EnterpriseCode,
-                        'Address': this.Address,
-                        //'phoneHead': this.phoneHead,
-                        'MobilePhone': this.MobilePhone,
-                        //'Telephone': this.Telephone,
-                        'Chairman': this.Chairman,
-                        'EnableTime': this.EnableTime,
-                        'ServiceStartTime': this.ServiceStartTime,
-                        'ServiceEndTime': this.ServiceEndTime,
-                        'ParentName': this.ParentName,
-                        'AccountSystem': this.AccountSystem,
-                        'Director': this.Director
-                    };
-                    if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
-                        && this.EnterpriseCode !='' && this.Chairman !='' && this.EnableTime != "" && this.ServiceStartTime !=''
-                        && this.ServiceEndTime !='' && this.ParentName != '' && this.AccountSystem !=''&& this.Director !=''){
-                        var data = {
-                            uid: "0",
-                            orgid: "0",
-                            infoData: page
+                    if(this.$route.query.showFlam){
+                        var page = {
+                            'Province': this.Province,
+                            'City': this.City,
+                            'County': this.County,
+                            'Street': this.Street,
+                            'file': this.file,
+                            'OrgName': this.OrgName,
+                            'EnterpriseCode': this.EnterpriseCode,
+                            'Address': this.Address,
+                            //'phoneHead': this.phoneHead,
+                            'MobilePhone': this.MobilePhone,
+                            //'Telephone': this.Telephone,
+                            'Chairman': this.Chairman,
+                            'EnableTime': this.EnableTime,
+                            'ServiceStartTime': this.ServiceStartTime,
+                            'ServiceEndTime': this.ServiceEndTime,
+                            'ParentName': this.ParentName,
+                            'ParentId': this.ParentId,
+                            'ParentEnCode': this.ParentCode,
+                            'AccountSystem': this.AccountSystem,
+                            'EnterpriseAttachment': this.EnterpriseAttachment,
+                            'ChairmanAttachment': this.ChairmanAttachment,
+                            'Director': this.Director
                         };
-                        this.$axios.post('/SysOrganize/PostAdd', data)
-                            .then(res => {
-                                if (res.Status == 'success') {
-                                    this.$message.success("新增成功");
-                                    this.$router.push({path: '/'});
-                                }else{
-                                    this.$message.error('新增失败,请重试!');
-                                }
-                            })
+                        if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
+                            && this.EnterpriseCode !='' && this.Chairman !='' && this.EnableTime != "" && this.ServiceStartTime !=''
+                            && this.ServiceEndTime !='' && this.ParentName != '' && this.AccountSystem !=''&& this.Director !=''){
+                            var data = {
+                                uid: "0",
+                                orgid: "0",
+                                infoData: page
+                            };
+                            this.$axios.post('/SysOrganize/PostAdd', data)
+                                .then(res => {
+                                    if (res.Status == 'success') {
+                                        this.$message.success("新增成功");
+                                        this.$router.push({path: '/'});
+                                    }else{
+                                        this.$message.error('新增失败,请重试!');
+                                    }
+                                })
+                        }else{
+                            this.$message.error('请将信息填写完整再保存,请重试!');
+                        }
                     }else{
-                        this.$message.error('请将信息填写完整再保存,请重试!');
+                        var page = {
+                            'Province': this.Province,
+                            'City': this.City,
+                            'County': this.County,
+                            'Street': this.Street,
+                            'file': this.file,
+                            'OrgName': this.OrgName,
+                            'EnterpriseCode': this.EnterpriseCode,
+                            'Address': this.Address,
+                            //'phoneHead': this.phoneHead,
+                            'MobilePhone': this.MobilePhone,
+                            //'Telephone': this.Telephone,
+                            'Chairman': this.Chairman,
+                            'ServiceStartTime': this.ServiceStartTime,
+                            'ServiceEndTime': this.ServiceEndTime,
+                            'ParentName': this.ParentName,
+                            'ParentId': this.ParentId,
+                            'ParentEnCode': this.ParentCode,
+                            'EnterpriseAttachment': this.EnterpriseAttachment,
+                            'ChairmanAttachment': this.ChairmanAttachment,
+                            'Director': this.Director
+                        };
+                        if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
+                            && this.EnterpriseCode !='' && this.Chairman !='' && this.ServiceStartTime !=''
+                            && this.ServiceEndTime !='' && this.Director !=''){
+                            var data = {
+                                uid: "0",
+                                orgid: "0",
+                                infoData: page
+                            };
+                            this.$axios.post('/SysAdminOrganize/PostAdd', data)
+                                .then(res => {
+                                    if (res.Status == 'success') {
+                                        this.$message.success("新增成功");
+                                        this.$router.push({path: '/'});
+                                    }else{
+                                        this.$message.error('新增失败,请重试!');
+                                    }
+                                })
+                        }else{
+                            this.$message.error('请将信息填写完整再保存,请重试!');
+                        }
                     }
+                    this.$store.commit("tagNav/removeTagNav", this.$route);
+                    this.$router.push({path: "/admin/orgin"});
                     // if (this.OrgName.length > 0 && this.EnterpriseCode.length > 0) {
                     //     let formData = new FormData();
                     //     let config = {
@@ -366,51 +590,53 @@
                     // }
                 }
             },
-            getFile($event) {
-                this.file = $event.target.files[0];
-            },
-            ajaxMode() {
-                var page = {
-                    'Province': this.Province,
-                    'City': this.City,
-                    'County': this.County,
-                    'Street': this.Street,
-                    'file': this.file,
-                    'OrgName': this.OrgName,
-                    'EnterpriseCode': this.EnterpriseCode,
-                    'Address': this.Address,
-                    //'phoneHead': this.phoneHead,
-                    'MobilePhone': this.MobilePhone,
-                    //'Telephone': this.Telephone,
-                    'Chairman': this.Chairman,
-                    'EnableTime': this.EnableTime,
-                    'ServiceStartTime': this.ServiceStartTime,
-                    'ServiceEndTime': this.ServiceEndTime,
-                    'ParentName': this.ParentName,
-                    'AccountSystem': this.AccountSystem,
-                    'Director': this.Director
-                };
-                if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
-                && this.EnterpriseCode !='' && this.Chairman !='' && this.EnableTime != "" && this.ServiceStartTime !=''
-                && this.ServiceEndTime !='' && this.ParentName != '' && this.AccountSystem !=''&& this.Director !=''){
-                    var data = {
-                        uid: "0",
-                        orgid: "0",
-                        infoData: page
-                    };
-                    this.$axios.post('/SysOrganize/PostAdd', data)
-                        .then(res => {
-                            if (res.Status == 'success') {
-                                this.$message.success("新增成功");
-                                this.$router.push({path: '/'});
-                            }else{
-                                this.$message.error('新增失败,请重试!');
-                            }
-                        })
-                }else{
-                    this.$message.error('请将信息填写完整再保存,请重试!');
-                }
-            }
+            // getFile($event) {
+            //     this.file = $event.target.files[0];
+            // },
+            // ajaxMode() {
+            //     var page = {
+            //         'Province': this.Province,
+            //         'City': this.City,
+            //         'County': this.County,
+            //         'Street': this.Street,
+            //         'file': this.file,
+            //         'OrgName': this.OrgName,
+            //         'EnterpriseCode': this.EnterpriseCode,
+            //         'Address': this.Address,
+            //         //'phoneHead': this.phoneHead,
+            //         'MobilePhone': this.MobilePhone,
+            //         //'Telephone': this.Telephone,
+            //         'Chairman': this.Chairman,
+            //         'EnableTime': this.EnableTime,
+            //         'ServiceStartTime': this.ServiceStartTime,
+            //         'ServiceEndTime': this.ServiceEndTime,
+            //         'ParentName': this.ParentName,
+            //         'ParentId': this.ParentId,
+            //         'ParentEnCode': this.ParentCode,
+            //         'AccountSystem': this.AccountSystem,
+            //         'Director': this.Director
+            //     };
+            //     if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
+            //     && this.EnterpriseCode !='' && this.Chairman !='' && this.EnableTime != "" && this.ServiceStartTime !=''
+            //     && this.ServiceEndTime !='' && this.ParentName != '' && this.AccountSystem !=''&& this.Director !=''){
+            //         var data = {
+            //             uid: "0",
+            //             orgid: "0",
+            //             infoData: page
+            //         };
+            //         this.$axios.post('/SysOrganize/PostAdd', data)
+            //             .then(res => {
+            //                 if (res.Status == 'success') {
+            //                     this.$message.success("新增成功");
+            //                     this.$router.push({path: '/'});
+            //                 }else{
+            //                     this.$message.error('新增失败,请重试!');
+            //                 }
+            //             })
+            //     }else{
+            //         this.$message.error('请将信息填写完整再保存,请重试!');
+            //     }
+            // }
         }
     }
 </script>
@@ -522,4 +748,51 @@
         margin-left: 10px;
     }
 
+</style>
+<style>
+    .avatar-uploader{
+        position: absolute;
+        z-index: 1;
+        right: 0px;
+        top: -10px;
+    }
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+    .avatar-uploader .el-upload--text{
+        width: 60px;
+        height: 60px;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 20px;
+        color: #8c939d;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+    }
+    .avatar {
+        width: 60px;
+        height: 60px;
+        display: block;
+    }
+    .orgform .el-form-item__label{
+        background: #00B8EE;
+    }
+
+    .orgform .el-form-item{
+        margin-bottom: 2px;
+    }
+    .pictrueUpload{
+        width:100%;
+        height:100%;
+    }
 </style>
