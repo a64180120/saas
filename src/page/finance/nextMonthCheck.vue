@@ -119,16 +119,12 @@
                                                      if(res.Status=='success'){
                                                          this.checkFaile[3] = false;
                                                      }
-                                                     console.log(res,this.checkFaile)
                                                      this.checkOutCss=true;
-                                                     this.checkFaile.forEach((arr,i,v)=>{
-                                                         console.log(arr,i,v,this.checkOutCss)
-                                                        if(arr==true){
+                                                     for(var che of  this.checkFaile){
+                                                        if(che){
                                                             this.checkOutCss=false;
-                                                             console.log(arr,this.checkOutCss)
                                                         }  
-                                                     })
-                                                     console.log(this.checkOutCss)
+                                                     }
                                                      this.$message("检查结束!")
                                                  })
 

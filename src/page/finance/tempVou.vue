@@ -491,7 +491,7 @@
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
-                console.log(childMsg)
+               
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
