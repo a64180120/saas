@@ -25,13 +25,8 @@
                       <li class="align-right">{{del.crVal}}</li>
                 </ul>
                 <ul class="formDataItems flexPublic">
-<<<<<<< HEAD
-                    <li style="width: 70%;">
-                        合计： <span class="bolder"> {{item.mst.lotal}}</span>
-=======
                     <li style="width: 737px;min-width: 737px;max-width: 737px;">
                         合计： <span class="bolder"> {{item.mst.lotal | NumtoCHN}}</span>
->>>>>>> 9a36846b5b89d80f50e6a27081147641f35fc5de
                     </li>
                     <li style="display: none"></li>
                     <li class="align-right">{{item.mst.lotal}}</li>
