@@ -174,7 +174,7 @@
                 </div>
             </div>            
         </div>
-        <print-tem style="width:20px;height:20px;" ref="print" :printData="printdata"></print-tem>
+        <print-tem  ref="print" :printData="printdata"></print-tem>
     </div>
 </template>
 

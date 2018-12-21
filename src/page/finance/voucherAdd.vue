@@ -1127,7 +1127,7 @@
     .asideNav{
         width:55px;
         position:absolute;
-        right:20px;
+        right:14px;
         top:10px;
         height: 700px;
          box-shadow:0 0 20px 2px #ccc;

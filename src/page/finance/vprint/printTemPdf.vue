@@ -76,7 +76,6 @@ export default {
     printvoucher(){
         //数据制空初始化
         this.tableData=[];
-
         this.voucher5tr(
             setTimeout(()=>{
             //下载pdf
