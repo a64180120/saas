@@ -53,6 +53,7 @@ export default {
           billdate:"2018-12-20", //日期
           voucherNum: "记-0001", //凭证号：记-0001
           lotal: '23987.20', //合计
+          director: "李三", //主管
           supervisor: "张三", //记账
           auditor: "张伟", //审核
           cashier: "王五", //出纳

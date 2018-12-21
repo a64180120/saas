@@ -6,8 +6,8 @@
                 <strong>{{item.mst.voucherTitle}}</strong>
             </div>
             <ul class="formDataItemsA flexPublic">
-                <li>核算单位：{{item.mst.orgName}}</li>
-                <li>日期：{{ item.mst.orgName}}</li>
+                <li>单位：{{item.mst.orgName}}</li>
+                <li>日期：{{ item.mst.billdate}}</li>
                 <li>凭证号：{{item.mst.voucherNum}}</li>
             </ul>
             <div class="formData" ref="printFrom">
@@ -20,19 +20,20 @@
                 <ul class="formDataItems flexPublic" v-for="(del, k) in item.list" :key="k">
                       <li>{{del.abstract}}</li>
                       <li>{{del.subject}}</li>
-                      <li>{{del.deVal}}</li>
-                      <li>{{del.crVal}}</li>
+                      <li class="liright">{{del.deVal | NumFormat}}</li>
+                      <li class="liright">{{del.crVal | NumFormat}}</li>
                 </ul>
                 <ul class="formDataItems flexPublic">
                     <li style="width: 70%;">
-                        合计： <span class="bolder"> {{item.mst.lotal}}</span>
+                        合计： <span class="bolder"> {{item.mst.lotal | NumtoCHN }}</span>
                     </li>
                     <li style="display: none"></li>
-                    <li>{{item.mst.lotal}}</li>
-                    <li>{{item.mst.lotal}}</li>
+                    <li class="liright">{{item.mst.lotal | NumFormat}}</li>
+                    <li class="liright">{{item.mst.lotal | NumFormat}}</li>
                 </ul>
             </div>
             <ul class="formDataItemsB flexPublic">
+                <li>主管：{{item.mst.director}}</li>
                 <li>记账：{{item.mst.supervisor}}</li>
                 <li>审核：{{item.mst.auditor}}</li>
                 <li>出纳：{{item.mst.cashier}}</li>
@@ -167,10 +168,12 @@ export default {
         min-width: 70px;
         padding:0 2px;
     }
-
     .formDataItems{
         border-bottom:1px solid #ebeef5;
         background: white;
+    }
+    .formDataItems .liright{
+        text-align: right !important;
     }
     .formDataItemsA{
         border-bottom:0;
