@@ -13,7 +13,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import Auth from "@/util/auth";
-import printTem from "@/page/finance/vprint/printTem"
+import printTem from "@/page/finance/vprint/printTemPdf"
 
 //科目期初
 export default {
@@ -58,7 +58,7 @@ export default {
           cashier: "王五", //出纳
           producer: this.username //制单
         };
-        
+
         var list=[
           { abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  deVal: '5071.00',  crVal: ''},
           { abstract: "代理收入",  subject: "11220002 应收账款_陕西咸阳佳佳",  deVal: '18916.20',  crVal: ''},
@@ -81,7 +81,6 @@ export default {
 
   }
 }
-</script>
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style scoped>

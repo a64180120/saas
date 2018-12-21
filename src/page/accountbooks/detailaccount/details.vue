@@ -112,6 +112,7 @@
         name: "detailsAc",
         data() {
             return {
+                JD:['平','借','贷'],
                 downloadLoading: false,
                 loading: false,
                 filterText:'',

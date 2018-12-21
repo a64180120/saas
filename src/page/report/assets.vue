@@ -226,6 +226,7 @@
         name: "assets",
         data(){
             return{
+                downloadLoading: false,
                 cashInData:[         ],
                 cashOutData:[         ],
                 cashData:[         ],

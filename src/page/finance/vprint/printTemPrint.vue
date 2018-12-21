@@ -72,11 +72,15 @@ export default {
   },
   methods: {
     printvoucher(){
-      this.voucher5tr(
-        setTimeout(()=>{
-          this.getPdf(this.$refs.printVoucher);
-        })
-      )
+        //数据制空初始化
+        this.tableData=[];
+
+        this.voucher5tr(
+            setTimeout(()=>{
+            //打印web页面
+            this.$print(this.$refs.printVoucher)
+            })
+        )
     },
     //每5列切成一张凭证
     voucher5tr(){
@@ -116,7 +120,6 @@ export default {
     }
   }
 }
-</script>
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>

@@ -4,14 +4,7 @@
             <div class="reportBox">
                 <div class="unionState flexPublic">
                     <ul class="flexPublic">
-                        <li class="flexPublic">
-                            <div>年度:</div>
-                            <div class="selectContainer">
-                                <select  v-model="userState">
-                                    <option v-for="item of userStateValues" :key="item.id" :value="item.id">{{item.uname}}</option>
-                                </select>
-                            </div>
-                        </li>
+
                     </ul>
                     <ul class="flexPublic handle">
                         <a href=""><li>打印</li></a>
@@ -92,7 +85,6 @@
                             <li></li>
                         </ul>
 
-
                     </div>
             </div>
         </div>
@@ -109,6 +101,7 @@
         data(){
             return{
                 date1:[],
+                loading:false
             }
         },
         mounted(){

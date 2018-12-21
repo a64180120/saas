@@ -215,6 +215,7 @@
         name: "user",
         data(){
             return{
+                downloadLoading: false,
                 date1:[],
                 proofType:'0',
                 dataInfo:[{zhixing:30}],
