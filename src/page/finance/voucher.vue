@@ -81,8 +81,8 @@
                             <div>
                                 <ul>
                                     <li >
-                                        <div>
-                                            {{item.SubjectCode}}&nbsp;{{item.SubjectName}}
+                                        <div >
+                                           <span>{{item.SubjectCode}} &nbsp;{{item.SubjectName}}</span> 
                                             <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
                                                     :key="index">.{{assist.BaseName}}</span>
                                         </div>
@@ -204,12 +204,13 @@
         name: "voucher",
         props:{
             'dataList':Object,
+            'sideDate':String
         },
         data(){return{
             fatherData:'',
             fileList:[],
             PhId:'',
-            PDate:new Date,
+            PDate:'',
             PNo:'',
             PAuditorName:'',
             PMakePerson:'',
@@ -259,6 +260,7 @@
                     Dtls:[]
                 }
                 this.PMakePerson=this.username;
+                this.getFreshVoucher();
             }else{   
                 this.getVoucherData(this.dataList.data.Mst);
                 if(this.dataList.data.Mst.PhId){
@@ -269,7 +271,7 @@
         },
         mounted(){
             this.initMoneyCss();
-            this.getSubject();
+            this.getSubject();         
         },
         methods:{
             //voucher组件要返回数据的函数********************
@@ -399,7 +401,6 @@
                         }
                         
                     }
-                
                     return {
                         Mst:this.fatherData,
                         Attachements: this.Attachements
@@ -442,6 +443,38 @@
                     }
                 }
             },
+            //获取最新一个凭证
+            getFreshVoucher(){
+                const loading1=this.$loading();
+                
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    sum1:'',
+                    sum2:'',
+                    keyword:'',
+                    pagesize:1,
+                    pageindex:0,
+                    sort:['PDate DESC','PNo DESC'],
+                   // itemValuePhid:649181122000008,
+                    itemValuePhid:'',
+                    queryfilter:{"PAccper*str*ge*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1]),
+                                    "PAccper*str*le*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1])}
+                }
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                    .then(res=>{
+                        
+                        if(res.Record.length<=0){
+                            this.PDate=nowTime;                            
+                        } else{                         
+                            this.PDate=res.Record[0].PDate;
+                        }   
+                        loading1.close();
+                    })
+                    .catch(err=>{
+                        this.$message({ showClose: true,message: err, type: "error"});loading1.close();
+                    })
+            },
             //获取父组件传参*********************************
             getVoucherData(data){
                 this.fatherData=data;
@@ -479,7 +512,6 @@
                     }
                 }
                 this.AbstractCss=data.PSource?data.PSource:'';//摘要样式******************
-                console.log(this.AbstractCss,data)
                 
             },
             //获取附件信息*******************
@@ -497,7 +529,7 @@
                         loading.close();
                     })
                     .catch(err=>{
-                            console.log(err);loading.close();
+                            this.$message({ showClose: true,message: err, type: "error"});loading.close();
                         }
                     )
             },
@@ -519,7 +551,7 @@
                             }
                         }
                     })
-                    .catch(err=>{console.log(err);loading1.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
             },
             //ajax获取科目下的辅助项***************************
             getAssist(val){
@@ -544,7 +576,7 @@
                         loading1.close();
                         this.moneyInputMask=false;
                     })
-                    .catch(err=>{console.log(err);loading1.close();this.moneyInputMask=false;})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();this.moneyInputMask=false;})
 
             },
             //辅助项选择完成********************
@@ -562,6 +594,7 @@
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
+               
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
@@ -588,7 +621,7 @@
                         loading5.close();
                     })
                     .catch(err=>{
-                        this.$message.error(err);
+                        this.$message({ showClose: true,message: err, type: "error"})
                         loading5.close();
                     })  
             },
@@ -744,6 +777,7 @@
                     this.$message.error('上传图片大小不能超过 2MB!');
                     return false
                 }
+                
             },
             // uploadFileMethodEnterprise(param) {console.log(res,2);
             //     let fileObject = param.file;
@@ -797,7 +831,10 @@
             },
             removeimg(item,deleValue) {//
                this.imglist=item;
-                console.log(item,this.imglist);
+                if(item.length<1){
+                    return;
+                }
+                console.log(item,deleValue,this.imglist);
                 // var urls=deleValue.imgPath.split('/');
                 // console.log(this.imglist,item,urls,deleValue)
                 // for(var i in item[0]){ 
@@ -1126,12 +1163,14 @@
         padding:5px 3px;
     }
      .kemu>div:first-of-type>ul>li:first-of-type{
+         width:100%;
          height:30px;
          overflow-y: auto;         
      }
      .kemu>div:first-of-type>ul>li:first-of-type>div:first-of-type{
          white-space: pre-wrap;
          width:100%;
+         text-align: left;
      }   
     .kemu>div>ul{
         height:100%;
