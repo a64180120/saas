@@ -3,7 +3,7 @@
     <div class="voucher">
         <div  class="voucherContent">
             <div @click.stop="moneyInputHide" v-show="moneyInputMask" class="moneyInputMask"></div>
-
+            <div  v-show="assistItemMask" class="assistItemMask"></div>
             <ul>
                 <li>
                     <ul class="flexPublic voucherContentItem">
@@ -59,7 +59,7 @@
                                 <ul>
                                     <li >
                                         <div>
-                                            {{item.SubjectCode}}&nbsp;{{item.SubjectName}}
+                                            <span>{{item.SubjectCode}}&nbsp;{{item.SubjectName}}</span>
                                             <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
                                                     :key="index">.{{assist.BaseName}}</span>
                                         </div>     
@@ -477,9 +477,10 @@
             },
             //辅助项选择完成********************
             assistOk(bool,item,index){
+                console.log(item)
                 if(bool){
                     item.DtlAccounts.assistItem=this.assistSels;
-                    console.log(this.assistSels)
+                    console.log( item.DtlAccounts.assistItem)
                 }else{
                     item.SubjectCode='';
                     item.SubjectName='';
@@ -490,8 +491,9 @@
             },
             //科目下拉框选择的科目********************************
             itemClick(childMsg){
+                console.log(childMsg)
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
-                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.KName;
+                this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
@@ -707,6 +709,12 @@
         padding:8px 18px;
         font-size:18px;
     }
+    .assistItemMask{
+        position: absolute;
+        width:100%;
+        height:100%;
+        z-index: 9;
+    }
 
     .voucherContent{
         margin-top:20px;
@@ -917,10 +925,12 @@
     }
      .kemu>div:first-of-type>ul>li:first-of-type{
          height:30px;
+         width:100%;
          overflow-y: auto;         
      }
      .kemu>div:first-of-type>ul>li:first-of-type>div:first-of-type{
          white-space: pre-wrap;
+         text-align: left;
          width:100%;
      }  
    
@@ -989,6 +999,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom:5px;
+        width:100%;
     }
     .kemu>.assistContainer>ul>li>div:first-of-type{
         margin-right: 15px;
