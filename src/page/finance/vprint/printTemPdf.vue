@@ -4,11 +4,12 @@
         <div class="manageContent" v-for="(item, n) in tableData" :key="n">
             <div class="title">
                 <strong>{{item.mst.voucherTitle}}</strong>
+                <div>附单据数：{{item.mst.billNum}}张</div>
             </div>
             <ul class="formDataItemsA flexPublic">
-                <li>核算单位：{{item.mst.orgName}}</li>
-                <li>日期：{{ item.mst.orgName}}</li>
-                <li>凭证号：{{item.mst.voucherNum}}</li>
+                <li>单位：{{item.mst.orgName}}</li>
+                <li>日期：{{ item.mst.billdate}}</li>
+                <li>凭证号：{{item.mst.voucherNum}}({{Math.floor(n+1)+'/'+(Math.floor(tableData.length))}})</li>
             </ul>
             <div class="formData" ref="printFrom">
                 <ul>
@@ -20,19 +21,20 @@
                 <ul class="formDataItems flexPublic" v-for="(del, k) in item.list" :key="k">
                       <li>{{del.abstract}}</li>
                       <li>{{del.subject}}</li>
-                      <li>{{del.deVal}}</li>
-                      <li>{{del.crVal}}</li>
+                      <li class="align-right">{{del.deVal}}</li>
+                      <li class="align-right">{{del.crVal}}</li>
                 </ul>
                 <ul class="formDataItems flexPublic">
                     <li style="width: 737px;min-width: 737px;max-width: 737px;">
-                        合计： <span class="bolder"> {{item.mst.lotal}}</span>
+                        合计： <span class="bolder"> {{item.mst.lotal | NumtoCHN}}</span>
                     </li>
                     <li style="display: none"></li>
-                    <li>{{item.mst.lotal}}</li>
-                    <li>{{item.mst.lotal}}</li>
+                    <li class="align-right">{{item.mst.lotal}}</li>
+                    <li class="align-right">{{item.mst.lotal}}</li>
                 </ul>
             </div>
             <ul class="formDataItemsB flexPublic">
+                <li>主管：{{item.mst.chager}}</li>
                 <li>记账：{{item.mst.supervisor}}</li>
                 <li>审核：{{item.mst.auditor}}</li>
                 <li>出纳：{{item.mst.cashier}}</li>
@@ -124,16 +126,23 @@ export default {
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style lang="scss" scoped>
    .manageContent{
-       margin: 120px 0 0px 0;
+       margin: 110px 0 0px 0;
        font-size:17px;
        padding-bottom: 0;
     .title{
-        font-size: 23px;
+        font-size: 25px;
         text-align: center;
         padding-bottom: 40px;
         font-weight: 600;
-
     }
+       .title div{
+           font-size: 17px;
+           text-align: right;
+           font-weight: 100;
+           position: relative;
+           right: 10px;
+           top: -20px;
+       }
     .formData{
         margin-bottom: 5px;
     }
