@@ -189,6 +189,7 @@
         name: "user",
         data(){
             return{
+                downloadLoading: false,
                 changeBtn:{
                     flag:true,
                     title:'编辑',
