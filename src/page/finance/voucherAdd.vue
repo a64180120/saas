@@ -568,7 +568,7 @@
                 }
                 const loading=this.$loading();
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{   console.log(res)     
+                    .then(res=>{        
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];

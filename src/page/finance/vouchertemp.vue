@@ -480,6 +480,9 @@
                     width:20px;
                     height:20px;
                     cursor:pointer;
+                    &:hover{
+                        opacity:0.7;
+                    }
                 }
             }
             .voucherList{
