@@ -744,6 +744,8 @@
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
+                    pageindex:this.pageindex,
+                    pagesize:this.pagesize,
                     sum1:this.superSearchVal.sum1,
                     sum2:this.superSearchVal.sum2,
                     keyword:this.superSearchVal.keyword,
@@ -1473,6 +1475,9 @@
             width:20px;
             height:20px;
             cursor:pointer;
+            &:hover{
+                opacity:0.7;
+            }
         }
     }
     .voucherMaskActive{

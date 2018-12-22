@@ -150,6 +150,25 @@
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
         </div>
+        <!-- 存为模板******************** -->
+        <div v-if="temp.tempMask" class="tempMask">
+            <div>
+                 <p  class="title">
+                    <span>存为模板</span><i @click="tempMaskShow(false)"></i></p>
+                <ul>
+                    <li class="flexPublic">
+                        <div>模板名称</div><div class="inputContainer"><input placeholder="必填" type="text" v-model="temp.TemName"></div>
+                    </li>
+                    <li class="flexPublic">
+                        <div>保存金额</div>
+                        <div><label > <input type="radio" name="tempM" v-model="temp.TemMoney" value='1'> 是 </label><label > <input type="radio" name="tempM" v-model="temp.TemMoney" value='0'> 否</label></div>
+                    </li>
+                </ul>
+                <div class="flexPublic">
+                    <span class="btn" @click="tempMaskShow(false)">取消</span><span class="btn" @click="tempMaskShow(true)">保存</span>    
+                </div> 
+            </div>
+        </div>
     </div>
 </template>
 
@@ -167,6 +186,12 @@
             year:'',
             month:'',
             searchVal:'',
+            temp:{ 
+                TemName:'',
+                TemMoney:0,
+                tempMask:false
+            },
+            
             superSearchVal:{//高级搜索参数******************
                     assistItemList:{type:'',list:''},
                     assistItem:'',
@@ -198,7 +223,8 @@
             nextMonthCss:false,
             allReset:'',
             resetShow:false,
-            voucherMask:false
+            voucherMask:false,
+           
         }},
         created(){ 
             if(this.$route.query.list){
@@ -235,8 +261,7 @@
                         this.modelListCss=true;
                         break;
                     case 'keepModel':
-                        this.voucherData();
-                        this.keepModel();
+                        this.temp.tempMask=true;   
                         break;
                     case 'moreVoucher':
                         //this.$store.commit("tagNav/turnCachePage",false);
@@ -287,6 +312,15 @@
                         this.voucherData();
                         this.keepVoucher('print');
                         break;
+                    case 'fresh':
+                         this.voucherDataList.data={
+                            Mst:{},
+                            Attachements:[]
+                        }
+                        this.voucherDataList.bool=false;
+                        this.getChecked();
+                        
+                        break;
                 }
             },
             //保存凭证*******************
@@ -316,9 +350,8 @@
                }else{
                    this.$message('请输入凭证会计期!')
                    return;
-               }console.log(Vdata.Mst)
+               }
                if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
-                    console.log(Vdata.Mst)
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -373,8 +406,33 @@
                 }
                 setTimeout(delay,5);
             },
+            //保存为模板弹窗确认******************
+            tempMaskShow(bool){
+                if(!bool){
+                    this.temp.tempMask=false;
+                }else{
+                    if(!this.temp.TemName){
+                        this.message("请输入凭证名称!")
+                    }else{
+                        this.voucherData();
+                        var dtls=this.voucherDataList.data.Mst.Dtls;
+                        if(this.temp.TemMoney==0){
+                            for(var dtl of dtls){
+                                dtl.JSum='';
+                                dtl.DSum='';
+                                if(dtl.DtlAccounts){
+                                    dtl.DtlAccounts[0].JSum='';
+                                    dtl.DtlAccounts[0].DSum='';
+                                }
+                            }
+                        }            
+                        this.keepModel(this.temp.TemName);
+                        this.temp.tempMask=false;
+                    }
+                }
+            },
             //保存模板**********************
-            keepModel(){
+            keepModel(name){
                 if(this.voucherDataList.data.Mst.PhId ){
                     this.clearPhId(this.voucherDataList.data.Mst); 
                 }
@@ -382,6 +440,7 @@
                     this.$message('请输入内容!')
                     return;
                 }
+                this.voucherDataList.data.Mst.TemName=name;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -509,7 +568,7 @@
                 }
                 const loading=this.$loading();
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{        
+                    .then(res=>{   console.log(res)     
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
@@ -517,7 +576,8 @@
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                         this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                        this.voucherDataList.bool=true;
+                        console.log(this.voucherDataList)
+                        this.voucherDataList.bool=true;           
                         this.$forceUpdate(); 
                         loading.close();
                     })
@@ -1606,6 +1666,9 @@
             width:20px;
             height:20px;
             cursor:pointer;
+            &:hover{
+                opacity:0.7;
+            }
         }
     }
     
@@ -1625,5 +1688,55 @@
             }
         }     
 
+    }
+    .tempMask{
+        width:100%;
+        height:100%;
+        top:0;
+        left:0;
+        position:absolute;
+        z-index: 999;
+        background: rgba(0,0,0,.3);
+        >div{
+            position: absolute;
+            left:30%;
+            top:150px;
+            width:552px;
+            height:246px;
+            background: #fff;
+            border-radius: 5px;
+            padding:5px 15px;
+            >ul{
+                padding:30px 50px;
+                font-size:16px;
+                >li{
+                    justify-content: flex-start;
+                    height:100%;
+                    line-height:100%;
+                    &:first-of-type{
+                        margin-bottom:30px;
+                    }
+                    
+                    >div:first-of-type{
+                        width:100px;
+                        
+                    }
+                    >div{
+                        >label{
+                            margin-right: 20px;
+                        }
+                    }
+                }
+            }
+            >div{
+                justify-content: center;
+                >span{
+                    margin-left:60px;
+                    width:110px;
+                    height:35px;
+                    line-height: 35px;
+                }
+            }
+        }
     }
 </style>

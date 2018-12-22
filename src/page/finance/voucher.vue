@@ -87,7 +87,7 @@
                                                     :key="index">.{{assist.BaseName}}</span>
                                         </div>
                                     </li>
-                                    <li v-show="item.SubjectCode"><span>余额:</span><span>{{item.balance}}</span></li>
+                                    <li v-show="item.SubjectCode"><span>余额:</span><span>{{item.balance?item.balance:0}}</span></li>
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
@@ -600,11 +600,12 @@
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
                 this.getAssist(childMsg);
-                this.getBalance(childMsg.data.KCode);
+                this.getBalance(childMsg);
                 this.$forceUpdate();
             },
             //科目余额*******************
-            getBalance(Kcode){
+            getBalance(Msg){
+                var Kcode=Msg.data.KCode;
                 var nowTime=this.nowTime;
                 var data={
                     Year:nowTime.getFullYear(),
@@ -617,7 +618,11 @@
                         if(res.Status=='error'){
                             this.$message(res.Msg)
                         }
-                        this.balance=res.Record[0].j_sum-res.Record[0].d_sum;
+                        if(res.Record.length==0){
+                            this.voucherInfo[Msg.id].balance=0
+                        }else{
+                             this.voucherInfo[Msg.id].balance=res.Record[0].j_sum-res.Record[0].d_sum;
+                        }
                         loading5.close();
                     })
                     .catch(err=>{
@@ -640,9 +645,10 @@
                 this.voucherInfo[index].SubjectCode='';
                 this.voucherInfo[index].SubjectName='';
                 item.money={jiefang:'',daifang:''};
-                var input=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[0]; 
-                this.inputBlur(input,item,'jiefang');
-                this.inputBlur(input,item,'daifang');
+                var input1=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[0]; 
+                var input2=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.nextElementSibling.children[0].children[0]; 
+                this.inputBlur(input1,item,'jiefang');
+                this.inputBlur(input2,item,'daifang');
                 this.moneyInputMask=false;
                 this.$forceUpdate();
             },
