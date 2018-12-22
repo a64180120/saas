@@ -3,7 +3,7 @@
     <div class="voucher">
         <div class="voucherHead">
             <ul class="flexPublic">
-                <li><span>凭证字号: </span><span>{{PNo}}</span></li>
+                <li><span>凭证字号: 记-</span><span>{{PNo}}</span></li>
                 <li>
                     <div class="block">
                         <span class="demonstration">凭证日期: </span>
@@ -91,7 +91,7 @@
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
-                            <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
+                            <searchSelect style="z-index:10" :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
                                           :nodatatext="itemText" @item-click="itemClick"></searchSelect>
                             <div @click.stop="1" v-show="assistItem[index].checked" class="assistContainer">
                                 <ul>
