@@ -514,9 +514,10 @@
                 this.voucherInfo[index].SubjectCode='';
                 this.voucherInfo[index].SubjectName='';
                 item.money={jiefang:'',daifang:''};
-                var input=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[0]; 
-                this.inputBlur(input,item,'jiefang');
-                this.inputBlur(input,item,'daifang');
+                var input1=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[0]; 
+                var input2=$event.currentTarget.parentNode.parentNode.parentNode.nextElementSibling.nextElementSibling.children[0].children[0]; 
+                this.inputBlur(input1,item,'jiefang');
+                this.inputBlur(input2,item,'daifang');
                 this.moneyInputMask=false;
                 this.$forceUpdate();
             },

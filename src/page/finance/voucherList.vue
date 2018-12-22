@@ -157,7 +157,7 @@
         </div>
         <side-time @time-click="getSideDate" ref='sideDate'></side-time>
         <!-- 弹出凭证********************* -->
-        <div :class="{voucherMask:voucherMask}">
+        <div v-if="voucherMask" :class="{voucherMask:voucherMask}">
             <div class="voucherContainer">
                 <p v-if="voucherMask" class="title"><span v-if="voucherMask=='copy'">复制凭证</span>
                         <span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红凭证</span>
@@ -744,6 +744,8 @@
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
+                    pageindex:this.pageindex,
+                    pagesize:this.pagesize,
                     sum1:this.superSearchVal.sum1,
                     sum2:this.superSearchVal.sum2,
                     keyword:this.superSearchVal.keyword,
@@ -1473,6 +1475,9 @@
             width:20px;
             height:20px;
             cursor:pointer;
+            &:hover{
+                opacity:0.7;
+            }
         }
     }
     .voucherMaskActive{
