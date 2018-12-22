@@ -198,7 +198,7 @@ const actions = {
             commit('tagNav/delAllTagNav', '', {root: true})
 
             //清除配置文件
-            commit('config/setPConfig', '', {root: true})
+            commit('Pconfig/setPConfig', '', {root: true})
 
             resolve();
         });
@@ -217,43 +217,28 @@ const actions = {
             // 重新登录时校验Token是否存在，若不存在则获取
 
             //token
-            if(!tokenInfo){
-                dispatch("getToken").then(() => {
-                    //commit("setToken", state.token);
-                });
-            }else{
+            if(tokenInfo){
                 //设置用户 state ,重新加载用户缓存
                 commit("setToken", tokenInfo);
             }
             //用户
-            if(!userInfo){
-                dispatch("loginByPhone").then(() => {
-
-                });
-            }else{
+            if(userInfo){
                 //设置用户 state ,重新加载用户缓存
                 commit("setUserInfo", userInfo);
             }
 
             //菜单
-            if(!menuInfo){
-                dispatch("getNavList").then(() => {
-
-                });
-            }else{
+            if(menuInfo){
                 //设置用户 state ,重新加载用户缓存
                 commit("setNavList", menuInfo);
             }
 
             //配置信息
-            if(!config){
-                dispatch("config/getBusinessConfig").then(() => {
-
-                });
-            }else{
+            if(config){
                 //设置用户 state ,重新加载用户缓存
-                commit("config/setPConfig", config);
+                commit("Pconfig/setPConfig", config,{root: true});
             }
+
             
             resolve();
         });

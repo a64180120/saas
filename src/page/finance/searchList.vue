@@ -96,7 +96,7 @@
     width: 100%;
     height:auto !important;
     margin: 0 auto;
-    z-index:10;
+    z-index:99;
     background: #fff;
     box-shadow: 0px 0px 10px #ccc;
     &._self-show {

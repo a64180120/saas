@@ -47,7 +47,7 @@
             <p class="title"><span v-if="tempCss=='add'">新建模板</span><span v-if="tempCss=='update'">修改模板</span><i @click="showList"></i></p>
             <div class="flexPublic tempName">
                 <div v-if="tempCss=='add'" class="flexPublic"><span>模板名称</span><div class="inputContainer"><input type="text" placeholder="输入模板名称" v-model="TemName"></div></div>
-                <div v-if="tempCss=='update'" class="flexPublic"><span>模板名称</span><div class="inputContainer"><input type="text" disabled v-model="TemName"></div></div>
+                <div v-if="tempCss=='update'" class="flexPublic"><span>模板名称</span><div class="inputContainer"><input type="text"  v-model="TemName"></div></div>
                 <div @click.stop="add()">保存模板</div>
             </div>
             <temp-vou :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></temp-vou>

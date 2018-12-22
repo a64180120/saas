@@ -1,6 +1,6 @@
 <template>
 <!--17-->
-    <div @click.stop="0" class="vue-dropdown default-theme" v-show-extend="show">
+    <div @click.stop="0" class="vueDropdown defaultTheme" v-show-extend="show">
       <div class="search-module clearfix" v-show="itemlists.kemu.length">
         <input  class="search-text" v-model="searchValue"
                @keyup='search($event)' :placeholder="placeholder" />
@@ -89,13 +89,14 @@
 </script>
 
 <style lang="scss" scoped>
-  .vue-dropdown.default-theme {
+  
+  .vueDropdown.defaultTheme {
     position: absolute;
+    z-index:99;
     display: none;
     width: 100%;
     height:auto !important;
     margin: 0 auto;
-    z-index:10;
     background: #fff;
     box-shadow: 0px 0px 10px #ccc;
     &._self-show {

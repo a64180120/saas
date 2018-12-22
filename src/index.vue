@@ -15,10 +15,13 @@ export default {
     beforeMount(){
         // 首次加载/刷新时判断当前是否在登录状态
         var userinfo=Auth.getUserInfoData();
-        if (!userinfo) {
-            console.log("重新登录")
+        if (userinfo) {
+            console.log("重新加载缓存数据")
             //重新加载state状态
             this.$store.dispatch('user/relogin')
+        }else{
+            console.log("重新登录")
+            this.$store.dispatch('user/logout')
         }
         // 加载默认语言包
         let defLang = Cookie.get('lang') || this.$i18n.locale

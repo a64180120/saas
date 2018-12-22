@@ -68,7 +68,7 @@
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
-                            <searchSelect :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
+                            <searchSelect style="z-index:10" :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
                                           :nodatatext="itemText" @item-click="itemClick"></searchSelect>
                             <div @click.stop="1" v-show="assistItem[index].checked" class="assistContainer">
                                 <ul>

@@ -568,7 +568,7 @@
                     keyword:this.superSearchVal.keyword,
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
-                    sort:['PDate DESC','PNo DESC'],
+                    sort:['PType','PDate DESC','PNo DESC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
@@ -576,13 +576,14 @@
                 console.log(data)
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                        if(res.Record.length<=0){
-                            this.$message('无法找到该凭证!')
+                         if(res.Status=='success'){
+                            this.$message(res.Msg);
                             this.voucherDataList.data={
                                          Mst:{},
                                          Attachements:[]
                              }
-                             
+                             loading1.close();
+                             return;
                         } else{                         
                             if(val=='searcher'&&res.Record.length>1){
                                 this.$store.commit("tagNav/upexcludeArr", ['voucherList']);

@@ -45,17 +45,9 @@ export default {
       }
     },
     created() {
-        var config=Auth.getPConfigStatus();
-        if (!config) {
-            var para={
-                userid:this.$store.state.user.userid,
-                orgid:this.$store.state.user.orgid,
-                year:''
-            }
-            this.$store.dispatch('config/getBusinessConfig',para).then((res)=>{
-                console.log(res);
-            })
-        }
+        // console.log('home')
+        // var config = Auth.getPConfigStatus();
+        // console.log(config)
     },
     methods: {
       collapseChange: function (childValue) {

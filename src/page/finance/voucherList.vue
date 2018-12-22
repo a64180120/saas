@@ -96,7 +96,7 @@
                     <ul>
                         <li>
                             <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
-                            <span>凭证字号 : {{item.PNo}}</span>
+                            <span>凭证字号 : 记-{{item.PNo}}</span>
                             <span>附件数 : {{item.PAttachment}}</span>
                             <span>制单人 : {{item.PMakePerson}}</span>
                             <span>审核人 : {{item.PAuditorName}}</span>
@@ -736,7 +736,7 @@
                 return val;
             },
             //凭证列表***************高级搜索***********************
-            getvoucherList(str){console.log(1111)
+            getvoucherList(str){
                 let base=httpConfig.getAxiosBaseConfig();
                 this.superSearchVal.date1=this.dateTurn(this.superSearchVal.date1)
                 this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
@@ -748,7 +748,7 @@
                     sum2:this.superSearchVal.sum2,
                     keyword:this.superSearchVal.keyword,
                     export2excel:str,
-                    sort:['PDate DESC','PNo DESC'],
+                    sort:['PType','PDate DESC','PNo DESC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
@@ -761,11 +761,11 @@
                 
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                        console.log(res)
                         if(res.Status=='success'){
                             this.$message(res.Msg);
-                        }
-                       
+                            loading1.close();
+                            return;
+                        }  
                         if(str=='yes'){
                             window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
                             return;
@@ -777,7 +777,7 @@
                         }
                          loading1.close();
                     })
-                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});loading1.close();})
             },
             getChecked(){
                 var data={
