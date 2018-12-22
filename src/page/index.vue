@@ -12,8 +12,8 @@
       <div class="carrouselContainer">
         <div class="carrouselTitle">工会财务管理平台</div>
         <el-carousel height="560px">
-          <el-carousel-item v-for="item in 4" :key="item">
-            <img src="@/assets/img/banner2.png" alt="">
+          <el-carousel-item v-for="img in imgList" :key="img">
+            <img :src="img">
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -56,7 +56,7 @@
               入越南第十三届国会。陈大光长期在越南内</p>
           </div>
           <ul>
-            <li  v-for="(item,index) of proInfoList" :key="index">
+            <li v-for="(item,index) of proInfoList" :key="index" @click.stop="openUrl(item)">
               <span>{{item.info}}</span>
               <span>{{item.date}}</span>
             </li>
@@ -91,7 +91,7 @@
             </ul>
           </div>
           <ul>
-            <li v-for="(item,index ) of roleInfo" :key="index">
+            <li v-for="(item,index ) of newsInfo" :key="index" @click.stop="openUrl(item)">
               <span>{{item.info}}</span>
               <span>{{item.date}}</span>
             </li>
@@ -194,29 +194,43 @@
 
 <script>
   import { mapActions } from 'vuex'
+  import config from '@/util/ajaxConfig'
   export default {
     name: "home",
     data(){
       return {
         nav:'',
         proInfoList:[
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'}
+          {info:'杭州市总启动2019平安返乡活动 万个车票补贴名额等你领',date:'2018-03-05',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167368656243964.html'},
+          {info:'杭州市总工会推出工间操公益培训',date:'2018-05-12',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29168762730849606.html'},
+          {info:'郑荣胜赴萧山区开展“五个一”蹲点调研',date:'2018-06-15',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29169282380215988.html'},
+          {info:'宁波市工会系统第一批“爱心托管班”出炉 每家给予3000元的经费补助',date:'2018-06-15',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29169286514242548.html'},
+          {info:'丽水与对口帮扶合作地区分享改革成果 “最多跑一次” 跨省传真经',date:'2018-08-20',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167357212420899.html'},
+          {info:'台州市域铁路巨晓林工作室“五小”成果丰硕 27项创新成果节约成本100万元',date:'2018-08-20',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167363932484398.html'},
+          {info:'线上线下齐发力，宁波市总工会“圈粉”有招',date:'2018-10-20',url:'ttps://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080941579871468.html'},
+          {info:'龙游县龙天红木小镇工会：从单一“小工会”走向多元“大工会”',date:'2018-10-21',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080945165230067.html'}
         ],
-        roleInfo:[
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'},
-          {info:'陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称',date:'2018-5-2'}
+        newsInfo:[
+          {info:'国务院印发《关于做好当前和今后一个时期促进就业工作的若干意见》',date:'2018-05-02',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97478'},
+          {info:'人社部、财政部印发《关于全面推行企业新型学徒制的意见》',date:'2018-05-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97276'},
+          {info:'中办国办印发《关于提高技术工人待遇的意见》',date:'2018-06-12',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=95935'},
+          {info:'国办印发《保障农民工工资支付工作考核办法》',date:'2018-06-12',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=95418'},
+          {info:'中共中央国务院关于全面振兴东北地区等老工业基地的若干意见',date:'2018-06-15',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=92570'},
+          {info:'中共中央国务院关于打赢脱贫攻坚战的决定',date:'2018-08-03',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=92089'},
+          {info:'中共中央印发《关于深化人才发展体制机制改革的意见》',date:'2018-10-10',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=92438'}
         ],
+        imgList:[]
       }
+    },
+    computed:{
+        picUrl:function(){
+            return config.baseurl;
+        }
+    },
+    mounted(){
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top1.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top2.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top3.png')
     },
     methods:{
       navEnter(val){
@@ -225,6 +239,10 @@
       },
       navLeave(){
         this.nav='';
+      },
+      //打开网址
+      openUrl(object){
+        window.open(object.url); 
       }
     }
   }
