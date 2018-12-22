@@ -110,9 +110,18 @@
                             <li>方向</li>
                             <li>余额(元)</li>
                         </ul>
+                        <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
+                            <li>{{dataInfoMonth.Pdate.slice(0,10)}}</li>
+                            <li class="align-center" :title="dataInfoMonth.Pno" style=""><a>{{dataInfoMonth.Pno}}</a></li>
+                            <li :class="{bolder:true,'align-center':true}">{{dataInfoMonth.Abstract}}</li>
+                            <li class="align-right">{{dataInfoMonth.JSum| NumFormat}}</li>
+                            <li class="align-right" :title="dataInfoMonth.DSum">{{dataInfoMonth.DSum| NumFormat}}</li>
+                            <li>{{JD[dataInfoMonth.DType]}}</li>
+                            <li class="align-right">{{dataInfoMonth.Balance | NumFormat}}</li>
+                        </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
                             <li>{{item.Pdate.slice(0,10)}}</li>
-                            <li class="align-center" :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
+                            <li class="align-center" :title="item.Pno" style=""><a @click="showvoucher">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
                             <li class="align-right">{{item.JSum=='0.00'?'':(item.JSum)}}</li>
                             <li class="align-right" :title="item.DSum">{{item.DSum=='0.00'?(item.Abstract=='本月累计'||item.Abstract=='本年累计'?'0.00':''):(item.DSum)}}</li>
@@ -131,6 +140,7 @@
                         <!--</div>-->
                     </div>
                 </div>
+                <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
             </div>
             <div class="timeSelectBox">
                 <time-select-bar @item-click="dateChoose"
@@ -146,6 +156,7 @@
     import { mapState, mapActions } from 'vuex'
     import { SubjectList } from '@/api/subject/subjectInfo'
     import TimeSelectBar from "@/components/TimeSelectBar/index";
+    import voucher from '../..//finance/voucher'
     /**
      * 明细表
      */
@@ -153,7 +164,8 @@
         name: "detailsAc",
         data() {
             return {
-
+                sideDate:'',
+                voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
                 JD:['平','借','贷'],
                 downloadLoading: false,
                 loading: false,
@@ -172,6 +184,7 @@
                 totalCount: 0, //总页数
                 busy:false,    //是否正在加载过程中
                 dataInfo: [],
+                dataInfoMonth: {},//月初数据
                 selectSubject:'',  //选择科目
                 date1:{choosedYear:'',
                        choosedMonth:'',
@@ -187,7 +200,8 @@
                 startCode:'',
                 endCode:'',
                 startMoney:'',
-                endMoney:''
+                endMoney:'',
+                que:''
             }
         },
         created() {
@@ -206,10 +220,10 @@
                 this.inputCode=val;
             },
             proofType:function(){
-                this.getData(this.date1,this.proofType);
+                this.getData();
             }
         },
-        components: {TimeSelectBar},
+        components: {TimeSelectBar,voucher},
         computed:{
             ...mapState({
                 orgid:state=>state.user.orgid,
@@ -218,6 +232,11 @@
             })
         },
         methods: {
+            //显示凭证
+            showvoucher:function(){
+                this.voucherDataList.bool=true;
+   `    ` ``},
+            //清除高级查询数据
             clearPorp:function(){
                 this.zwTime='';
                 this.startCode='';
@@ -243,9 +262,8 @@
             },
 
             selectBtn:function(){
-                 let que='{"[or-dictionary0]*dictionary*or",{"Pno*str*like":"'+this.inputKvalue+'" , "Abstract*str*like":"'+this.inputKvalue+'"}}';
-                this.getData(this.inputKvalue);
-
+                 this.que=this.inputKvalue
+                this.getData();
                 // let flag=true;
                 // for(let i in this.subjectLists){
                 //     if(this.subjectLists[i].KCode==this.inputCode){
@@ -264,10 +282,11 @@
                 this.date1=time;
                 this.getData();
             },
-            getData(queryf) {
+            //查询详细数据
+            getData() {
+                this.getDataByMonth();
                 let year='';
                 let Pmonth='';
-                let query=(queryf==undefined?'':queryf);
                 if(this.date1.choosedYear==''){
                     let currentYear = new Date();
                     let currentyear=currentYear.getFullYear(currentYear);
@@ -293,13 +312,12 @@
                     Title:this.selectSubject.KName,
                     Verify:this.proofType,
                     Pmonth:Pmonth,
-                    value:query,
+                    value:this.inputKvalue==''?'':this.que,
                     StartTime:this.zwTime[0],
                     EndTime:this.zwTime[1],
                     StartPNo:this.startCode,EndPno:this.endCode,
                     StartAmount:this.startMoney,EndAmount:this.endMoney
                 };
-
                 this.loading = true;
                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
@@ -332,8 +350,66 @@
                         this.loading = false;
                         this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
                     })
+            },
+            //查询月初数据
+            getDataByMonth() {
+                this.dataInfoMonth={};
+                console.log(this.dataInfoMonth);
+                let year='';
+                let Pmonth='';
+                console.log('==============');
+                if(this.date1.choosedYear==''){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    year=currentyear;
+                    Pmonth=currentMonth+','+currentMonth;
+                }else{
+                    if(this.date1.choosedMonth!=this.date1.choosedMonthEnd){return}
+                    else{
+                        year=this.date1.choosedYear;
+                        Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
+                    }
+                }
+                var data = {
+                    uid: this.uid,
+                    orgid:this.orgid,
+                    Kcode: this.selectSubject.KCode||'',
+                    Year: year,
+                    OrgIds: this.orgid,
+                    pageindex:this.testIndex,
+                    pagesize:this.pageSize,
+                    Title:this.selectSubject.KName,
+                    Verify:this.proofType,
+                    Pmonth:Pmonth,
+                    value:this.inputKvalue==''?'':this.que,
+                    StartTime:this.zwTime[0],
+                    EndTime:this.zwTime[1],
+                    StartPNo:this.startCode,EndPno:this.endCode,
+                    StartAmount:this.startMoney,EndAmount:this.endMoney
+                };
+                this.loading = true;
+                let that=this;
+                this.$axios.get("/PVoucherMst/GetDetailAccount_MonthStart",{params:data})
+                    .then(res=>{
+                        console.log(res);
+                        that.loading = false;
 
-
+                        if(res.Status==='error'){
+                            this.$message.error(res);
+                            return
+                        }
+                        that.dataInfoMonth=res;
+                        console.log(that.dataInfoMonth);
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                        this.loading = false;
+                        this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
+                    })
             },
             async getSubjectData(queryfil){
                 console.log('查询科目');

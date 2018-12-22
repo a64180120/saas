@@ -19,21 +19,22 @@
                     <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
                     <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
                     <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                    <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
                 </ul>
             </div>
             <div class="formData" id="form1" ref="printFrom">
             <ul>
-                <li>编号</li>
-                <li>名称</li>
-                <li>上年决算数</li>
-                <li>本年预算数</li>
+                <li>科目编码</li>
+                <li>科目名称</li>
+                <li>上年决算数(元)</li>
+                <li>本年预算数(元)</li>
                 <li>说明</li>
             </ul>
             <template v-for="(item,index) in budgetList">
                 <template v-if="item.SubjectCode=='BNSRHJ'">
                     <ul class="formDataItems flexPublic">
-                        <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+                        <li class=" bolder" style="width: 30%;text-align: center">{{item.k_name}}</li>
+                        <li style="display: none"></li>
                         <li class="align-right">{{item.FinalaccountsTotal| NumFormat}}</li>
                         <li class="align-right">
                             <input disabled v-bind:value="item.BudgetTotal| NumFormat">
@@ -42,19 +43,12 @@
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                         </li>
                     </ul>
-                    <ul class="formDataItems flexPublic">
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                    </ul>
                 </template>
 
                 <template v-else-if="item.SubjectCode=='BNZCHJ'">
                     <ul class="formDataItems flexPublic">
-                        <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+                        <li class=" bolder" style="width: 30%;text-align: center">{{item.k_name}}</li>
+                        <li style="display: none"></li>
                         <li class="align-right">{{item.FinalaccountsTotal| NumFormat}}</li>
                         <li class="align-right">
                             <input disabled v-bind:value="item.BudgetTotal| NumFormat">
@@ -67,8 +61,9 @@
 
                 <template v-else-if="item.SubjectCode=='BNJY'">
                     <ul class="formDataItems flexPublic">
+                        <li class=" bolder">{{item.k_name}}</li>
                         <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
                             <input disabled v-bind:value="item.BudgetTotal">
@@ -82,7 +77,7 @@
                 <template v-else-if="item.SubjectCode=='SNJY'">
                     <ul class="formDataItems flexPublic">
                         <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+                        <li class="align-center">{{item.k_name}}</li>
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
                             <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
@@ -96,7 +91,7 @@
                 <template v-else-if="item.SubjectCode=='BNSHTZ'">
                     <ul class="formDataItems flexPublic">
                         <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+                        <li class="align-center">{{item.k_name}}</li>
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
                             <input v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
@@ -110,7 +105,7 @@
                 <template v-else-if="item.SubjectCode=='BNTZ'">
                     <ul class="formDataItems flexPublic">
                         <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+                        <li class="align-center">{{item.k_name}}</li>
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
                             <input  v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
@@ -124,7 +119,7 @@
                 <template v-else-if="item.SubjectCode=='BNTQHBJ'">
                     <ul class="formDataItems flexPublic">
                         <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+                        <li class="align-center ">{{item.k_name}}</li>
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
                             <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
@@ -137,8 +132,9 @@
 
                 <template v-else-if="item.SubjectCode=='QMGCJY'">
                     <ul class="formDataItems flexPublic">
+                        <li class=" bolder">{{item.k_name}}</li>
                         <li></li>
-                        <li class="align-center bolder">{{item.k_name}}</li>
+
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
                             <input disabled  v-bind:value="item.BudgetTotal | NumFormat" >
@@ -151,7 +147,7 @@
 
                 <template v-else-if="item.k_name!='未找到该科目编码对应的科目'">
                     <ul class="formDataItems flexPublic">
-                        <li v-bind:class="{'align-center':item.Layers==1}">{{item.SubjectCode}}</li>
+                        <li v-bind:class="{'align-centers':item.Layers==1}">{{item.SubjectCode}}</li>
                         <li v-bind:class="{'align-center':item.Layers==1}">{{item.k_name}}</li>
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
@@ -159,11 +155,11 @@
                                 <input disabled  v-bind:code="item.SubjectCode" v-bind:value="code_firstCount[item.SubjectCode] | NumFormat">
                             </template>
                             <template v-else>
-                                <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis" v-bind:value="item.BudgetTotal">
+                                <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:blur="inputLis" v-bind:value="item.BudgetTotal | NumFormat">
                             </template>
                         </li>
                         <li>
-                            <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description" v-bind:index="index" v-on:input="inputDicription">
+                            <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description" v-bind:index="index" v-on:blur="inputDicription">
                         </li>
                     </ul>
                 </template>
@@ -319,6 +315,7 @@
                     "orgid":this.orgid,
                     "Year":  year,
                     "OrgIds": this.orgid,
+                    'IsStart':1
                 };
                 this.loading=true;
                 this.$axios.get(
@@ -454,6 +451,10 @@
             // 打印
             printContent(e){
                 this.$print(this.$refs.printFrom) // 使用
+            },
+            //刷新
+            refresh:function(){
+                this.getBeginYear();
             }
 
         }
@@ -489,7 +490,7 @@
         height:50px;
         line-height:50px;
         text-align: center;
-        width:20%;
+        width:17%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -499,13 +500,11 @@
     }
 
     .formData>ul>li:first-child{
-        width:10%;
-        min-width: 70px;
+        width:11%;
         padding:0 2px;
     }
     .formData>ul>li:last-child{
         width:30%;
-        min-width: 210px;
         padding:0 2px;
     }
 
@@ -593,9 +592,12 @@
         padding:0 15px;
     }
     .formData>ul.formDataItems>li.align-center{
-        //text-align: center;
         padding:0;
         text-indent: 40px;
+    }
+    .formData>ul.formDataItems>li.align-centers{
+        padding:0;
+        text-indent: 30px;
     }
     .formData>ul.formDataItems>li.align-right{
         text-align: right;

@@ -143,7 +143,7 @@
                 </div>
             </div>
         </div>
-        <div>
+        <div style="display: none;">
             <countdownpop></countdownpop>
         </div>
     </div>
@@ -365,12 +365,15 @@
                         if(level==0){
                             that.province=res;
                             that.registerForm2.provincevalue=res[0].label;
+                            that.searchArea(res[0].value,1)
                         }else if(level==1){
                             that.city=res;
                             that.registerForm2.cityvalue=res[0].label;
+                            that.searchArea(res[0].value,2)
                         }else if(level==2){
                             that.county=res;
                             that.registerForm2.countyvalue=res[0].label;
+                            that.searchArea(res[0].value,3)
                         }else if(level==3){
                             that.street=res;
                             that.registerForm2.streetvalue=res[0].label;
@@ -379,6 +382,17 @@
                         }
                     }
                 )
+            }
+        },
+        watch:{
+            provincevalue(){
+                this.searchArea(this.registerForm2.provincevalue,1)
+            },
+            cityvalue(){
+                this.searchArea(this.registerForm2.cityvalue,2)
+            },
+            countyvalue(){
+                this.searchArea(this.registerForm2.countyvalue,3)
             }
         }
     }
