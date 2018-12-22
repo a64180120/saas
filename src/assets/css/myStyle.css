@@ -9,8 +9,8 @@
 }
 *{padding:0; margin:0;box-sizing: border-box;font-family: myFont,Arial, Helvetica, sans-serif}
 /* @font-face {
-    font-family: 'myFont'; 
-    src: url('./font/pingfang.ttf'); 
+    font-family: 'myFont';
+    src: url('./font/pingfang.ttf');
     font-weight: normal;
     font-style:normal;
 } */
@@ -265,5 +265,7 @@ ul{
     overflow-y: auto;
     margin-bottom: 500px;
 }
-
+.popper{
+    top: 235px !important;
+}
 
