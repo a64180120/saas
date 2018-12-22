@@ -45,12 +45,9 @@ export default {
       }
     },
     created() {
-        var config=Auth.getPConfigStatus();
-        if (!config) {
-            this.$store.dispatch('config/getBusinessConfig').then((res)=>{
-                console.log(res);
-            })
-        }
+        // console.log('home')
+        // var config = Auth.getPConfigStatus();
+        // console.log(config)
     },
     methods: {
       collapseChange: function (childValue) {

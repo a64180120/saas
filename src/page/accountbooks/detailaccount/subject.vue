@@ -117,7 +117,7 @@
                     OrgIds: this.orgid,
                     Type:'S01',
                     Year: '2018'
-                }
+                };
                 this.$axios.get("/PVoucherMst/GetDetailAccountTNV",{params:data})
                     .then(res=>{
                         this.dataInfo=res.Record;

@@ -63,21 +63,17 @@ const actions = {
     //获取当前账务的基础配置信息
     getBusinessConfig({ commit, state }, parameters){
         return new Promise((resolve, reject) => {
-            var year='';
-            if(parameters){
-                year=parameters.year;
-            }
-           
+
             axios({
                 url: "/PBusinessConfig/GetPBusinessConfigByOrg",
                 methods: "get",
                 params: {
-                    uid:state.userid,
-                    orgid:state.orgid,
-                    Ryear:year          //会计年度
+                    uid:parameters.userid,
+                    orgid:parameters.orgid,
+                    Ryear:parameters.year   //会计年度
                 }
             }).then(res => {
-                if (res.Status === "success") {
+                if (res &&res.Status === "success") {
                     //用户信息缓存
                     
                     commit("setPConfig", res.Data);

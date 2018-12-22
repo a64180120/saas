@@ -1,11 +1,11 @@
 import user from './user'
 import tagNav from './tagNav'
 import uploadFile from './uploadFile'
-import config from './config'
+import Pconfig from './Pconfig'
 
 export default {
     user: user,
     tagNav: tagNav,
     uploadFile:uploadFile,
-    config:config
+    Pconfig:Pconfig
 }

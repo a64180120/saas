@@ -103,9 +103,7 @@
                 department:'',
                 JD:['平','借','贷'],
                 auxiliaryType:[],
-                auxiliaryLists:[
-
-                ],
+                auxiliaryLists:[],
                 defaultProps: {
                     children: 'children',
                     label: 'BaseName'
@@ -181,9 +179,9 @@
                         this.$message.error(res.Msg);
                         return
                     }
-                    
+
                     let types=res.type;
-                    
+
                     if(types.length>0){
                         this.auxiliaryType=types;
                         this.department=types[0].PhId

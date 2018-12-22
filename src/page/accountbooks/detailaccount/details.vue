@@ -142,7 +142,6 @@
             }
         },
         created() {
-
             //获取科目属性列表
             this.getSubjectData();
         },

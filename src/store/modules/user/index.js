@@ -198,7 +198,7 @@ const actions = {
             commit('tagNav/delAllTagNav', '', {root: true})
 
             //清除配置文件
-            commit('config/setPConfig', '', {root: true})
+            commit('Pconfig/setPConfig', '', {root: true})
 
             resolve();
         });
@@ -244,16 +244,26 @@ const actions = {
                 //设置用户 state ,重新加载用户缓存
                 commit("setNavList", menuInfo);
             }
+            console.log('config')
+            console.log(config)
+
+            debugger;
 
             //配置信息
-            if(!config){
-                dispatch("config/getBusinessConfig").then(() => {
+            // if(!config){
+            //     var para={
+            //         userid:state.userid,
+            //         orgid:state.orgid,
+            //         year:''
+            //     }
+            //     dispatch("Pconfig/getBusinessConfig",para,{root: true}).then((res) => {
+            //         console.log(res)
+            //     });
+            // }else{
+            //     //设置用户 state ,重新加载用户缓存
+            //     commit("Pconfig/setPConfig", config,{root: true});
+            // }
 
-                });
-            }else{
-                //设置用户 state ,重新加载用户缓存
-                commit("config/setPConfig", config);
-            }
             
             resolve();
         });
