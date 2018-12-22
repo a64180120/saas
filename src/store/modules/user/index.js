@@ -217,52 +217,27 @@ const actions = {
             // 重新登录时校验Token是否存在，若不存在则获取
 
             //token
-            if(!tokenInfo){
-                dispatch("getToken").then(() => {
-                    //commit("setToken", state.token);
-                });
-            }else{
+            if(tokenInfo){
                 //设置用户 state ,重新加载用户缓存
                 commit("setToken", tokenInfo);
             }
             //用户
-            if(!userInfo){
-                dispatch("loginByPhone").then(() => {
-
-                });
-            }else{
+            if(userInfo){
                 //设置用户 state ,重新加载用户缓存
                 commit("setUserInfo", userInfo);
             }
 
             //菜单
-            if(!menuInfo){
-                dispatch("getNavList").then(() => {
-
-                });
-            }else{
+            if(menuInfo){
                 //设置用户 state ,重新加载用户缓存
                 commit("setNavList", menuInfo);
             }
-            console.log('config')
-            console.log(config)
-
-            debugger;
 
             //配置信息
-            // if(!config){
-            //     var para={
-            //         userid:state.userid,
-            //         orgid:state.orgid,
-            //         year:''
-            //     }
-            //     dispatch("Pconfig/getBusinessConfig",para,{root: true}).then((res) => {
-            //         console.log(res)
-            //     });
-            // }else{
-            //     //设置用户 state ,重新加载用户缓存
-            //     commit("Pconfig/setPConfig", config,{root: true});
-            // }
+            if(config){
+                //设置用户 state ,重新加载用户缓存
+                commit("Pconfig/setPConfig", config,{root: true});
+            }
 
             
             resolve();

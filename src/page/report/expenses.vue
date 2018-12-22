@@ -5,17 +5,6 @@
         <div class="unionState flexPublic">
             <ul class="flexPublic">
                 <li class="flexPublic">
-                    <!--<div>账期:</div>-->
-                    <!--<div>-->
-                        <!--<el-date-picker-->
-                            <!--v-model="zwTime"-->
-                            <!--type="daterange"-->
-                            <!--range-separator="至"-->
-                            <!--start-placeholder="开始日期"-->
-                            <!--end-placeholder="结束日期"-->
-                            <!--value-format="yyyy-MM-dd">-->
-                        <!--</el-date-picker>-->
-                    <!--</div>-->
                     <div>条件：</div>
                     <div  class="block selectContainer">
                         <select class="el-input__inner el-button--small" v-model="proofType">

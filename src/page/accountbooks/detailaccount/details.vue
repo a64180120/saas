@@ -27,10 +27,51 @@
                         <div class="flexPublic handle">
                             <div class="searcherValue"><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></div>
                             <div  class="searcherBtn" @click="selectBtn">搜索</div>
+                            <div   class="searcherBtn" @click="showType='block'" style="margin-left: 20px">高级</div>
+                            <div class="searchPanel" :style="{'display':showType}">
+                                <div class="flexPublic searchPanel_title">
+                                    <div>高级查询</div>
+                                    <div class="el-icon-close" @click="showType='none'"></div>
+                                </div>
+                                <div class="flexPublic">
+                                    <div>凭证日期:</div>
+                                    <div>
+                                        <el-date-picker
+                                            v-model="zwTime"
+                                            type="daterange"
+                                            range-separator="至"
+                                            start-placeholder="开始日期"
+                                            end-placeholder="结束日期"
+                                            value-format="yyyy-MM-dd"
+                                            style="width: 250px;border:none;padding-right: 0;"
+                                            popper-class="popper"
+                                        >
+                                        </el-date-picker>
+                                    </div>
+                                </div>
+                                <div class="flexPublic">
+                                    <div>凭证号码</div>
+                                    <div class="flexPublic">
+                                        <input v-model="startCode"/>至<input v-model="endCode"/>
+                                    </div>
+
+                                </div>
+                                <div class="flexPublic">
+                                    <div>发生金额</div>
+                                    <div class="flexPublic">
+                                        <input v-model="startMoney"/>至<input v-model="endMoney"/>
+                                    </div>
+                                </div>
+                                <div class="flexPublic searchPanel_bottom">
+                                    <div class="searchPanel_btn greybtn" @click="clearPorp">重置</div>
+                                    <div class="searchPanel_btn bluebtn" @click="searchDetail">搜索</div>
+                                </div>
+
+                            </div>
                         </div>
                         <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li></a>
                         <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li></a>
-
+                        <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
                     </ul>
                 </div>
                 <div class="flexPublic  p0">
@@ -73,8 +114,8 @@
                             <li>{{item.Pdate.slice(0,10)}}</li>
                             <li class="align-center" :title="item.Pno">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?item.Pno:''}}</li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
-                            <li class="align-right">{{item.JSum | NumFormat}}</li>
-                            <li class="align-right" :title="item.DSum">{{item.DSum | NumFormat}}</li>
+                            <li class="align-right">{{item.JSum=='0.00'?'':(item.JSum)}}</li>
+                            <li class="align-right" :title="item.DSum">{{item.DSum=='0.00'?(item.Abstract=='本月累计'||item.Abstract=='本年累计'?'0.00':''):(item.DSum)}}</li>
                             <li>{{JD[item.DType]}}</li>
                             <li class="align-right">{{item.Balance | NumFormat}}</li>
                         </ul>
@@ -112,6 +153,7 @@
         name: "detailsAc",
         data() {
             return {
+
                 JD:['平','借','贷'],
                 downloadLoading: false,
                 loading: false,
@@ -138,7 +180,14 @@
                 inputCode:'',//搜索框输入项目编码
                 focus:false,
                 proofType:'0,1',
-                inputKvalue:''//顶部搜索框输入凭证字号或摘要Kno Abstract
+                inputKvalue:'',//顶部搜索框输入凭证字号或摘要Kno Abstract
+/*高级搜索框参数   */
+                showType:'none',
+                zwTime:'',
+                startCode:'',
+                endCode:'',
+                startMoney:'',
+                endMoney:''
             }
         },
         created() {
@@ -169,6 +218,24 @@
             })
         },
         methods: {
+            clearPorp:function(){
+                this.zwTime='';
+                this.startCode='';
+                this.endCode='';
+                this.startMoney='';
+                this.endMoney=''
+            },
+            searchDetail:function(){
+                if(this.startCode>this.endCode){
+                    this.$message.error('开始凭证号码不应大于结束凭证号码');
+                }else if(this.startMoney>this.endMoney){
+                    this.$message.error('开始发生金额不应大于结束发生金额');
+                }else{
+                    this.showType='none';
+                    this.getData();
+                }
+
+            },
             searchCode:function(val){
                 this.selectSubject.KCode=val.target.value;
                 //let que='{"[or-dictionary0]*dictionary*or",{"KCode*str*like":"'+val.target.value+'" , "KName*str*like":"'+val.target.value+'"}}';
@@ -214,7 +281,6 @@
                     year=this.date1.choosedYear;
                     Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
                 }
-
                 var data = {
                     uid: this.uid,
                     orgid:this.orgid,
@@ -227,13 +293,19 @@
                     Title:this.selectSubject.KName,
                     Verify:this.proofType,
                     Pmonth:Pmonth,
-                    value:query
+                    value:query,
+                    StartTime:this.zwTime[0],
+                    EndTime:this.zwTime[1],
+                    StartPNo:this.startCode,EndPno:this.endCode,
+                    StartAmount:this.startMoney,EndAmount:this.endMoney
                 };
 
                 this.loading = true;
                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
                         this.loading = false;
+                        res.Record=this.changeData(res.Record);
+
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
                             this.dataInfo=[]
@@ -317,6 +389,41 @@
                         this.pingjie(res[i].children)
                     }
                 }
+            },
+            changeData:function(res){
+                for(var i in res){
+                    res[i].JSum=this.changeNum(res[i].JSum);
+                    res[i].DSum=this.changeNum(res[i].DSum);
+                    if(res[i].children!=[]){
+                        this.changeData(res[i].children)
+                    }
+                }
+                return res;
+            },
+            changeNum:function(value) {
+                if(!value) return '0.00';
+
+                /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                var intPart =  Number(value)|0; //获取整数部分
+                var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+
+                var floatPart = ".00"; //预定义小数部分
+                var value2Array = value.toString().split(".");
+
+                //=2表示数据有小数位
+                if(value2Array.length == 2) {
+                    floatPart = value2Array[1].toString(); //拿到小数部分
+
+                    if(floatPart.length == 1) { //补0,实际上用不着
+                        return intPartFormat + "." + floatPart + '0';
+                    } else {
+                        return intPartFormat + "." + floatPart;
+                    }
+
+                } else {
+                    return intPartFormat + floatPart;
+                }
+
             },
             // unionListOpen($event) {
             //     var e = $event.target;
@@ -425,8 +532,11 @@
                 // return false;
 
                 this.$print(this.$refs.printFrom) // 使用
+            },
+        //刷新
+            refresh:function(){
+                this.getData();
             }
-
         }
     }
 </script>
@@ -617,5 +727,66 @@
     .formData>ul.formDataItems>li.align-right{
         text-align: right;
         padding-right: 10px;
+    }
+    .searchPanel{
+        position: absolute;
+        top: 42px;
+        right: -103px;
+        z-index: 99;
+        background-color: #fff;
+        width: 339px;
+        height: 250px;
+        box-shadow: 0 0 6px 2px #c9ccce;
+        /*border-radius: 10px 10px 0 0;*/
+    }
+    .searchPanel .flexPublic{
+        padding: 5px 10px;
+        height: 45px;
+    }
+    .searchPanel .searchPanel_title{
+        height: 29px;
+        background-color: #3E8CBC;
+        color: #fff;
+    }
+    .searchPanel .searchPanel_title div:nth-of-type(2){
+        padding: 5px;
+        border-radius: 15px;
+        background: white;
+        font-size: 15px;
+        color: #3e8cbc;
+        cursor: pointer;
+    }
+    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child,
+    .searchPanel>.flexPublic:nth-of-type(4)>div:last-child{
+        width: 250px;
+        padding-left: 10px;
+    }
+    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child input,
+    .searchPanel>.flexPublic:nth-of-type(4)>div:last-child input{
+        width: 116px;
+        display: inline;
+        font-size: 14px;
+        color: #606266;
+        border: none;
+        padding-left: 5px;
+    }
+    .searchPanel .searchPanel_bottom{
+        height: 86px;
+        border-top: 1px solid #dddfe4;
+    }
+    .searchPanel .searchPanel_btn{
+        width: 135px;
+        height: 33px;
+        color: #fff;
+        line-height: 33px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .searchPanel .greybtn{
+        background-color: #606266;
+    }
+   .searchPanel .bluebtn{
+        background-color: #3e8cbc;
     }
 </style>
