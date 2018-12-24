@@ -92,7 +92,7 @@
             </ul>
             <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
                 <li @dblclick="voucherDel(item)">
-                    <ul @click="voucherDel(item)" class="listIndex"><li>{{index+1}}</li></ul>
+                    <ul class="listIndex"><li>{{index+1}}</li></ul>
                     <ul>
                         <li>
                             <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
@@ -124,6 +124,11 @@
                 </li>
             </ul>
         </section>
+        <div class="footInfo">
+            <router-link to="">服务协议</router-link>
+            <router-link to="">运营规范</router-link>
+            <router-link to="">关于政云</router-link>
+        </div>
         <!--凭证重排****************************-->
         <div v-if="resetShow" class="codeResetContainer">
             <div>
@@ -174,7 +179,7 @@
                 </div>
             </div>            
         </div>
-        <print-tem  ref="print" :printData="printdata"></print-tem>
+        <!-- <print-tem  ref="print" :printData="printdata"></print-tem> -->
     </div>
 </template>
 
@@ -196,9 +201,7 @@
                     this.getChecked();
                 }
             }
-            this.getAssist();
-            
-           
+            this.getAssist();        
         },
         data(){
             return {                 
@@ -272,8 +275,13 @@
                         this.voucherDel(item);
                         break;
                     case 'audit'://审核**********  
+                    console.log(item,item.Verify)
                         if(!item.PhId){
                             this.$message("请先选择凭证!");
+                            return;
+                        }
+                        if(item.Verify){
+                            this.$message("该凭证已审核!");
                             return;
                         }
                         this.audit(true,item.PhId);
@@ -281,6 +289,10 @@
                     case 'unaudit'://反审核************
                         if(!item.PhId){
                             this.$message("请先选择凭证!");
+                            return;
+                        }
+                        if(!item.Verify){
+                            this.$message("该凭证还未审核,请先审核!");
                             return;
                         }
                         this.audit(false,item.PhId);
@@ -407,7 +419,7 @@
                             }else{
                                 this.$message('反审核成功!')
                             }
-                             this.getvoucherList();
+                            this.getvoucherList();
                         }else{
                             if(bool){
                                 this.$message('审核失败!')
@@ -415,7 +427,6 @@
                                 this.$message('反审核失败!')
                             }
                         }
-                       this.getvoucherList(); 
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
@@ -643,7 +654,7 @@
                                         }
                                         vm.voucherMask='gengz'; 
                                     }else{
-
+                                        vm.voucherMask=false;     
                                     }
                                 } else {
                                     this.$message('保存失败,请重试!')
@@ -750,7 +761,7 @@
                     sum2:this.superSearchVal.sum2,
                     keyword:this.superSearchVal.keyword,
                     export2excel:str,
-                    sort:['PType','PDate DESC','PNo DESC'],
+                    sort:['PNo DESC','PType','PDate DESC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
@@ -769,7 +780,9 @@
                             return;
                         }  
                         if(str=='yes'){
+                            console.log(res)
                             window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
+                            loading1.close();
                             return;
                         } 
                         if(res.Record.length<=0){
@@ -882,6 +895,7 @@
                 var vm=this;
                 this.$axios.get('/PVoucherAuxiliaryType/GetVoucherAuxiliaryTypeList',{params:data})
                     .then(res=>{
+                        loading.close();
                          if(res.Status==='error'){
                             this.$message.error(res.Msg);
                             return
@@ -889,9 +903,6 @@
                         this.superSearchVal.assistItemList.type=res.type;
                         this.superSearchValPhId=res.type[0].PhId;
                         this.assistItemList.kemu=res.list;
-                        loading.close();
-                        //this.userInfo=res.list;
-                        //this.navTab=res.type;
                     })
                     .catch(err=>{
                         this.$message({ showClose: true,message: err, type: "error"});loading.close();
@@ -1201,13 +1212,12 @@
         cursor:pointer;
     }
     .voucherList{
-        padding:8px 70px 50px 18px;
+        padding:8px 70px 0 18px;
         margin-right:10px;
-        margin-bottom: 50px;
         font-size:14px;
         position:relative;
         min-width: 1024px;
-        height:100%;
+        height:93%;
         .voucherNav>ul{
             display: flex;
             flex-flow: row nowrap;
@@ -1486,6 +1496,7 @@
         z-index: -1;
     }
     .listContainer{
+        max-height:85%;
         overflow-y: auto;
         padding:5px;
         margin-top:10px;
@@ -1543,7 +1554,6 @@
         height:100%;
         width:5%;
         font-size: 18px;
-        cursor:pointer;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1654,5 +1664,25 @@
        .ul.listContent > li > ul > li > div{
            text-align: left;
        } 
-    
+    .footInfo{
+        position:fixed;
+        bottom:0;
+        left:0;
+        width:100%;
+        margin: 30px 0 10px 0;
+        height:70px;
+        line-height: 70px;
+        background: #2b3245;
+        text-align: center;
+        color:#fff;
+        font-size: 20px;
+        >a{
+            color:#fff;
+            padding:0 20px;
+            border-right:1px solid #fff;
+            &:last-of-type{
+                border:0;
+            }
+        }
+    }
 </style>

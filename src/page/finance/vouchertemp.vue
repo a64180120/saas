@@ -593,6 +593,7 @@
         }
         .tempContentCon{
             position:relative;
+            overflow-y: auto;
             >.tempBG{
                 position: absolute;
                 width:100%;

@@ -15,27 +15,27 @@
             <ul class="flexPublic handle">
                 <a>
                     <li class="mode" style="width:60px;">
-                        <span style="background: #04cc41;color:#fff">模板</span>
+                        <span style="background: #4dd4fd;color:#fff">模板</span>
                         <span @click.prevent="addVoucher('modelList')" >引用模板</span>
                         <span @click.prevent="addVoucher('keepModel')">存为模板</span>
                     </li>
                 </a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li style="background:#d85cb6;">保存</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li style="background:#dbbfdd;">修改</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="background:#ff9300;width:80px">保存并新增</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li style="background:#f89486;">审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li style="background:#fcb980;">反审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li style="background:#fdc087;">删除</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li style="background:#d2e29b;">复制</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li style="background:#9fd29f;">剪切</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li style="background:#78cfd3;">冲红</li></a>
-                <a @click.prevent="addVoucher('print')"><li style="background:#cccd35;width:80px">保存并打印</li></a>
-                <a @click.prevent="addVoucher('reset')"><li style="background:#48bbd8;width:80px">凭证号重排</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li style="background:#4dd4fd;">保存</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li style="background:#4dd4fd;">修改</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="background:#4dd4fd;width:80px">保存并新增</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li style="background:#4dd4fd;">审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li style="background:#4dd4fd;">反审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li style="background:#4dd4fd;">删除</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li style="background:#4dd4fd;">复制</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li style="background:#4dd4fd;">剪切</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li style="background:#4dd4fd;">冲红</li></a>
+                <a @click.prevent="addVoucher('print')"><li style="background:#4dd4fd;width:80px">保存并打印</li></a>
+                <a @click.prevent="addVoucher('reset')"><li style="background:#4dd4fd;width:80px">凭证号重排</li></a>
                 <a @click.prevent="addVoucher('fresh')"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
             </ul>
         </div>
         <!--凭证组件*******************-->
-        <div :class="{voucherMask:voucherMask}" ref="print">
+        <div style="overflow-y:auto"  :class="{voucherMask:voucherMask}" ref="print">
             <div class="voucherContainer">
                 <p v-if="voucherMask" class="title">
                     <span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红凭证</span><span v-if="voucherMask=='gengz'">更正凭证</span><i @click="voucherMaskShow(false)"></i></p>
@@ -47,7 +47,9 @@
                     <div :class="{voucherDisabled:voucherMask=='chongh'}"></div>
                     <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                 </div>
-            </div>            
+                 <div v-show="!voucherMask" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
+            </div>
+           
         </div>
         <!--右侧时间选择组件-->
         <div class="asideNav">
@@ -261,7 +263,8 @@
                         this.modelListCss=true;
                         break;
                     case 'keepModel':
-                        this.temp.tempMask=true;   
+                        this.temp.tempMask=true;
+                        this.temp.TemName='';      
                         break;
                     case 'moreVoucher':
                         //this.$store.commit("tagNav/turnCachePage",false);
@@ -269,10 +272,18 @@
                         break;
                     case 'audit':
                         this.voucherData();
+                        if(this.voucherDataList.data.Mst.Verify){
+                            this.$message("该凭证已审核!");
+                            return;
+                        }
                         this.audit(true,this.voucherDataList.data.Mst.PhId);
                         break;
                     case 'unAudit':
                         this.voucherData();
+                        if(!this.voucherDataList.data.Mst.Verify){
+                            this.$message("该凭证未审核!");
+                            return;
+                        }
                         this.audit(false,this.voucherDataList.data.Mst.PhId);
                         break;
                     case 'copy':
@@ -546,7 +557,7 @@
                 }
                 const loading2=this.$loading();
                 this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
-                    .then(res=>{console.log(res)
+                    .then(res=>{
                         if(res.Status=='success'){                            
                             this.voucherDataList.data.Mst=res.Data;
                             this.resetVoucher();
@@ -628,7 +639,7 @@
                     keyword:this.superSearchVal.keyword,
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
-                    sort:['PType','PDate DESC','PNo DESC'],
+                    sort:['PNo DESC','PType','PDate DESC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
@@ -1019,7 +1030,7 @@
         width:100%;
         min-width: 1250px;
         height:100%;
-        overflow-y: scroll;
+        overflow: hidden;
         text-align: left;
         padding:8px 18px;
         padding-right:70px;
@@ -1043,9 +1054,9 @@
                     height:30px;       
                     overflow: hidden;
                     position:absolute;
-                    z-index: 9;
+                   
                     transition:all 0.2s linear;
-                    border:1px solid #04cc41;
+                    border:1px solid #4dd4fd;
                     >span{
                         display: block;
                         width:100%;
@@ -1066,6 +1077,7 @@
                         border:1px solid #ccc;
                         background: #fff;
                         opacity: 1;
+                         z-index: 5;
                         color:#aaa;    
                     }
                 }
@@ -1188,8 +1200,8 @@
     .asideNav{
         width:55px;
         position:absolute;
-        right:14px;
-        top:10px;
+        right:10px;
+        top:0px;
         height: 700px;
          box-shadow:0 0 20px 2px #ccc;
         background: #fff;
@@ -1611,7 +1623,10 @@
         z-index: -1;
     }
     .footInfo{
-        margin: 50px 0;
+        position:fixed;
+        bottom:0;
+        left:0;
+        width:100%;
         height:70px;
         line-height: 70px;
         background: #2b3245;
@@ -1627,15 +1642,21 @@
             }
         }
     }
+    .voucherContainer{
+         position:relative;
+         padding:50px 0;
+         overflow: hidden;
+
+    }
     .voucherMask{
         position: absolute;
         width:100%;
         height:100%;
         background: rgba(0,0,0,0.3);
-        .voucherContainer{
-          background: #fff;
+        .voucherContainer{        
           width:80%;
           position:absolute;
+          background:#fff;
           top:30px;
           left:100px;
           padding:10px;
@@ -1643,12 +1664,31 @@
               display: flex;
               justify-content: flex-end;
               padding:5px 10px;
+              position: relative;
+              z-index: 1;
               >span{
                   margin-left: 20px;
               }
-          }  
+          } 
+          >p{
+              position: relative;
+              z-index: 1;
+          }
+          
         }
     }
+    .voucherBG{
+                position:absolute;
+                z-index:0;
+                left:-30px;
+                top:0;
+                width:106%;
+                height:100%;
+                >img{
+                    width:100%;
+                    height:100%;
+                }
+            } 
     
     .title{
         border-bottom: 1px solid #ccc;
@@ -1675,8 +1715,11 @@
 
      .voucherDisabledCon{
          position:relative; 
-         min-height:516px;   
+         min-height:516px;  
+         z-index: 1; 
+         background:#fff;
         .voucherDisabled{
+            
             position:absolute;
             background: none;
             z-index: 99;
