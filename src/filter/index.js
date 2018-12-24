@@ -1,31 +1,32 @@
 import Vue from 'vue'
 
 /**
- * 数字金额 格式化
+ * 数字金额 千分位格式化
  */
-Vue.filter('NumFormat', function(value) {
+Vue.filter('NumFormat', function(value, decimals = 2, decPoint = '.', thousandsSep = ',') {
     if(!value) return '0.00';
 
-    /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
-    var intPart =  Number(value)|0; //获取整数部分
-    var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
-
-    var floatPart = ".00"; //预定义小数部分
-    var value2Array = value.toString().split(".");
-
-    //=2表示数据有小数位
-    if(value2Array.length == 2) {
-        floatPart = value2Array[1].toString(); //拿到小数部分
-
-        if(floatPart.length == 1) { //补0,实际上用不着
-            return intPartFormat + "." + floatPart + '0';
-        } else {
-            return intPartFormat + "." + floatPart;
-        }
-
-    } else {
-        return intPartFormat + floatPart;
+    value = (value + '').replace(/[^0-9+-Ee.]/g, '')
+    
+    let n = !isFinite(+value) ? 0 : +value
+    let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+    let sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+    let dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+    let s = ''
+    let toFixedFix = function (n, prec) {
+      let k = Math.pow(10, prec)
+      return '' + Math.ceil(n * k) / k
     }
+    s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+    let re = /(-?\d+)(\d{3})/
+    while (re.test(s[0])) {
+      s[0] = s[0].replace(re, '$1' + sep + '$2')
+    }
+    if ((s[1] || '').length < prec) {
+      s[1] = s[1] || ''
+      s[1] += new Array(prec - s[1].length + 1).join('0')
+    }
+    return s.join(dec)
 
 });
 /**
