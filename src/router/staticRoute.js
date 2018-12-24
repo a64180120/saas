@@ -14,10 +14,6 @@ const staticRoute = [
         component: () => import("../page/register")
     },
     {
-        path:'/indexfinance',
-        component: () =>import("../page/finance/voucherAdd")
-    },
-    {
         path:'/index',
         component: () =>import("../page/index")
     },
@@ -27,8 +23,10 @@ const staticRoute = [
         children: [
             {
                 path: "",
-                component: () =>import("../page/home/index"),
-                meta:{ requireAuth:true,type:'page',name:'首页', }
+                component: () =>import( "../page/finance/voucherAdd"),
+                meta:{ requireAuth:true,type:'page',name:'凭证新增'}
+                // component: () =>import("../page/home/index"),
+                // meta:{ requireAuth:true,type:'page',name:'首页' }
             }
         ]
     },
@@ -90,15 +88,14 @@ const staticRoute = [
             {
                 //新增凭证
                 path: "voucherAdd",
-                name:"voucherAdd",
                 component: () =>import( "../page/finance/voucherAdd"),
-                meta:{ requireAuth:true,type:'page',name:'凭证新增',}
+                meta:{ requireAuth:true,type:'page',name:'凭证新增'}
             },
             {
                 //凭证管理
                 path: "voucherList",
                 component: () =>import("../page/finance/voucherList"),
-                meta:{ requireAuth:true,type:'page',name:'凭证管理',}
+                meta:{ requireAuth:true,type:'page',name:'凭证管理'}
             }
             // {
             //     //查看凭证
