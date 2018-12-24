@@ -262,7 +262,9 @@
         },
         components: {countdownpop},
         mounted(){
+            console.log(111)
             this.searchArea(0,0);
+            console.log(2222)
         },
         methods:{
             showMsg:function(){
@@ -355,11 +357,13 @@
             },
         //    查询省市县街道
             searchArea:function(val,level){
+               
                 let that=this;
                 console.log('======='+val);
                 this.$axios.get( '/SysArea/GetAreaList',
                     {params: {'id': val}}
                 ).then(
+                    
                     function(res){
                         console.log(res);
                         if(level==0){
@@ -382,6 +386,9 @@
                         }
                     }
                 )
+                .catch(err=>{
+                    console.log(err)
+                })
             }
         },
         watch:{
