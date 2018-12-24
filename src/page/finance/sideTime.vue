@@ -273,7 +273,7 @@ export default {
                             this.$message('结账成功!');
                             this.getChecked();
                         }else{
-                            this.$message('结账失败!');
+                            this.$message(res.Msg);
                         }
                     })
                     .catch(err=>{console.log(err);loading1.close();})

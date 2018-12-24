@@ -235,6 +235,7 @@ export default {
 
 }
 .sys-header{
+  box-shadow: 0 1px 8px #b3acac;
   border-color:#ccc;
 }
 .collapse-btn {
@@ -243,6 +244,7 @@ export default {
   cursor: pointer;
   line-height: 60px;
   width: 180px;
+  height:59px;
 }
 .header .logo {
   float: left;
