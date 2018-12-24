@@ -147,11 +147,11 @@
         </div>
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <div class="footInfo " :class="{voucherMaskActive:voucherMask}">
+        <!-- <div class="footInfo " :class="{voucherMaskActive:voucherMask}">
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
-        </div>
+        </div> -->
         <!-- 存为模板******************** -->
         <div v-if="temp.tempMask" class="tempMask">
             <div>
