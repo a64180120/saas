@@ -1,59 +1,119 @@
 import Vue from 'vue'
 
 /**
- * 数字金额 格式化
+ * 数字金额 千分位格式化
  */
-Vue.filter('NumFormat', function(value) {
+Vue.filter('NumFormat', function(value, decimals = 2, decPoint = '.', thousandsSep = ',') {
     if(!value) return '0.00';
 
-    /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
-    var intPart =  Number(value).toString().split('.')[0]; //获取整数部分 原方法Number(value)|0在位数超过11位时会转变为负数，溢出，故修改，是否存在bug，不明确
-
-    var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
-
-    var floatPart = ".00"; //预定义小数部分
-    var value2Array = value.toString().split(".");
-
-    //=2表示数据有小数位
-    if(value2Array.length == 2) {
-        floatPart = value2Array[1].toString(); //拿到小数部分
-
-        if(floatPart.length == 1) { //补0,实际上用不着
-            return intPartFormat + "." + floatPart + '0';
-        } else {
-            return intPartFormat + "." + floatPart;
-        }
-
-    } else {
-        return intPartFormat + floatPart;
+    value = (value + '').replace(/[^0-9+-Ee.]/g, '')
+    
+    let n = !isFinite(+value) ? 0 : +value
+    let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+    let sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+    let dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+    let s = ''
+    let toFixedFix = function (n, prec) {
+      let k = Math.pow(10, prec)
+      return '' + Math.ceil(n * k) / k
     }
+    s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+    let re = /(-?\d+)(\d{3})/
+    while (re.test(s[0])) {
+      s[0] = s[0].replace(re, '$1' + sep + '$2')
+    }
+    if ((s[1] || '').length < prec) {
+      s[1] = s[1] || ''
+      s[1] += new Array(prec - s[1].length + 1).join('0')
+    }
+    return s.join(dec)
 
 });
 /**
  * 数字转为中文大写金额
  */
 Vue.filter('NumtoCHN', function(value) {
-    var values=value.toString()
-    let len=values.length//统计出长度
-    let arr=[];
-
-    let chin_list=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖']//所有的数值对应的汉字
-
-    let chin_lisp=['仟','佰','拾','亿','仟','佰','拾','万','仟','佰','拾']//进制
-
-    for(let i=0;i<len;i++){
-        arr.push(parseInt(values[i]));		//输入的数据按下标存进去   存进去的只是数字
-        arr[i]=chin_list[arr[i]]			//是根据我们输入的输入的数字，对应着我们的chin_list这个数组
-    }//123['壹','佰','贰','拾','叁']
-
-    for(let i=len-1,j=1;i>0;i--){//i =2	1		//倒序		为了添加进制，方便我们去观看
-        arr.splice(i,0,chin_lisp[chin_lisp.length-j++])	//j=2
+  //汉字的数字
+  var cnNums = new Array('零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖');
+  //基本单位
+  var cnIntRadice = new Array('', '拾', '佰', '仟');
+  //对应整数部分扩展单位
+  var cnIntUnits = new Array('', '万', '亿', '兆');
+  //对应小数部分单位
+  var cnDecUnits = new Array('角', '分', '毫', '厘');
+  //整数金额时后面跟的字符
+  var cnInteger = '整';
+  //整型完以后的单位
+  var cnIntLast = '元';
+  //最大处理的数字
+  var maxNum = 999999999999999.9999;
+  //金额整数部分
+  var integerNum;
+  //金额小数部分
+  var decimalNum;
+  //输出的中文金额字符串
+  var chineseStr = '';
+  //分离金额后用的数组，预定义
+  var parts;
+  if (value == '') { return ''; }
+  value = parseFloat(value);
+  if (value >= maxNum) {
+    //超出最大处理数字
+    return '';
+  }
+  if (value == 0) {
+    chineseStr = cnNums[0] + cnIntLast + cnInteger;
+    return chineseStr;
+  }
+  //转换为字符串
+  value = value.toString();
+  if (value.indexOf('.') == -1) {
+    integerNum = value;
+    decimalNum = '';
+  } else {
+    parts = value.split('.');
+    integerNum = parts[0];
+    decimalNum = parts[1].substr(0, 4);
+  }
+  //获取整型部分转换
+  if (parseInt(integerNum, 10) > 0) {
+    var zeroCount = 0;
+    var IntLen = integerNum.length;
+    for (var i = 0; i < IntLen; i++) {
+      var n = integerNum.substr(i, 1);
+      var p = IntLen - i - 1;
+      var q = p / 4;
+      var m = p % 4;
+      if (n == '0') {
+        zeroCount++;
+      } else {
+        if (zeroCount > 0) {
+          chineseStr += cnNums[0];
+        }
+        //归零
+        zeroCount = 0;
+        chineseStr += cnNums[parseInt(n)] + cnIntRadice[m];
+      }
+      if (m == 0 && zeroCount < 4) {
+        chineseStr += cnIntUnits[q];
+      }
     }
-    //console.log(arr)
-
-    arr=arr.join('')
-    if(len>=1){
-        arr+='元整'
+    chineseStr += cnIntLast;
+  }
+  //小数部分
+  if (decimalNum != '') {
+    var decLen = decimalNum.length;
+    for (var i = 0; i < decLen; i++) {
+      var n = decimalNum.substr(i, 1);
+      if (n != '0') {
+        chineseStr += cnNums[Number(n)] + cnDecUnits[i];
+      }
     }
-    return arr
+  }
+  if (chineseStr == '') {
+    chineseStr += cnNums[0] + cnIntLast + cnInteger;
+  } else if (decimalNum == '') {
+    chineseStr += cnInteger;
+  }
+  return chineseStr;
 });
