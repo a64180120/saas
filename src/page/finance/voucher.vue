@@ -966,7 +966,7 @@
     .voucher{
         width:100%;
         text-align: left;
-        padding:8px 25px;
+        padding:3px 25px;
         margin-right:10px;
         font-size:18px;
     }

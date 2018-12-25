@@ -147,11 +147,11 @@
         </div>
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <div class="footInfo " >
+        <!-- <div class="footInfo " >
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
-        </div>
+        </div> -->
         <!-- 存为模板******************** -->
         <div v-if="temp.tempMask" class="tempMask">
             <div>
@@ -1069,9 +1069,10 @@
 <style lang="scss" scoped>
     .addVoucher{
         width:100%;
-        min-width: 1250px;
+        min-width: 1190px;
         height:100%;
         overflow: hidden;
+        overflow-y: auto;
         text-align: left;
         padding:8px 18px;
         padding-right:70px;
@@ -1081,7 +1082,7 @@
     }
     .unionState{
         padding-right: 10px;
-        margin-bottom: 30px;
+       // margin-bottom: 30px;
         >ul{
             >a:first-of-type{
                 position:relative;
