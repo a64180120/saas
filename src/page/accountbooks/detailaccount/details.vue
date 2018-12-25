@@ -146,7 +146,12 @@
                         <!--</div>-->
                     </div>
                 </div>
-                <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" @click="voucherDataList.bool=false">
+                    <div class="voucherContent">
+                        <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                    </div>
+                </div>
+
             </div>
             <div class="timeSelectBox">
                 <time-select-bar @item-click="dateChoose"
@@ -315,6 +320,7 @@
                             console.log(this.voucherDataList.data.Mst);
                             this.voucherDataList.bool=true;
                             this.resetVoucher();
+                            console.log(this.voucherDataList)
                         }else{
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
@@ -668,6 +674,20 @@
 </script>
 
 <style scoped>
+    .voucherCover{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 0 30px;
+    }
+    .voucherContent{
+        margin-top: 10%;
+        background-color: white;
+    }
     .selectContainer>select {
         background-color: transparent;
         line-height: 30px;
@@ -685,7 +705,7 @@
         top: 110px;
         bottom:0;
         width: 60px;
-        z-index: 999;
+        z-index: 99;
     }
     .unionState>ul>li{
         width:100%;
