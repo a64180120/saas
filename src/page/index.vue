@@ -69,10 +69,10 @@
         <div class="roles">
           <div>
             <ul>
-              <li class="roleActive">全部</li>
-              <li>国家</li>
-              <li>省级</li>
-              <li>市级</li>
+              <li class="roleActive" @click.stop="typeclick('all')">全部</li>
+              <li class="roleActive" @click.stop="typeclick('country')"><a href="javascript:void(0);">国家</a></li>
+              <li @click.stop="typeclick('province')"><a href="javascript:void(0);">省级</a></li>
+              <li @click.stop="typeclick('city')"><a href="javascript:void(0);">市级</a></li>
             </ul>
           </div>
           <ul>
@@ -213,9 +213,10 @@
         }
     },
     mounted(){
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top1.png')
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top2.png')
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top3.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t1.jpg')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t2.jpg')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t3.jpg')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t4.jpg')
     },
     methods:{
       navEnter(val){
@@ -228,6 +229,9 @@
       //打开网址
       openUrl(object){
         window.open(object.url); 
+      },
+      typeclick(object){
+        alert(object);
       }
     }
   }
@@ -548,15 +552,18 @@
               margin-right:40px;
               font-size: 13px;
               position:relative;
-              &.roleActive:after{
-                position:absolute;
-                content:"";
-                width:6px;
-                height:6px;
-                top:13px;
-                left:-8px;
-                background: #fff;
-                border-radius: 50%;
+              &.roleActive{
+                  color: #fff;
+                  >a:after{
+                    position:absolute;
+                    content:"";
+                    width:6px;
+                    height:6px;
+                    top:13px;
+                    left:-8px;
+                    background: #fff;
+                    border-radius: 50%;
+                  }
               }
             }
           }
