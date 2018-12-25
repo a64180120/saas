@@ -16,7 +16,7 @@
           </el-carousel-item>
         </el-carousel>
       </div>
-      <div class="headerBG"></div>
+      <div class="headerBGindex"></div>
     </header>
     <nav>
       <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('finance')"><router-link to="/home"><img src="@/assets/img/cai.png" alt=""><span :class="{moveHide:nav=='finance'}">工会财务管理</span></router-link></div>
@@ -244,9 +244,9 @@
   header{
     padding:0 70px;
     position:relative;
-    .headerBG{
+    .headerBGindex{
       position:absolute;
-      z-index: -1;
+      z-index: 0;
       height:499px;
       width:100%;
       left:0;
