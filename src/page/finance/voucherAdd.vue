@@ -145,13 +145,15 @@
             </div>
 
         </div>
+        <!-- 凭证模板****************** -->
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
+        <!-- 下月账******************* -->
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <!-- <div class="footInfo " >
+        <div class="footInfo " >
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
-        </div> -->
+        </div>
         <!-- 存为模板******************** -->
         <div v-if="temp.tempMask" class="tempMask">
             <div>
@@ -1666,11 +1668,12 @@
     }
     .footInfo{
         position:fixed;
+        z-index:10;
         bottom:0;
         left:0;
         width:100%;
-        height:70px;
-        line-height: 70px;
+        height:50px;
+        line-height: 50px;
         background: #2b3245;
         text-align: center;
         color:#fff;
@@ -1757,7 +1760,7 @@
 
      .voucherDisabledCon{
          position:relative; 
-         min-height:516px;  
+        // min-height:516px;  
          z-index: 1; 
          background:#fff;
         .voucherDisabled{

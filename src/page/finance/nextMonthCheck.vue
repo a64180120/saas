@@ -1,7 +1,6 @@
 <template>
-<!--17-->
-  <div class="nextMonthCheck">
-        <div class="container">
+  <div class="nextMonthCheck" >
+        <div v-show="checkNav=='month'" class="container">
             <p class="flexPublic">
                 <span>规范性检查</span>
                 <i @click.stop="handle(false)"></i>
@@ -19,7 +18,7 @@
                 <li>
                     <div><img src="@/assets/icon/share.svg" alt=""></div>
                     <span>凭证数及审核情况检查</span>
-                    <span v-show="CkeckAudioRes.res==0" class="checkRight">凭证审批</span>
+                    <span @click="handle('audit')" v-show="CkeckAudioRes.all-CkeckAudioRes.already>0" class="checkRight">凭证审批</span>
                 </li>
                 <li v-if="checkCss">
                     <ul>
@@ -31,7 +30,7 @@
                 <li>
                     <div><img src="@/assets/icon/share.svg" alt=""></div>
                     <span>凭证断号及序时检查</span>
-                    <span v-show="(checkFaile[2]||checkFaile[3])&&checkCss" class="checkRight">凭证重排</span>
+                    <span @click="handle('codeReset')" v-show="(checkFaile[2]||checkFaile[3])&&checkCss" class="checkRight">凭证重排</span>
                 </li>
                 <li v-if="checkCss">
                     <ul>
@@ -47,6 +46,14 @@
                 <span v-if="checkCss&&checkOutCss" @click.stop="handle('check')" class="btn">结账</span>
             </div>
         </div>
+        <div v-show="checkNav=='audit'" class="audit">
+            <p class="title">
+                <span >审核凭证</span><i @click="checkNavShow('month')"></i></p>    
+        </div>
+        <div v-show="checkNav=='codeReset'" class="codeReset">
+            <p class="title">
+                <span >凭证号重排</span><i @click="checkNavShow('month')"></i></p>     
+        </div>
   </div>
 </template>
 
@@ -59,6 +66,7 @@
           year:'',
           nowTime:new Date,
           checkedTime:'',
+          checkNav:'month',
           checkFaile:[
                 'true','true','true','true'
           ],
@@ -83,9 +91,16 @@
                     this.checkOut('check',this.checkedTime);                    
                     this.$emit('child-click',false);
                     break;
+                case 'audit':
+                    this.checkNavShow('audit')
+                    break;
+                case 'codeReset':
+                    this.checkNavShow('codeReset')
+                    break;
+
             }
         },
-         matchBegin(){
+        matchBegin(){
             var data={
                 orgid:this.orgid,
                 Year:this.nowTime.getFullYear().toString(),
@@ -184,6 +199,9 @@
                   })
                   .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
           },
+        checkNavShow(str){
+            this.checkNav=str;
+        }
       },
       computed:{
           ...mapState({
@@ -300,5 +318,13 @@
             color:#fff;
             background:#2473eb;
         }
+    }
+    .audit{
+        height:80%;
+        width:90%;
+        background: #fff;
+        position:absolute;
+        left:5%;
+        top:100px;
     }
 </style>

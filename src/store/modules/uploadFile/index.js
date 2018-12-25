@@ -59,6 +59,26 @@ const actions = {
             });
         });
     },
+    // 凭证导入excel
+    Excelupload({ commit }, data) {
+        return new Promise((resolve, reject) => {
+            let baseheader=httpConfig.getHeaderConfig();
+            let base=httpConfig.getAxiosBaseConfig();
+
+            let config_header = { "Content-Type": "multipart/form-data" };
+            var new_header = Object.assign({},config_header, baseheader);
+            console.log(data)
+            axios.create(base).post('/PVoucherMst/PostUploadFile', data, { headers:new_header }).then(res => {
+                var response=JSON.parse(res.data);
+                console.log(response)
+                resolve(response);
+
+        　　}).catch((error) =>{
+                //错误
+                reject(error);
+            });
+        });
+    },
     //下载附件
     download({ commit }, data){
         return new Promise((resolve, reject) => {
