@@ -19,6 +19,7 @@
                 <li>
                     <div><img src="@/assets/icon/share.svg" alt=""></div>
                     <span>凭证数及审核情况检查</span>
+                    <span>凭证审批</span>
                 </li>
                 <li v-if="checkCss">
                     <ul>
@@ -30,6 +31,7 @@
                 <li>
                     <div><img src="@/assets/icon/share.svg" alt=""></div>
                     <span>凭证断号及序时检查</span>
+                    <span>凭证重排</span>
                 </li>
                 <li v-if="checkCss">
                     <ul>
