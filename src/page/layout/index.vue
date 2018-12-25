@@ -3,7 +3,7 @@
         <template>
             <!-- v-once只渲染元素和组件一次 头部 -->
             <header-bar v-on:collapseByValue="collapseChange" v-once> 
-                <p slot="logo"><router-link to="/index" class="header-title">工会财务管理云平台</router-link></p>
+                <p slot="logo"><router-link to="/index" class="header-title">工会云财务</router-link></p>
             </header-bar>
             <!-- 左侧菜单 -->
             <nav-bar :isCollapse="collapsevule"></nav-bar>
@@ -62,3 +62,11 @@ export default {
     }
 }
 </script>
+<style >
+.header-title{
+    position:relative;
+    color:#444 !important;
+    left:-100px;
+}
+</style>
+

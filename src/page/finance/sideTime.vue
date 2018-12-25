@@ -273,7 +273,7 @@ export default {
                             this.$message('结账成功!');
                             this.getChecked();
                         }else{
-                            this.$message('结账失败!');
+                            this.$message(res.Msg);
                         }
                     })
                     .catch(err=>{console.log(err);loading1.close();})
@@ -349,8 +349,8 @@ export default {
    .asideNav{
         width:55px;
         position:absolute;
-        right:4px;
-        top:10px;
+        right:0px;
+        top:0px;
         height: 700px;
         background: #fff;  
         box-shadow:0 0 20px 2px #ccc;

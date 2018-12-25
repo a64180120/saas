@@ -3,7 +3,7 @@
     <div class="voucher">
         <div class="voucherHead">
             <ul class="flexPublic">
-                <li><span>凭证字号: 记-</span><span>{{PNo}}</span></li>
+                <li><span>凭证字号: </span><span>{{PNo?'记-':''}}</span>  <span>{{PNo}}</span></li>
                 <li>
                     <div class="block">
                         <span class="demonstration">凭证日期: </span>
@@ -84,7 +84,7 @@
                                         <div >
                                            <span>{{item.SubjectCode}} &nbsp;{{item.SubjectName}}</span> 
                                             <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
-                                                    :key="index">.{{assist.BaseName}}</span>
+                                                    :key="index">{{assist.BaseName?('.'+assist.BaseName):''}}</span>
                                         </div>
                                     </li>
                                     <li v-show="item.SubjectCode"><span>余额:</span><span>{{item.balance?item.balance:0}}</span></li>
@@ -243,6 +243,7 @@
             assistItem:[],//辅助项显示隐藏样式参数********************
             assistItemMask:false,
             assistCheck:true,
+            sideDateNew:'',
             nowTime:new Date,
             AbstractCss:false
         }},
@@ -260,6 +261,15 @@
                     Dtls:[]
                 }
                 this.PMakePerson=this.username;
+                console.log(this.PMakePerson)
+                if(!this.sideDate){
+                    this.sideDateNew=this.sideDate;
+                } else{
+                    this.sideDateNew=this.nowTime.getFullYear()+'-'+ (parseInt(this.$store.state.Pconfig.jmonth)+1);
+                
+                }
+                   
+                console.log( this.sideDateNew)
                 this.getFreshVoucher();
             }else{   
                 this.getVoucherData(this.dataList.data.Mst);
@@ -384,6 +394,9 @@
                     }
                     this.fatherData.PDate=this.PDate;
                     this.fatherData.PAttachment=this.PAttachment;
+                    if(!this.PMakePerson){
+                        this.PMakePerson=this.username;
+                    }
                     this.fatherData.PMakePerson=this.PMakePerson;
                     this.fatherData.PFinancePerson=this.PFinancePerson;
                     this.fatherData.PKeepingPerson=this.PKeepingPerson;
@@ -446,20 +459,19 @@
             //获取最新一个凭证
             getFreshVoucher(){
                 const loading1=this.$loading();
-                
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
                     sum1:'',
                     sum2:'',
                     keyword:'',
-                    pagesize:1,
+                    pagesize:3,
                     pageindex:0,
                     sort:['PDate DESC','PNo DESC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:'',
-                    queryfilter:{"PAccper*str*ge*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1]),
-                                    "PAccper*str*le*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1])}
+                    queryfilter:{"PAccper*str*ge*1":this.sideDateNew.split('-')[1]>9?this.sideDateNew.replace("-",''):(this.sideDateNew.split('-')[0]+'0'+this.sideDateNew.split('-')[1]),
+                                    "PAccper*str*le*1":this.sideDateNew.split('-')[1]>9?this.sideDateNew.replace("-",''):(this.sideDateNew.split('-')[0]+'0'+this.sideDateNew.split('-')[1])}
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
@@ -542,6 +554,7 @@
                 }
                 this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
                     .then(res=>{
+
                         this.subjectlist=res;
                         loading1.close();
                         for(var i in this.voucherInfo){
@@ -623,6 +636,7 @@
                         }else{
                              this.voucherInfo[Msg.id].balance=res.Record[0].j_sum-res.Record[0].d_sum;
                         }
+                        this.$forceUpdate();
                         loading5.close();
                     })
                     .catch(err=>{
@@ -950,7 +964,8 @@
     .voucher{
         width:100%;
         text-align: left;
-        padding:8px 18px;
+        padding:8px 25px;
+        margin-right:10px;
         font-size:18px;
     }
     .assistItemMask{
@@ -987,6 +1002,7 @@
         height:100%;
         border: 0;
         padding:2px 5px;
+        font-size:15px;
     }
     .addIcon,.deleteIcon{
         width:25px;

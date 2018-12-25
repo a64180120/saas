@@ -195,6 +195,7 @@
             searchVoucher(val){
                 const loading1=this.$loading();
                 var data={
+                    id:0,
                     uid:this.uid,
                     orgid:this.orgid,
                     queryfilter:{"SubjectCode*str*eq*1":this.searchVal,"SubjectName*str*eq*1":this.searchVal,"Abstract*str*eq*1":this.searchVal,"PNo*str*eq*1":this.searchVal}
@@ -593,6 +594,7 @@
         }
         .tempContentCon{
             position:relative;
+            overflow-y: auto;
             >.tempBG{
                 position: absolute;
                 width:100%;
