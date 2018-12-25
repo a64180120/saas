@@ -33,7 +33,7 @@
                     <ul>
                         <li>
                             <div>科目名称</div>
-                            <div class="inputContainer"><input type="text" placeholder="科目名称" v-model="superSearchVal.keyword"></div>
+                            <div class="inputContainer"><input type="text" placeholder="科目/凭证号/摘要" v-model="superSearchVal.keyword"></div>
                         </li>
                         <li>
                             <div>辅助核算</div>
@@ -63,12 +63,12 @@
                             <div>账期</div>
                             <div class="flexPublic">
                                 <div class="block">
-                                    <el-date-picker type="date" v-model="superSearchVal.date1" placeholder="请选择日期">
+                                    <el-date-picker type="date" v-model="superSearchVal.date1" placeholder="日期">
                                     </el-date-picker>
                                 </div>
                                 <span>至</span>
                                 <div class="block">
-                                    <el-date-picker type="date" v-model="superSearchVal.date2" placeholder="请选择日期">
+                                    <el-date-picker type="date" v-model="superSearchVal.date2" placeholder="日期">
                                     </el-date-picker>
                                 </div>
                             </div>
@@ -198,9 +198,9 @@
                 this.$store.commit("tagNav/upexcludeArr", []);
                 this.voucherList= this.$route.query.voucherList;
             }else{
-                if(!this.sideDate){
-                    this.getChecked();
-                }
+                // if(!this.sideDate){
+                //     this.getChecked();
+                // }
             }
 
             this.getAssist();        
@@ -362,20 +362,14 @@
             //高级搜索显示隐藏****************
             highGradeToggle(bool) {   
                 if(bool=='reset'){
-                    this.superSearchValPhId='',
-                    this.assistItemList={id:0,kemu:[]},
-                    this.superSearchVal={
-                        assistItemList:{type:'',list:''},
-                        assistItem:'',
-                        sum1:'',
-                        sum2:'',
-                        date1:this.year+'-'+(this.month>9?this.month:('0'+this.month)),
-                        date2:this.year+'-'+(this.month>9?this.month:('0'+this.month)),
-                        keyword:'',
-                        placeholder:'选择辅助项',
-                        nodatatext:'',
-                        show:true
-                    }       
+                    this.superSearchValPhId=0;                
+                    this.assistItemList={id:0,kemu:[]};                                
+                    this.superSearchVal.sum1='';
+                    this.superSearchVal.sum2='';
+                    this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
+                    this.superSearchVal.date2=this.year+'-'+(this.month>9?this.month:('0'+this.month));
+                    console.log(this.superSearchVal.date1,this.year,(this.month>9?this.month:('0'+this.month)))
+                    this.superSearchVal.keyword='';                                       
                 }else{
                     this.highGradeCss = bool; 
                 }   
@@ -390,6 +384,7 @@
             },
             //凭证选择**********************
             choose(item){
+                console.log(item)
                 if(this.chooseItem.PhId==item.PhId){
                    this.chooseItem=''; 
                 }else{
@@ -507,13 +502,22 @@
              //冲红***********************
             chongh(){
                 var vm=this;
-               //this.voucherData();  
+               //this.voucherData(); 
                 var Mst=this.voucherDataList.data.Mst;
+                if(Mst.WriteOff_PhIds.length>0){
+                    if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                       
+                    }else{
+                        this.voucherMaskShow(false);
+                        return;
+                    }
+                }
                 var month;
                 var date1;
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
                 month=Mst.PDate.slice(5,7);
                 date1=Mst.PDate.slice(8,10);
+                console.log(Mst)
                 for(var dtl of Mst.Dtls){
                     dtl.Abstract=`注销${month}月${date1}号${Mst.PNo}号凭证`;                    
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
@@ -523,11 +527,14 @@
                         dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
                     }
                 }
+                console.log(Mst)
                 this.clearPhId(this.voucherDataList.data.Mst); 
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 this.voucherDataList.data.Mst.PSource='冲红'
                 //this.resetVoucher();        
-                this.$message("请查看凭证信息,确认无误点击保存!")
+                this.$message("请查看凭证信息,确认无误点击保存!")               
+                
+                
                               
             },
             //清空凭证phid*****************
@@ -712,54 +719,54 @@
             //剪切*****************
             cut(data1){
                 this.$message('功能暂未开放!')
-            //      var url='Add';
-            //     var Vdata=this.voucherDataList.data; 
-            //    if(Vdata.Mst.Dtls.length<=0){
-            //        this.$message('请输入内容!')
-            //        return;
-            //    }
-            //    if(Vdata.Mst.PDate){
-            //        if(typeof(Vdata.Mst.PDate)=='object'){
-            //            Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
-            //            Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
-            //            var date=Vdata.Mst.PDate.getDate();
-            //            Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
-            //        }else {
-            //            Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
-            //        }
-            //    }else{
-            //        this.$message('请输入凭证会计期!')
-            //        return;
-            //    }
-            //    if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
-            //        var data = {
-            //            uid: this.uid,
-            //            orgid: this.orgid,
-            //            orgcode: this.orgcode,
-            //            infoData: this.voucherDataList.data
-            //        }
-            //        if (this.voucherDataList.data.Mst.PhId) {
-            //            url = 'Update';
-            //        }
-            //        const loading=this.$loading();
-            //        this.$axios.post('/PVoucherMst/Post' + url, data)
-            //            .then(res => {
-            //                loading.close();      
-            //                if (res.Status == 'success') {
-            //                    this.$message('保存成功!')
-            //                    this.delete(data1);
-            //                    if(str=='print'){
-            //                        this.printContent();
-            //                    }
-            //                } else {
-            //                    this.$message('保存失败,请重试!')
-            //                }
-            //            })
+                 var url='Add';
+                var Vdata=this.voucherDataList.data; 
+               if(Vdata.Mst.Dtls.length<=0){
+                   this.$message('请输入内容!')
+                   return;
+               }
+               if(Vdata.Mst.PDate){
+                   if(typeof(Vdata.Mst.PDate)=='object'){
+                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
+                       Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+                       var date=Vdata.Mst.PDate.getDate();
+                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+                   }else {
+                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
+                   }
+               }else{
+                   this.$message('请输入凭证会计期!')
+                   return;
+               }
+               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                   var data = {
+                       uid: this.uid,
+                       orgid: this.orgid,
+                       orgcode: this.orgcode,
+                       infoData: this.voucherDataList.data
+                   }
+                   if (this.voucherDataList.data.Mst.PhId) {
+                       url = 'Update';
+                   }
+                   const loading=this.$loading();
+                   this.$axios.post('/PVoucherMst/Post' + url, data)
+                       .then(res => {
+                           loading.close();      
+                           if (res.Status == 'success') {
+                               this.$message('保存成功!')
+                               this.delete(data1);
+                               if(str=='print'){
+                                   this.printContent();
+                               }
+                           } else {
+                               this.$message('保存失败,请重试!')
+                           }
+                       })
                        
-            //            .catch(err =>{console.log(err);loading.close()} )
-            //    }else{
-            //        this.$message('当前月份已结账,无法修改凭证!')
-            //    }
+                       .catch(err =>{console.log(err);loading.close()} )
+               }else{
+                   this.$message('当前月份已结账,无法修改凭证!')
+               }
                 
             },
             //接收voucher组件传值************
@@ -770,16 +777,19 @@
             //搜索日期转换*************
             dateTurn(val){
                 var str;
+                 console.log(val)
                 if(typeof(val)=='object'){
                     str=val.getMonth()+1;
                     val=val.getFullYear();         
                     val=val.toString()+'-'+(str>9?str:('0'+str))
                 }
+                 console.log(val)
                 return val;
             },
             //凭证列表***************高级搜索***********************
             getvoucherList(str){
                 let base=httpConfig.getAxiosBaseConfig();
+               console.log(111)
                 this.superSearchVal.date1=this.dateTurn(this.superSearchVal.date1)
                 this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
                 const loading1=this.$loading();
@@ -846,10 +856,12 @@
             },
             //获取time组件传参********************
             getSideDate(data){
+                this.checkedTime=data.checkedTime;
                 this.sideDate=data.sideDate;
                 this.year=this.sideDate.split('-')[0];
                 this.month=this.sideDate.split('-')[1];
-                this.superSearchVal.date2=this.superSearchVal.date1=this.year+(this.month>9?this.month:('0'+this.month));
+                this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
+                console.log(this.superSearchVal.date2)
                 if(this.routerQuery){
                     this.routerQuery=false;
                 }
@@ -1670,6 +1682,7 @@
         position: relative;
         width:100%;
         height:30px;
+        line-height: 25px;
         background: #fff;
         border:1px solid #ddd;
         padding:3px;
@@ -1724,4 +1737,12 @@
             }
         }
     }
+    
 </style>
+<style>
+    .highGradeCss .el-input--prefix .el-input__inner {
+        padding-left: 24px;
+        font-size:12px;
+    }
+</style>
+

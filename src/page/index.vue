@@ -2,7 +2,7 @@
   <div class="home">
     <header>
       <div class="loginContainer flexPublic">
-        <img src="@/assets/img/logo.png" alt="">
+        <img src="../assets/images/logo2.png" alt="">
         <div class="login">
           <div><img src="@/assets/img/ren.png" alt=""><span> &nbsp;0571-88270588</span></div>
           <div><img src="@/assets/img/d1.png" alt=""><router-link to="/login">登录</router-link><router-link to="/register">注册</router-link></div>
@@ -10,7 +10,6 @@
         </div>
       </div>
       <div class="carrouselContainer">
-        <div class="carrouselTitle">工会财务管理平台</div>
         <el-carousel height="560px">
           <el-carousel-item v-for="img in imgList" :key="img">
             <img :src="img">

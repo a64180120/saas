@@ -459,6 +459,9 @@
             //获取最新一个凭证
             getFreshVoucher(){
                 const loading1=this.$loading();
+                if(!this.sideDateNew){
+                    this.sideDateNew=nowTime.getFullYear()+'-'+nowTime.getMonth()
+                }
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -475,16 +478,15 @@
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                        
                         if(res.Record.length<=0){
-                            this.PDate=nowTime;                            
+                            this.PDate=this.nowTime;                     
                         } else{                         
                             this.PDate=res.Record[0].PDate;
                         }   
                         loading1.close();
                     })
                     .catch(err=>{
-                        this.$message({ showClose: true,message: err, type: "error"});loading1.close();
+                        this.$message({ showClose: true,message: 'err', type: "error"});loading1.close();
                     })
             },
             //获取父组件传参*********************************
@@ -1042,13 +1044,13 @@
         line-height:27.5px;
     }
     li:last-of-type>ul.voucherContentItem>li{
-        width:30%;
+        width:24%;
     }
     li:last-of-type>ul.voucherContentItem>li:first-of-type{
-        width:40%;
+        width:52%;
     }
     .voucherContentItem>li{
-        width:20%;
+        width:26%;
         height:55px;
         line-height:55px;
         text-align: center;
@@ -1060,7 +1062,7 @@
         border-left: 1px solid #dddddd;
     }
     .voucherContentItem>li:nth-of-type(3),.voucherContentItem>li:nth-of-type(4){
-        width:30%;
+        width:24%;
     }
     .voucherContentItem>li,.voucherContentItem:nth-of-type(5)>li{
         border-right-color:#7a7a7a;

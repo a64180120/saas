@@ -107,7 +107,7 @@ export default {
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                         //this.getvoucherList('reset');
-                        this.$emit("time-click",{sideDate:this.sideDate})
+                        this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime})
                         this.$forceUpdate();
                     })
                     .catch(err=>console.log(err))

@@ -147,11 +147,11 @@
         </div>
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <!-- <div class="footInfo " :class="{voucherMaskActive:voucherMask}">
+        <div class="footInfo " >
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
-        </div> -->
+        </div>
         <!-- 存为模板******************** -->
         <div v-if="temp.tempMask" class="tempMask">
             <div>
@@ -381,7 +381,8 @@
                                this.$message('保存成功!')
                                if(str=='keepAdd'){
                                    this.voucherDataList.data={
-                                        Mst:{},
+                                        Mst:{
+                                        },
                                         Attachements:[]
                                     }
                                     this.resetVoucher();
@@ -877,6 +878,14 @@
                 var vm=this;
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
+                if(Mst.WriteOff_PhIds.length>0){
+                    if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                       
+                    }else{
+                        this.voucherMaskShow(false);
+                        return;
+                    }
+                }
                 var month;
                 var date1;
                 var oldPhId=this.voucherDataList.data.Mst.PhId;

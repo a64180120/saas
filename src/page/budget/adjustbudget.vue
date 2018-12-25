@@ -268,8 +268,14 @@
                 //val.target.value=val.target.value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g);
                 let code = val.target.attributes.code.value;//当前修改数据的code
                 let index=val.target.attributes.index.value;//当前修改数据在列表中的下标
-                let in_value = parseFloat(val.target.value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g));//input数据转数字
-                console.log(in_value);
+               /* let in_value = parseFloat(val.target.value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g));//input数据转数字*/
+                let in_value = '';
+                let numList=val.target.value.split(',');
+                for(var i in numList){
+                    in_value+=numList[i];
+                }
+                // input数据转数字
+                in_value=Number(in_value);
                 let code_first=this.code_first;//一级科目数据列表
                 if(!isNaN(in_value)){
                     if(code=='BNSHTZ'){
@@ -660,6 +666,9 @@
     }
     .formData>ul.formDataItems>li.align-right{
         text-align: right;
+    }
+    .formData>ul.formDataItems>li:last-child >input{
+        text-align: left;
     }
     .formData>ul.bottomForm>li{
         border:none;
