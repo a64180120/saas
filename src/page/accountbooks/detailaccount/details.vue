@@ -112,8 +112,8 @@
                         </ul>
                         <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
                             <li>{{dataInfoMonth.Pdate.slice(0,10)}}</li>
-                            <li class="align-center" :title="dataInfoMonth.Pno" style=""><a>{{dataInfoMonth.Pno}}</a></li>
-                            <li :class="{bolder:true,'align-center':true}">{{dataInfoMonth.Abstract}}</li>
+                            <li></li>
+                            <li :class="{bolder:true,'align-center':true}">{{date1.choosedMonth==1?'本年期初':dataInfoMonth.Abstract}}</li>
                             <li class="align-right">{{dataInfoMonth.JSum| NumFormat}}</li>
                             <li class="align-right" :title="dataInfoMonth.DSum">{{dataInfoMonth.DSum| NumFormat}}</li>
                             <li>{{JD[dataInfoMonth.DType]}}</li>
@@ -121,12 +121,18 @@
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
                             <li>{{item.Pdate.slice(0,10)}}</li>
-                            <li class="align-center" :title="item.Pno" style=""><a @click="showvoucher">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
+                            <li class="align-center" style=""><a @click="showvoucher" :title="item.PhIdMst">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
                             <li class="align-right">{{item.JSum=='0.00'?'':(item.JSum)}}</li>
                             <li class="align-right" :title="item.DSum">{{item.DSum=='0.00'?(item.Abstract=='本月累计'||item.Abstract=='本年累计'?'0.00':''):(item.DSum)}}</li>
                             <li>{{JD[item.DType]}}</li>
-                            <li class="align-right">{{item.Balance | NumFormat}}</li>
+                            <template v-if="item.Pno!='本月累计'&&item.Pno!='本年累计'">
+                                <li></li>
+                            </template>
+                            <template v-else>
+                                <li class="align-right">{{item.Balance | NumFormat}}</li>
+                            </template>
+
                         </ul>
                         <!--
                             v-infinite-scroll:
@@ -140,7 +146,7 @@
                         <!--</div>-->
                     </div>
                 </div>
-                <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
             </div>
             <div class="timeSelectBox">
                 <time-select-bar @item-click="dateChoose"
@@ -233,9 +239,12 @@
         },
         methods: {
             //显示凭证
-            showvoucher:function(){
-                this.voucherDataList.bool=true;
-   `    ` ``},
+            showvoucher:function(val){
+                console.log(val.target.title);
+
+                this.getVoucherData(val.target.title);
+
+                },
             //清除高级查询数据
             clearPorp:function(){
                 this.zwTime='';
@@ -282,6 +291,39 @@
                 this.date1=time;
                 this.getData();
             },
+            //手动刷新voucher组件**************************
+            resetVoucher(){
+                var vm=this;
+                this.voucherDataList.bool=false;
+                function delay(){
+                    vm.voucherDataList.bool=true
+                }
+                setTimeout(delay,5);
+            },
+//获取单个凭证**************
+            getVoucherData(PhId){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    id:PhId
+                }
+                const loading2=this.$loading();
+                this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
+                    .then(res=>{console.log(res)
+                        if(res.Status=='success'){
+                            this.voucherDataList.data.Mst=res.Data;
+                            console.log(this.voucherDataList.data.Mst);
+                            this.voucherDataList.bool=true;
+                            this.resetVoucher();
+                        }else{
+                            this.$message({ showClose: true,message: res.Msg, type: "error"});
+                        }
+                        loading2.close();
+                    })
+                    .catch(err=>{
+                        this.$message({ showClose: true,message: err, type: "error"});loading2.close();
+                    })
+            },
             //查询详细数据
             getData() {
                 this.getDataByMonth();
@@ -321,6 +363,7 @@
                 this.loading = true;
                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
+
                         this.loading = false;
                         res.Record=this.changeData(res.Record);
 
@@ -368,7 +411,14 @@
                     year=currentyear;
                     Pmonth=currentMonth+','+currentMonth;
                 }else{
-                    if(this.date1.choosedMonth!=this.date1.choosedMonthEnd){return}
+                    if(this.date1.choosedMonth!=this.date1.choosedMonthEnd){
+                        if(this.date1.choosedMonth==1){
+                            year=this.date1.choosedYear;
+                            Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonth;
+                        }else{
+                            return
+                        }
+                   }
                     else{
                         year=this.date1.choosedYear;
                         Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
