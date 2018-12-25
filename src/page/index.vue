@@ -227,7 +227,7 @@
       },
       //打开网址
       openUrl(object){
-        window.open(object.url); 
+        window.open(object.url);
       }
     }
   }

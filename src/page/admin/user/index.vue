@@ -747,7 +747,7 @@
                                     vm.$message.error(res.Msg);
                                     return
                                 }
-                                vm.$message.success('密码重置成功!');
+                                vm.$message.success('密码重置成功!  重置后密码为：123456');
                             }).catch(error =>{
                                 console.log(error);
                                 vm.$message({ showClose: true,message: "密码重置错误", type: "error"});

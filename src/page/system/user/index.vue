@@ -22,6 +22,10 @@
                         <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10"
                                    @click="PageReset">密码重置
                         </el-button>
+                        <el-button type="info"  size="small" class="el-icon-refresh"
+                                   @click="refresh">
+                        </el-button>
+                        <!--<a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>-->
                     </el-col>
                 </el-row>
             </div>
@@ -47,10 +51,19 @@
                 </el-table-column>
                 <el-table-column label="账号状态">
                     <template slot-scope="scope">
-                        <el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini"
-                                   circle></el-button>
-                        <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>
+                        <label style="margin-right: 60px"><input :name="scope.row.realName" type="radio" value="0" v-model="scope.row.EnabledMark"
+                                      @click="changeEnable(scope.row,0)">启用</label>
+                        <label style="margin-right: 60px"><input :name="scope.row.realName" type="radio" value="1" v-model="scope.row.EnabledMark"
+                                      @click="changeEnable(scope.row, 1)">临时停用</label>
+                        <label><input :name="scope.row.realName" type="radio" value="2" v-model="scope.row.EnabledMark"
+                                      @click="changeEnable(scope.row, 2)">永久停用</label>
+                        <!--<el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini"-->
+                                   <!--circle></el-button>-->
+                        <!--<el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>-->
                     </template>
+                </el-table-column>
+                <el-table-column label="创建时间" >
+                    <template slot-scope="scope">{{ scope.row.NgInsertDt.replace('T',' ') }}</template>
                 </el-table-column>
             </el-table>
             <div class="pagination">
@@ -59,10 +72,25 @@
                 </el-pagination>
             </div>
         </div>
+        <div>
+            <span style="color: #cf9236; font-size: 20px; font-weight: bold">
+                工作账号管理规范说明：
+            </span>
+        </div>
+        <div class="container"  style="height: 100px">
+            <div>
+                <span>
+                    基层工会工作账号不分角色，系统最多支持6名人员使用（含停用账户）。如果需要更多用户数量，需要支付额外费用。
+                </span>
+            </div>
+            <!--<div>-->
+                <!--<el-button type="danger" style="float: right">购买用户数</el-button>-->
+            <!--</div>-->
+        </div>
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="dialogTitle" :visible.sync="editVisible" width="40%" :close="dialogClose">
-            <el-form ref="forms" :model="form" :rules="rules" label-width="100px" label-position="right"
+            <el-form ref="forms" :model="form" :rules="rules" label-width="120px" label-position="right"
                      v-loading.fullscreen.lock="loading">
                 <el-form-item label="用户姓名：" prop="realName">
                     <el-input v-model="form.realName"></el-input>
@@ -71,11 +99,22 @@
                     <el-input v-model="form.mobilePhone"></el-input>
                 </el-form-item>
                 <el-form-item label="角色：" prop="rolesid">
-                    <el-checkbox-group v-model="form.rolesid">
-                        <el-checkbox v-for="item of roledata" :key="item.PhId" :label="item.PhId"
-                                     class="el-checkbox-role">{{item.Name}}
-                        </el-checkbox>
-                    </el-checkbox-group>
+                    <div style="width: 60%; float: left">
+                        <el-checkbox-group v-model="form.rolesid" style="float: left">
+                            <el-checkbox v-for="item of roledata" :key="item.PhId" :label="item.PhId"
+                                         class="el-checkbox-role">{{item.Name}}
+                                <!--<el-tag class="el-checkbox-role2">权限详情</el-tag>-->
+                            </el-checkbox>
+
+                        </el-checkbox-group>
+                    </div>
+                    <div style="width: 40%; float: right">
+                        <span v-for="item of roledata" class="el-checkbox-role2" @click="premisList(item.PhId)">
+                            权限详情
+                        </span>
+                        <!--<el-button type="primary" v-for="item of roledata" class="el-checkbox-role2" @click="premissionList(item.PhId)">权限详情</el-button>-->
+                        <!--<el-tag v-for="item of roledata" class="el-checkbox-role2" @click="premissionList(item.PhId)">权限详情</el-tag>-->
+                    </div>
                 </el-form-item>
                 <el-form-item label="账号状态：" prop="enabledMark">
                     <el-radio-group v-model="form.enabledMark">
@@ -84,7 +123,7 @@
                         <el-radio label="2">永久停用</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item v-if="dialogState=='add'?false:true">
+                <el-form-item label="历史关联账号：" v-if="dialogState=='trans'?true:false">
                     <el-table
                         :data="form.historyAccount"
                         border
@@ -93,12 +132,33 @@
                         <el-table-column prop="RealName" label="用户姓名"></el-table-column>
                         <el-table-column prop="MobilePhone" label="手机号码"></el-table-column>
                         <el-table-column prop="RoleName" label="角色"></el-table-column>
+                        <!--<el-table-column prop="RoleName" label="角色"></el-table-column>-->
                     </el-table>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="saveEdit('forms')">保 存</el-button>
                 <el-button @click="callof('forms')">取 消</el-button>
+            </span>
+        </el-dialog>
+        <!-- 编辑弹出框 -->
+        <el-dialog :title="'权限详情'" :visible.sync="editVisible2" width="40%" style="height: 800px">
+            <el-form ref="form2" :model="form2" :rules="rule2" label-width="100px" label-position="right" style="height: 400px; overflow-y: auto">
+                <el-form-item label="角色权限：">
+                    <el-tree
+                        :data="form2.data2"
+                        ref="tree"
+                        show-checkbox
+                        :check-strictly="form2.checkStrictly"
+                        node-key="ItemId"
+                        default-expand-all
+                        :default-checked-keys="form2.CheckedList"
+                        :render-content="renderContent">
+                    </el-tree>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editVisible2 = false">取 消</el-button>
             </span>
         </el-dialog>
     </div>
@@ -128,6 +188,7 @@
                 }
             }
             return {
+                //data2: [],
                 loading: false,
                 //table数据
                 tableData: [],
@@ -138,9 +199,16 @@
                 select_word: "", //搜索字段
                 dialogState: "add",
                 dialogTitle: '',
+                jsonFlam:'',
                 editVisible: false,
+                editVisible2: false,
                 is_search: false,
                 roledata: [],
+                form2: {
+                    data2: [],
+                    CheckedList: [],
+                    checkStrictly: true
+                },
                 form: {
                     phid: 0,
                     realName: "",
@@ -168,6 +236,8 @@
                         {required: true, message: "请选择账号状态", trigger: "change"}
                     ]
                 },
+
+                rule2:{},
                 idx: ''
             };
         },
@@ -175,10 +245,13 @@
         created() {
             //获取角色信息
             this.getRoleData();
+            this.getData2();
         },
         mounted: function () {
             this.getData('');
+            //this.getData2();
         },
+        components: {},
         //计算
         computed: {
             ...mapState({
@@ -191,6 +264,85 @@
             handleCurrentChange(val) {
                 this.pageIndex = val;
                 this.getData('');
+            },
+            // uid: this.userid,
+            // orgid: this.orgid,
+            // infoData: {Mst: userinfo, Relation: relations}
+            //修改启用标志
+            changeEnable(PhId, EnabledMark) {
+                //this.PhIdList = PhId;
+                let object = PhId;
+                var me = this;
+                if(object != null){
+                    console.log(object);
+                    object.EnabledMark = EnabledMark;
+                    var data = {
+                        uid: this.userid,
+                        orgid: this.orgid,
+                        infoData: object
+                    };
+                    this.$axios
+                        .post("/SysUser/PostUpdateEnabled", data)
+                        .then(res => {
+                            if(res.Status=='success'){
+                                this.$message.success("修改成功");
+                            }else{
+                                this.$message.error('修改失败,请重试!');
+                            }
+                            this.getData('');
+                        });
+                }else{
+                    this.$message.error('请点击状态栏!');
+                }
+
+            },
+            //刷新功能
+            refresh(){
+                this.getData('');
+            },
+            //获取权限详情列表
+            premisList(id){
+                this.getData2();
+                let vm = this;
+                console.log(id);
+                if (id != 0) {
+                    this.editVisible2 = true;
+                    this.$axios.get("/SysRole/GetAuthorizeListByRoleId", {
+                        params: {
+                            uid: "0",
+                            orgid: "0",
+                            id: id
+                        }
+                    }).then(res => {
+                        console.log(res);
+                        //vm.CheckedList = [403181206000002, 403181206000003];
+                        this.form2.CheckedList = res;
+                        //console.log(this.CheckedList);
+                        debugger;
+                    });
+                    //this.$refs.tree.setCheckedKeys(list);
+
+                } else {
+                    this.$message({
+                        message: "请选中权限详情按钮",
+                        type: "warning"
+                    });
+                }
+            },
+            getData2(){
+                this.$axios.get("/SysMenu/GetMenuListAndButtonList", {
+                    params: {
+                        uid: "",
+                        orgid: ""
+                    }
+                }).then(
+                    res => {
+                        this.form2.data2 = res;
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                );
             },
             /**
              * 用户列表获取数据
@@ -318,8 +470,7 @@
                     this.editVisible = true;
 
                     //获取移交记录
-                    this.getTransData(id);
-
+                    //this.getTransData(id);
                 } else {
                     this.$message({showClose: true, message: "请选中列表的其中一行", type: "warning"});
                 }
@@ -409,7 +560,7 @@
                                 vm.$message.error(res.Msg);
                                 return
                             }
-                            vm.$message.success('密码重置成功!');
+                            vm.$message.success('密码重置成功! 重置后密码为：123456');
 
                         }).catch(error => {
                             console.log(error);
@@ -439,12 +590,13 @@
                     }
 
                     this.form.phid = object[0].PhId;
-                    //this.form.realName=object[0].RealName;
-                    //this.form.mobilePhone=object[0].MobilePhone;
+                    this.form.realName=object[0].RealName;
+                    this.form.mobilePhone=object[0].MobilePhone;
                     this.form.rolesid = roles;
                     this.form.enabledMark = String(object[0].EnabledMark);
 
-
+                    this.jsonFlam = JSON.stringify(object[0]);
+                    console.log(object);
                     //改变更新状态
                     this.dialogState = "trans";
                     this.dialogTitle = "账号移交";
@@ -621,12 +773,15 @@
             },
             //账号移交
             transUser() {
+                //选中用户
+                let select = this.singleSelection[0];
+                console.log(select);
                 //获取缓存 的用户 组织，角色基本信息
                 let cookiesUser = Auth.getUserInfoData();
                 var vm = this;
                 //选中用户
-                let selectUser = this.singleSelection[0];
-
+                //let selectUser = this.singleSelection[0];
+                let selectUser = JSON.parse(this.jsonFlam);
                 var userinfo = this.singleSelection[0];
                 userinfo.PersistentState = 2;
                 userinfo.Account = this.form.mobilePhone;
@@ -673,38 +828,39 @@
                     RoleName: String(rolesname),
                     RoleId: String(rolesid)
                 };
-
+                console.log(transrecord);
+                console.log(selectUser);
 
                 this.loading = true;
                 //提交asiox
-                SysUserUpdate(vm, {
-                    otype: this.dialogState,
-                    uid: this.userid,
-                    orgid: this.orgid,
-                    infoData: {Mst: userinfo, Relation: relations, sysUserTransferRecord: transrecord}
-                }).then(res => {
-                    this.loading = false;
-
-                    if (res.Status === 'error') {
-                        this.$message.error(res.Msg);
-                        return
-                    }
-
-                    this.$message.success('修改成功!');
-                    //设置状态，隐藏新增页面
-                    this.dialogState = "";
-                    this.editVisible = false;
-                    //清空选中项
-                    this.singleSelection = [];
-                    //刷新列表
-                    this.getData('');
-
-                }).catch(error => {
-                    console.log(error);
-                    this.loading = false;
-                    this.$message({showClose: true, message: "用户列表获取错误", type: "error"});
-
-                })
+                // SysUserUpdate(vm, {
+                //     otype: this.dialogState,
+                //     uid: this.userid,
+                //     orgid: this.orgid,
+                //     infoData: {Mst: userinfo, Relation: relations, sysUserTransferRecord: transrecord}
+                // }).then(res => {
+                //     this.loading = false;
+                //
+                //     if (res.Status === 'error') {
+                //         this.$message.error(res.Msg);
+                //         return
+                //     }
+                //
+                //     this.$message.success('修改成功!');
+                //     //设置状态，隐藏新增页面
+                //     this.dialogState = "";
+                //     this.editVisible = false;
+                //     //清空选中项
+                //     this.singleSelection = [];
+                //     //刷新列表
+                //     this.getData('');
+                //
+                // }).catch(error => {
+                //     console.log(error);
+                //     this.loading = false;
+                //     this.$message({showClose: true, message: "用户列表获取错误", type: "error"});
+                //
+                // })
             }
         }
     };
@@ -716,7 +872,21 @@
         float: left;
         margin-left: 0px;
     }
+    .el-checkbox__label {
+        display: inline-block;
+        padding-left: 10px;
+        line-height: 19px;
+        font-size: 14px;
+        width: 80%;
+    }
 
+    .el-checkbox-role2 {
+        width: 30%;
+        float: right;
+        margin-bottom: 0px;
+        margin-right: 100px;
+        color: #00B8EE;
+    }
     /* .el-checkbox-role >.el-checkbox__label{
             width: 80%;
         } */

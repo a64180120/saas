@@ -360,7 +360,9 @@
                 this.ajaxMode();
             },
             verifyMany(){
-                if(this.PhIdLists ==[] && this.PhIdList == ""){
+                console.log(this.PhIdLists);
+                console.log(this.PhIdList);
+                if(this.PhIdLists.length < 1 && this.PhIdList == ""){
                     this.$message.error('请选择需要审核的组织,请重试!');
                     return;
                 }else{
