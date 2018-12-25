@@ -8,7 +8,8 @@
             </ul>
         </div>
         <div class="addFormContainer">
-            <h6 class="addTitle">基层组织账套管理</h6>
+            <h6 class="addTitle" v-model="titleName" v-show="showFlam">基层组织账套管理</h6>
+            <h6 class="addTitle" v-show="showFlam2">机关组织账套管理</h6>
             <ul class="addFormItems ul-flexChild">
                 <li>
                     <div class="addFormItemTitle">工会名称</div>
@@ -199,10 +200,12 @@ import qs from 'qs';
                 file: '1',
                 OrgName: '',
                 EnterpriseCode: '',
+                showFlam2:'',
                 EnterpriseAttachment:'',
                 ChairmanAttachment:'',
                 Address: '',
                 address: [],
+                titleName:'基层组织账套管理',
                 fileVisible:false,
                 clearable: true,
                 phoneHead: '1',
@@ -294,8 +297,13 @@ import qs from 'qs';
             //this.getNodes();
             this.selectParentName();
             this.selectArea("0", 0);
-            console.log(this.showFlam);
             this.showFlam = this.$route.query.showFlam;
+            if(this.showFlam){
+                this.showFlam2 = false;
+            }else{
+                this.showFlam2 = true;
+            }
+            console.log(this.titleName);
         },
         methods: {
             ...mapActions({

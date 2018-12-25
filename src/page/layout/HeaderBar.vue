@@ -8,6 +8,7 @@
             <slot name="logo"></slot>
         </div>
         <div class="header-right">
+            
             <div class="header-user-con">
                 <!-- 全屏显示 -->
                 <!-- <div class="btn-fullscreen" @click="handleFullScreen">
@@ -16,16 +17,17 @@
                     </el-tooltip>
                 </div> -->
                 <!-- 消息中心 -->
+                <div class="telPhone"><img src="../../assets/images/finance/SAAS-03.png"><span>0571-88270588</span></div>
                 <div class="btn-bell">
                     <el-tooltip effect="dark" :content="message?`有${message}条未读消息`:`消息中心`" placement="bottom">
                         <router-link to="/notice">
-                            <i class="el-icon-bell"></i>
+                            <div class="message"><img src="../../assets/images/finance/SAAS-02.png"></div>
                         </router-link>
                     </el-tooltip>
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div>
                 <!-- 用户头像 -->
-                <div class="user-avator"><img src="static/img/22.png"></div>
+                <div class="user-avator"><img src="../../assets/images/finance/SAAS-01.png"></div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="userOperation">
                     <span class="el-dropdown-link">
@@ -230,6 +232,11 @@ export default {
   width: 100%;
   height: 60px;
   font-size: 22px;
+
+}
+.sys-header{
+  box-shadow: 0 1px 8px #b3acac;
+  border-color:#ccc;
 }
 .collapse-btn {
   float: left;
@@ -237,6 +244,7 @@ export default {
   cursor: pointer;
   line-height: 60px;
   width: 180px;
+  height:59px;
 }
 .header .logo {
   float: left;
@@ -266,15 +274,15 @@ export default {
   border-radius: 15px;
   cursor: pointer;
 }
-.btn-bell-badge {
+/* .btn-bell-badge {
   position: absolute;
-  right: 0;
-  top: -2px;
+  right: -15px;
+  top: 3px;
   width: 8px;
   height: 8px;
   border-radius: 4px;
   background: #f56c6c;
-}
+} */
 .el-icon-menu{
   font-size: 20px;
 }
@@ -309,5 +317,25 @@ export default {
     font-weight: 600;
     margin-bottom: 6px;
     padding-bottom: 6px;
+}
+.telPhone{
+  color:#88b927;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+.telPhone>img{
+  width:30px;
+}
+.message>img{
+  width:100%;
+}
+.user-avator>img{
+  width:35px;
+  height:30px;
+}
+.sys-header .header-user-con .el-dropdown{
+  color:#333;
 }
 </style>

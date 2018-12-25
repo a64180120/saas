@@ -180,6 +180,7 @@
                     res => {
                         this.checkStrictly = true;
                         this.data2 = res;
+                        console.log(this.data2);
                     },
                     error => {
                         console.log(error);

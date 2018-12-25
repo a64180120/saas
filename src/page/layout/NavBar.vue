@@ -96,6 +96,14 @@ export default {
   bottom: 0;
   overflow-y: scroll;
 } */
+.sidebar{
+  top:65px;
+}
+
+.el-menu{
+  border-right:0;
+  margin-right:10px;
+}
 .sidebar::-webkit-scrollbar {
   width: 0;
 }

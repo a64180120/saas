@@ -3,6 +3,7 @@
     <div class="container">
       <el-button type="primary" @click="printClick">打印</el-button>
 
+      <div>{{ sumvalue| NumtoCHN}} </div>
 
       <print-tem ref="print" :printData="voucherdata"></print-tem>
 
@@ -22,7 +23,8 @@ export default {
   data() {
     return {
       voucherdata:'',
-      fileVisible:false
+      fileVisible:false,
+      sumvalue:999999999999.123
     }
   },
   created() {

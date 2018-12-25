@@ -7,7 +7,7 @@
 .el-input__icon{
     line-height:30px;
 }
-*{padding:0; margin:0;box-sizing: border-box;font-family: myFont,Arial, Helvetica, sans-serif}
+*{padding:0; margin:0;box-sizing: border-box;font-family: myFont,PingFang SC,Arial, Helvetica, sans-serif,SimSun,NSimSun !important}
 /* @font-face {
     font-family: 'myFont';
     src: url('./font/pingfang.ttf');
@@ -268,4 +268,79 @@ ul{
 .popper{
     top: 235px !important;
 }
-
+.sys-header .collapse-btn{
+    background: #fff;
+}
+.sidebar{
+    background: #fff;
+}
+.collapse-btn{
+    display: flex;
+    align-items: center;
+}
+.el-icon-menu:before{
+    content:"";
+    position:relative;
+    top:10px;
+    width:65px;
+    height:35px;
+    display: block;
+    background: url(../images/logo2.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb1::before,
+.el-icon-lx-SAAS_tb2::before,
+.el-icon-lx-SAAS_tb3::before,
+.el-icon-lx-SAAS_tb4::before,
+.el-icon-lx-SAAS_tb5::before,
+.el-icon-lx-SAAS_tb6::before,
+.el-icon-lx-SAAS_tb7::before,
+.el-icon-lx-SAAS_tb8::before{
+    content:"";
+    width:24px;
+    height:24px;
+    display: block;
+    background: url(../images/finance/SAAS_tb6.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb1::before{
+    background: url(../images/finance/SAAS_tb1.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb2::before{
+    background: url(../images/finance/SAAS_tb2.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb3::before{
+    background: url(../images/finance/SAAS_tb3.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb4::before{
+    background: url(../images/finance/SAAS_tb4.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb5::before{
+    background: url(../images/finance/SAAS_tb5.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb6::before{
+    background: url(../images/finance/SAAS_tb8.png);
+    background-size:cover;
+}
+.el-icon-lx-SAAS_tb7::before{
+    background: url(../images/finance/SAAS_tb7.png);
+    background-size:cover;
+}
+.sidebar .el-menu{
+    background: #fff;
+    color:#333;
+  }
+  .sidebar .el-menu .el-menu-item{
+    color:#333;
+  }
+  .sidebar .el-menu .el-submenu__title{
+    color:#333;
+  }
+  .el-submenu__icon-arrow{
+      color:rgb(117, 74, 74) !important;
+  }
