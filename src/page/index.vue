@@ -219,7 +219,7 @@
     },
     methods:{
       navEnter(val){
-        console.log(111,this.nav)
+
         this.nav=val;
       },
       navLeave(){

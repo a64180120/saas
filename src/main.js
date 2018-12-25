@@ -1,4 +1,6 @@
 
+import '../static/serverconfig.js'
+
 import Vue from "vue"
 import App from './index'
 import ElementUI from 'element-ui'
@@ -16,6 +18,7 @@ import './plugins/install'
 import infiniteScroll from 'vue-infinite-scroll'
 import Print from '@/plugins/printJS/print'
 import getPdf from './plugins/PDF/getPdf'
+import httpajax from "axios";
 
 import '../static/css/icon.css';  //阿里的图标样式
 
@@ -33,7 +36,23 @@ Vue.use(infiniteScroll)
 Vue.use(Print) 
 
 // 注册Pdf
-Vue.use(getPdf) 
+Vue.use(getPdf)
+
+//在main.js中定义一个全局函数
+Vue.prototype.getConfigJson=function(){
+    httpajax.create()({
+        url: '/data/index',
+        method: 'post'
+    }).then((result)=>{
+        //用一个全局字段保存baseUrl
+        Vue.prototype.baseUrl=result.data.baseUrl;
+
+        return Promise.resolve(result.data);
+        
+    }).catch((error)=>{
+        console.log(error)
+    });
+}  
 
 new Vue({
     i18n,
@@ -43,3 +62,6 @@ new Vue({
     filter,
     render: h => h(App)
 }).$mount('#app')
+
+
+//Vue.prototype.getConfigJson()//调用声明的全局方法
