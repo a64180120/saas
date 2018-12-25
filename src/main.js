@@ -62,6 +62,3 @@ new Vue({
     filter,
     render: h => h(App)
 }).$mount('#app')
-
-
-//Vue.prototype.getConfigJson()//调用声明的全局方法
