@@ -19,6 +19,7 @@
                 <li>
                     <div><img src="@/assets/icon/share.svg" alt=""></div>
                     <span>凭证数及审核情况检查</span>
+                    <span v-show="CkeckAudioRes.res==0" class="checkRight">凭证审批</span>
                 </li>
                 <li v-if="checkCss">
                     <ul>
@@ -30,6 +31,7 @@
                 <li>
                     <div><img src="@/assets/icon/share.svg" alt=""></div>
                     <span>凭证断号及序时检查</span>
+                    <span v-show="(checkFaile[2]||checkFaile[3])&&checkCss" class="checkRight">凭证重排</span>
                 </li>
                 <li v-if="checkCss">
                     <ul>
@@ -231,6 +233,7 @@
                     margin-bottom: 25px;
                     font-size: 18px;
                     font-weight: 600;
+                    position:relative;
                     >div{
                         width:46px;
                         height:46px;
@@ -281,6 +284,21 @@
                     font-size: 16px;
                 }
             }
+        }
+    }
+    .checkRight{
+        position:absolute;
+        right:40px;
+        color:#2473eb;
+        border:2px solid #2473eb;
+        font-weight:400;
+        font-size:16px;
+        padding:3px 10px;
+        border-radius:3px;
+        cursor:pointer;
+        &:hover{
+            color:#fff;
+            background:#2473eb;
         }
     }
 </style>

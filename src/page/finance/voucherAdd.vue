@@ -147,7 +147,7 @@
         </div>
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <!-- <div class="footInfo " :class="{voucherMaskActive:voucherMask}">
+        <!-- <div class="footInfo " >
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
@@ -381,7 +381,8 @@
                                this.$message('保存成功!')
                                if(str=='keepAdd'){
                                    this.voucherDataList.data={
-                                        Mst:{},
+                                        Mst:{
+                                        },
                                         Attachements:[]
                                     }
                                     this.resetVoucher();
@@ -877,6 +878,14 @@
                 var vm=this;
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
+                if(Mst.WriteOff_PhIds.length>0){
+                    if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                       
+                    }else{
+                        this.voucherMaskShow(false);
+                        return;
+                    }
+                }
                 var month;
                 var date1;
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
@@ -1060,9 +1069,10 @@
 <style lang="scss" scoped>
     .addVoucher{
         width:100%;
-        min-width: 1250px;
+        min-width: 1190px;
         height:100%;
         overflow: hidden;
+        overflow-y: auto;
         text-align: left;
         padding:8px 18px;
         padding-right:70px;
@@ -1072,7 +1082,7 @@
     }
     .unionState{
         padding-right: 10px;
-        margin-bottom: 30px;
+       // margin-bottom: 30px;
         >ul{
             >a:first-of-type{
                 position:relative;

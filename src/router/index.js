@@ -23,7 +23,8 @@ function initRoute(router,menu) {
                         console.log("权限列表生成完毕");
                         permissionList = res;
                         res.forEach(function(v) {
-                            let routeItem = router.match(v.path);
+                            var path=v.path||'';
+                            let routeItem = router.match(path);
                             if (routeItem) {
                                 routeItem.meta.permission = v.permission? v.permission: [];
                                 routeItem.meta.name = v.name;
