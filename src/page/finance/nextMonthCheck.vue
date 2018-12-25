@@ -233,6 +233,7 @@
                     margin-bottom: 25px;
                     font-size: 18px;
                     font-weight: 600;
+                    position:relative;
                     >div{
                         width:46px;
                         height:46px;
@@ -252,6 +253,10 @@
                         }
                     }
                     &:nth-of-type(3){
+                        >span:last-of-type{
+                            position:absolute;
+                            right:50px;
+                        }
                         >div{
                             background: #fb7798;
                         }

@@ -212,9 +212,10 @@
         }
     },
     mounted(){
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top1.png')
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top2.png')
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/top3.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t1.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t2.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t3.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t4.png')
     },
     methods:{
       navEnter(val){
