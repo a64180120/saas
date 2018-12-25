@@ -66,7 +66,7 @@
 
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
-                            <input disabled v-bind:value="item.BudgetTotal">
+                            <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                         </li>
                         <li>
                             其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -94,7 +94,7 @@
                         <li class="align-center">{{item.k_name}}</li>
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
-                            <input v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
+                            <input v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
                         </li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -108,7 +108,7 @@
                         <li class="align-center">{{item.k_name}}</li>
                         <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                         <li class="align-right">
-                            <input  v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
+                            <input  v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
                         </li>
                         <li>
                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -238,7 +238,13 @@
             inputLis:function(val){
                 let code = val.target.attributes.code.value;//当前修改数据的code
                 let index=val.target.attributes.index.value;//当前修改数据在列表中的下标
-                let in_value = parseFloat(val.target.value);//input数据转数字
+                let in_value = '';
+                let numList=val.target.value.split(',');
+                for(var i in numList){
+                    in_value+=numList[i];
+                }
+                // input数据转数字
+                in_value=Number(in_value);
                 if(!isNaN(in_value)){
                     if(code=='BNSHTZ'){
 
@@ -280,6 +286,7 @@
                         }
                     }
                     //修改该科目在总list中的数据
+                    console.log(this.budgetList[index].BudgetTotal);
                     this.budgetList[index].BudgetTotal=in_value;
                     this.budgetList[index].ApprovedBudgetTotal=this.budgetList[index].BudgetTotal
                 }
@@ -601,6 +608,9 @@
     }
     .formData>ul.formDataItems>li.align-right{
         text-align: right;
+    }
+    .formData>ul.formDataItems>li:last-child >input{
+        text-align: left;
     }
     .formData>ul.bottomForm>li{
         border:none;

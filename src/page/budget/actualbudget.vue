@@ -624,6 +624,9 @@
         padding-right: 10px;
         text-align: right;
     }
+    .formData>ul.formDataItems>li:last-child >input{
+        text-align: left;
+    }
     .formData>ul.bottomForm>li{
         border:none;
         text-align: right;
