@@ -49,7 +49,7 @@
                       </span>
                     </template>
                 </el-table-column>
-                <el-table-column label="账号状态">
+                <el-table-column label="账号状态" width="360px">
                     <template slot-scope="scope">
                         <label style="margin-right: 60px"><input :name="scope.row.realName" type="radio" value="0" v-model="scope.row.EnabledMark"
                                       @click="changeEnable(scope.row,0)">启用</label>
@@ -64,6 +64,9 @@
                 </el-table-column>
                 <el-table-column label="创建时间" >
                     <template slot-scope="scope">{{ scope.row.NgInsertDt.replace('T',' ') }}</template>
+                </el-table-column>
+                <el-table-column label="永久停用时间" >
+                    <template slot-scope="scope">{{ scope.row.NgUpdateDt.replace('T',' ') }}</template>
                 </el-table-column>
             </el-table>
             <div class="pagination">
@@ -132,6 +135,7 @@
                         <el-table-column prop="RealName" label="用户姓名"></el-table-column>
                         <el-table-column prop="MobilePhone" label="手机号码"></el-table-column>
                         <el-table-column prop="RoleName" label="角色"></el-table-column>
+                        <el-table-column prop="Enabled" label="账号状态"></el-table-column>
                         <!--<el-table-column prop="RoleName" label="角色"></el-table-column>-->
                     </el-table>
                 </el-form-item>
@@ -274,23 +278,37 @@
                 let object = PhId;
                 var me = this;
                 if(object != null){
-                    console.log(object);
-                    object.EnabledMark = EnabledMark;
-                    var data = {
-                        uid: this.userid,
-                        orgid: this.orgid,
-                        infoData: object
-                    };
-                    this.$axios
-                        .post("/SysUser/PostUpdateEnabled", data)
-                        .then(res => {
-                            if(res.Status=='success'){
-                                this.$message.success("修改成功");
-                            }else{
-                                this.$message.error('修改失败,请重试!');
-                            }
-                            this.getData('');
+                    this.$confirm("此操作将改变用户状态（注：一旦改为永久停用，则此用户将不能进行任何操作！）, 是否继续?", "状态修改提示", {
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        type: "warning"
+                    }).then(() => {
+                        console.log(object);
+                        object.EnabledMark = EnabledMark;
+                        var data = {
+                            uid: this.userid,
+                            orgid: this.orgid,
+                            infoData: object
+                        };
+                        this.$axios
+                            .post("/SysUser/PostUpdateEnabled", data)
+                            .then(res => {
+                                if (res.Status == 'success') {
+                                    this.$message.success("修改成功");
+                                } else {
+                                    this.$message.error('修改失败,请重试!');
+                                }
+                                this.getData('');
+                            });
+
+                    }).catch(() => {
+                        this.getData('');
+                        this.$message({
+                            type: "info",
+                            message: "已取消删除"
                         });
+                    });
+
                 }else{
                     this.$message.error('请点击状态栏!');
                 }
@@ -367,6 +385,11 @@
                     }
                     console.log(res.Record);
                     this.tableData = res.Record;
+                    for(let i = 0; i< this.tableData.length ;i++){
+                        if(this.tableData[i].EnabledMark != '2'){
+                            this.tableData[i].NgUpdateDt = "——";
+                        }
+                    }
                     this.totalCount = Number(res.totalRows);
                 }).catch(error => {
                     console.log(error);
@@ -397,6 +420,7 @@
             //获取移交记录信息
             getTransData(userid) {
                 var vm = this;
+                let object = vm.singleSelection;
                 //获取200角色信息
                 SysUserTransferList(vm, {
                     uid: userid,
@@ -408,9 +432,45 @@
                         this.$message.error(res.Msg);
                         return
                     }
-
-                    this.form.historyAccount = res.Record;
-
+                    let js = JSON.stringify(res.Record)
+                    console.log(res.Record);
+                    this.form.historyAccount = JSON.parse(js);
+                    // if(this.form.historyAccount.length > res.Record.length){
+                    //     let len = this.form.historyAccount.length - res.Record.length;
+                    //     this.form.historyAccount.splice(res.Record.length,len);
+                    // }
+                    if(res.Record.length < 1){
+                        this.form.historyAccount[this.form.historyAccount.length] = {};
+                    }else{
+                        for(let i = res.Record.length; i > 0; i--){
+                            this.form.historyAccount[this.form.historyAccount.length] = {};
+                            this.form.historyAccount[i]={RealName: this.form.historyAccount[i-1].RealName,
+                                MobilePhone : this.form.historyAccount[i-1].MobilePhone,
+                                RoleName : this.form.historyAccount[i-1].RoleName,
+                                Enabled : "已禁用"
+                            };
+                            // this.form.historyAccount[i].MobilePhone = this.form.historyAccount[i-1].MobilePhone;
+                            // this.form.historyAccount[i].RoleName = this.form.historyAccount[i-1].RoleName;
+                            // this.form.historyAccount[i].Enabled = "已禁用";
+                        }
+                    }
+                    if(object.length > 0)
+                    {
+                        var roles = [];
+                        if (object[0].Roles.length > 0) {
+                            object[0].Roles.forEach(el => {
+                                roles.push(el.Name);
+                            })
+                        }
+                        this.form.historyAccount[0].RealName = object[0].RealName;
+                        this.form.historyAccount[0].MobilePhone = object[0].MobilePhone;
+                        this.form.historyAccount[0].RoleName = roles;
+                        this.form.historyAccount[0].Enabled = "正常";
+                    }
+                    if(this.form.historyAccount.length > res.Record.length){
+                        let len = this.form.historyAccount.length - res.Record.length-1;
+                        this.form.historyAccount.splice(res.Record.length+1,len);
+                    }
                 }).catch(error => {
                     console.log(error);
                     this.$message({showClose: true, message: '移交记录获取错误', type: 'error'});
@@ -429,6 +489,11 @@
                     this.getData('');
                     this.is_search = false;
                 }
+            },
+            //永久停用账号的提示
+            messageTs(){
+
+                this.$message.success("无法对永久停用的用户进行操作！");
             },
             //新增
             Add() {
@@ -603,6 +668,7 @@
                     this.editVisible = true;
 
                     //获取移交记录
+                    this.form.historyAccount = [];
                     this.getTransData(id);
 
                 } else {
@@ -833,34 +899,34 @@
 
                 this.loading = true;
                 //提交asiox
-                // SysUserUpdate(vm, {
-                //     otype: this.dialogState,
-                //     uid: this.userid,
-                //     orgid: this.orgid,
-                //     infoData: {Mst: userinfo, Relation: relations, sysUserTransferRecord: transrecord}
-                // }).then(res => {
-                //     this.loading = false;
-                //
-                //     if (res.Status === 'error') {
-                //         this.$message.error(res.Msg);
-                //         return
-                //     }
-                //
-                //     this.$message.success('修改成功!');
-                //     //设置状态，隐藏新增页面
-                //     this.dialogState = "";
-                //     this.editVisible = false;
-                //     //清空选中项
-                //     this.singleSelection = [];
-                //     //刷新列表
-                //     this.getData('');
-                //
-                // }).catch(error => {
-                //     console.log(error);
-                //     this.loading = false;
-                //     this.$message({showClose: true, message: "用户列表获取错误", type: "error"});
-                //
-                // })
+                SysUserUpdate(vm, {
+                    otype: this.dialogState,
+                    uid: this.userid,
+                    orgid: this.orgid,
+                    infoData: {Mst: userinfo, Relation: relations, sysUserTransferRecord: transrecord}
+                }).then(res => {
+                    this.loading = false;
+
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+
+                    this.$message.success('修改成功!');
+                    //设置状态，隐藏新增页面
+                    this.dialogState = "";
+                    this.editVisible = false;
+                    //清空选中项
+                    this.singleSelection = [];
+                    //刷新列表
+                    this.getData('');
+
+                }).catch(error => {
+                    console.log(error);
+                    this.loading = false;
+                    this.$message({showClose: true, message: "用户列表获取错误", type: "error"});
+
+                })
             }
         }
     };
