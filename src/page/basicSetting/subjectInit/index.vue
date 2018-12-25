@@ -7,6 +7,7 @@
 
       <print-tem ref="print" :printData="voucherdata"></print-tem>
 
+      <timerBtn ref="timerbtn" class="btn btn-default" @run="sendCode"></timerBtn>
     </div>
   </div>
 </template>
@@ -15,11 +16,12 @@
 import { mapState, mapActions } from 'vuex'
 import Auth from "@/util/auth";
 import printTem from "@/page/finance/vprint/printTemPdf"
+import timerBtn from '@/components/timerBtn';
 
 //科目期初
 export default {
   name: "subjectInit",
-  components: { printTem },
+  components: { printTem,timerBtn },
   data() {
     return {
       voucherdata:'',
@@ -80,6 +82,9 @@ export default {
      printClick(){
        //this.fileVisible=true; //打印
        this.$refs.print.printvoucher(); //打印
+     },
+     sendCode(){
+       this.$refs.timerbtn.setDisabled(true); //设置按钮不可用
      }
 
   }
