@@ -5,7 +5,7 @@
                 <ul>
                     <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">基层工会组织</li>
                     <li @click="unionTab('union')" :class="{asideActive:asideActive=='union'}">机关工会组织</li>
-                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i>4</i>待审核基层组织</li>
+                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i>{{dVerifyNum}}</i>待审核基层组织</li>
                 </ul>
             </aside>
             <look v-if="asideActive=='look'"></look>
@@ -25,6 +25,7 @@
         data() {
             return {
                 asideActive: 'basic',
+                dVerifyNum : "",
                 pickerOptions1: {
                     disabledDate(time) {
                         return time.getTime() > Date.now();
@@ -61,13 +62,30 @@
             unionTab(name) {
                 this.asideActive = name;
                 sessionStorage.setItem("asideActive", name);//**防止刷新数据清空************* */
+            },
+            ajaxMode() {
+                let data = {
+                    uid: "0",
+                    orgid: "0",
+                    pagesize: 300,
+                    pageindex: 0,
+                    value: "0"
+                };
+                this.$axios.get('/SysOrganize/GetOrganizesByAuditStatus', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        this.dVerifyNum = res.totalRows;
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
             }
         },
         mounted() {
             if (sessionStorage.getItem("asideActive")) {
                 this.asideActive = sessionStorage.getItem("asideActive");
             }
-
+            this.ajaxMode();
         },
         components: {
             union,
