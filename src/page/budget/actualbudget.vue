@@ -1,5 +1,6 @@
 <template>
-    <div class="container">
+    <div class="timeSelect">
+        <div class="container">
     <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
@@ -193,6 +194,7 @@
         <div class="timeSelectBox">
             <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
         </div>
+    </div>
     </div>
     </div>
 </template>
@@ -480,8 +482,8 @@
         background-color: transparent;
         line-height: 30px;
     }
-    .reportBox{
-        margin-right: 60px;
+  /*  .reportBox{
+        margin-right: 0px;
     }
     .timeSelectBox{
         position: fixed;
@@ -489,7 +491,7 @@
         top: 110px;
         bottom:0;
         width: 60px;
-    }
+    }*/
     .pinzheng{
         margin-left: 120px;
     }
@@ -510,7 +512,7 @@
         white-space: nowrap;
     }
     .formData>ul:first-child>li:last-of-type{
-        border-right:1px solid #2780d1;
+        border-right:1px solid #d3e9f9;
     }
 
     .formData>ul>li:first-child{
