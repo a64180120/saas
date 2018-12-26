@@ -17,10 +17,7 @@
                 <li class="flexPublic">
                     <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
                     <div @click.stop="testFile" class="uploaderTitle"></div>
-                    <!-- 附件弹出框 -->
-                    <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
-                        <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
-                    </el-dialog>
+                    
                 </li>
             </ul>
         </div>
@@ -190,6 +187,10 @@
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
         </div>
+        <!-- 附件弹出框 -->
+        <el-dialog title="选择附件"  :visible.sync="fileVisible" width="40%">
+            <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
+        </el-dialog>
     </div>
 </template>
 
@@ -478,11 +479,13 @@
                 }
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
+                       
                         if(res.Record.length<=0){
                             this.PDate=this.nowTime;                     
                         } else{                         
                             this.PDate=res.Record[0].PDate;
                         }   
+                        
                         loading1.close();
                     })
                     .catch(err=>{
@@ -788,19 +791,20 @@
             },
             //附件上传************************************
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
-            beforeAvatarUpload(file) {
-                const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
-                const isLt2M = file.size / 1024 / 1024 < 2;
-                if (!isRightType) {
-                    this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
-                    return false
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传图片大小不能超过 2MB!');
-                    return false
-                }
+            // beforeAvatarUpload(file) {
+            //     console.log(111,file)
+            //     const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
+            //     const isLt2M = file.size / 1024 / 1024 < 2;
+            //     if (!isRightType) {
+            //         this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
+            //         return false
+            //     }
+            //     if (!isLt2M) {
+            //         this.$message.error('上传图片大小不能超过 2MB!');
+            //         return false
+            //     }
                 
-            },
+            // },
             // uploadFileMethodEnterprise(param) {console.log(res,2);
             //     let fileObject = param.file;
             //     let formData = new FormData();

@@ -145,7 +145,9 @@
             </div>
 
         </div>
+        <!-- 凭证模板****************** -->
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
+        <!-- 下月账******************* -->
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
         <div class="footInfo " >
             <router-link to="">服务协议</router-link>
@@ -1069,9 +1071,10 @@
 <style lang="scss" scoped>
     .addVoucher{
         width:100%;
-        min-width: 1250px;
+        min-width: 1190px;
         height:100%;
         overflow: hidden;
+        overflow-y: auto;
         text-align: left;
         padding:8px 18px;
         padding-right:70px;
@@ -1081,7 +1084,7 @@
     }
     .unionState{
         padding-right: 10px;
-        margin-bottom: 30px;
+       // margin-bottom: 30px;
         >ul{
             >a:first-of-type{
                 position:relative;
@@ -1665,11 +1668,12 @@
     }
     .footInfo{
         position:fixed;
+        z-index:10;
         bottom:0;
         left:0;
         width:100%;
-        height:70px;
-        line-height: 70px;
+        height:50px;
+        line-height: 50px;
         background: #2b3245;
         text-align: center;
         color:#fff;
@@ -1756,7 +1760,7 @@
 
      .voucherDisabledCon{
          position:relative; 
-         min-height:516px;  
+        // min-height:516px;  
          z-index: 1; 
          background:#fff;
         .voucherDisabled{

@@ -16,7 +16,7 @@
           </el-carousel-item>
         </el-carousel>
       </div>
-      <div class="headerBG"></div>
+      <div class="headerBGindex"></div>
     </header>
     <nav>
       <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('finance')"><router-link to="/home"><img src="@/assets/img/cai.png" alt=""><span :class="{moveHide:nav=='finance'}">工会财务管理</span></router-link></div>
@@ -68,10 +68,10 @@
         <div class="roles">
           <div>
             <ul>
-              <li class="roleActive">全部</li>
-              <li>国家</li>
-              <li>省级</li>
-              <li>市级</li>
+              <li class="roleActive" @click.stop="typeclick('all')">全部</li>
+              <li class="roleActive" @click.stop="typeclick('country')"><a href="javascript:void(0);">国家</a></li>
+              <li @click.stop="typeclick('province')"><a href="javascript:void(0);">省级</a></li>
+              <li @click.stop="typeclick('city')"><a href="javascript:void(0);">市级</a></li>
             </ul>
           </div>
           <ul>
@@ -212,14 +212,14 @@
         }
     },
     mounted(){
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t1.png')
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t2.png')
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t3.png')
-      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t4.png')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t1.jpg')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t2.jpg')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t3.jpg')
+      this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t4.jpg')
     },
     methods:{
       navEnter(val){
-        console.log(111,this.nav)
+
         this.nav=val;
       },
       navLeave(){
@@ -227,7 +227,10 @@
       },
       //打开网址
       openUrl(object){
-        window.open(object.url);
+        window.open(object.url); 
+      },
+      typeclick(object){
+        alert(object);
       }
     }
   }
@@ -241,9 +244,9 @@
   header{
     padding:0 70px;
     position:relative;
-    .headerBG{
+    .headerBGindex{
       position:absolute;
-      z-index: -1;
+      z-index: 0;
       height:499px;
       width:100%;
       left:0;
@@ -548,15 +551,18 @@
               margin-right:40px;
               font-size: 13px;
               position:relative;
-              &.roleActive:after{
-                position:absolute;
-                content:"";
-                width:6px;
-                height:6px;
-                top:13px;
-                left:-8px;
-                background: #fff;
-                border-radius: 50%;
+              &.roleActive{
+                  color: #fff;
+                  >a:after{
+                    position:absolute;
+                    content:"";
+                    width:6px;
+                    height:6px;
+                    top:13px;
+                    left:-8px;
+                    background: #fff;
+                    border-radius: 50%;
+                  }
               }
             }
           }

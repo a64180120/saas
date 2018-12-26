@@ -8,9 +8,9 @@
             <div class="form-area">
                 <div class="form-group">
                     <div class="form-box">
-                        <i class="el-icon-close"></i>
+                        <i class="el-icon-close" :style="{display:((showArea=='selectArea'||showArea=='firstStep')?'block':'none')}" @click="backToLogin"></i>
                         <div :class="{active_showarea:showArea!='selectArea'}">
-                            <div class="el-message-box__title">请选择注册方式</div>
+                            <div class="el-message-box__title" style="color: rgb(1,131,253)">请选择注册方式</div>
                             <div class="card_content">
                                 <div @click="changeshowArea('firstStep','0')">
                                     <img src="@/assets/images/register/register_ordinary.png">
@@ -25,27 +25,32 @@
                         <el-form :model="registerForm1" :rules="registerRules1"  ref="validFormF" label-position="left" label-width="0px">
                             <div :class="{active_showarea:showArea!='firstStep'}" >
                                 <div style="height: 65px;line-height: 30px">
-                                    <div  class="el-message-box__title">请选择注册方式</div>
-                                    <el-radio label="0" v-model="checkType">普通注册</el-radio>
-                                    <el-radio label="1" v-model="checkType">邀请码注册</el-radio>
+                                    <div  class="el-message-box__title">当前注册方式: {{checkType==0?'普通注册':'邀请码注册'}}</div>
+                                    <!--<el-radio label="0" v-model="checkType">普通注册</el-radio>-->
+                                    <!--<el-radio label="1" v-model="checkType">邀请码注册</el-radio>-->
                                 </div>
                                 <template v-if="checkType==0">
                                     <el-form-item prop="name">
-                                        <el-input v-model="registerForm1.name" type="text" placeholder="请输入联系人姓名（必填）"></el-input>
+                                        <img src="@/assets/images/register/1.png">
+                                        <el-input v-model="registerForm1.name" type="text"
+                                                  placeholder="请输入联系人姓名（必填）"></el-input>
                                     </el-form-item>
                                 </template>
                                 <template v-else>
                                     <el-form-item prop="code">
+                                        <img src="@/assets/images/register/1.png">
                                         <el-input v-model="registerForm1.code" type="text" placeholder="请输入邀请码（必填）"></el-input>
                                     </el-form-item>
                                 </template>
 
                                 <el-form-item prop="phone">
+                                    <img src="@/assets/images/register/sj.png">
                                     <el-input v-model="registerForm1.phone" type="text" placeholder="请输入手机号（必填）"></el-input>
                                 </el-form-item>
                                 <el-form-item prop="phonecode" >
-                                    <el-input class="verifyCode" v-model="registerForm1.phonecode" type="password"  placeholder="请输入手机验证码（必填）"></el-input>
-                                    <div :disabled="disabled" class="selfBtn blueBtn_verify"
+                                    <img src="@/assets/images/register/4.png">
+                                    <el-input v-model="registerForm1.phonecode" type="password"  placeholder="请输入手机验证码（必填）"></el-input>
+                                    <div :disabled="disabled" class="selfBtn verifyCode"
                                          :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode">{{timertitle}}</div>
                                 </el-form-item>
                                 <div>
@@ -54,12 +59,14 @@
                                 </div>
                             </div>
                         </el-form>
-                        <el-form :model="registerForm2" :rules="registerRules2" ref="validFormS" label-position="left" label-width="0px">
+                        <el-form style=" margin-top:45px;" :model="registerForm2" :rules="registerRules2" ref="validFormS" label-position="left" label-width="0px">
                             <div :class="{active_showarea:showArea!='secondStep'}">
                                 <el-form-item prop="company">
+                                    <img src="@/assets/images/register/1.png">
                                     <el-input v-model="registerForm2.company" type="text" placeholder="请输入企业/单位名称（必填）"></el-input>
                                 </el-form-item>
-                                <el-form-item prop="streetvalue">
+                                <el-form-item prop="addressDetail">
+                                    <img src="@/assets/images/register/dz.png" style="bottom: 35px;">
                                     <el-select v-model="registerForm2.provincevalue" placeholder="请选择"  @change="searchArea(registerForm2.provincevalue,1)">
                                         <el-option
                                             v-for="item in province"
@@ -67,7 +74,7 @@
                                             :label="item.label"
                                             :value="item.value" >
                                         </el-option>
-                                    </el-select>省
+                                    </el-select>
                                     <el-select v-model="registerForm2.cityvalue" placeholder="请选择" @change="searchArea(registerForm2.cityvalue,2)">
                                         <el-option
                                             v-for="item in city"
@@ -75,7 +82,7 @@
                                             :label="item.label"
                                             :value="item.value">
                                         </el-option>
-                                    </el-select>市
+                                    </el-select>
                                     <el-select v-model="registerForm2.countyvalue" placeholder="请选择" @change="searchArea(registerForm2.countyvalue,3)">
                                         <el-option
                                             v-for="item in county"
@@ -83,7 +90,7 @@
                                             :label="item.label"
                                             :value="item.value">
                                         </el-option>
-                                    </el-select>县
+                                    </el-select>
                                     <el-select v-model="registerForm2.streetvalue" placeholder="请选择">
                                         <el-option
                                             v-for="item in street"
@@ -91,13 +98,15 @@
                                             :label="item.label"
                                             :value="item.value">
                                         </el-option>
-                                    </el-select>街道
-
-                                </el-form-item>
-                                <el-form-item prop="addressDetail">
+                                    </el-select>
                                     <el-input v-model="registerForm2.addressDetail" type="text" placeholder="请输入详细地址、门牌号（必填）"></el-input>
                                 </el-form-item>
+                                <!--<el-form-item prop="addressDetail">
+                                    <img src="@/assets/images/register/register_ordinary.png">
+
+                                </el-form-item>-->
                                 <el-form-item prop="password">
+                                    <img src="@/assets/images/register/2.png">
                                     <el-input v-model="registerForm2.password" type="password" placeholder="请输入密码（必填）" @focus="showMsg" @blur="hideMsg"></el-input>
                                     <div :style="{'display': showMsgFlag?'block':'none'}" >
                                         <div class="selficon_bac"></div>
@@ -113,9 +122,8 @@
                                     </div>
                                 </el-form-item>
 
-
-
                                 <el-form-item prop="confirmpassword">
+                                    <img src="@/assets/images/register/2-1.png">
                                     <el-input v-model="registerForm2.confirmpassword" type="password" placeholder="请输入确认密码（必填）"></el-input>
                                 </el-form-item>
                                 <div>
@@ -137,8 +145,8 @@
 
                         <div v-if="sysMsg" class="err-msg">{{sysMsg}}</div>
                     </div>
-                    <div :style="{'margin': 'auto auto','width': '70%','text-align': 'left','color':'#999','display':showArea=='selectArea'?'block':'none'}">
-                        <h6>说明：</h6>
+                    <div class="msg" :style="{'display':showArea=='selectArea'?'block':'none'}">
+                        <h1>说明：</h1>
                         <p>1、注册方式选择“普通注册”的，提交注册信息后，待管理人员审核通过后，可正常使用平台功能，申请结果将以短信方式通知。</p>
                         <p>2、注册方式选择“邀请码注册”的，核对相关信息无误并提交成功后，即表示注册成功，可正常使用平台功能。</p>
                         <p>3、注册成功后，15日内您可免费试用本平台。若相关信息在此期间未完善上传或者审核不通过的，您将无法继续正常使用本平台功能。</p>
@@ -279,6 +287,14 @@
             this.searchArea(0,0);
         },
         methods:{
+            backToLogin:function(val){
+                if(this.showArea=='selectArea'){
+                    this.$router.push({name: 'login'});
+                }else{
+                    this.showArea="selectArea";
+                }
+
+            },
             showMsg:function(){
               this.showMsgFlag=true;
             },
@@ -362,9 +378,13 @@
                 this.checkType=val;
             },
             sendCode:function(){
-                this.disabled=true;
-                this.timer(59);
-                this.timertitle='59S后重新发送';
+
+                if(!this.disabled){
+                    this.disabled=true;
+                    this.timer(59);
+                    this.timertitle='59S后重新发送';
+                }
+
             },
             timer:function(t){
                     let that=this;
@@ -478,10 +498,10 @@
     }
     .selficon_bac{
         border-top: 10px solid transparent;
-        border-right: 10px solid #cccccc;
+        border-right: 10px solid #63b1fb;
         border-bottom: 10px solid transparent;
         position: absolute;
-        right: -16px;
+        right: -6px;
         top: 11px;
     }
     .selficon_frot{
@@ -489,35 +509,36 @@
         border-right: 10px solid white;
         border-bottom: 10px solid transparent;
         position: absolute;
-        right: -18px;
+        right: -8px;
         top: 11px;
         z-index: 2;
     }
     .msgBox{
         position: absolute;
-        right: -270px;
+        right: -140px;
         top: 0;
         line-height: 20px;
-        border: 2px solid #CCCCCC;
+        border: 1px solid #63b1fb;
         color: grey;
-        padding: 10px 25px;
-        font-size: 10pt;
+        padding: 10px 5px 10px 23px;
+        font-size: 12px;
+        width: 135px;
     }
     .msgBox>li:nth-of-type(2n-1){
-        width: 5px;
-        height: 5px;
-        background-color: #67c23a;
+        width: 3px;
+        height: 3px;
+        background-color: #63b1fb;
         border-radius: 5px;
-        box-shadow: 0 0 3px 2px #67c23a;
+        box-shadow: 0 0 3px 2px #63b1fb;
         position: absolute;
         left: 7px;
-        top: 16px;
+        top: 18px;
     }
     .msgBox>li:nth-of-type(3) {
-        top: 36px;
+        top: 38px;
     }
     .msgBox>li:nth-of-type(5){
-        top:56px;
+        top:78px;
     }
     .el-select{
         width: 80px;
@@ -525,14 +546,13 @@
     }
     .sys-login{
         height: 100%;
-        overflow-y:scroll ;
         background-image: none;
         background-color: #f5f5f5;
     }
     .sys-login .login-area{
         width: 100%;
         min-width: 969px;
-        height: 427px;
+        height: 398px;
         margin: auto;
         margin-top: 170px;
         padding: 0;
@@ -543,14 +563,13 @@
         text-align: center;
         width: 100%;
         position: relative;
-        top: -35px;
+        top: -20px;
 
     }
     .form-group{
         margin: auto;
         width:725px ;
-        height: 425px;
-        height: auto;
+        height: 437px;
         background-color: #FFFFFF;
         background-image: none;
         border: 2px solid  #FFFFFF;
@@ -559,10 +578,21 @@
         font-size: 10.0pt;
         font-family: Arial,Arial;
     }
+    .form-group .msg{
+        font-size:15px;
+        color: #000;
+        margin: auto auto;
+        width: 70%;
+        text-align: left;
+    }
+    .form-group .msg>p{
+        font-size: 12px;
+        padding-left: 30px;
+    }
     .form-box{
         text-align: left;
         width: 407px;
-        margin: 30px auto;
+        margin: 20px auto;
     }
     .card_content{
         display: flex;
@@ -575,8 +605,8 @@
         border-style: solid;
         border-color: rgb(217, 217, 217);
         border-radius: 0px;
-        width: 192px;
-        height: 207px;
+        width: 170px;
+        height: 170px;
         background-color: transparent;
         margin: 10px 5px;
     }
@@ -584,18 +614,17 @@
         border-color: #0183FD;
     }
     .card_content>div>img{
-        width: 113px;
-        height: 113px;
+        width: 89px;
+        height: 89px;
         cursor: pointer;
-        margin-top: 40px;
+        margin-top: 20px;
     }
     .card_content>div>p{
         color: #0183FD;
         text-align: center;
         text-decoration: none;
-        font-size: 14.0pt;
+        font-size: 20px;
         font-style: normal;
-        font-weight: 700;
         line-height: 0px;
         margin-top: 30px;
     }
@@ -604,12 +633,11 @@
     }
     .selfBtn{
         cursor: pointer;
-        width: 177px;
-        height: 38px;
-        border-radius: 7px 7px;
+        width: 120px;
+        height: 33px;
+        border-radius: 5px 5px;
         line-height: 38px;
-        font-size: 14pt;
-        font-weight: 700;
+        font-size: 16px;
         text-align: center;
         display: inline-block;
     }
@@ -636,9 +664,60 @@
     }
     .verifyCode{
         display: inline-block;
-        width: 250px;
+        background-color: rgb(36, 115, 235);
+        color: white;
+        position: absolute;
+        bottom: 5px;
+        width: 100px;
+        right: 3px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+    }
+
+</style>
+<style>
+    .sys-login .form-group .el-form-item{
+        border-width: 0px 0px 1px 0px;
+        border-style: solid;
+        border-color: #63b1fb;
+        border-radius: 0 0;
+    }
+    .sys-login .form-group .el-form-item.is-error{
+        border-color: #d45b5b;
+    }
+    .sys-login .form-group .el-form-item .el-form-item__content img{
+        position: absolute;
+        width: 30px;
+        bottom:5px
+    }
+    .sys-login .form-group .el-input{
+        background:none;
+
+    }
+    .sys-login .form-group .el-select .el-input .el-input__inner{
+        padding: 0px;
+        margin: 10px;
+        width: 100px;
+    }
+    .sys-login .form-group .el-select .el-input .el-input__inner:first-child{
+        margin-left: 40px;
+        padding-left: 10px;
     }
     .sys-login .form-group .el-input__inner{
         background-color: white;
+        border: none;
+        margin-left: 40px;
+        width: 345px;
+    }
+    .sys-login .form-group .el-input__suffix{
+        display: none;
+    }
+    .sys-login .form-group .el-form-item.is-error .el-input__inner {
+        border-color:transparent;
+        background-color: transparent;
+    }
+    .el-select{
+        text-align: center;
     }
 </style>

@@ -1,20 +1,30 @@
 <template>
 
     <div class="voucherList">               
+
         <div class="voucherNav">
             <ul>
-                <router-link to="/finance/voucherAdd"><li style="background:#ed7c6a">新增</li></router-link>
-                <a @click.prevent="handle('update')"><li style="background:#dbbfdd">修改</li></a>
-                <a @click.prevent="handle('delete')"><li style="background:#fdc087">删除</li></a>
-                <a @click.prevent="handle('audit')"><li style="background:#f89486">审核</li></a>
-                <a @click.prevent="handle('unaudit')"><li style="background:#f89486">反审核</li></a>
-                <a @click.prevent="handle('copy')"><li style="background:#d2e29b">复制</li></a>
-                <a @click.prevent="handle('cut')"><li style="background:#9fd29f">剪切</li></a>
-                <a @click.prevent="handle('chongh')"><li style="background:#78cfd3">冲红</li></a>
-                <a @click.prevent="handle('reset')"><li style="background:#48bbd8">凭证重排</li></a>
-                <a @click.prevent="handle('upload')"><li style="background:#ab86b9">导入</li></a>
-                <a @click.prevent="handle('download')"><li style="background:#84c75d">导出</li></a>
-                <a @click.prevent="handle('print')"><li style="background:#99d1d2">打印</li></a>
+                <router-link to="/finance/voucherAdd"><li style="background:#4dd4fd">新增</li></router-link>
+                <a @click.prevent="handle('update')"><li style="background:#4dd4fd">修改</li></a>
+                <a @click.prevent="handle('delete')"><li style="background:#4dd4fd">删除</li></a>
+                <a @click.prevent="handle('audit')"><li style="background:#4dd4fd">审核</li></a>
+                <a @click.prevent="handle('unaudit')"><li style="background:#4dd4fd">反审核</li></a>
+                <a @click.prevent="handle('copy')"><li style="background:#4dd4fd">复制</li></a>
+                <a @click.prevent="handle('cut')"><li style="background:#4dd4fd">剪切</li></a>
+                <a @click.prevent="handle('chongh')"><li style="background:#4dd4fd">冲红</li></a>
+                <a @click.prevent="handle('reset')"><li style="background:#4dd4fd">凭证重排</li></a>
+                <a @click.prevent="handle('upload')">
+                    <li @mouseover.stop="1"  style="background:#4dd4fd">
+                        <div @click.stop="testFile">导入</div>
+                        
+                    </li>
+                </a>
+                <a @click.prevent="handle('download')">
+                    <li  style="background:#4dd4fd">
+                        <span>导出</span>
+                    </li>
+                </a>
+                <a @click.prevent="handle('print')"><li style="background:#4dd4fd">打印</li></a>
                 <a @click.prevent="handle('fresh')"><li style="width:30px;min-width:30px;border-radius:50%;"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
                 
             </ul>
@@ -124,11 +134,11 @@
                 </li>
             </ul>
         </section>
-        <div class="footInfo">
+        <!-- <div class="footInfo">
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
-        </div>
+        </div> -->
         <!--凭证重排****************************-->
         <div v-if="resetShow" class="codeResetContainer">
             <div>
@@ -180,6 +190,10 @@
             </div>            
         </div>
         <!-- <print-tem  ref="print" :printData="printdata"></print-tem> -->
+        <!-- 附件弹出框 -->
+        <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
+            <file-upload  @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></file-upload>
+        </el-dialog>
     </div>
 </template>
 
@@ -190,6 +204,8 @@
     import sideTime from './sideTime'
     import voucher from './voucher'
     import searchSelect from './searchList'
+    import { SysOrgModel,SysOrgUpdate,SysOrgUploadFile,SysOrgDelete } from '@/api/organize/orgInfo'
+    import fileUpload from "@/components/upload/fileUpload";
     export default {
         name: "voucherList",
         created(){     
@@ -265,7 +281,9 @@
                 voucherMask:false,
                 voucherDisabled:true,
                 printdata:{},
-                routerQuery:false
+                routerQuery:false,
+                fileVisible:false,
+                imglist:[]
             }
         },
         methods:{
@@ -777,19 +795,16 @@
             //搜索日期转换*************
             dateTurn(val){
                 var str;
-                 console.log(val)
                 if(typeof(val)=='object'){
                     str=val.getMonth()+1;
                     val=val.getFullYear();         
                     val=val.toString()+'-'+(str>9?str:('0'+str))
                 }
-                 console.log(val)
                 return val;
             },
             //凭证列表***************高级搜索***********************
             getvoucherList(str){
                 let base=httpConfig.getAxiosBaseConfig();
-               console.log(111)
                 this.superSearchVal.date1=this.dateTurn(this.superSearchVal.date1)
                 this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
                 const loading1=this.$loading();
@@ -861,7 +876,6 @@
                 this.year=this.sideDate.split('-')[0];
                 this.month=this.sideDate.split('-')[1];
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                console.log(this.superSearchVal.date2)
                 if(this.routerQuery){
                     this.routerQuery=false;
                 }
@@ -963,7 +977,96 @@
             itemClick(childData){
                 this.superSearchVal.assistItem=childData.data;
                 this.superSearchVal.show=false;
+            },
+            testFile(){
+                this.message('功能开发中!!')
+                //this.fileVisible=true;
+            },
+            removeimg(item,deleValue) {//
+               this.imglist=item;
+                if(item.length<1){
+                    return;
             }
+                console.log(item,deleValue,this.imglist);
+                // var urls=deleValue.imgPath.split('/');
+                // console.log(this.imglist,item,urls,deleValue)
+                // for(var i in item[0]){ 
+                //     console.log(item[0][i].BName,urls[4])
+                //     if(item[0][i].BName==urls[4]){
+                //             console.log(item)
+                //           item[0].splice(i,1);  
+                //     }
+                // } 
+                var param={
+                    PhId:deleValue.phid,
+                    BTable:'gcw3_voucher_mst',
+                    BUrlPath:deleValue.imgPath
+                };
+                this.$axios({
+                    url: '/PVoucherAttachment/PostDeleteFile',
+                    method: "post",
+                    data: param,
+                }).then(res => {
+                if(res.Status==="error"){
+                        this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                        return;
+                    }
+                }).catch(error => {
+                    this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
+                });
+        },
+            uploadimg(item) {
+                //this.imglist.push(item);
+                console.log(this.imglist);
+                if(item){
+                    this.ExcelValidMsg(item);    
+                }
+                
+            },
+            //校验excel文件中凭证信息***********
+            ExcelValidMsg(param){
+                var data={
+                    fileName:param[0].BUrlPath,
+                    orgid:this.orgid,
+                    orgcode:this.orgcode,
+                    uyear:this.year,
+                    dealwithPNo:0 //重复凭证字号处理方式: 0 禁止, 1 跳过, 2 覆盖
+                }
+                this.$axios.get('/PVoucherMst/GetImportVoucherListFromExcelValidMsg',{params:data})
+                .then(res=>{
+                    if(res.Status=='error'){
+                        this.$message({ showClose: true, message: res.Msg, type: 'error'});
+                        if(res.Data.ErrMsg.length>0){
+                            return;
+                        }else if(res.Data.IgnoreMsg.length>0){
+                            console.log(res.Data.IgnoreMsg);
+                            //忽略**************
+                            data.dealwithPNo=1;
+                            this.GetImportVoucherListFromExcel(data);
+                            //覆盖****************
+                        }
+                    }else{
+                        this.GetImportVoucherListFromExcel(data);
+                    }
+                })
+                .catch(err=>console.log(err))
+            },
+            //excel文件导入**************
+            GetImportVoucherListFromExcel(data){
+                this.$axios.get('PVoucherMst/GetImportVoucherListFromExcel',{params:data})
+                    .then(res=>{
+                        if(res.Status=='success'){
+                            this.message(res.Msg)
+                        }
+                        console.log(res)
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                    })
+            }
+            // ...mapActions({
+            //     uploadFile: 'uploadFile/Voucherupload'
+            // }),
         },
         computed:{
             ...mapState({
@@ -972,7 +1075,10 @@
                 uname: state => state.user.username,
                 orgcode:state => state.user.orgcode,
                 cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
-            })
+            }),
+            picUrl:function(){
+                return httpConfig.baseurl;
+        },
         },
         watch:{
             superSearchValPhId(val){
@@ -1132,6 +1238,7 @@
             },
         },
         components:{
+            fileUpload,
             searchSelect,
             sideTime,
             voucher,
@@ -1299,6 +1406,7 @@
             flex-flow: row nowrap;
             justify-content: space-between;
             align-items: center;
+            position: relative;
             >div{
                 display: flex;
                 justify-content: flex-start;
@@ -1737,12 +1845,67 @@
             }
         }
     }
+    .uploaderTitle{
+        position:relative;
+        width:40px;
+        height:30px;  
+        cursor:pointer; 
+        background: url("../../assets/icon/f90c871a-13a3-4900-9b6f-ff9edc5c98c5.svg") no-repeat;
+        background-size:40px 30px;
+    }
     
+    .avatar-uploader{
+    position: absolute;
+    z-index: 1;
+    right: 61px;
+    top: -20px;
+}
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+.avatar-uploader .el-upload--text{
+    width: 80px;
+    height: 80px;
+}
+
+.avatar-uploader-icon {
+    font-size: 20px;
+    color: #8c939d;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+}
+.avatar {
+    width: 80px;
+    height: 80px;
+    display: block;
+}
+.orgform .el-form-item__label{
+    background: #00B8EE;
+}
+
+.orgform .el-form-item{
+    margin-bottom: 2px;
+}
+
 </style>
 <style>
     .highGradeCss .el-input--prefix .el-input__inner {
         padding-left: 24px;
         font-size:12px;
     }
+    
+    /* .voucherList   .el-dialog{
+            z-index:2008;
+        }
+     */
 </style>
 
