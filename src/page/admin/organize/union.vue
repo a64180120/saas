@@ -53,13 +53,13 @@
                 <a @click.prevent="routerTo('/admin/orgin/edit')">
                     <li>修改</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>备份</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>恢复</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>导入</li>
                 </a>
             </ul>
