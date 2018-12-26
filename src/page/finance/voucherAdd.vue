@@ -1116,7 +1116,7 @@
 <style lang="scss" scoped>
     .addVoucher{
         width:100%;
-        min-width: 1190px;
+        min-width: 920px;
         height:100%;
         overflow: hidden;
         overflow-y: auto;

@@ -1433,7 +1433,7 @@
         margin-right:10px;
         font-size:14px;
         position:relative;
-        min-width: 1024px;
+        min-width: 920px;
         height:93%;
         .voucherNav>ul{
             display: flex;

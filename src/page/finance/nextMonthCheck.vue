@@ -49,8 +49,8 @@
         <div v-show="checkNav=='audit'" class="audit">
             <p class="title">
                 <span >审核凭证</span><i @click="checkNavShow('month')"></i></p> 
-            <p><span>审核</span></p>  
-            <!-- <section  class="listContainer">
+            <p class="auditCheck"><span>审核</span></p>  
+            <section  class="listContainer">
                 <ul class="listTitle">
                     <li>序号</li>
                     <li>摘要</li>
@@ -93,7 +93,7 @@
                         </ul>
                     </li>
                 </ul>
-            </section>  -->
+            </section> 
         </div>
         <div v-show="checkNav=='codeReset'" class="codeReset">
             <p class="title">
@@ -372,12 +372,52 @@
         position:absolute;
         left:5%;
         top:100px;
+        padding:5px 15px;
         >.title{
+            width:100%;
+            height:40px;
+            line-height: 40px;
+            font-size:18px;
+            font-weight: 600;
+            border-bottom:1px solid #ccc;
             >span{
                 float:left;
             }
             >i{
                 float:right;
+                margin-top:10px;          
+                background: url("../../assets/icon/close.svg");
+                background-size:cover ;
+                width:20px;
+                height:20px;
+                cursor:pointer;
+                &:hover{
+                    opacity:0.7;
+                }
+            }
+        }
+        >p.auditCheck{
+            height:50px;
+            line-height: 50px;
+            >span{
+                float:right;
+                width:80px;
+                height:30px;
+                text-align: center;
+                line-height: 30px;
+                margin-top:10px;
+                margin-right:30px;
+                color:#fff;
+                border-radius: 4px;
+                background: #00b7ee;
+                &:hover{
+                    opacity:0.8;
+                }
+                &:after{
+                    content:"";
+                    clear: both;
+                    display: block;
+                }
             }
         }
     }
