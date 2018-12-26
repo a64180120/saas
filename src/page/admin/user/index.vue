@@ -1,5 +1,5 @@
 <template>
-    <div class="sys-page">
+    <div class="sys-page" style="background-color: #ffffff">
         <div class="container">
             <div class="handle-box">
                 <el-row>
@@ -35,18 +35,18 @@
                     </el-col>
                 </el-row>
             </div>
-            <div style="width: 100%">
-                <div style="float: left; width: 20%; height: 100%">
-                    <div class="block" style="margin-bottom: 10px">
-                        <span class="demonstration">请选择要查看的组织所在区域</span>
+            <div style="width: 100%;">
+                <div style="float: left; width: 19%; height: 100%;border: 1px solid #eaeaea;">
+                    <div class="block" style="margin-bottom:10px;background-color: #00B8EE;height: 80px;">
+                        <!--<span class="demonstration">请选择要查看的组织所在区域</span>-->
                         <el-cascader
-                            placeholder="可搜索"
+                            placeholder="请选择要查看的组织所在区域"
                             :options="options"
                             @active-item-change="handleItemChange"
                             filterable
                             :clearable="clearable"
                             @change ="changeArea"
-                            style="width: 90%"
+                            style="width: 90%;text-align: center;margin-top: 25px;margin-left: 15px"
                         ></el-cascader>
                     </div>
                     <div align="center">
@@ -75,9 +75,8 @@
                             ref="tree">
                         </el-tree>
                     </div>
-
                 </div>
-                <div style="float: right; width: 80%; height: 100%">
+                <div style="float: right; width: 80%; height: 100%;border: 1px solid #eaeaea;">
                     <el-table
                         :data="tableData"
                         border
@@ -1149,6 +1148,13 @@
     .table {
         width: 100%;
         font-size: 14px;
+    }
+    .container {
+        padding: 30px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 0px;
+        box-shadow: 0px 3px 10px #e4e4e4;
     }
 
     .red {
