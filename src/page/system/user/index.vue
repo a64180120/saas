@@ -36,7 +36,7 @@
                 v-loading="loading"
                 ref="multipleTable"
                 highlight-current-row
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
                 @row-click="handleClickRow">
                 <el-table-column label="序号" type="index" width="50"></el-table-column>
                 <el-table-column prop="RealName" label="用户名称" width="120"></el-table-column>
@@ -252,6 +252,9 @@
             //获取角色信息
             this.getRoleData();
             this.getData2();
+            // console.log(this.form2.data2);
+            // this.tickMenuIdFilter().filter(this.form2.data2);
+            // console.log(this.form2.data2);
         },
         mounted: function () {
             this.getData('');
@@ -270,6 +273,39 @@
             handleCurrentChange(val) {
                 this.pageIndex = val;
                 this.getData('');
+            },
+            //tree的禁用状态设置
+            tickMenuIdFilter: function() {
+                var resultArr = new Array();
+                var getTickMenuId = function(obj) {
+                    if (undefined == obj || null == obj || !obj instanceof Object) {
+                        return;
+                    }
+                    if (obj.ItemId > 0) {
+                        // console.log('obj',obj)
+                        obj.disabled = true;
+                        resultArr.push(obj.ItemId);
+                    }
+                    if (null != obj.children && obj.children instanceof Array) {
+                        for (let child of obj.children) {
+                            getTickMenuId(child);
+                        }
+                    }
+                };
+
+
+                return {
+                    filter: function(arr) {
+                        if (!arr instanceof Array) {
+                            return false;
+                        }
+                        resultArr = new Array();
+                        for (let rootMenu of arr) {
+                            getTickMenuId(rootMenu);
+                        }
+                        return resultArr;
+                    }
+                };
             },
             // uid: this.userid,
             // orgid: this.orgid,
@@ -341,11 +377,9 @@
                             id: id
                         }
                     }).then(res => {
-                        console.log(res);
                         //vm.CheckedList = [403181206000002, 403181206000003];
                         this.form2.CheckedList = res;
-                        //console.log(this.CheckedList);
-                        debugger;
+                        // this.tickMenuIdFilter().filter(this.form2.data2);
                     });
                     //this.$refs.tree.setCheckedKeys(list);
 
@@ -366,6 +400,7 @@
                 }).then(
                     res => {
                         this.form2.data2 = res;
+                        this.tickMenuIdFilter().filter(this.form2.data2);
                     },
                     error => {
                         console.log(error);

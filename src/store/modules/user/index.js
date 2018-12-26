@@ -73,7 +73,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             let base=httpConfig.getAxiosBaseConfig();
             let url=httpConfig.baseurl;
-
+            //console.log(base);
             httpajax.create({
                 baseURL: base.baseURL
             }).get('/SysToken/GetToken',{
@@ -98,7 +98,7 @@ const actions = {
                     alert('网络不通:'+ url +',请检查服务接口网络！.....')
                 }
 
-                resolve(res);
+                resolve(res.data);
 
         　　}).catch((error) =>{
                 console.log(error)
@@ -227,7 +227,6 @@ const actions = {
                 //设置用户 state ,重新加载用户缓存
                 commit("setUserInfo", userInfo);
             }
-
             //菜单
             if(menuInfo){
                 //设置用户 state ,重新加载用户缓存
@@ -238,9 +237,7 @@ const actions = {
             if(config){
                 //设置用户 state ,重新加载用户缓存
                 commit("Pconfig/setPConfig", config,{root: true});
-            }
-
-            
+            }   
             resolve();
         });
     },

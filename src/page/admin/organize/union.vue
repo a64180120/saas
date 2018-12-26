@@ -432,7 +432,7 @@
 
     .formData > ul:first-child > li:last-of-type {
         width: 15%;
-        border-right: 1px solid #2780d1;
+        /*border-right: 1px solid #2780d1;*/
     }
 
     .formData > ul > li:first-child {

@@ -28,7 +28,7 @@
                 :expand-all="expandAll"
                 v-loading="loading"
                 highlight-current-row
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
                 @onRowClick="handleClickRow">
                 <!-- <el-table-column type="selection" width="55" align="center"></el-table-column> -->
                 <!--<el-table-column label="序号" type="index" width="50"></el-table-column>-->
@@ -161,7 +161,7 @@
                 :expand-all="expandAllButton"
                 v-loading="loadingButton"
                 highlight-current-row
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
                 @onRowClick="handleClickRow">
                 <el-table-column label="位置"  align="center">
                     <template slot-scope="scope">

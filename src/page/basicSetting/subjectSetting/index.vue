@@ -88,6 +88,12 @@
                         <el-checkbox v-for="item in  auxiliaryTypes" :label="item.PhId" :key="item.PhId">{{item.BaseName}}</el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
+                <el-form-item label="是否启用：">
+                    <el-radio-group v-model="form.EnabledMark">
+                        <el-radio :label="0">启用</el-radio>
+                        <el-radio :label="1">停用</el-radio>
+                    </el-radio-group>
+                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="Save('form')">保 存</el-button>
@@ -151,7 +157,8 @@ export default {
         KName: "",
         KType:"",
         KBalanceType: "0",
-        AuxiliaryType: []
+        AuxiliaryType: [],
+        EnabledMark:0
       },
       rules: {
         KCode: [
@@ -279,6 +286,7 @@ export default {
                 this.form.KType='';
                 this.form.KBalanceType='0';
                 this.form.AuxiliaryType=[];
+                this.form.EnabledMark=0;
             })
             this.parentKCode=object[0].KCode
 
@@ -301,6 +309,7 @@ export default {
             this.form.KName=object[0].KName;
             this.form.KType=object[0].KType;
             this.form.KBalanceType=object[0].KBalanceType;
+            this.form.EnabledMark=object[0].EnabledMark;
 
             //辅助项类型信息
             var typePhId=[];
@@ -397,10 +406,21 @@ export default {
             KCode:this.form.KCode,
             KName:this.form.KName,
             KType:this.form.KType,
-            KBalanceType:this.form.KBalanceType
+            KBalanceType:this.form.KBalanceType,
+            EnabledMark:this.form.EnabledMark
             //IsSystem:selectSub[0].IsSystem,
             //ParentId:selectSub[0].PhId
           };
+        
+        //     var subjectinfo=selectSub[0];
+        //     subjectinfo.PersistentState=2;
+        //     subjectinfo.KCode=this.form.KCode
+        //     subjectinfo.KName=this.form.KName
+        //     subjectinfo.KType=this.form.KType
+        //     subjectinfo.KBalanceType=this.form.KBalanceType
+        //     subjectinfo.EnabledMark=this.form.EnabledMark
+        //     subjectinfo.children=[]
+        //     subjectinfo.AuxiliaryTypes=[]
 
           //辅助项类别 实体信息组合
           var auxiliarytypeInfo=[];
@@ -445,6 +465,7 @@ export default {
                 this.form.KType=''
                 this.form.KBalanceType='0'
                 this.form.AuxiliaryType=[]
+                this.form.EnabledMark=0
                 
                 //清空选中项
                 this.singleSelection=[];
@@ -483,7 +504,8 @@ export default {
             Layers:selectSub[0].Layers+1,
             OrgId:this.orgid,
             OrgCode:cookiesUser.orgInfo.EnCode,
-            ParentId:selectSub[0].PhId
+            ParentId:selectSub[0].PhId,
+            EnabledMark:this.form.EnabledMark
           };
 
           //辅助项类别 实体信息组合
@@ -530,6 +552,7 @@ export default {
                 this.form.KType=''
                 this.form.KBalanceType='0'
                 this.form.AuxiliaryType=[]
+                this.form.EnabledMark=0
                 //清空选中项
                 this.singleSelection=[];
                 //清空父级code值
