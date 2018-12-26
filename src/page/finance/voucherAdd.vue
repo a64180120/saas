@@ -12,7 +12,7 @@
                     <li @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
-            <ul class="flexPublic handle">
+            <ul class=" handle">
                 <a>
                     <li class="mode" style="width:60px;">
                         <span >模板</span>
@@ -1174,7 +1174,6 @@
 
     }
     .searcherCon{
-        width:50%;
         min-width: 300px;
         justify-content: flex-start;
     }
@@ -1250,18 +1249,27 @@
         color:#fff;
         cursor:pointer;
     }
+    .unionState .handle{
+        margin-right:20px;
+    }
+    .unionState .handle>a{
+        float:left;
+        min-width:50px;
+        margin-left:10px;
+    }
     .unionState .handle>a>li{
         border:0;
+        padding:0;
         color:#fff;
         cursor:pointer;
         border-radius: 3px;
         text-align: center;
         background: #00b7ee;
-        min-width:60px;
+        width:100%;
         font-size:14px;
+        min-width:50px;
         height:30px;
-        line-height: 30px;
-        margin-left:10px;
+        line-height: 30px;    
         margin-right: 0;
         &:hover{
             opacity: 0.8;
@@ -1271,6 +1279,8 @@
             min-width:30px;
             border-radius:50%;
             background:none;
+            position:relative;
+            left:-10px;
             >img{
                 height:100%;
             }
