@@ -1,7 +1,6 @@
 <template>
-    <div class="container">
-
-
+    <div class="timeSelect">
+        <div class="container">
     <div class="manageContent" v-loading="loading">
         <div class="reportBox">
             <div class="unionState flexPublic">
@@ -210,6 +209,7 @@
         <div class="timeSelectBox">
             <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
         </div>
+    </div>
     </div>
     </div>
 </template>
@@ -436,17 +436,17 @@
 </script>
 
 <style scoped>
-    .reportBox{
-        margin-right: 60px;
-    }
-    .timeSelectBox{
-        position: fixed;
-        right: 0;
-        top: 110px;
-        bottom:0;
-        width: 60px;
-        z-index: 2;
-    }
+    /*.reportBox{*/
+        /*margin-right: 60px;*/
+    /*}*/
+    /*.timeSelectBox{*/
+        /*position: fixed;*/
+        /*right: 0;*/
+        /*top: 110px;*/
+        /*bottom:0;*/
+        /*width: 60px;*/
+        /*z-index: 2;*/
+    /*}*/
     .pinzheng{
         margin-left: 120px;
     }
@@ -474,7 +474,7 @@
         width:20%;
     }
     .formData>ul:first-child>li:last-of-type{
-        border-right:1px solid #2780d1;
+        border-right:1px solid #d3e9f9;
     }
 
     .formData>ul>li:first-child,

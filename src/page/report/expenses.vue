@@ -1,5 +1,6 @@
 <template>
-   <div class="container">
+    <div class="timeSelect">
+        <div class="container">
     <div class="manageContent" v-loading="loading">
         <div class="reportBox">
         <div class="unionState flexPublic">
@@ -25,7 +26,7 @@
                 :data="inMoney"
                 :expand-all="expandAll"
                 :columns="columns"
-                :header-cell-style="{background:'#2780d1',color:'#fff','text-align':'center'}"
+                :header-cell-style="{background:'#d3e9f9',color:'#000','text-align':'center'}"
                 v-loading="loading"
                 highlight-current-row
                 border>
@@ -43,6 +44,7 @@
         </div>
     </div>
    </div>
+    </div>
 </template>
 
 <script>
@@ -338,7 +340,7 @@
     }
 </style>-->
 <style scoped>
-    .reportBox{
+   /* .reportBox{
         margin-right: 60px;
     }
     .timeSelectBox{
@@ -348,7 +350,7 @@
         bottom:0;
         width: 60px;
         z-index: 2;
-    }
+    }*/
     .unionState>ul>li{
         width:100%;
     }

@@ -1,7 +1,6 @@
 <template>
         <div class="manageContent" v-loading="loading">
             <div class="reportBox">
-
                 <div class="unionState flexPublic">
                     <ul class="flexPublic">
                     <li class="flexPublic">
@@ -77,8 +76,8 @@
                 <div class="flexPublic  p0">
                     <div class="unionLists">
 
-                        <div class="unionListsTitle">科目列表 &nbsp;
-                        </div>
+                        <div class="unionListsTitle">
+
                         <div class="el-input el-input--prefix" style="text-align: center; padding: 3px 10px;height: 35px;overflow: hidden">
                             <div style="width: 158px;height: 26px;line-height: 26px;margin: auto">
                                 <input type="text" autocomplete="off" placeholder="搜索科目编码/名称" class="el-input__inner" style="width: 158px;height: 26px;line-height: 26px;font-size: 10pt;" @change="searchCode">
@@ -86,6 +85,7 @@
 
                             </div>
 
+                        </div>
                         </div>
                         <div class="unionListsContent">
                             <el-tree
@@ -695,7 +695,7 @@
     .searcherValue {
         border-radius: 15px 0 0 15px;
     }
-    .reportBox{
+    /*.reportBox{
         margin-right: 60px;
         height: 100%;
     }
@@ -706,7 +706,7 @@
         bottom:0;
         width: 60px;
         z-index: 99;
-    }
+    }*/
     .unionState>ul>li{
         width:100%;
     }
@@ -739,7 +739,7 @@
         width:10%;
     }
     .formData>ul:first-child>li:last-of-type{
-        border-right:1px solid #2780d1;
+        border-right:1px solid #d3e9f9;
     }
 
     .formData>ul>li:first-child{
@@ -772,7 +772,7 @@
         align-self: flex-start;
         margin-right: 10px;
         margin-top: 10px;
-        border: 1px solid #83c350;
+        border: 1px solid #45c0f7;
     }
     .manageContent:before{
         content:"";
@@ -784,7 +784,7 @@
     }
     .unionLists>div.unionListsTitle{
         text-align: center;
-        background: #83c350;
+        background: #45c0f7;
         height:50px;
         color:#fff;
         font-size: 15px;

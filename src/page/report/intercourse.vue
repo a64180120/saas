@@ -1,95 +1,97 @@
 <template>
-    <div class="container">
-        <div class="manageContent" v-loading="loading">
-            <div class="reportBox">
-                <div class="unionState flexPublic">
-                    <ul class="flexPublic">
+    <div class="timeSelect">
+        <div class="container">
+            <div class="manageContent" v-loading="loading">
+                <div class="reportBox">
+                    <div class="unionState flexPublic">
+                        <ul class="flexPublic">
 
-                    </ul>
-                    <ul class="flexPublic handle">
-                        <a href=""><li>打印</li></a>
-                        <a href=""><li>导出</li></a>
-                    </ul>
-                </div>
-                    <div class="formData">
-                        <ul>
-                            <li>资产类科目</li>
-                            <li>具体内容</li>
-                            <li>金额(元)</li>
-                            <li>负债类科目</li>
-                            <li>具体内容</li>
-                            <li>余额(元)</li>
                         </ul>
-                        <ul class="formDataItems flexPublic">
-                            <li>借出款</li>
-                            <li ></li>
-                            <li></li>
-                            <li>借出款</li>
-                            <li ></li>
-                            <li></li>
+                        <ul class="flexPublic handle">
+                            <a href=""><li>打印</li></a>
+                            <a href=""><li>导出</li></a>
                         </ul>
-                        <ul class="formDataItems flexPublic">
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                        </ul>
-                        <ul class="formDataItems flexPublic" >
-                            <li>应收上级经费</li>
-                            <li ></li>
-                            <li></li>
-                            <li>应收上级经费</li>
-                            <li ></li>
-                            <li></li>
-                        </ul>
-                        <ul class="formDataItems flexPublic">
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                        </ul>
-                        <ul class="formDataItems flexPublic">
-                            <li>应收下级经费</li>
-                            <li ></li>
-                            <li></li>
-                            <li>应收下级经费</li>
-                            <li ></li>
-                            <li></li>
-                        </ul>
-                        <ul class="formDataItems flexPublic" >
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                        </ul>
-                        <ul class="formDataItems flexPublic" >
-                            <li>其他应收款</li>
-                            <li ></li>
-                            <li></li>
-                            <li>其他应收款</li>
-                            <li ></li>
-                            <li></li>
-                        </ul>
-                        <ul class="formDataItems flexPublic" >
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                            <li>(按明细项目列)</li>
-                            <li ></li>
-                            <li></li>
-                        </ul>
-
                     </div>
+                        <div class="formData">
+                            <ul>
+                                <li>资产类科目</li>
+                                <li>具体内容</li>
+                                <li>金额(元)</li>
+                                <li>负债类科目</li>
+                                <li>具体内容</li>
+                                <li>余额(元)</li>
+                            </ul>
+                            <ul class="formDataItems flexPublic">
+                                <li>借出款</li>
+                                <li ></li>
+                                <li></li>
+                                <li>借出款</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+                            <ul class="formDataItems flexPublic">
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+                            <ul class="formDataItems flexPublic" >
+                                <li>应收上级经费</li>
+                                <li ></li>
+                                <li></li>
+                                <li>应收上级经费</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+                            <ul class="formDataItems flexPublic">
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+                            <ul class="formDataItems flexPublic">
+                                <li>应收下级经费</li>
+                                <li ></li>
+                                <li></li>
+                                <li>应收下级经费</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+                            <ul class="formDataItems flexPublic" >
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+                            <ul class="formDataItems flexPublic" >
+                                <li>其他应收款</li>
+                                <li ></li>
+                                <li></li>
+                                <li>其他应收款</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+                            <ul class="formDataItems flexPublic" >
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                                <li>(按明细项目列)</li>
+                                <li ></li>
+                                <li></li>
+                            </ul>
+
+                        </div>
+                </div>
             </div>
-        </div>
-        <div class="timeSelectBox">
-            <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
+            <div class="timeSelectBox">
+                <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
+            </div>
         </div>
     </div>
 </template>
@@ -118,20 +120,7 @@
 </script>
 
 <style scoped>
-    .reportBox{
-        margin-right: 60px;
-    }
-    .timeSelectBox{
-        position: fixed;
-        right: 0;
-        top: 110px;
-        bottom:0;
-        width: 60px;
-        z-index: 2;
-    }
-    .unionState>ul>li{
-        width:100%;
-    }
+
     .formData>ul>li{
         border-right:1px solid #fff;
         height:50px;
@@ -143,27 +132,25 @@
         white-space: nowrap;
     }
     .formData>ul>li:nth-of-type(2){
-        width:24%;
+        width:20%;
     }
     .formData>ul>li:nth-of-type(3){
-        width:24%;
+        width:10%;
     }
     .formData>ul>li:nth-of-type(4){
-        width:18%;
+        width:20%;
     }
     .formData>ul>li:nth-of-type(5){
-        width:18%;
+        width:20%;
     }
     .formData>ul>li:nth-of-type(6){
         width:10%;
     }
     .formData>ul:first-child>li:last-of-type{
-        border-right:1px solid #2780d1;
+        border-right:1px solid #d3e9f9;
     }
 
     .formData>ul>li:first-child{
-        width:10%;
-        min-width: 70px;
         padding:0 2px;
     }
 
@@ -186,20 +173,11 @@
     .formData>ul.formDataItems>li:first-child{
         border-left:1px solid #ddd;
     }
-    .unionLists{
-        width:20%;
-        align-self: flex-start;
-        margin-right: 10px;
-        margin-top: 10px;
-    }
     .manageContent:before{
         content:"";
         display: inline-block;
     }
-    .unionLists~.formData{
-        width:80%;
-        align-self: flex-start;
-    }
+
     .unionLists>p{
         text-align: center;
         background: #83c350;
