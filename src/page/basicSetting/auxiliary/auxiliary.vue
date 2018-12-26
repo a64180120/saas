@@ -2,7 +2,7 @@
     <div class="sys-page">
         <div class="container">
             <div class="unionState flexPublic">
-                <div class="flexPublic" style="margin-left: 15%;">
+                <div class="flexPublic">
                     <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="组织编码/名称"></div>
                     <div @click="unionSearch" class="searcherBtn">搜索</div>
                 </div>
@@ -266,8 +266,17 @@
 </script>
 
 <style scoped>
-
-
+    .container{
+        height:90%;
+        overflow-y: auto;
+    }
+    .manageContent{
+        padding-bottom: 0;
+        height:auto;
+    }
+    .unionState{
+        padding:0 10px;
+    }
     .formData>ul>li{
         border-right:1px solid #fff;
         height:40px;
@@ -285,7 +294,6 @@
     }
     .formData>ul:first-child>li:last-of-type{
         width:15%;
-        border-right:1px solid #2780d1;
     }
 
     .formData>ul>li:first-child{
@@ -333,10 +341,11 @@
         min-width:138px;
         margin-top: 10px;
         padding-right:5px;
+        margin-right:15px;
     }
     .auxiliaryNavTitle{
-        background:#83c350;
-        color:#fff;
+        background:#d3e9f9;
+        color:#333;
         height:40px;
         line-height: 40px;
         text-align: center;
@@ -344,6 +353,7 @@
     }
     .auxiliaryNav>ul{
         padding:10px 20px;
+        border:1px solid #d3e9f9;
     }
     .auxiliaryNav>ul>li{
         width:90%;
@@ -353,16 +363,16 @@
         height:30px;
         line-height: 30px;
         text-align: center;
-        border:1px solid #ff9900;
+        border:1px solid #00b8ee;
         border-radius: 5px;
     }
     .auxiliaryNav>ul>li:hover{
-        background: #ff9900;
+        background: #00b8ee;
         color:#fff;
         cursor:pointer;
     }
     .auxiliaryNav>ul>li.active{
-        background: #ff9900;
+        background: #00b8ee;
         color:#fff;
     }
     .auxiliaryContent{
