@@ -37,10 +37,10 @@
                 <el-table-column label="序号" type="index" width="50"></el-table-column>
                 <el-table-column prop="EnCode" label="角色编码" sortable width="120"></el-table-column>
                 <el-table-column prop="Name" label="角色名称" width="120"></el-table-column>
-                <el-table-column label="角色状态" width="100">
-                    <template slot-scope="scope">
-                        <el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini" circle></el-button>
-                        <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>
+                <el-table-column label="角色状态" width="100" align="center">
+                    <template slot-scope="scope" >
+                        <el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini" circle style="text-align: center"></el-button>
+                        <el-button v-else type="danger" icon="el-icon-close" size="mini" circle style="text-align: center"></el-button>
                     </template>
                     <!--<template slot-scope="scope">-->
                         <!--<span v-if="scope.row.EnabledMark===0">启用</span>-->
@@ -496,13 +496,6 @@
         width: 100%;
         font-size: 14px;
     }
-    .container {
-             padding: 30px;
-             background: #fff;
-             border: 1px solid #eaeaea;
-             border-radius: 0px;
-             box-shadow: 0px 3px 10px #e4e4e4;
-         }
     .red {
         color: #ff0000;
     }

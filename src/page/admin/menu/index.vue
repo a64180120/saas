@@ -243,6 +243,9 @@
                 <el-button @click="editButton = false">取 消</el-button>
             </span>
         </el-dialog>
+        <div style="position: fixed; top:120px;bottom: 0px; width: 38px;background-color: #FFFFFF;right: 0px;">
+
+        </div>
     </div>
 </template>
 <script>
@@ -995,13 +998,7 @@
         width: 100%;
         font-size: 14px;
     }
-    .container {
-        padding: 30px;
-        background: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 0px;
-        box-shadow: 0px 3px 10px #e4e4e4;
-    }
+
     .red {
         color: #ff0000;
     }
