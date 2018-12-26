@@ -27,8 +27,8 @@ export default {
             this.$store.dispatch('user/logout')
         }
         // 加载默认语言包
-        let defLang = Cookie.get('lang') || this.$i18n.locale
-        this.$store.dispatch("loadLang", defLang)
+        //let defLang = Cookie.get('lang') || this.$i18n.locale
+        //this.$store.dispatch("loadLang", defLang)
 
     },
     // 初次加载时，可通过接口获取用户的主题信息，或者通过按钮触发，或者直接加载默认主题
@@ -37,14 +37,14 @@ export default {
             setTheme("theme-default")
             this.$store.commit("setThemeColor", "theme-default")
 
-            this.getConfigJson(res=>{
-                console.log('2');
-                console.log(res)
+            // this.getConfigJson(res=>{
+            //     console.log(Auth.getBaseUrl())
 
-            });
+            // });
 
             //加载token信息
             if(!Auth.getToken()){
+                console.log('获取token信息');
                 const loading = this.$loading({
                     lock: true,
                     text: 'Loading',
@@ -59,6 +59,7 @@ export default {
                     alert('网络不通,请检查服务接口网络！.....')
                 })
             }
+
         })
     }
 }
