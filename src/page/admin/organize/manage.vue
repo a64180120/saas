@@ -1,6 +1,6 @@
 <template>
-    <div class="manage">
-        <section class="container">
+    <div class="sys-page" style="background-color: #ffffff">
+        <div class="container">
             <aside class="asideNav">
                 <ul>
                     <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">基层工会组织</li>
@@ -11,7 +11,7 @@
             <look v-if="asideActive=='look'"></look>
             <basic v-if="asideActive=='basic'"></basic>
             <union v-if="asideActive=='union'"></union>
-        </section>
+        </div>
     </div>
 </template>
 
@@ -110,6 +110,10 @@
         display: flex;
         flex-flow: row nowrap;
         justify-content: start;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 0px;
+        box-shadow: 0px 3px 10px #e4e4e4;
     }
 
     .asideNav > ul {
@@ -136,7 +140,13 @@
         color: #fff;
         border-radius: 50%;
     }
-
+    .container {
+        padding: 30px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 0px;
+        box-shadow: 0px 3px 10px #e4e4e4;
+    }
     .asideNav > ul > li.asideActive {
         background: #ff9900;
         color: #fff;
