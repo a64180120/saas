@@ -15,8 +15,8 @@
                         </ul>
                     </div>
                 </el-header>
-                <el-main>
-                    <h4 class="addTitle">基层组织账套管理</h4>
+                <el-main style="min-width: 900px; margin: 0 auto">
+                    <h4 class="addTitle" style="font-size: 30px;font-weight: bold">基层组织账套管理</h4>
                     <div class="container" v-if='isedit'>
                     <!--<el-dialog :title="'账套信息维护'" :visible.sync="editVisible" width="40%" style="height: 800px">-->
                         <el-form :model="orgForm" :rules="rules" ref="orgForm" class="orgform" label-width="200px"
@@ -536,7 +536,7 @@
     .avatar-uploader {
         position: absolute;
         z-index: 1;
-        right: 61px;
+        right: 25px;
         top: -20px;
     }
 
@@ -584,7 +584,6 @@
         width: 100%;
         height: 100%;
     }
-
     .el-form-item.is-required .el-form-item__label:before {
         content: '*';
         color:#d8281d;
