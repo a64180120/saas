@@ -267,6 +267,9 @@ ul{
     height:100%;
     overflow-y: auto;
     margin-bottom: 500px;
+    padding: 0 35px 30px 35px;
+    background: #fff;
+    margin-top: 40px;
 }
 .popper{
     top: 235px !important;

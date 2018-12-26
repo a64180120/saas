@@ -16,7 +16,7 @@
                 </li>
             </ul>
             <ul class="flexPublic handle">
-                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
+                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printLodop" size="small" plain>打印</li ></a>
                 <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
                 <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
             </ul>
@@ -56,6 +56,7 @@
     import treeTable from "@/components/tree-table";
     import treeSum from './totalAmount'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
+    import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     export default {
         name: "expensesRe",
         data(){
@@ -300,8 +301,6 @@
                 if (!data) {
                     return
                 }
-                // let fileName = res.headers['content-disposition'].split('=')[1];
-                // let fileName2 = res.headers['content-disposition'].match(/fushun(\S*)xls/)[0];
 
                 let blob = new Blob([data],{type:'application/octet-stream'});
                 let filename = fileName || "filename.xls";
@@ -325,7 +324,27 @@
             },
             //打印
             printContent(){
-                this.$print(this.$refs.printFrom) // 使用
+                //this.$print(this.$refs.printFrom) // 使用
+            },
+            printLodop() {
+                /**
+                 * Lodop专有样式和属性有：
+                   ●代码中若包含style="page-break-after:always"或style="page-break-before:always"，该元素称为“强制分页元素”，控件会在该元素处分页。
+                   ●代码中的标签IMG如果有transcolor属性，则可以实现透明打印图片。例如属性格式为：transcolor="#FFFFFF"表示用白色作为透明底色，这里的颜色值可以是“#”加三色16进制值组合，也可以是英文颜色名。这个专有属性再配合IMG的position: absolute可以实现“先字后章”的公章打印效果。
+                   ●代码中的元素如果包含borderthin属性，如果属性值等于true,则该元素的border在合并单元格时会采用单细线模式。
+                 */
+                const me = this
+                var html=this.$refs.printFrom.innerHTML;
+                //console.log(html);
+                let LODOP = getLodop();
+                LODOP.PRINT_INIT("收入支出表");      //打印初始化
+                LODOP.SET_PRINT_PAGESIZE(3, 0, 0, "A4");  //设定纸张大小
+                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "收入支出表");
+                LODOP.ADD_PRINT_HTM(30, "10mm", "RightMargin:10mm", "BottomMargin:10mm",html);
+                LODOP.SET_SHOW_MODE("LANDSCAPE_DEFROTATED",1);//横向时转换为正向不需要手动旋转
+                LODOP.SET_SHOW_MODE("NP_NO_RESULT", true);
+                //LODOP.PRINT();  //直接打印不进行预览
+                LODOP.PREVIEW();  //先预览再打印
             },
             //刷新
             refresh:function(){

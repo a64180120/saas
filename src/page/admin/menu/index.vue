@@ -1,5 +1,5 @@
 <template>
-    <div class="sys-page">
+    <div class="sys-page" style="background-color: #ffffff">
         <div class="container">
             <div class="handle-box">
                 <el-row>
@@ -994,6 +994,13 @@
     .table {
         width: 100%;
         font-size: 14px;
+    }
+    .container {
+        padding: 30px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 0px;
+        box-shadow: 0px 3px 10px #e4e4e4;
     }
     .red {
         color: #ff0000;

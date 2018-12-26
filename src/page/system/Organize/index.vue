@@ -18,6 +18,7 @@
                 <el-main>
                     <h4 class="addTitle">基层组织账套管理</h4>
                     <div class="container" v-if='isedit'>
+                    <!--<el-dialog :title="'账套信息维护'" :visible.sync="editVisible" width="40%" style="height: 800px">-->
                         <el-form :model="orgForm" :rules="rules" ref="orgForm" class="orgform" label-width="200px"
                                  label-position="right" v-loading.fullscreen.lock="loading">
                             <el-form-item label="工会名称：" prop="OrgName">
@@ -59,11 +60,11 @@
                                 <el-input v-model="orgForm.AccountSystem" class="pic-input"></el-input>
                             </el-form-item>
                             <!--<el-form-item label="启用日期：">-->
-                                <!--<el-date-picker-->
-                                    <!--v-model="orgForm.EnableTime"-->
-                                    <!--type="date"-->
-                                    <!--placeholder="选择日期">-->
-                                <!--</el-date-picker>-->
+                            <!--<el-date-picker-->
+                            <!--v-model="orgForm.EnableTime"-->
+                            <!--type="date"-->
+                            <!--placeholder="选择日期">-->
+                            <!--</el-date-picker>-->
                             <!--</el-form-item>-->
                             <el-form-item label="工会主席：" prop="Chairman">
                                 <el-input v-model="orgForm.Chairman" class="pic-input"></el-input>
@@ -83,19 +84,21 @@
                                 <el-input v-model="orgForm.Director" class="pic-input"></el-input>
                             </el-form-item>
                             <!--<el-form-item label="使用期限：">-->
-                                <!--<el-date-picker-->
-                                    <!--v-model="orgForm.ServiceStartTime"-->
-                                    <!--type="date"-->
-                                    <!--placeholder="选择开始日期">-->
-                                <!--</el-date-picker>-->
-                                <!--&#45;&#45;-->
-                                <!--<el-date-picker-->
-                                    <!--v-model="orgForm.ServiceEndTime"-->
-                                    <!--type="date"-->
-                                    <!--placeholder="选择结束日期">-->
-                                <!--</el-date-picker>-->
+                            <!--<el-date-picker-->
+                            <!--v-model="orgForm.ServiceStartTime"-->
+                            <!--type="date"-->
+                            <!--placeholder="选择开始日期">-->
+                            <!--</el-date-picker>-->
+                            <!--&#45;&#45;-->
+                            <!--<el-date-picker-->
+                            <!--v-model="orgForm.ServiceEndTime"-->
+                            <!--type="date"-->
+                            <!--placeholder="选择结束日期">-->
+                            <!--</el-date-picker>-->
                             <!--</el-form-item>-->
                         </el-form>
+                    <!--</el-dialog>-->
+
                     </div>
                     <div class="container" v-else>
                         <ul>
@@ -184,6 +187,7 @@
                 isedit: false,
                 loading: false,
                 fileVisible: false,
+                editVisible: false,
                 imglist: [
                     {
                         PhId: 0,
@@ -266,10 +270,12 @@
             }),
             //修改编辑页显示
             edit() {
+                this.editVisible = true;
                 this.isedit = true
             },
             //刷新页面
             freshPage() {
+                this.editVisible = false;
                 this.isedit = false;
                 this.getData();
             },
@@ -295,6 +301,7 @@
                     this.loading = false;
                     if (res.Status == 'success') {
                         this.$message.success("保存成功！");
+                        this.editVisible = false;
                         this.isedit = false;
                         this.getData();
                         //移除TagNav

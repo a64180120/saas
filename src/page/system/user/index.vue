@@ -1,5 +1,5 @@
 <template>
-    <div class="sys-page">
+    <div class="sys-page" style="background-color: #ffffff">
         <div class="container">
             <div class="handle-box">
                 <el-row>
@@ -75,8 +75,8 @@
                 </el-pagination>
             </div>
         </div>
-        <div>
-            <span style="color: #cf9236; font-size: 20px; font-weight: bold">
+        <div style="margin-bottom: 20px;margin-top: 20px">
+            <span style="color: #cf9236; font-size: 20px; font-weight: bold; margin-bottom: 20px;margin-top: 20px">
                 工作账号管理规范说明：
             </span>
         </div>
@@ -157,12 +157,13 @@
                         node-key="ItemId"
                         default-expand-all
                         :default-checked-keys="form2.CheckedList"
-                        :render-content="renderContent">
+                        :render-content="renderContent"
+                        @disabled="disAble()">
                     </el-tree>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible2 = false">取 消</el-button>
+                <el-button @click="editVisible2 = false" style="text-align: center">关 闭</el-button>
             </span>
         </el-dialog>
     </div>
@@ -209,6 +210,7 @@
                 is_search: false,
                 roledata: [],
                 form2: {
+                    //Disable: true,
                     data2: [],
                     CheckedList: [],
                     checkStrictly: true
@@ -1008,7 +1010,13 @@
         width: 100%;
         font-size: 14px;
     }
-
+    .container {
+        padding: 30px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 0px;
+        box-shadow: 0px 3px 10px #e4e4e4;
+    }
     .red {
         color: #ff0000;
     }
