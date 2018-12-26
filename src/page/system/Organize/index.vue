@@ -58,13 +58,13 @@
                             <el-form-item label="会计制度：">
                                 <el-input v-model="orgForm.AccountSystem" class="pic-input"></el-input>
                             </el-form-item>
-                            <el-form-item label="启用日期：">
-                                <el-date-picker
-                                    v-model="orgForm.EnableTime"
-                                    type="date"
-                                    placeholder="选择日期">
-                                </el-date-picker>
-                            </el-form-item>
+                            <!--<el-form-item label="启用日期：">-->
+                                <!--<el-date-picker-->
+                                    <!--v-model="orgForm.EnableTime"-->
+                                    <!--type="date"-->
+                                    <!--placeholder="选择日期">-->
+                                <!--</el-date-picker>-->
+                            <!--</el-form-item>-->
                             <el-form-item label="工会主席：" prop="Chairman">
                                 <el-input v-model="orgForm.Chairman" class="pic-input"></el-input>
                                 <el-upload
@@ -82,19 +82,19 @@
                             <el-form-item label="经审会主任：" prop="Director">
                                 <el-input v-model="orgForm.Director" class="pic-input"></el-input>
                             </el-form-item>
-                            <el-form-item label="使用期限：">
-                                <el-date-picker
-                                    v-model="orgForm.ServiceStartTime"
-                                    type="date"
-                                    placeholder="选择开始日期">
-                                </el-date-picker>
-                                --
-                                <el-date-picker
-                                    v-model="orgForm.ServiceEndTime"
-                                    type="date"
-                                    placeholder="选择结束日期">
-                                </el-date-picker>
-                            </el-form-item>
+                            <!--<el-form-item label="使用期限：">-->
+                                <!--<el-date-picker-->
+                                    <!--v-model="orgForm.ServiceStartTime"-->
+                                    <!--type="date"-->
+                                    <!--placeholder="选择开始日期">-->
+                                <!--</el-date-picker>-->
+                                <!--&#45;&#45;-->
+                                <!--<el-date-picker-->
+                                    <!--v-model="orgForm.ServiceEndTime"-->
+                                    <!--type="date"-->
+                                    <!--placeholder="选择结束日期">-->
+                                <!--</el-date-picker>-->
+                            <!--</el-form-item>-->
                         </el-form>
                     </div>
                     <div class="container" v-else>
@@ -137,7 +137,7 @@
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">启用日期：</span></div>
-                                <div class="orgedit-value">{{orgForm.EnableTime}}</div>
+                                <div class="orgedit-value">{{orgForm.EnableTime.substr(0,10)}}</div>
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">工会主席：</span></div>
@@ -149,7 +149,7 @@
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">使用期限：</span></div>
-                                <div class="orgedit-value">{{orgForm.ServiceStartTime}}-{{orgForm.ServiceEndTime}}</div>
+                                <div class="orgedit-value">{{orgForm.ServiceStartTime.substr(0,16)}}-{{orgForm.ServiceEndTime.substr(0,16)}}</div>
                             </li>
                         </ul>
                     </div>
@@ -161,6 +161,11 @@
                                 @removeimg="removeimg"></picture-upload>
             </el-dialog>
         </div>
+        <!--<div class="footInfo " >-->
+            <!--<router-link to="">服务协议</router-link>-->
+            <!--<router-link to="">运营规范</router-link>-->
+            <!--<router-link to="">关于政云</router-link>-->
+        <!--</div>-->
     </div>
 
 </template>
@@ -273,7 +278,13 @@
                 var route = this.$route;
                 var vm = this;
                 this.loading = true;
-
+                console.log(this.orgForm.Director);
+                if(this.orgForm.OrgName ==null|| this.orgForm.EnterpriseCode == null || this.orgForm.ParentName == null || this.orgForm.Chairman == null || this.orgForm.Director == null
+                    || this.orgForm.OrgName ==''|| this.orgForm.EnterpriseCode == '' || this.orgForm.ParentName == '' || this.orgForm.Chairman == '' || this.orgForm.Director == '') {
+                    this.$message.error('保存失败,请将必填信息填写完整!');
+                    this.getData();
+                    return;
+                }
                 //提交asiox
                 SysOrgUpdate(vm, {
                     otype: 'edit',
@@ -430,7 +441,7 @@
         }
     }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 
     .choose {
         background: #fff;
@@ -448,6 +459,26 @@
         border: 1px solid #ff9900;
         border-radius: 3px;
         cursor: pointer;
+    }
+    .footInfo{
+        position:fixed;
+        bottom:0;
+        left:0;
+        width:100%;
+        height:70px;
+        line-height: 70px;
+        background: #2b3245;
+        text-align: center;
+        color:#fff;
+        font-size: 20px;
+        >a{
+            color:#fff;
+            padding:0 20px;
+            border-right:1px solid #fff;
+            &:last-of-type{
+                border:0;
+            }
+        }
     }
 
     .choose > ul > li:hover {
@@ -535,7 +566,7 @@
     }
 
     .orgform .el-form-item__label {
-        background: #00B8EE;
+        background: #6acccb;
     }
 
     .orgform .el-form-item {
@@ -545,5 +576,12 @@
     .pictrueUpload {
         width: 100%;
         height: 100%;
+    }
+
+    .el-form-item.is-required .el-form-item__label:before {
+        content: '*';
+        color:#d8281d;
+        margin-right: 4px;
+        font-size: 15px;
     }
 </style>

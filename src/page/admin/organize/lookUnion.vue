@@ -1,8 +1,8 @@
 <template>
     <div class="manageContent">
         <div class="examineTab">
-            <div @click="examineTabFn(true)" :class="{examineTabAct:examineTab}">待审核(4)</div>
-            <div @click="examineTabFn(false)" :class="{examineTabAct:!examineTab}">已审核(4)</div>
+            <div @click="examineTabFn(true)" :class="{examineTabAct:examineTab}">待审核({{dVerifyNum}})</div>
+            <div @click="examineTabFn(false)" :class="{examineTabAct:!examineTab}">已审核({{yVerifyNum}})</div>
         </div>
         <!--******待审核********-->
         <div v-show="examineTab" class="unionState flexPublic">
@@ -28,8 +28,8 @@
                 </li>
             </ul>
             <div class="flexPublic">
-                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text"
-                                                  placeholder="组织编码/名称"></div>
+                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text" style="width: 200px"
+                                                  placeholder="企业名称/单位名称/联系人名称"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
             </div>
             <ul class="flexPublic handle">
@@ -113,8 +113,8 @@
                 </li>
             </ul>
             <div class="flexPublic">
-                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue2" type="text"
-                                                  placeholder="组织编码/名称"></div>
+                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue2" type="text" style="width: 200px"
+                                                  placeholder="企业名称/单位名称/联系人名称"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
             </div>
             <!--<div class="flexPublic">-->
@@ -188,6 +188,8 @@
                     VerifyOpinion: ""
                 },
                 rules:{},
+                dVerifyNum:'',
+                yVerifyNum:'',
                 verifyFlrm : "0",
                 infoPersentSelect: 0,
                 tryTimeSelect: 0,
@@ -216,46 +218,62 @@
                     id: 3,
                     name: '50%-80%'
                 }, {id: 4, name: '80%以上'}],
-                tryTimeSelectValues: [{id: 0, name: '全部'}, {id: 1, name: '一天'}, {id: 2, name: '3天以内'}, {
-                    id: 3,
-                    name: '一周之内'
-                }, {id: 4, name: '15天'}],
+                tryTimeSelectValues: [{id: 0, name: '全部'}, {id: 1, name: '8h以内'}, {id: 2, name: '24h以内'}, {
+                    id: 3, name: '48h以内'}],
                 userInfo1: [],
                 userInfo: [],
                 examined: []
             }
         },
         methods: {
+            //搜索按钮进行搜索
             unionSearch() {
                 let data;
+                let verify;
+                let infoPersent;
+                let tryTime;
                 if(this.verifyFlrm == '0'){
+                    if(this.infoPersentSelect == ''){
+                        infoPersent = 0;
+                    }else{
+                        infoPersent = this.infoPersentSelect;
+                    }
+                    if(this.tryTimeSelect == ''){
+                        tryTime = 0;
+                    }else{
+                        tryTime = this.tryTimeSelect;
+                    }
                     data = {
-                        uid: "0",
-                        orgid: "0",
-                        pagesize: this.pageSize,
-                        pageindex: this.pageIndex - 1,
-                        value: this.verifyFlrm
+                        integrity: this.infoPersentSelect,
+                        serviceEndTime: tryTime,
+                        name : this.unionSearchValue1,
+                        verify: 0
                     };
                 }else{
+                    if(this.infoVerify == ''){
+                        verify = '3';
+                    }else{
+                        verify = this.infoVerify;
+                    }
+                    console.log(verify);
                     data = {
-                        uid: "0",
-                        orgid: "0",
-                        pagesize: this.pageSize,
-                        pageindex: this.pageIndex - 1,
-                        value: this.verifyFlrm + ','+ this.infoVerify+','+ this.unionSearchValue2
+                        integrity: 0,
+                        serviceEndTime: 0,
+                        name : this.unionSearchValue2,
+                        verify: verify
                     };
                 }
-
-                this.$axios.get('/SysOrganize/GetOrganizesByAuditStatus', {params: data})
+                this.$axios.get('/SysOrganize/GetOrgListByQuery', {params: data})
                     .then(res => {
                         if(this.verifyFlrm == "0"){
-                            this.userInfo = res.Record;
+                            this.userInfo = res;
                             for (var i = 0; i < this.userInfo.length; i++) {
                                 this.userInfoCssList[i] = {checked: false};
                                 this.$forceUpdate();
                             }
                         }else{
-                            this.examined = res.Record;
+                            this.examined = res;
+                            console.log(this.examined);
                             for (var i = 0; i < this.examined.length; i++) {
                                 if(this.examined[i].Verify == "1"){
                                     this.examined[i].Verify = true;
@@ -326,6 +344,7 @@
             pageSizeSelect() {
                 this.ajaxMode();
             },
+            //审核保存
             saveEdit(form){
                 let data;
                 if(this.PhIdList != ""){
@@ -359,6 +378,7 @@
                     })
                 this.ajaxMode();
             },
+            //批量审核
             verifyMany(){
                 console.log(this.PhIdLists);
                 console.log(this.PhIdList);
@@ -369,6 +389,7 @@
                     this.editVisible = true;
                 }
             },
+            //单选事件
             chooseOn(index, PhId, flam) {
                 // console.log(this.chFlam);
                 // console.log(this.PhIdLists);
@@ -385,6 +406,7 @@
                 }
                 console.log(this.PhIdList);
             },
+            //多选事件
             chooseMany(index, PhId){
                 if(this.PhIdLists.length >0 && this.PhIdList != ''){
                     this.PhIdLists = [];
@@ -430,12 +452,14 @@
                     .then(res => {
                         if(this.verifyFlrm == "0"){
                             this.userInfo = res.Record;
+                            this.dVerifyNum = res.totalRows;
                             for (var i = 0; i < this.userInfo.length; i++) {
                                 this.userInfoCssList[i] = {checked: false};
                                 this.$forceUpdate();
                             }
                         }else{
                             this.examined = res.Record;
+                            this.yVerifyNum = res.totalRows;
                             for (var i = 0; i < this.examined.length; i++) {
                                 if(this.examined[i].Verify == "1"){
                                     this.examined[i].Verify = true;

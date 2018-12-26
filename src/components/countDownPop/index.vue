@@ -1,9 +1,9 @@
 <template>
-    <div class="pop_cover">
+    <div class="pop_cover" :style="{'display':showType?'block':'none'}">
         <div class="pop_content">
             <div class="pop_title">
                 <img src="../../assets/images/register/register_company.png">
-                <div class="time">跳过（10S）</div>
+                <div class="time" @click="showType=false">跳过（{{showMsg}}S）</div>
             </div>
             <div class="pop_middle">
                 <img src="../../assets/images/register/register_backimg.png">
@@ -26,21 +26,43 @@
                     </ul>
 
                 </div>
-                <div >立即完善信息</div>
+                <div @click="toUser">立即完善信息</div>
             </div>
         </div>
-
-
-
-
-
-
     </div>
 </template>
 
 <script>
     export default {
-        name: "countdownpop"
+        name: "countdownpop",
+        data(){
+            return{
+                showType:true,
+                showMsg:10
+            }
+        },
+        mounted(){
+            this.timer(10);
+        },
+        methods:{
+            toUser:function(){
+                this.$router.push('system/organization');
+                this.showType=false;
+            },
+            timer:function(t){
+                t--;
+                let that=this;
+                setTimeout(function(){
+
+                    if(t>0){
+                        that.showMsg=t
+                        that.timer(t);
+                    }else{
+                        that.showType=false;
+                    }
+                },1000)
+            }
+        }
     }
 </script>
 
@@ -51,6 +73,7 @@
         bottom: 0;
         width: 100%;
         background-color: rgba(0, 0, 0, 0.43);
+        z-index: 999;
     }
     .pop_content{
         width: 975px;

@@ -2,7 +2,7 @@
     <div class="wrapper">
         <template>
             <!-- v-once只渲染元素和组件一次 头部 -->
-            <header-bar v-on:collapseByValue="collapseChange" v-once> 
+            <header-bar v-on:collapseByValue="collapseChange" v-once>
                 <p slot="logo"><router-link to="/index" class="header-title">工会云财务</router-link></p>
             </header-bar>
             <!-- 左侧菜单 -->
@@ -18,6 +18,10 @@
                 </transition>
             </div>
         </div>
+        <!--15天提示弹窗-->
+        <div style="display: block;">
+            <countdownpop></countdownpop>
+        </div>
     </div>
 </template>
 
@@ -25,6 +29,7 @@
 import HeaderBar from './HeaderBar'
 import NavBar from './NavBar'
 import TagNav from './TagNav'
+import countdownpop from "../../components/countDownPop";
 import Auth from "@/util/auth"
 
 export default {
@@ -58,7 +63,8 @@ export default {
     components:{
         HeaderBar,
         NavBar,
-        TagNav
+        TagNav,
+        countdownpop  //15天提示弹窗
     }
 }
 </script>
