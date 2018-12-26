@@ -87,7 +87,7 @@ service.interceptors.request.use(
 
         //let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
         //var new_header = Object.assign({},config_header, baseheader);  //合并对象
-        let baseheader=httpConfig.getHeaderConfig();
+        let baseheader=httpConfig.getTestHeaderConfig();
         config.headers = baseheader
 
         //POST传参序列化
@@ -153,7 +153,7 @@ service.interceptors.response.use(
 
             const res = error.response.data
             //return Promise.reject(JSON.parse(error.response.data));
-            return Promise.resolve(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
+            return Promise.reject(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
 
         }
     }

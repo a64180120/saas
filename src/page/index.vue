@@ -11,12 +11,24 @@
       </div>
       <div class="carrouselContainer">
         <el-carousel height="560px">
-          <el-carousel-item v-for="img in imgList" :key="img">
+          <!-- <el-carousel-item v-for="img in imgList" :key="img">
             <img :src="img">
+          </el-carousel-item> -->
+          <el-carousel-item>
+            <img src="@/assets/img/t1.jpg">
+          </el-carousel-item>
+          <el-carousel-item>
+            <img src="@/assets/img/t2.jpg">
+          </el-carousel-item>
+          <el-carousel-item>
+            <img src="@/assets/img/t3.jpg">
+          </el-carousel-item>
+          <el-carousel-item>
+            <img src="@/assets/img/t4.jpg">
           </el-carousel-item>
         </el-carousel>
       </div>
-      <div class="headerBG"></div>
+      <div class="headerBGindex"></div>
     </header>
     <nav>
       <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('finance')"><router-link to="/home"><img src="@/assets/img/cai.png" alt=""><span :class="{moveHide:nav=='finance'}">工会财务管理</span></router-link></div>
@@ -30,14 +42,15 @@
         <div class="flexPublic proInfoContent">
           <div>
             <div class="flexPublic">
-              <img src="@/assets/img/img1.png" alt="">
+              <img src="@/assets/img/img1.jpg" alt="">
               <div>
                 <h4>新版企业所得税</h4>
-                <p>根据《浙江省人民政府办公厅关于“无违建县（市、区）”创建标准及验收办法（试行）的通知》（浙政办发〔2015〕72号）和《浙江省“三改一拆”行动领导小组关于“无违建县（市、区）”创建标准及考评办法的通知》（浙改拆〔2016〕9号）要求，经各设区市政</p>
+                <p>为进一步落实企业所得税优惠政策，统一规范企业所得税优惠事项的办理，根据《国家税务总局关于发布修订后的<企业所得税优惠政策事项办理办法>的公告》（国家税务总局公告2018年第23号，以下简称23号公告）的规定，结合我省实际，现就企业所得税优惠事项办理有关问题公告如下：</p>
               </div>
             </div>
-            <p>府审核，省“无违建县（市、区）”创建工作领导小组办公室组织考核验收，拟推荐淳安县等6个县（市、区）为第一批“无违建县（市、区）”，杭州市富阳区等19个县（市、区）为第二批“基本无违建县（市、区）”，杭州市上城区等27县（市、区）为第三批“无违建创建先进县（市、区）”，现予公示，接受社会公众监督。
-　　公示时间：2017年4月14日—4月19日（8:30—17:30）。在公示期内，任何单位和个人均可通过来信、来电等形式，反映公示对象在“无违建县（市、区）”创建工作中存在的问题。反映问题必须实事求是，以单位名义反映问题的应加盖公章，以个人名义反映问题的提倡署报本人真实姓名。逾期不予受理。</p>
+            <p>一、凡享受企业所得税优惠政策的企业，均应按照23号公告执行。
+　　            二、享受集成电路生产企业、集成电路设计企业、软件企业、国家规划布局内的重点软件企业和集成电路设计企业等优惠事项的企业，应当在完成年度汇算清缴后，按照《企业所得税优惠事项管理目录》（2017年版）“后续管理要求”项目中列示的清单，通过省经信委的浙江省软件和信息服务业公共服务平台（网址：www.zjiip.org.cn）上传相关资料。相关资料不再单独报送税务机关。
+　　            三、本公告适用于2017年度汇算清缴及以后年度企业所得税优惠事项办理工作。《浙江省国家税务局 浙江省地方税务局关于企业所得税优惠事项办理问题的公告》（浙江省国家税务局 浙江省地方税务局公告2015年第10号）以及《浙江省国家税务局关于加强企业所得税优惠备案管理工作的通知》（浙国税发〔2017〕60号）同时废止。</p>
           </div>
           <ul>
             <li v-for="(item,index) of proInfoList" :key="index" @click.stop="openUrl(item)">
@@ -85,8 +98,17 @@
         <div class="unionHome">
           <i></i>
           <el-carousel indicator-position="none" height="400px" arrow="never">
-            <el-carousel-item v-for="item in 4" :key="item">
+            <el-carousel-item>
                 <a href="#"><img src="@/assets/img/n1.png" alt=""></a>
+            </el-carousel-item>
+            <el-carousel-item >
+                <a href="#"><img src="@/assets/img/n2.jpg" alt=""></a>
+            </el-carousel-item>
+            <el-carousel-item >
+                <a href="#"><img src="@/assets/img/n3.jpg" alt=""></a>
+            </el-carousel-item>
+            <el-carousel-item>
+                <a href="#"><img src="@/assets/img/n4.jpg" alt=""></a>
             </el-carousel-item>
           </el-carousel>
         </div>
@@ -219,7 +241,7 @@
     },
     methods:{
       navEnter(val){
-        console.log(111,this.nav)
+
         this.nav=val;
       },
       navLeave(){
@@ -244,9 +266,9 @@
   header{
     padding:0 70px;
     position:relative;
-    .headerBG{
+    .headerBGindex{
       position:absolute;
-      z-index: -1;
+      z-index: 0;
       height:499px;
       width:100%;
       left:0;

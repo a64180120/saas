@@ -135,7 +135,7 @@
                 <li>
                     <div class="addFormItemTitle">工会主席</div>
                     <div>
-                        <div class="inputContainer"><input style="width: 90%" type="text" v-model="Chairman" disabled></div>
+                        <div class="inputContainer"><input style="width: 90%" type="text" v-model="Chairman"></div>
                         <!--<div @click="testFile">附件</div>-->
                         <!--<el-button type="primary" round @click="testFile">附件</el-button>-->
                         <!--<input @change="getFile($event)" type="file">-->
@@ -212,7 +212,7 @@ import qs from 'qs';
                 MobilePhone: '',
                 Telephone: '',
                 showFlam: true,
-                Chairman: '工会主席',
+                Chairman: '',
                 Director: '',
                 EnableTime: '',
                 ServiceStartTime: '',
@@ -420,6 +420,7 @@ import qs from 'qs';
                 //console.log(item)
                 this.imglist.push(item);
             },
+            //改变父级组织后的点击事件
             changeParentOrg(){
                 console.log(this.Parent);
                 this.ParentId = this.Parent.PhId;
@@ -428,6 +429,7 @@ import qs from 'qs';
                 console.log(this.ParentId);
                 console.log(this.ParentCode);
             },
+            //改变省后的点击时间
             changeProvince(){
                 console.log(this.Province);
                 this.StreetValue = [];
@@ -435,15 +437,18 @@ import qs from 'qs';
                 this.CityValue = [];
                 this.selectArea(this.Province, 1);
             },
+            //改变城市后的点击时间
             changeCity(){
                 this.StreetValue = [];
                 this.CountyValue = [];
                 this.selectArea(this.City, 2);
             },
+            //改变区后的点击时间
             changeCounty(){
                 this.StreetValue = [];
                 this.selectArea(this.County, 3);
             },
+            //查询地区
             selectArea(Area,i){
                 var data = {
                     uid: "0",
@@ -532,6 +537,8 @@ import qs from 'qs';
                                         this.$message.error('新增失败,请重试!');
                                     }
                                 })
+                            this.$store.commit("tagNav/removeTagNav", this.$route);
+                            this.$router.push({path: "/admin/orgin"});
                         }else{
                             this.$message.error('请将信息填写完整再保存,请重试!');
                         }
@@ -575,12 +582,13 @@ import qs from 'qs';
                                         this.$message.error('新增失败,请重试!');
                                     }
                                 })
+                            this.$store.commit("tagNav/removeTagNav", this.$route);
+                            this.$router.push({path: "/admin/orgin"});
                         }else{
                             this.$message.error('请将信息填写完整再保存,请重试!');
                         }
                     }
-                    this.$store.commit("tagNav/removeTagNav", this.$route);
-                    this.$router.push({path: "/admin/orgin"});
+
                     // if (this.OrgName.length > 0 && this.EnterpriseCode.length > 0) {
                     //     let formData = new FormData();
                     //     let config = {

@@ -174,6 +174,7 @@ const actions = {
                     orgid:state.orgid
                 }
             }).then(res => {
+                console.log(res)
                 if (res.Status === "success") {
                     //用户信息缓存
                     commit("setUserInfo", res.Data);
@@ -247,6 +248,10 @@ const actions = {
     // 获取该用户的菜单列表
     getNavList({ commit, state }) {
         return new Promise((resolve, reject) => {
+            //let base=httpConfig.getAxiosBaseConfig();
+            //测试的Header
+            //let headconfig=httpConfig.getTestHeaderConfig();
+
             axios({
                 url: "/SysMenu/GetMenuList",
                 methods: "get",
@@ -255,8 +260,10 @@ const actions = {
                     orgid:state.orgid
                 }
             }).then(res => {
-
-                commit("setNavList", res);
+                //var response=JSON.parse(res.data);
+                if(res){
+                    commit("setNavList", res);
+                }
                 resolve(res);
             }).catch(error =>{
                 console.log(error)
@@ -275,7 +282,9 @@ const actions = {
                     if (v.child && v.child.length) {
                         flatNavList(v.child);
                     } else {
-                        permissionList.push(v);
+                        if(v.path){
+                            permissionList.push(v);
+                        }
                     }
                 }
             }

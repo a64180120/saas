@@ -24,7 +24,7 @@ import httpConfig from '@/util/ajaxConfig' //自定义ajax头部配置*****
 
 //附件
 export default {
-  name: "pictureUpload",
+  name: "fileUpload",
   props: {
     //父组件传递的图片列表
     imgList:{
@@ -84,7 +84,7 @@ export default {
   },
   methods: {
         ...mapActions({
-            uploadFile: 'uploadFile/Voucherupload'
+            uploadFile: 'uploadFile/Excelupload'
         }),
         //图片移除时处理数据
         handleRemove(file, fileList) {
@@ -116,17 +116,17 @@ export default {
         },
         //附件上传前的判断
         beforeAvatarUpload(file){
-            const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
-            const isLt2M = file.size / 1024 / 1024 < 2;
-            console.log(3333)
-            if (!isRightType) {
-                this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
-                return false
-            }
-            if (!isLt2M) {
-                this.$message.error('上传图片大小不能超过 2MB!');
-                return false
-            }
+            // const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
+            // const isLt2M = file.size / 1024 / 1024 < 2;
+            // console.log(3333)
+            // if (!isRightType) {
+            //     this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
+            //     return false
+            // }
+            // if (!isLt2M) {
+            //     this.$message.error('上传图片大小不能超过 2MB!');
+            //     return false
+            // }
         },
         beforeRemove(file, fileList){},
         //判断图片数量
@@ -137,20 +137,18 @@ export default {
             let me=this;
             let fileObject = param.file;
             let formData = new FormData();
+            console.log(param)
             formData.append('RelPhid', '0')
             formData.append('BTable', 'gcw3_voucher_mst')
             formData.append("file", fileObject);
-            console.log(param)
             this.uploadFile(formData).then(res => {
                 if(res.Status==='error'){
                     this.$message.error(res.Msg);
                     return
-                }
-
-               
+                }               
                 //回传的上传临时文件
                 if(res.Data){
-                    
+                    this.ExcelValidMsg(res.Data);
                     var model=res.Data
                     var url_=me.picUrl
 
@@ -164,6 +162,11 @@ export default {
                 console.log(error);
                 this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
             })
+        },
+        ExcelValidMsg(param){
+            if(param){
+                console.log(param)
+            }
         }
   }
 };

@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+//const GeneraterAssetPlugin = require('generate-asset-webpack-plugin')
 
 function recursiveIssuer(m) {
     if (m.issuer) {
@@ -130,8 +131,22 @@ const webpackConfig = merge(baseWebpackConfig, {
             ignore: ['.*']
           }
         ])
+        // new GeneraterAssetPlugin({
+        //     filename: utils.assetsPath('serverconfig.json'),
+        //     fn: (compilation, cb) => {
+        //         cb(null, createServerConfig(compilation));
+        //     },
+        //     extraFiles: []
+        // })
     ]
 })
+
+// const createServerConfig = function(compilation) {
+//     let serverConfig = {
+//         baseUrl: config.build.env.API_ROOT
+//     }
+//     return JSON.stringify(serverConfig);
+// };
 
 if (config.build.productionGzip) {
     var CompressionWebpackPlugin = require('compression-webpack-plugin')
