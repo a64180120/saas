@@ -3,11 +3,11 @@
     <div class="container">
       <el-button type="primary" @click="printClick">打印</el-button>
 
-      <div>{{ sumvalue| NumtoCHN}} </div>
+      <div style="margin-top: 20px">{{ sumvalue| NumtoCHN}} </div>
 
       <print-tem ref="print" :printData="voucherdata"></print-tem>
 
-      <timerBtn ref="timerbtn" class="btn btn-default" @run="sendCode"></timerBtn>
+      <!--<timerBtn ref="timerbtn" class="btn btn-default" @run="sendCode"></timerBtn>-->
     </div>
   </div>
 </template>
