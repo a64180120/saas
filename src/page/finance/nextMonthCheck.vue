@@ -48,7 +48,52 @@
         </div>
         <div v-show="checkNav=='audit'" class="audit">
             <p class="title">
-                <span >审核凭证</span><i @click="checkNavShow('month')"></i></p>    
+                <span >审核凭证</span><i @click="checkNavShow('month')"></i></p> 
+            <p class="auditCheck"><span>审核</span></p>  
+            <section  class="listContainer">
+                <ul class="listTitle">
+                    <li>序号</li>
+                    <li>摘要</li>
+                    <li>科目</li>
+                    <li>借方金额(元)</li>
+                    <li>贷方金额(元)</li>
+                </ul>
+                <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
+                    <li @dblclick="voucherDel(item)">
+                        <ul class="listIndex"><li>{{index+1}}</li></ul>
+                        <ul>
+                            <li>
+                                <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
+                                <span>凭证字号 : 记-{{item.PNo}}</span>
+                                <span>附件数 : {{item.PAttachment}}</span>
+                                <span>制单人 : {{item.PMakePerson}}</span>
+                                <span>审核人 : {{item.PAuditorName}}</span>
+                            </li>
+                            <li v-for="(dtl,ind) of item.Dtls" :key="ind">
+                                <div class="wrapKemu">
+                                    <div>{{dtl.Abstract}}</div>
+                                </div>
+                                <div class="wrapKemu"> 
+                                    <div> 
+                                        {{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}
+                                        <span 
+                                            v-for="(item,index) of dtl.DtlAccounts?dtl.DtlAccounts[0].NameValueDtls:0" :key="index">
+                                            .{{item.AuxiliaryName}}
+                                        </span> 
+                                    </div>
+                                </div>
+                                <div>{{(dtl.JSum==0?'':dtl.JSum) | NUmTurn}}</div>
+                                <div>{{(dtl.DSum==0?'':dtl.DSum) | NUmTurn}}</div>
+                            </li>
+                            <li>
+                                <div>合计:{{'sum' | sum(item.Dtls)}}</div>
+                                <div>{{'jie'|sum(item.Dtls)}}</div>
+                                <div>{{'dai'|sum(item.Dtls)}}</div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </section> 
         </div>
         <div v-show="checkNav=='codeReset'" class="codeReset">
             <p class="title">
@@ -221,6 +266,7 @@
         top:0;
         width:100%;
         height:100%;
+        overflow-y: auto;
         >.container{
             background: #fff;
             padding:10px 30px;
@@ -321,10 +367,191 @@
     }
     .audit{
         height:80%;
-        width:90%;
+        width:85%;
         background: #fff;
         position:absolute;
         left:5%;
         top:100px;
+        padding:5px 15px;
+        >.title{
+            width:100%;
+            height:40px;
+            line-height: 40px;
+            font-size:18px;
+            font-weight: 600;
+            border-bottom:1px solid #ccc;
+            >span{
+                float:left;
+            }
+            >i{
+                float:right;
+                margin-top:10px;          
+                background: url("../../assets/icon/close.svg");
+                background-size:cover ;
+                width:20px;
+                height:20px;
+                cursor:pointer;
+                &:hover{
+                    opacity:0.7;
+                }
+            }
+        }
+        >p.auditCheck{
+            height:50px;
+            line-height: 50px;
+            >span{
+                float:right;
+                width:80px;
+                height:30px;
+                text-align: center;
+                line-height: 30px;
+                margin-top:10px;
+                margin-right:30px;
+                color:#fff;
+                border-radius: 4px;
+                background: #00b7ee;
+                &:hover{
+                    opacity:0.8;
+                }
+                &:after{
+                    content:"";
+                    clear: both;
+                    display: block;
+                }
+            }
+        }
     }
+
+    .listContainer{
+        max-height:85%;
+        overflow-y: auto;
+        padding:5px;
+        margin-top:10px;
+        padding-bottom: 20px;
+    }
+    .listContainer ul.listTitle{
+        display: flex;
+        background: #d3e9f9 ;
+        color:#333;
+        
+    }
+    .listContainer ul.listTitle li{
+        text-align: center;
+        height:40px;
+        line-height: 40px;
+    }
+    .listContainer ul.listTitle li:first-of-type{
+        width:5%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(2){
+        width:31%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(3){
+        width:26%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(4){
+        width:19%;
+    }
+    .listContainer ul.listTitle li:nth-of-type(5){
+        width:19%;
+    }
+    ul.listContent{
+        border-top:1px solid #ccc;
+        margin-bottom: 20px;
+        background: #fff;
+    }    
+    ul.listContent.choosed>li>ul.listIndex{
+        background: #d3e9f9;
+        color:#333;
+    
+    }
+    
+    ul.listContent>li {
+        width:100%;
+        height:100%;
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        position: relative;
+    }
+        ul.listContent>li> ul.listIndex{
+        margin:0;
+        border:1px solid #ccc;
+        border-top:0;
+        height:100%;
+        width:5%;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position:absolute;
+            
+    }
+    ul.listContent>li> ul.listIndex>li:first-of-type{
+            border:0;
+            width:100%;
+            height:100%;
+            display: flex;
+            align-items: center;
+            justify-content:center;
+        }
+    ul.listContent>li> ul {
+        height:100%;
+        width: 95%;
+        margin-left:5%;
+        
+    }
+    ul.listContent>li> ul>li{
+        display: flex;
+        justify-content: flex-start;
+        height:30px;
+        line-height: 30px;
+    }
+    ul.listContent>li> ul>li:first-of-type{
+        padding:0 10px;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left: 0;
+    }
+    ul.listContent>li> ul>li:first-of-type>span{
+            margin-right: 50px;
+        }
+    ul.listContent>li> ul>li>div{
+        text-align: left;
+        padding:0 10px;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left:0;
+    }
+    ul.listContent>li> ul>li div:first-of-type{
+        width:32%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(2){
+        width:28%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(3){
+        width:20%;
+    }
+    ul.listContent>li> ul>li div:nth-of-type(4){
+        width:20%;
+    }
+    
+    ul.listContent>li> ul>li:last-of-type>div{
+        text-align: left;
+        border:1px solid #ccc;
+        border-top:0;
+        border-left:0;
+        width:20%;
+        
+    }
+    ul.listContent>li> ul>li:last-of-type>div:first-of-type{
+            width:60%;
+        }
+        ul.listContent>li> ul:nth-of-type(2)>li>div:nth-last-of-type(1),ul.listContent>li> ul:nth-of-type(2)>li>div:nth-last-of-type(2){
+            text-align: right;
+        }
+    
+         ul.listContent>li> ul:nth-of-type(2)>li:last-of-type>div{
+             padding-left:10%;
+         }
 </style>

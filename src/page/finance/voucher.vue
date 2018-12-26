@@ -84,7 +84,7 @@
                                                     :key="index">{{assist.BaseName?('.'+assist.BaseName):''}}</span>
                                         </div>
                                     </li>
-                                    <li v-show="item.SubjectCode"><span>余额:</span><span>{{item.balance?item.balance:0}}</span></li>
+                                    <li v-show="item.SubjectCode"><span v-if="item.balance">余额:</span><span v-if="item.balance">{{item.balance}}</span></li>
                                     <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
@@ -262,15 +262,12 @@
                     Dtls:[]
                 }
                 this.PMakePerson=this.username;
-                console.log(this.PMakePerson)
                 if(!this.sideDate){
                     this.sideDateNew=this.sideDate;
                 } else{
                     this.sideDateNew=this.nowTime.getFullYear()+'-'+ (parseInt(this.$store.state.Pconfig.jmonth)+1);
                 
                 }
-                   
-                console.log( this.sideDateNew)
                 this.getFreshVoucher();
             }else{   
                 this.getVoucherData(this.dataList.data.Mst);
@@ -633,6 +630,7 @@
                 const loading5=this.$loading();
                 this.$axios.get('/PVoucherMst/GetSubjectBalance',{params:data})
                     .then(res=>{
+                        console.log(res.Record)
                         if(res.Status=='error'){
                             this.$message(res.Msg)
                         }
@@ -641,6 +639,10 @@
                         }else{
                              this.voucherInfo[Msg.id].balance=res.Record[0].j_sum-res.Record[0].d_sum;
                         }
+                        if(this.voucherInfo[Msg.id].balance==0){
+                            this.voucherInfo[Msg.id].balance='0';
+                        }
+                        console.log(this.voucherInfo[Msg.id].balance)
                         this.$forceUpdate();
                         loading5.close();
                     })
@@ -970,7 +972,7 @@
     .voucher{
         width:100%;
         text-align: left;
-        padding:8px 25px;
+        padding:8px 15px 0 25px;
         margin-right:10px;
         font-size:18px;
     }
@@ -1019,20 +1021,20 @@
     }
     .addIcon{
         top:2px;
-        background: url("../../assets/icon/addition.svg");
+        background: url("../../assets/icon/addition_fill.svg");
         background-size:cover;
     }
     .addIcon:hover{
-        background: url("../../assets/icon/addition_fill.svg");
+        background: url("../../assets/icon/addition.svg");
         background-size:cover;
     }
     .deleteIcon{
         bottom:2px;
-        background: url("../../assets/icon/delete.svg");
+        background: url("../../assets/icon/delete_fill.svg");
         background-size:cover;
     }
     .deleteIcon:hover{
-        background: url("../../assets/icon/delete_fill.svg");
+        background: url("../../assets/icon/delete.svg");
         background-size:cover;
     }
     .voucherContentItem,.voucherContent>ul>li{
@@ -1069,11 +1071,11 @@
         width:24%;
     }
     .voucherContentItem>li,.voucherContentItem:nth-of-type(5)>li{
-        border-right-color:#7a7a7a;
-        border-bottom-color:#7a7a7a;
+        border-right-color:#bbb;
+        border-bottom-color:#bbb;
     }
     .voucherContentItem>li:first-of-type{
-        border-left-color:#7a7a7a;
+        border-left-color:#bbb;
     }
     .voucherContent>ul>li:first-of-type>ul>li>div~.money{
         border-top:1px solid #aaa;

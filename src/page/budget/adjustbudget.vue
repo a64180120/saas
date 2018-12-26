@@ -384,7 +384,6 @@
                 }
                 this.loading=true;
                 this.$axios.get(
-                    // 'PSubjectBudget/GetBeginYear',
                     'PSubjectBudget/GetMiddleYear',
                     {params:data}
                 ).then(res=>{

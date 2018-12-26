@@ -24,7 +24,7 @@ const staticRoute = [
             {
                 path: "",
                 component: () =>import( "../page/finance/voucherAdd"),
-                meta:{ requireAuth:true,type:'page',name:'凭证新增'}
+                meta:{ requireAuth:true,type:'page',name:'新增凭证'}
                 // component: () =>import("../page/home/index"),
                 // meta:{ requireAuth:true,type:'page',name:'首页' }
             }

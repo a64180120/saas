@@ -351,7 +351,7 @@ export default {
         position:absolute;
         right:0px;
         top:0px;
-        height: 700px;
+        height: 95%;
         background: #fff;  
         box-shadow:0 0 20px 2px #ccc;
         >div:first-of-type{
@@ -374,7 +374,7 @@ export default {
             color:#04a9f4;
         }
         .monthsContainer{
-            height:620px;
+            height:90%;
             //overflow-y:scroll;
             overflow: hidden;
             position: relative;
@@ -384,7 +384,7 @@ export default {
                 position: absolute;
                 left:6px;
                 bottom:0px;
-                transition: all 0.8s linear;
+                // transition: all 0.1s linear;
                >li{
                    >ul> li{
                        &:nth-of-type(2):after,&:nth-of-type(1):after{

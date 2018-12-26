@@ -401,8 +401,12 @@
         line-height: 40px;
         color: #45c0f7;
     }
+    .list div ul li:hover{
+        background:#00B8EE;
+        color:#fff;
+    }
     .list div ul li.selectMonth{
-        background:#03a9f4;
+        background:#00B8EE;
         color:#fff;
     }
 

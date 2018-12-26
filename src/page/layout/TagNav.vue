@@ -140,6 +140,8 @@ export default {
     .tag-nav .tag-nav-item{
         height: 28px;
         line-height: 28px;
+        background: #00b7ee;
+        color:#fff;
     }
     .tags-close-box {
         position: absolute;

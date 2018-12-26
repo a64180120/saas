@@ -18,10 +18,23 @@
                         </ul>
                         <ul class="flexPublic handle">
                             <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
+                            <a><li style='margin:0 0 0px 20px;'>核定年初预算</li></a>
                             <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
                             <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                             <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
                         </ul>
+                    </div>
+                    <div class="cover">
+                        <div>
+                            <i class="el-icon-close"></i>
+                            <div>
+                                <p>年初预算核定后不允许更改，确定核定？</p>
+                            </div>
+                            <ul class="flexPublic handle">
+                                <a><li style='margin:0 0 0px 20px;'>确定</li></a>
+                                <a><li style='margin:0 0 0px 20px;'>取消</li></a>
+                            </ul>
+                        </div>
                     </div>
                     <div class="formData" id="form1" ref="printFrom">
                     <ul>
