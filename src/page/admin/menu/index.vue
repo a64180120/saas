@@ -28,7 +28,7 @@
                 :expand-all="expandAll"
                 v-loading="loading"
                 highlight-current-row
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
                 @onRowClick="handleClickRow">
                 <!-- <el-table-column type="selection" width="55" align="center"></el-table-column> -->
                 <!--<el-table-column label="序号" type="index" width="50"></el-table-column>-->
@@ -161,7 +161,7 @@
                 :expand-all="expandAllButton"
                 v-loading="loadingButton"
                 highlight-current-row
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
                 @onRowClick="handleClickRow">
                 <el-table-column label="位置"  align="center">
                     <template slot-scope="scope">
@@ -243,6 +243,9 @@
                 <el-button @click="editButton = false">取 消</el-button>
             </span>
         </el-dialog>
+        <div style="position: fixed; top:120px;bottom: 0px; width: 38px;background-color: #FFFFFF;right: 0px;">
+
+        </div>
     </div>
 </template>
 <script>
@@ -995,13 +998,7 @@
         width: 100%;
         font-size: 14px;
     }
-    .container {
-        padding: 30px;
-        background: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 0px;
-        box-shadow: 0px 3px 10px #e4e4e4;
-    }
+
     .red {
         color: #ff0000;
     }

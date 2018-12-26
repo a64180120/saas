@@ -110,10 +110,10 @@
         display: flex;
         flex-flow: row nowrap;
         justify-content: start;
-        background: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 0px;
-        box-shadow: 0px 3px 10px #e4e4e4;
+        /*background: #fff;*/
+        /*border: 1px solid #eaeaea;*/
+        /*border-radius: 0px;*/
+        /*box-shadow: 0px 3px 10px #e4e4e4;*/
     }
 
     .asideNav > ul {
@@ -140,13 +140,7 @@
         color: #fff;
         border-radius: 50%;
     }
-    .container {
-        padding: 30px;
-        background: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 0px;
-        box-shadow: 0px 3px 10px #e4e4e4;
-    }
+
     .asideNav > ul > li.asideActive {
         background: #ff9900;
         color: #fff;

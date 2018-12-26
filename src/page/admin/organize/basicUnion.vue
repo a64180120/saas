@@ -380,7 +380,7 @@
     }
 
     .formData > ul:first-child > li:last-of-type {
-        border-right: 1px solid #2780d1;
+        /*border-right: 1px solid #2780d1;*/
     }
 
     .formDataItem > li:first-child, .formData > ul:first-child > li:first-child {

@@ -273,7 +273,7 @@ ul{
     height:100%;
     overflow-y: auto;
     margin-bottom: 500px;
-    padding: 0 35px 30px 35px;
+    padding: 10px;
     background: #fff;
     margin-top: 40px;
 }
@@ -308,27 +308,27 @@ ul{
         background-size:cover;
         color:#fff;
   }
-  .sidebar  .el-menu-item:hover>.el-icon-lx-SAAS_tb3::before, .el-menu-item:focus>.el-icon-lx-SAAS_tb3::before{
+  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb3::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb3::before{
     background: url(../images/finance/SAAS_tb3-2.png);
     background-size:cover;
   }
-  .sidebar  .el-menu-item:hover>.el-icon-lx-SAAS_tb4::before, .el-menu-item:focus>.el-icon-lx-SAAS_tb4::before{
+  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb4::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb4::before{
     background: url(../images/finance/SAAS_tb4-2.png);
     background-size:cover;
   }
-  .sidebar  .el-menu-item:hover>.el-icon-lx-SAAS_tb5::before, .el-menu-item:focus>.el-icon-lx-SAAS_tb5::before{
+  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb5::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb5::before{
     background: url(../images/finance/SAAS_tb5-2.png);
     background-size:cover;
   }
-  .sidebar  .el-menu-item:hover>.el-icon-lx-SAAS_tb8::before, .el-menu-item:focus>.el-icon-lx-SAAS_tb8::before{
+  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb6::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb6::before{
     background: url(../images/finance/SAAS_tb8-2.png);
     background-size:cover;
   }
-  .sidebar  .el-menu-item:hover>.el-icon-lx-SAAS_tb7::before, .el-menu-item:focus>.el-icon-lx-SAAS_tb7::before{
+  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb7::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb7::before{
     background: url(../images/finance/SAAS_tb7-2.png);
     background-size:cover;
   }
-  .sidebar  .el-menu-item:hover>.el-icon-lx-SAAS_tb6::before, .el-menu-item:focus>.el-icon-lx-SAAS_tb6::before{
+  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb8::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb8::before{
     background: url(../images/finance/SAAS_tb6-2.png);
     background-size:cover;
   }

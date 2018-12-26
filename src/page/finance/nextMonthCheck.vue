@@ -50,7 +50,7 @@
             <p class="title">
                 <span >审核凭证</span><i @click="checkNavShow('month')"></i></p> 
             <p class="auditCheck"><span>审核</span></p>  
-            <section  class="listContainer">
+            <!-- <section  class="listContainer">
                 <ul class="listTitle">
                     <li>序号</li>
                     <li>摘要</li>
@@ -93,7 +93,7 @@
                         </ul>
                     </li>
                 </ul>
-            </section> 
+            </section>  -->
         </div>
         <div v-show="checkNav=='codeReset'" class="codeReset">
             <p class="title">

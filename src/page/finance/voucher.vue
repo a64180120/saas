@@ -458,7 +458,7 @@
             getFreshVoucher(){
                 const loading1=this.$loading();
                 if(!this.sideDateNew){
-                    this.sideDateNew=nowTime.getFullYear()+'-'+nowTime.getMonth()
+                    this.sideDateNew=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth()
                 }
                 var data={
                     uid:this.uid,
