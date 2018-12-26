@@ -101,7 +101,7 @@ export default {
 }
 
 .el-menu{
-  border-right:0;
+  border-right:1px solid #ddd;
   margin-right:10px;
 }
 .sidebar::-webkit-scrollbar {

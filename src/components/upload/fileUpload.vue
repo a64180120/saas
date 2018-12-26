@@ -148,7 +148,7 @@ export default {
                 }               
                 //回传的上传临时文件
                 if(res.Data){
-                    this.ExcelValidMsg(res.Data);
+                    
                     var model=res.Data
                     var url_=me.picUrl
 
@@ -163,11 +163,7 @@ export default {
                 this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
             })
         },
-        ExcelValidMsg(param){
-            if(param){
-                console.log(param)
-            }
-        }
+        
   }
 };
 </script>
