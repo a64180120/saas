@@ -558,7 +558,6 @@ export default {
   }
 };
 </script>
-</script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style scoped>
 .el-checkbox-role {
