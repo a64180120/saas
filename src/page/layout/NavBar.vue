@@ -113,4 +113,5 @@ export default {
 .sidebar > ul {
   height: 100%;
 }
+
 </style>

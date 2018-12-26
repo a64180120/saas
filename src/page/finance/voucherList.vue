@@ -12,9 +12,8 @@
                 <a @click.prevent="handle('chongh')"><li >冲红</li></a>
                 <a @click.prevent="handle('reset')"><li >凭证重排</li></a>
                 <a @click.prevent="handle('upload')">
-                    <li @mouseover.stop="1"  >
-                        <div @click.stop="testFile">导入</div>
-                        
+                    <li >
+                        <div @click.stop="1">导入</div>                       
                     </li>
                 </a>
                 <a @click.prevent="handle('download')">
@@ -1433,7 +1432,7 @@
         margin-right:10px;
         font-size:14px;
         position:relative;
-        min-width: 1024px;
+        min-width: 920px;
         height:93%;
         .voucherNav>ul{
             display: flex;

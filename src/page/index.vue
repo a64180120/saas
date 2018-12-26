@@ -372,6 +372,10 @@
     display: flex;
     align-items: center;
     color:#7fa409;
+    // ********弹性布局***************************
+    >div,>span,>img{
+      float:left;
+    }
     >div{
       margin-left: 10px;
       display: flex;
@@ -440,12 +444,20 @@
     width:1200px;
     display: flex;
     align-items: center;
+    // ********弹性布局***************************
+    >div,>span,>img{
+      float:left;
+    }
     >div{
       width:50%;
       height:192px;
       display: flex;
       align-items: center;
       justify-content: center;
+      // ********弹性布局***************************
+      >div,>span,>img{
+        float:left;
+      }
         >a{
             display: flex;
             align-items: center;
@@ -569,6 +581,10 @@
       margin-top:30px;
       display: flex;
       align-items: center;
+      // ********弹性布局***************************
+      >div,>span,>img{
+        float:left;
+      }
       background: url(../assets/img/q6.png) -10px -8px;
       >div{
         width:950px;
@@ -584,6 +600,10 @@
               width:1800px;
               height:100%;
               align-items: center;
+              // ********弹性布局***************************
+              >div,>span,>img{
+                float:left;
+              }
               animation:proBanner 10s linear infinite;
               >li{
                   margin-right: 30px;
@@ -609,6 +629,10 @@
       padding:8px;
       display: flex;
       justify-content: space-between;
+      // ********弹性布局***************************
+      >div,>span,>img{
+        float:left;
+      }
       >div{
         width:49%;
       }

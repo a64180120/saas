@@ -384,7 +384,7 @@ export default {
                 position: absolute;
                 left:6px;
                 bottom:0px;
-                transition: all 0.8s linear;
+                // transition: all 0.1s linear;
                >li{
                    >ul> li{
                        &:nth-of-type(2):after,&:nth-of-type(1):after{
