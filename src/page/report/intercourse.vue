@@ -22,12 +22,14 @@
                                 <li>余额(元)</li>
                             </ul>
                             <template v-for="item in interCourse">
+                                <ul class="formDataItems flexPublic">
                                 <li>{{item.Asset_Name}}</li>
                                 <li >{{item.Asset_Content}}</li>
                                 <li>{{item.Asset_Amount}}</li>
                                 <li>{{item.Liability_Name}}</li>
                                 <li>{{item.Liability_Content}}</li>
                                 <li>{{item.Liability_Amount}}</li>
+                                </ul>
                             </template>
                             <!--<ul class="formDataItems flexPublic">-->
                                 <!--<li>借出款</li>-->
