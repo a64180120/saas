@@ -1,31 +1,29 @@
 <template>
-
     <div class="voucherList">               
-
         <div class="voucherNav">
             <ul>
-                <router-link to="/finance/voucherAdd"><li style="background:#4dd4fd">新增</li></router-link>
-                <a @click.prevent="handle('update')"><li style="background:#4dd4fd">修改</li></a>
-                <a @click.prevent="handle('delete')"><li style="background:#4dd4fd">删除</li></a>
-                <a @click.prevent="handle('audit')"><li style="background:#4dd4fd">审核</li></a>
-                <a @click.prevent="handle('unaudit')"><li style="background:#4dd4fd">反审核</li></a>
-                <a @click.prevent="handle('copy')"><li style="background:#4dd4fd">复制</li></a>
-                <a @click.prevent="handle('cut')"><li style="background:#4dd4fd">剪切</li></a>
-                <a @click.prevent="handle('chongh')"><li style="background:#4dd4fd">冲红</li></a>
-                <a @click.prevent="handle('reset')"><li style="background:#4dd4fd">凭证重排</li></a>
+                <router-link to="/finance/voucherAdd"><li >新增</li></router-link>
+                <a @click.prevent="handle('update')"><li >修改</li></a>
+                <a @click.prevent="handle('delete')"><li >删除</li></a>
+                <a @click.prevent="handle('audit')"><li >审核</li></a>
+                <a @click.prevent="handle('unaudit')"><li >反审核</li></a>
+                <a @click.prevent="handle('copy')"><li >复制</li></a>
+                <a @click.prevent="handle('cut')"><li >剪切</li></a>
+                <a @click.prevent="handle('chongh')"><li >冲红</li></a>
+                <a @click.prevent="handle('reset')"><li >凭证重排</li></a>
                 <a @click.prevent="handle('upload')">
-                    <li @mouseover.stop="1"  style="background:#4dd4fd">
+                    <li @mouseover.stop="1"  >
                         <div @click.stop="testFile">导入</div>
                         
                     </li>
                 </a>
                 <a @click.prevent="handle('download')">
-                    <li  style="background:#4dd4fd">
+                    <li  >
                         <span>导出</span>
                     </li>
                 </a>
-                <a @click.prevent="handle('print')"><li style="background:#4dd4fd">打印</li></a>
-                <a @click.prevent="handle('fresh')"><li style="width:30px;min-width:30px;border-radius:50%;"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                <a @click.prevent="handle('print')"><li >打印</li></a>
+                <a @click.prevent="handle('fresh')"><li style="background:#fff;width:30px;min-width:30px;border-radius:50%;"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
                 
             </ul>
         </div>
@@ -112,7 +110,9 @@
                             <span>审核人 : {{item.PAuditorName}}</span>
                         </li>
                         <li v-for="(dtl,ind) of item.Dtls" :key="ind">
-                            <div>{{dtl.Abstract}}</div>
+                            <div class="wrapKemu">
+                                <div>{{dtl.Abstract}}</div>
+                            </div>
                             <div class="wrapKemu"> 
                                 <div> 
                                     {{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}
@@ -194,10 +194,14 @@
         <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
             <file-upload  @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></file-upload>
         </el-dialog>
+         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" @msg-click="getMsgData" v-if="saasMessage.msgShow"></saas-msg>
+
     </div>
 </template>
 
 <script>
+    import saasMsg from './message'
     import printTem from "@/page/finance/vprint/printTemPdf"
     import httpConfig from '@/util/ajaxConfig'
     import {mapState, mapActions} from 'vuex'
@@ -281,9 +285,14 @@
                 voucherMask:false,
                 voucherDisabled:true,
                 printdata:{},
-                routerQuery:false,
+                routerQuery:false,//路由是否传值************
                 fileVisible:false,
-                imglist:[]
+                imglist:[], //文件上传的内容************
+                saasMessage:{
+                    msgShow:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                }
             }
         },
         methods:{
@@ -433,16 +442,32 @@
                         loading.close();      
                         if(res.Status=='success'){
                             if(bool){ 
-                                this.$message('审核成功!')
+                                this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:'审核成功!'
+                               };
                             }else{
-                                this.$message('反审核成功!')
+                                 this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:'反审核成功!'
+                               };
                             }
                             this.getvoucherList();
                         }else{
                             if(bool){
-                                this.$message('审核失败!')
+                                 this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:'审核失败!'
+                               };
                             }else{
-                                this.$message('反审核失败!')
+                                 this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:'反审核成功!'
+                               };
                             }
                         }
                     })
@@ -456,9 +481,17 @@
                     .then(res=>{
                         loading.close();      
                         if(res.Status=='success'){
-                            this.$message('删除成功!');
+                             this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:'删除成功!'
+                               };
                         }else{
-                            this.$message('删除失败,请重试!')
+                             this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:res.Msg
+                               };
                         }
                         this.getvoucherList(); 
                     })
@@ -627,13 +660,21 @@
                        .then(res => {
                            loading.close();      
                            if (res.Status == 'success') {
-                               this.$message('保存成功!')
+                                this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:res.Msg
+                               };
                                if(str=='print'){
                                    this.printContent();
                                }
                                this.getvoucherList(); 
                            } else {
-                               this.$message('保存失败,请重试!')
+                                this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:res.Msg
+                               };
                            }   
                        })
                        .catch(err =>{this.$message({ showClose: true,message: err, type: "error"});loading.close()} )
@@ -709,7 +750,11 @@
                                             vm.getvoucherList();     
                                         }
                                     } else {
-                                        this.$message('保存失败,请重试!')
+                                         this.saasMessage={
+                                            msgShow:true,
+                                            delay:3000,
+                                            message:res.Msg
+                                        };
                                     }
                                     loading.close();
                                 })
@@ -771,7 +816,11 @@
                        .then(res => {
                            loading.close();      
                            if (res.Status == 'success') {
-                               this.$message('保存成功!')
+                                this.saasMessage={
+                                  msgShow:true,
+                                  delay:3000,
+                                  message:res.Msg
+                               };
                                this.delete(data1);
                                if(str=='print'){
                                    this.printContent();
@@ -1063,10 +1112,18 @@
                     .catch(err=>{
                         console.log(err)
                     })
-            }
+            },
             // ...mapActions({
             //     uploadFile: 'uploadFile/Voucherupload'
             // }),
+            //获取message传值*****
+            getMsgData(data){
+                this.saasMessage={
+                    msgShow:false,
+                    message:'',
+                    delay:0
+                }
+            },
         },
         computed:{
             ...mapState({
@@ -1211,6 +1268,7 @@
                 return sum;
 
             },
+            
             //数字转换******************
             NUmTurn(value){
                 if(!value) return '';
@@ -1242,7 +1300,8 @@
             searchSelect,
             sideTime,
             voucher,
-            printTem
+            printTem,
+            saasMsg
         }
     }
     
@@ -1365,7 +1424,7 @@
         width:20%;
         text-align: center;
         line-height: 30px;
-        background:#00B8EE;
+        background: #00b7ee;
         color:#fff;
         cursor:pointer;
     }
@@ -1392,6 +1451,7 @@
                 cursor:pointer;
                 width:60px;
                 text-align: center;
+                background: #00b7ee;
                 &:hover{
                     opacity: 0.8;
                    
@@ -1663,8 +1723,8 @@
     }
     .listContainer ul.listTitle{
         display: flex;
-        background: #00B8EE;
-        color:#fff;
+        background: #d3e9f9 ;
+        color:#333;
         
     }
     .listContainer ul.listTitle li{
@@ -1693,8 +1753,8 @@
         background: #fff;
     }    
     ul.listContent.choosed>li>ul.listIndex{
-        background: #2780d1;
-        color:#fff;
+        background: #d3e9f9;
+        color:#333;
     
     }
     
@@ -1823,6 +1883,7 @@
       
        .ul.listContent > li > ul > li > div{
            text-align: left;
+           overflow-y: auto;     
        } 
     .footInfo{
         position:fixed;

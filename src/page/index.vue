@@ -27,8 +27,8 @@
         <div class="proInfoTitle">
           <span>更多</span>
         </div>
-        <div class="flexPublic proInfoContent">
-          <div>
+        <div class="flexPublic proInfoContent" >
+          <div  style="position:relative;top:-10px">
             <div class="flexPublic">
               <img src="@/assets/img/img1.png" alt="">
               <div>
@@ -192,7 +192,7 @@
           {info:'丽水与对口帮扶合作地区分享改革成果 “最多跑一次” 跨省传真经',date:'2018-08-20',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167357212420899.html'},
           {info:'台州市域铁路巨晓林工作室“五小”成果丰硕 27项创新成果节约成本100万元',date:'2018-08-20',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167363932484398.html'},
           {info:'线上线下齐发力，宁波市总工会“圈粉”有招',date:'2018-10-20',url:'ttps://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080941579871468.html'},
-          {info:'龙游县龙天红木小镇工会：从单一“小工会”走向多元“大工会”',date:'2018-10-21',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080945165230067.html'}
+          // {info:'龙游县龙天红木小镇工会：从单一“小工会”走向多元“大工会”',date:'2018-10-21',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080945165230067.html'}
         ],
         newsInfo:[
           {info:'国务院印发《关于做好当前和今后一个时期促进就业工作的若干意见》',date:'2018-05-02',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97478'},
@@ -324,8 +324,8 @@
     width:1200px;
     height:626px;
     margin:0 auto;
+    z-index:1;
     margin-top: 10px;
-    opcity:0;
     background: url("../assets/img/q1.png");
       animation: head-z 1s ease;
       animation-delay: 0.5s;
