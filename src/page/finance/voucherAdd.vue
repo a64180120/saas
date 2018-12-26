@@ -8,11 +8,11 @@
                 <ul class="fastGps">
                     <li @click="getvoucher('pre')"></li>
                     <li @click="getvoucher('next')"></li>
-                    <li  @click.prevent="addVoucher('moreVoucher')" style="width:80px">更多凭证</li>
+                    <li  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
                     <li @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
-            <ul class=" handle">
+            <ul class="handle">
                 <a>
                     <li class="mode" style="width:60px;">
                         <span >模板</span>
@@ -25,13 +25,20 @@
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li >反审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li >复制</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li >剪切</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li >冲红</li></a>
-                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a>
-                <a @click.prevent="addVoucher('reset')"><li style="width:80px">凭证号重排</li></a>
-                <a @click.prevent="addVoucher('fresh')"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a>           
+                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a> 
+                <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
+                    <li class="more" style="width:80px">
+                        <ul >
+                            <li>更多</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')">复制</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')">剪切</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')">冲红</li>
+                            <li @click.prevent="addVoucher('reset')">凭证号重排</li>
+                        </ul>
+                    </li>
+                </a>
+                <a @click.prevent="addVoucher('fresh')" style="width:40px;margin-left:10px"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -1131,6 +1138,7 @@
         padding-right: 10px;
        // margin-bottom: 30px;
         >ul{
+            
             >a:first-of-type{
                 position:relative;
                 width:70px;
@@ -1169,18 +1177,51 @@
                         color:#aaa;    
                     }
                 }
+
+            }
+            .more{
+                height:30px;
+                overflow:hidden; 
+                position: absolute;
+                z-index: 2;
+                width:100%;
+                margin:0;  
+                opacity:1;         
+                >ul{
+                    width:100%;  
+                    >li{
+                    width:100%;     
+                    background: #fff;         
+                    color:#999;
+                    &:hover{
+                        background:#ccc;
+                        color:#fff;
+                    }
+                    &:first-of-type{
+                        background: #00b7ee;
+                        border-radius: 3px;
+                        color:#fff;
+                    }
+                    
+                }
+                }
+                
+                &:hover{
+                    height:auto;
+                    background: #00b7ee;  
+                }
+                
             }
         }
 
     }
     .searcherCon{
-        min-width: 300px;
+        min-width: 432px;
         justify-content: flex-start;
     }
     .fastGps{
         display: flex;
         align-items: center;
-        width:290px;
         >li{
             &:hover{
                 opacity: 0.8;
@@ -1217,6 +1258,10 @@
                 border-width:2px 2px 0 0  ;
                 left:8px;
             }
+            &:nth-of-type(3){
+                width:70px;
+                padding:0;
+            }
             // &:nth-of-type(4){
             //     background: #6acccb;
             // }
@@ -1241,7 +1286,7 @@
     }
     .searcherBtn{
         height:30px;
-        width:20%;
+        width:60px;
         min-width: 70px;
         text-align: center;
         line-height: 30px;
@@ -1251,11 +1296,14 @@
     }
     .unionState .handle{
         margin-right:20px;
+        min-width: 590px;
     }
     .unionState .handle>a{
         float:left;
         min-width:50px;
-        margin-left:10px;
+    }
+    .unionState .handle>a>li.more:hover{
+        opacity:1;
     }
     .unionState .handle>a>li{
         border:0;
@@ -1267,7 +1315,7 @@
         background: #00b7ee;
         width:100%;
         font-size:14px;
-        min-width:50px;
+        width:50px;
         height:30px;
         line-height: 30px;    
         margin-right: 0;
