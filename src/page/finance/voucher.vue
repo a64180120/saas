@@ -1021,20 +1021,20 @@
     }
     .addIcon{
         top:2px;
-        background: url("../../assets/icon/addition.svg");
+        background: url("../../assets/icon/addition_fill.svg");
         background-size:cover;
     }
     .addIcon:hover{
-        background: url("../../assets/icon/addition_fill.svg");
+        background: url("../../assets/icon/addition.svg");
         background-size:cover;
     }
     .deleteIcon{
         bottom:2px;
-        background: url("../../assets/icon/delete.svg");
+        background: url("../../assets/icon/delete_fill.svg");
         background-size:cover;
     }
     .deleteIcon:hover{
-        background: url("../../assets/icon/delete_fill.svg");
+        background: url("../../assets/icon/delete.svg");
         background-size:cover;
     }
     .voucherContentItem,.voucherContent>ul>li{

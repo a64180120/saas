@@ -2,7 +2,7 @@
     <div class="voucherList">               
         <div class="voucherNav">
             <ul>
-                <router-link to="/finance/voucherAdd"><li >新增</li></router-link>
+                <router-link to="/home"><li >新增</li></router-link>
                 <a @click.prevent="handle('update')"><li >修改</li></a>
                 <a @click.prevent="handle('delete')"><li >删除</li></a>
                 <a @click.prevent="handle('audit')"><li >审核</li></a>
@@ -407,7 +407,7 @@
        
                 this.$store.commit("tagNav/upexcludeArr", ['voucherAdd']);
 
-                this.$router.push({path:'/finance/voucherAdd',query:{list:item}});
+                this.$router.push({path:'/home',query:{list:item}});
             },
             //凭证选择**********************
             choose(item){

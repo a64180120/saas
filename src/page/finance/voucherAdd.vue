@@ -1292,7 +1292,7 @@
         position:absolute;
         right:10px;
         top:0px;
-        height: 700px;
+        height: 90%;
          box-shadow:0 0 20px 2px #ccc;
         background: #fff;
         >div:first-of-type{
@@ -1315,7 +1315,7 @@
             color:#04a9f4;
         }
         .monthsContainer{
-            height:620px;
+            height:90%;
             overflow: hidden;
             position: relative;
             >ul.months{

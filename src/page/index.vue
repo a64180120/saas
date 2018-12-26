@@ -368,6 +368,7 @@
     height:50px;
   }
   .login{
+    float:right;
     display: flex;
     align-items: center;
     color:#7fa409;
