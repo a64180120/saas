@@ -554,7 +554,9 @@
         min-width: 969px;
         height: 398px;
         margin: auto;
-        margin-top: 170px;
+        position: absolute;
+        top: 50%;
+        margin-top: -199px;
         padding: 0;
         background: #0183fd;
         text-align: center;
