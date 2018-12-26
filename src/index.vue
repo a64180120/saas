@@ -16,13 +16,6 @@ export default {
     },
     // TODO: 全局状态加载及变更。请根据实际情况改写
     beforeMount(){
-        // this.getConfigJson(res=>{
-
-        //     console.log('1');
-        //     console.log(res)
-
-        // });
-
         // 首次加载/刷新时判断当前是否在登录状态
         var userinfo=Auth.getUserInfoData();
         if (userinfo) {
@@ -44,11 +37,11 @@ export default {
             setTheme("theme-default")
             this.$store.commit("setThemeColor", "theme-default")
 
-            // this.getConfigJson(res=>{
-            //     console.log('2');
-            //     console.log(res)
+            this.getConfigJson(res=>{
+                console.log('2');
+                console.log(res)
 
-            // });
+            });
 
             //加载token信息
             if(!Auth.getToken()){

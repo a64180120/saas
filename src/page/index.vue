@@ -11,8 +11,20 @@
       </div>
       <div class="carrouselContainer">
         <el-carousel height="560px">
-          <el-carousel-item v-for="img in imgList" :key="img">
+          <!-- <el-carousel-item v-for="img in imgList" :key="img">
             <img :src="img">
+          </el-carousel-item> -->
+          <el-carousel-item>
+            <img src="@/assets/img/t1.jpg">
+          </el-carousel-item>
+          <el-carousel-item>
+            <img src="@/assets/img/t2.jpg">
+          </el-carousel-item>
+          <el-carousel-item>
+            <img src="@/assets/img/t3.jpg">
+          </el-carousel-item>
+          <el-carousel-item>
+            <img src="@/assets/img/t4.jpg">
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -30,14 +42,15 @@
         <div class="flexPublic proInfoContent">
           <div>
             <div class="flexPublic">
-              <img src="@/assets/img/img1.png" alt="">
+              <img src="@/assets/img/img1.jpg" alt="">
               <div>
                 <h4>新版企业所得税</h4>
-                <p>根据《浙江省人民政府办公厅关于“无违建县（市、区）”创建标准及验收办法（试行）的通知》（浙政办发〔2015〕72号）和《浙江省“三改一拆”行动领导小组关于“无违建县（市、区）”创建标准及考评办法的通知》（浙改拆〔2016〕9号）要求，经各设区市政</p>
+                <p>为进一步落实企业所得税优惠政策，统一规范企业所得税优惠事项的办理，根据《国家税务总局关于发布修订后的<企业所得税优惠政策事项办理办法>的公告》（国家税务总局公告2018年第23号，以下简称23号公告）的规定，结合我省实际，现就企业所得税优惠事项办理有关问题公告如下：</p>
               </div>
             </div>
-            <p>府审核，省“无违建县（市、区）”创建工作领导小组办公室组织考核验收，拟推荐淳安县等6个县（市、区）为第一批“无违建县（市、区）”，杭州市富阳区等19个县（市、区）为第二批“基本无违建县（市、区）”，杭州市上城区等27县（市、区）为第三批“无违建创建先进县（市、区）”，现予公示，接受社会公众监督。
-　　公示时间：2017年4月14日—4月19日（8:30—17:30）。在公示期内，任何单位和个人均可通过来信、来电等形式，反映公示对象在“无违建县（市、区）”创建工作中存在的问题。反映问题必须实事求是，以单位名义反映问题的应加盖公章，以个人名义反映问题的提倡署报本人真实姓名。逾期不予受理。</p>
+            <p>一、凡享受企业所得税优惠政策的企业，均应按照23号公告执行。
+　　            二、享受集成电路生产企业、集成电路设计企业、软件企业、国家规划布局内的重点软件企业和集成电路设计企业等优惠事项的企业，应当在完成年度汇算清缴后，按照《企业所得税优惠事项管理目录》（2017年版）“后续管理要求”项目中列示的清单，通过省经信委的浙江省软件和信息服务业公共服务平台（网址：www.zjiip.org.cn）上传相关资料。相关资料不再单独报送税务机关。
+　　            三、本公告适用于2017年度汇算清缴及以后年度企业所得税优惠事项办理工作。《浙江省国家税务局 浙江省地方税务局关于企业所得税优惠事项办理问题的公告》（浙江省国家税务局 浙江省地方税务局公告2015年第10号）以及《浙江省国家税务局关于加强企业所得税优惠备案管理工作的通知》（浙国税发〔2017〕60号）同时废止。</p>
           </div>
           <ul>
             <li v-for="(item,index) of proInfoList" :key="index" @click.stop="openUrl(item)">
@@ -68,10 +81,10 @@
         <div class="roles">
           <div>
             <ul>
-              <li class="roleActive" @click.stop="typeclick('all')">全部</li>
-              <li class="roleActive" @click.stop="typeclick('country')"><a href="javascript:void(0);">国家</a></li>
-              <li @click.stop="typeclick('province')"><a href="javascript:void(0);">省级</a></li>
-              <li @click.stop="typeclick('city')"><a href="javascript:void(0);">市级</a></li>
+              <li :class="active==='all'? 'roleActive' : ''"  @click.stop="typeclick('all')"><a href="javascript:void(0);">全部</a></li>
+              <li :class="active==='country'? 'roleActive' : ''" @click.stop="typeclick('country')"><a href="javascript:void(0);">国家</a></li>
+              <li :class="active==='province'? 'roleActive' : ''" @click.stop="typeclick('province')"><a href="javascript:void(0);">省级</a></li>
+              <li :class="active==='city'? 'roleActive' : ''" @click.stop="typeclick('city')"><a href="javascript:void(0);">市级</a></li>
             </ul>
           </div>
           <ul>
@@ -85,8 +98,17 @@
         <div class="unionHome">
           <i></i>
           <el-carousel indicator-position="none" height="400px" arrow="never">
-            <el-carousel-item v-for="item in 4" :key="item">
+            <el-carousel-item>
                 <a href="#"><img src="@/assets/img/n1.png" alt=""></a>
+            </el-carousel-item>
+            <el-carousel-item >
+                <a href="#"><img src="@/assets/img/n2.jpg" alt=""></a>
+            </el-carousel-item>
+            <el-carousel-item >
+                <a href="#"><img src="@/assets/img/n3.jpg" alt=""></a>
+            </el-carousel-item>
+            <el-carousel-item>
+                <a href="#"><img src="@/assets/img/n4.jpg" alt=""></a>
             </el-carousel-item>
           </el-carousel>
         </div>
@@ -117,7 +139,7 @@
             </li>
             <li>
               <img src="@/assets/img/d5.png"  />
-              <p>www.gdata.cn</p>
+              <p>www.gdataware.com</p>
             </li>
             <li>
               <img  src="@/assets/img/d6.png" />
@@ -184,6 +206,7 @@
     data(){
       return {
         nav:'',
+        active:'all',
         proInfoList:[
           {info:'杭州市总启动2019平安返乡活动 万个车票补贴名额等你领',date:'2018-03-05',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167368656243964.html'},
           {info:'杭州市总工会推出工间操公益培训',date:'2018-05-12',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29168762730849606.html'},
@@ -195,13 +218,13 @@
           {info:'龙游县龙天红木小镇工会：从单一“小工会”走向多元“大工会”',date:'2018-10-21',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080945165230067.html'}
         ],
         newsInfo:[
-          {info:'国务院印发《关于做好当前和今后一个时期促进就业工作的若干意见》',date:'2018-05-02',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97478'},
-          {info:'人社部、财政部印发《关于全面推行企业新型学徒制的意见》',date:'2018-05-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97276'},
-          {info:'中办国办印发《关于提高技术工人待遇的意见》',date:'2018-06-12',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=95935'},
-          {info:'国办印发《保障农民工工资支付工作考核办法》',date:'2018-06-12',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=95418'},
-          {info:'中共中央国务院关于全面振兴东北地区等老工业基地的若干意见',date:'2018-06-15',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=92570'},
-          {info:'中共中央国务院关于打赢脱贫攻坚战的决定',date:'2018-08-03',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=92089'},
-          {info:'中共中央印发《关于深化人才发展体制机制改革的意见》',date:'2018-10-10',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=92438'}
+          {info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
+          {info:'全国总工会党组召开会议传达学习习近平总书记在庆祝改革开放40周年大会上重要讲话精神',date:'2018-12-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97563'},
+          {info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+          {info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+          {info:'全国总工会权益保障部 中国劳动和社会保障科学研究院战略合作框架协议签约仪式在京举行 ',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97131'},
+          {info:'全总女职工部赴云南省调研指导工会女职工工作',date:'2018-08-23',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96879'},
+          {info:'《全国工会干部培训基础教材》（2018版）出版',date:'2018-08-30',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96918'},
         ],
         imgList:[]
       }
@@ -219,7 +242,6 @@
     },
     methods:{
       navEnter(val){
-
         this.nav=val;
       },
       navLeave(){
@@ -230,7 +252,60 @@
         window.open(object.url); 
       },
       typeclick(object){
-        alert(object);
+        //alert(object);
+        this.active=object;
+
+        let countryInfo=[
+          {info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
+          {info:'全国总工会党组召开会议传达学习习近平总书记在庆祝改革开放40周年大会上重要讲话精神',date:'2018-12-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97563'},
+          {info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+          {info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+          {info:'全国总工会权益保障部 中国劳动和社会保障科学研究院战略合作框架协议签约仪式在京举行 ',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97131'},
+          {info:'全总女职工部赴云南省调研指导工会女职工工作',date:'2018-08-23',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96879'},
+          {info:'《全国工会干部培训基础教材》（2018版）出版',date:'2018-08-30',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96918'},
+        ];
+
+        let provinceInfo=[
+          {info:'关于评选推荐全国模范职工之家、全国模范职工小家、全国优秀工会工作者和全国优秀工会积极分子、全国优秀工会之友的通知 ',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-05-08/9581253785651033.html'},
+          {info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
+          {info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
+          {info:'中华全国总工会办公厅关于印发《基层工会经费收支管理办法》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877049644557550.html'},
+          {info:'浙江省财政厅 浙江省总工会关于提前下达2018年度职工帮扶专项资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2017-12-05/13752942087233041.html'},
+          {info:'关于印发《浙江省总工会本级基本建设项目管理办法（试行）》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200524602960515.html'},
+          {info:'关于下拨“尊法守法·携手筑梦”服务农民工法治宣传行动专项补助资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200612334907516.html'},
+        ];
+
+        let cityInfo=[
+          {info:'机关工会工作暂行条例',date:'2018-05-02',url:'http://www.hzgh.org/newsview33982.htm'},
+          {info:'浙江省总工会关于加强和规范基层工会经费收支管理的实施细则',date:'2018-05-02',url:'http://www.hzgh.org/newsview33654.htm'},
+          {info:'关于印发《杭州市总工会内部审计工作办法》的通知 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview33916.htm'},
+          {info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
+          {info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
+          {info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
+          {info:'国务院办公厅关于深入贯彻工会法支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10849.htm'},
+          {info:'国务院印发《关于做好当前和今后一个时期促进就业工作的若干意见》',date:'2018-05-02',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97478'},
+        ];
+
+        let allInfo=[
+          {info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+          {info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+          {info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
+          {info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
+          {info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
+          {info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
+          {info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
+        ]
+
+        if(object==='country') {
+          this.newsInfo=countryInfo;
+        }else if(object==='province'){
+          this.newsInfo=provinceInfo;
+        }else if(object==='city'){
+          this.newsInfo=cityInfo;
+        }else if(object==='all'){
+          this.newsInfo=allInfo;
+        }
+
       }
     }
   }
