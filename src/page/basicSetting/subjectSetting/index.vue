@@ -21,8 +21,8 @@
         <tree-table 
         :data="data" 
         :expand-all="expandAll" 
-        :columns="columns" 
-        :header-cell-style="{background:'#2780d1',color:'#fff'}"
+        :columns="columns"
+        :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
         v-loading="loading"
         highlight-current-row
         @onRowClick="handleClickRow"
