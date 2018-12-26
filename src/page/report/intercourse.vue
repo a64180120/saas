@@ -21,70 +21,78 @@
                                 <li>具体内容</li>
                                 <li>余额(元)</li>
                             </ul>
-                            <ul class="formDataItems flexPublic">
-                                <li>借出款</li>
-                                <li ></li>
-                                <li></li>
-                                <li>借出款</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic">
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic" >
-                                <li>应收上级经费</li>
-                                <li ></li>
-                                <li></li>
-                                <li>应收上级经费</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic">
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic">
-                                <li>应收下级经费</li>
-                                <li ></li>
-                                <li></li>
-                                <li>应收下级经费</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic" >
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic" >
-                                <li>其他应收款</li>
-                                <li ></li>
-                                <li></li>
-                                <li>其他应收款</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic" >
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                                <li>(按明细项目列)</li>
-                                <li ></li>
-                                <li></li>
-                            </ul>
+                            <template v-for="item in interCourse">
+                                <li>{{item.Asset_Name}}</li>
+                                <li >{{item.Asset_Content}}</li>
+                                <li>{{item.Asset_Amount}}</li>
+                                <li>{{item.Liability_Name}}</li>
+                                <li>{{item.Liability_Content}}</li>
+                                <li>{{item.Liability_Amount}}</li>
+                            </template>
+                            <!--<ul class="formDataItems flexPublic">-->
+                                <!--<li>借出款</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>借出款</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
+                            <!--<ul class="formDataItems flexPublic">-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
+                            <!--<ul class="formDataItems flexPublic" >-->
+                                <!--<li>应收上级经费</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>应收上级经费</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
+                            <!--<ul class="formDataItems flexPublic">-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
+                            <!--<ul class="formDataItems flexPublic">-->
+                                <!--<li>应收下级经费</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>应收下级经费</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
+                            <!--<ul class="formDataItems flexPublic" >-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
+                            <!--<ul class="formDataItems flexPublic" >-->
+                                <!--<li>其他应收款</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>其他应收款</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
+                            <!--<ul class="formDataItems flexPublic" >-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                                <!--<li>(按明细项目列)</li>-->
+                                <!--<li ></li>-->
+                                <!--<li></li>-->
+                            <!--</ul>-->
 
                         </div>
                 </div>
@@ -98,22 +106,59 @@
 
 <script>
     import TimeSelectBar from "../../components/TimeSelectBar/index";
+    import { mapState, mapGetters } from "vuex";
     export default {
         name: "user",
         data(){
             return{
-                date1:[],
-                loading:false
+                date1:[],//存储时间选择器的时间
+                loading:false,//页面刷新的等待幕布
+                interCourse:[],
             }
         },
+        computed:{
+            ...mapState({
+                userid: state => state.user.userid,
+                orgid: state => state.user.orgid,
+                OrgIds:state => state.user.OrgIds
+            }),
+        },
         mounted(){
-
+            this.getData();
         },
         components: { TimeSelectBar },
         methods:{
             dateChoose:function(val){
                 this.date1=val;
                 // this.getData(time,this.proofType);
+            },
+            getData:function(){
+                let year='';
+                if(this.date1.choosedYear==undefined){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    this.date1.choosedYear=currentyear;
+                    year=currentyear;
+                }else{
+                    year=this.date1.choosedYear
+                }
+                let data={
+                    "orgid":this.orgid,
+                    "Year":  year
+                }
+                this.loading=true;
+                this.$axios.get(
+                    // 'PSubjectBudget/GetBeginYear',
+                    'DealingsMst/GetBaseModel',
+                    {params:data}
+                ).then(res=>{
+                    this.loading=false;
+                    console.log(res);
+                    this.interCourse=res.Record;
+                }).catch(err=>{
+                    this.loading=false;
+                  this.$message(err);
+                })
             },
         }
     }

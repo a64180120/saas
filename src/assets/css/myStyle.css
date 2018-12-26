@@ -103,12 +103,14 @@ ul{
     width:60px;
     text-align: center;
     line-height: 30px;
-    background:#509edc;
+    background:#00B8EE;
     color:#fff;
     cursor:pointer;
 }
 .unionState .handle>a>li{
-    border:1px solid #ff9900;
+    border:1px solid #00B8EE;
+    background-color: #00B8EE;
+    color:#fff;
     cursor:pointer;
     border-radius: 3px;
     text-align: center;
@@ -118,10 +120,11 @@ ul{
     line-height: 30px;
     margin-left:10px;
     margin-right: 0;
+    padding: 0 15px;
 }
 .unionState .handle>a>li:hover{
-    background: #ff9900;
-    color:#fff;
+    background: #fff;
+    color: #00B8EE;
 }
 
 .formData{
