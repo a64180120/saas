@@ -18,6 +18,7 @@
                         </ul>
                         <ul class="flexPublic handle">
                             <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
+                            <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">核定年中调整</li></a>
                             <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
                             <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                             <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
@@ -183,6 +184,22 @@
                 <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
             </div>
         </div>
+        <!--核定弹窗提示-->
+        <div class="cover" :style="{'display':(showCountMsg?'block':'none')}">
+            <div class="coverContent">
+                <div class="flexPublic">
+                    <p>提示</p>
+                    <i class="el-icon-close" @click="showCountMsg=false"></i>
+                </div>
+                <div>
+                    <p>年初预算核定后不允许更改，确定核定？</p>
+                </div>
+                <ul class="flexPublic handle">
+                    <li style='margin:0 0 0px 20px;' @click="showCountMsg=false">取消</li>
+                    <li style='margin:0 0 0px 20px;' @click="hedin">确定</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -198,6 +215,7 @@
         name: "user",
         data(){
             return{
+                showCountMsg:false,//核定显示
                 downloadLoading: false,
                 changeBtn:{
                     flag:true,
@@ -225,6 +243,13 @@
             this.getMiddleYear();
         },
         methods:{
+            /*
+                       *核定
+                       *
+                       * */
+            hedin:function(){
+                this.$message('待开发');
+            },
 
             /*
             * 监听编辑按钮事件
