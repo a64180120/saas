@@ -278,6 +278,13 @@
                 let object = PhId;
                 var me = this;
                 if(object != null){
+                    if(object.EnabledMark == '2'){
+                        this.messageTs();
+                        this.getData('');
+                        return;
+                    }
+                }
+                if(object != null){
                     this.$confirm("此操作将改变用户状态（注：一旦改为永久停用，则此用户将不能进行任何操作！）, 是否继续?", "状态修改提示", {
                         confirmButtonText: "确定",
                         cancelButtonText: "取消",
@@ -305,7 +312,7 @@
                         this.getData('');
                         this.$message({
                             type: "info",
-                            message: "已取消删除"
+                            message: "已取消修改"
                         });
                     });
 
@@ -347,6 +354,7 @@
                     });
                 }
             },
+            //获取权限列表
             getData2(){
                 this.$axios.get("/SysMenu/GetMenuListAndButtonList", {
                     params: {
@@ -492,7 +500,6 @@
             },
             //永久停用账号的提示
             messageTs(){
-
                 this.$message.success("无法对永久停用的用户进行操作！");
             },
             //新增
@@ -512,6 +519,12 @@
 
                 //debugger;
                 let id = object.length > 0 ? object[0].PhId : 0;
+                if(object.length > 0){
+                    if(object[0].EnabledMark == '2'){
+                        this.messageTs();
+                        return;
+                    }
+                }
                 if (id != 0) {
                     //this.form=object[0];
 
@@ -559,6 +572,12 @@
             Delete() {
                 let object = this.singleSelection;
                 let length = object.length;
+                if(length> 0){
+                    if(object[0].EnabledMark == '2'){
+                        this.messageTs();
+                        return;
+                    }
+                }
                 if (length > 0) {
                     this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
                         confirmButtonText: "确定",
@@ -611,6 +630,12 @@
                 var vm = this;
 
                 let id = object.length > 0 ? object[0].PhId : 0;
+                if(object.length > 0){
+                    if(object[0].EnabledMark == '2'){
+                        this.messageTs();
+                        return;
+                    }
+                }
                 if (id != 0) {
                     this.$confirm('确定对账号进行密码重置?', '提示', {
                         confirmButtonText: '确定',
@@ -644,8 +669,13 @@
 
                 //账号移交
                 let object = this.singleSelection;
-
                 let id = object.length > 0 ? object[0].PhId : 0;
+                if(object.length > 0){
+                    if(object[0].EnabledMark == '2'){
+                        this.messageTs();
+                        return;
+                    }
+                }
                 if (id != 0) {
                     var roles = [];
                     if (object[0].Roles.length > 0) {
@@ -655,8 +685,8 @@
                     }
 
                     this.form.phid = object[0].PhId;
-                    this.form.realName=object[0].RealName;
-                    this.form.mobilePhone=object[0].MobilePhone;
+                    this.form.realName="";
+                    this.form.mobilePhone="";
                     this.form.rolesid = roles;
                     this.form.enabledMark = String(object[0].EnabledMark);
 
