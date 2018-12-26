@@ -44,7 +44,7 @@
                                 </div>
                                 <div style="text-align: center">
                                     <div class="selfBtn blueBtn" @click="submitForm('loginForm')">登录</div>
-                                    <router-link to="/index"><button class="selfBtn whiteBtn">取消</button></router-link>
+                                    <router-link to="/index"><div class="selfBtn whiteBtn">取消</div></router-link>
                                 </div>
                             </el-form>
                         </div>

@@ -1,18 +1,20 @@
 <template>
-    <div class="manage">
-        <section class="container">
-            <!--<aside class="asideNav">-->
-                <!--<ul>-->
-                    <!--<li @click="unionTab('details')" :class="{asideActive:asideActive=='details'}">明细表</li>-->
-                    <!--<li @click="unionTab('auxiliary')" :class="{asideActive:asideActive=='auxiliary'}">辅助项科目明细表</li>-->
-                    <!--<li @click="unionTab('subject')" :class="{asideActive:asideActive=='subject'}">科目辅助项明细表</li>-->
-                <!--</ul>-->
-            <!--</aside>-->
-            <detailsAc v-if="asideActive=='details'"></detailsAc>
-            <!--<subject v-if="asideActive=='subject'"></subject>-->
-            <!--<auxiliary v-if="asideActive=='auxiliary'"></auxiliary>-->
-        </section>
-    </div>
+
+        <div class="timeSelect">
+            <section class="container">
+                <!--<aside class="asideNav">-->
+                    <!--<ul>-->
+                        <!--<li @click="unionTab('details')" :class="{asideActive:asideActive=='details'}">明细表</li>-->
+                        <!--<li @click="unionTab('auxiliary')" :class="{asideActive:asideActive=='auxiliary'}">辅助项科目明细表</li>-->
+                        <!--<li @click="unionTab('subject')" :class="{asideActive:asideActive=='subject'}">科目辅助项明细表</li>-->
+                    <!--</ul>-->
+                <!--</aside>-->
+                <detailsAc v-if="asideActive=='details'"></detailsAc>
+                <!--<subject v-if="asideActive=='subject'"></subject>-->
+                <!--<auxiliary v-if="asideActive=='auxiliary'"></auxiliary>-->
+            </section>
+        </div>
+
 </template>
 
 <script>
@@ -50,19 +52,6 @@
 
 <style scoped>
 
-    .manage{
-        min-width: 1024px;
-        height:100%;
-    }
-    .container{
-        padding:3px;
-        width:100%;
-        height:100%;
-        overflow: hidden;
-        display: flex;
-        flex-flow:row nowrap;
-        justify-content: start;
-    }
     .asideNav>ul{
         width:25px;
         font-size:13px;

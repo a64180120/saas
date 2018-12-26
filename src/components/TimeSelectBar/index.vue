@@ -34,7 +34,7 @@
                                     <li :date="(startyear+n)+'-'+12"
                                         :class="{'selectMonth':(startyear+n==choosedYear)}"
                                         @click="chosedata"
-                                        style="border-radius: unset;height: 19px; width: 43px;line-height: 19px;font-size: 10pt">{{startyear+n}}</li>
+                                        >{{startyear+n}}</li>
                                     <i :class="{'colour':(startyear+n==currentyear+2)?true:false}" style="margin: 12px 25px;"></i>
                                 </template>
                                 <template v-else></template>
