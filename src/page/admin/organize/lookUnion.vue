@@ -558,11 +558,6 @@
         font-size: 13px;
     }
 
-    .formData > ul:first-child {
-        background: #2780d1;
-        color: #fff;
-    }
-
     .formData > ul > li {
         border-right: 1px solid #fff;
         height: 50px;
@@ -588,7 +583,7 @@
 
     .formData > ul:first-child > li:last-of-type {
         width: 15%;
-        border-right: 1px solid #2780d1;
+        /*border-right: 1px solid #2780d1;*/
         display: block;
     }
 
