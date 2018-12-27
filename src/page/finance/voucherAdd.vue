@@ -45,7 +45,13 @@
         <div style="overflow-y:auto"  :class="{voucherMask:voucherMask}" ref="print">
             <div class="voucherContainer">
                 <p v-if="voucherMask" class="title">
-                    <span v-if="voucherMask=='copy'">复制凭证</span><span v-if="voucherMask=='cut'">剪切凭证</span><span v-if="voucherMask=='chongh'">冲红凭证</span><span v-if="voucherMask=='gengz'">更正凭证</span><i @click="voucherMaskShow(false)"></i></p>
+                    <span v-if="voucherMask=='copy'">复制凭证</span>
+                    <span v-if="voucherMask=='cut'">剪切凭证</span>
+                    <span v-if="voucherMask=='chongh'">冲红凭证</span>
+                    <span v-if="voucherMask=='gengz'">更正凭证</span>
+                    <span v-if="voucherMask=='update'">修改凭证</span>
+                    <i @click="voucherMaskShow(false)"></i>
+                </p>
                 <div v-if="voucherMask">
                     <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
                     <span class="btn" @click.stop="keepChoose(false)">取消</span>
@@ -273,7 +279,7 @@
                             }
                             return;
                         }
-                        this.keepVoucher();
+                        this.voucherMaskShow('update');
                         break;
                     case 'keep':
                         this.voucherData();
@@ -581,7 +587,7 @@
                                   visible:true,
                                   delay:3000,
                                   message:res.Msg
-                               };debugger
+                               };
                         }else{
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
@@ -605,7 +611,6 @@
                 }
                 data.PDate=new Date;
                 this.voucherDataList.data.Mst=data;
-                console.log(222,data);
                 this.resetVoucher(); 
                 }
                 this.modelListCss=false;
@@ -701,7 +706,6 @@
             //凭证列表***************高级搜索***********************
             getvoucherList(val){
                 var vm=this;
-                const loading1=vm.$loading();
                 var data={
                     uid:vm.uid,
                     orgid:vm.orgid,
@@ -711,24 +715,20 @@
                     pagesize:vm.pagesize,
                     pageindex:vm.pageindex,
                     sort:['PNo DESC','PType','PDate DESC'],
-                   // itemValuePhid:649181122000008,
                     itemValuePhid:vm.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":vm.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":vm.superSearchVal.date2.replace('-','')}
                 }
                 vm.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
-                         if(res.Status=='success'){
-                           
+                         if(res.Status=='success'){        
                             vm.$message(res.Msg);
                             vm.voucherDataList.data={
                                          Mst:{},
                                          Attachements:[]
                              }
                              vm.resetVoucher();
-                             loading1.close();
                              return;
-                        } else{   
-                            loading1.close();              
+                        } else{               
                             if(val=='searcher'&&res.Record.length>1){
                                vm.$store.commit("tagNav/upexcludeArr", ['voucherList']);
                                  vm.$router.push({path:'/finance/voucherList',query:{voucherList:res.Record}})   
@@ -757,43 +757,6 @@
                 this.sideDate=year+'-'+i;
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                 this.getvoucherList('reset');
-            },
-            //鼠标滚轮移动月份选择****************
-            monthsSel($event){
-                var month= document.getElementById('scrollMonth');
-                var bot=parseInt(month.style.bottom);
-                if($event.deltaY=='-100'){
-                    if(parseInt(bot)>0){
-                        return;
-                    }else{
-                        month.style.bottom=bot-100+'px';
-                    }
-                }else if($event.deltaY=='100'){
-                    if(bot>-100){
-                        month.style.bottom='0px';
-                    }else{
-                        month.style.bottom=bot+100+'px';
-                    }
-                }
-            },
-            //火狐浏览鼠标滚轮移动****************
-            foxMonthSel($event){
-                var month= document.getElementById('scrollMonth');
-                var bot=parseInt(month.style.bottom);
-
-                if($event.detail=='-3'){
-                    if(parseInt(bot)>0){
-                        return;
-                    }else{
-                        month.style.bottom=bot-100+'px';
-                    }
-                }else if($event.detail=='3'){
-                    if(bot>-100){
-                        month.style.bottom='0px';
-                    }else{
-                        month.style.bottom=bot+100+'px';
-                    }
-                }
             },
             //鼠标按下***************
             dragDown(bool,$event){
@@ -1042,8 +1005,8 @@
                             id:id
                         }
                 
-                        this.cut(data1);
-                    }else if(val=='chongh'){
+                        this.cut(vm,data1);
+                    }else if(val=='chongh'){  //冲红
                         var Vdata=this.voucherDataList.data;
                         if(Vdata.Mst.Dtls.length<=0){
                             this.$message('请输入内容!')
@@ -1064,7 +1027,6 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
-                        console.log(Vdata.Mst,this.checkedTime);debugger;
                         if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
                             var data = {
                                 uid: this.uid,
@@ -1111,23 +1073,21 @@
                                               
                     }
                     else{
-                        //this.clearPhId(this.voucherDataList.data.Mst); 
+                        if(val=='copy'){
+                            this.clearPhId(this.voucherDataList.data.Mst);
+                        }
                         this.keepVoucher(val);
-                        this.voucherMask=false; 
-                        //this.voucherDataList.bool=false; 
-                        //this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
+                        this.voucherMask=false;   
                     } 
                 }else{
                     this.voucherMask=false; 
-                    //this.voucherDataList.bool=false; 
-                    //this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};   
                 }
                     
             },
             //剪切*****************
-            cut(data1){
+            cut(vm,data1){
                 var url='Add';
-                var Vdata=this.voucherDataList.data; 
+                var Vdata=vm.voucherDataList.data; 
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
                    return;
@@ -1142,42 +1102,40 @@
                        Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
                    }
                }else{
-                   this.$message('请输入凭证会计期!')
+                   vm.$message('请输入凭证会计期!')
                    return;
                }
-               this.clearPhId(Vdata.Mst);
-               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+               vm.clearPhId(Vdata.Mst);
+               if(Vdata.Mst.Uyear==vm.nowTime.getFullYear()&& Vdata.Mst.PMonth>=vm.checkedTime) {
                    var data = {
-                       uid: this.uid,
-                       orgid: this.orgid,
-                       orgcode: this.orgcode,
-                       infoData: this.voucherDataList.data
+                       uid: vm.uid,
+                       orgid: vm.orgid,
+                       orgcode: vm.orgcode,
+                       infoData: vm.voucherDataList.data
                    }
-                   if (this.voucherDataList.data.Mst.PhId) {
+                   if (vm.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                   const loading=this.$loading();
-                   this.$axios.post('/PVoucherMst/Post' + url, data)
+                   const loading=vm.$loading();
+                   vm.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            loading.close();      
                            if (res.Status == 'success') {
-                                this.saasMessage={
+                                vm.saasMessage={
                                   visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
-                               this.delete(data1);
-                               if(str=='print'){
-                                   this.printContent();
-                               }
+                               vm.voucherMask=false;
+                               vm.delete(data1);
                            } else {
-                               this.$message('保存失败,请重试!')
+                               vm.$message('保存失败,请重试!')
                            }
                        })
                        
                        .catch(err =>{console.log(err);loading.close()} )
                }else{
-                   this.$message('当前月份已结账,无法修改凭证!')
+                   vm.$message('当前月份已结账,无法修改凭证!')
                }
             },
         },
