@@ -17,11 +17,14 @@ export const setStore = params => {
  * 获取localStorage
  */
 export const getStore = params => {
-    const { name } = params;
+    const { name, type } = params;
     let obj = {};
     let content;
-    obj = window.localStorage.getItem(name);
-    if (validatenull(obj)) obj = window.sessionStorage.getItem(name);
+    if(type) {
+        obj = window.sessionStorage.getItem(name);
+    }else{
+        obj = window.localStorage.getItem(name);
+    }
     if (validatenull(obj)) return;
     obj = JSON.parse(obj);
     if (obj.dataType === "string") {

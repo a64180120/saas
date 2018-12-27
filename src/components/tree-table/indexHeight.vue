@@ -42,7 +42,7 @@ export default {
   name: 'treeTable',
   data() {
     return {
-      tableHeight:500
+      tableHeight:600
     }
   },
   props: {
@@ -77,6 +77,9 @@ export default {
       }
     }
   },
+  created(){
+
+  },
   computed: {
     // 格式化数据源
     formatData: function() {
@@ -92,8 +95,11 @@ export default {
     }
   },
   mounted(){
-    this.tableHeight = window.innerHeight - this.$refs.treetable.$el.offsetTop - this.extraheight;
-    //window.innerHeight:浏览器的可用高度
+    console.log(document.documentElement.clientHeight);
+    console.log(window.innerHeight);
+    debugger;
+    this.tableHeight = document.documentElement.clientHeight - this.$refs.treetable.$el.offsetTop - this.extraheight;
+    //document.documentElement.clientHeight:浏览器的body可用高度
     //this.$refs.table.$el.offsetTop：表格距离浏览器的高度
     //后面的50：根据需求空出的高度，自行调整
   },
