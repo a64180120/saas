@@ -19,6 +19,7 @@
                 <ul class="flexPublic handle">
                     <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
                     <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                    <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
                 </ul>
             </div>
 
@@ -236,7 +237,7 @@
                 cashInCountsQ:0,
                 cashOutCountsQ:0,
                 cashCountsQ:0,
-                date1:'',
+                date1:[],
                 proofType:'1',
                 loading:false
             }
@@ -250,7 +251,7 @@
             }),
         },
         mounted(){
-            this.getData(this.date1,this.proofType);
+            this.getData();
         },
         watch:{
             // /*
@@ -260,31 +261,15 @@
             //     this.getData(this.date1,this.proofType);
             // },
             proofType:function(){
-                this.getData(this.date1,this.proofType);
+                this.getData();
             }
         },
         methods:{
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.getData(time,this.proofType);
+                this.date1=val;
+                this.getData();
             },
-            /*
-             *时间处理方法
-             *  */
-            getParamTime(param){
-                let nowtime ='';
-                if(param==null||param==undefined||param==''){
-                    nowtime = new Date();
-                }else{
-                    nowtime = new Date(param);
-                }
-                let year=nowtime.getFullYear();
-                let month=nowtime.getMonth()+1;
-                month<10?month='0'+month:month;
-                let day=nowtime.getDate();
-                day<10?day='0'+day:day;
-                return param=year+'-'+month+'-'+day;
-            },
+
             /*
             *author:hyz
             *获取资产负债表数据
@@ -292,18 +277,28 @@
             * 参数：param--日期，未选择自动使用当前时间
             * proofType--资产凭证类型，包含未审核凭证（0），不包含未审核凭证（1）
             * */
-            getData(param,proofType){
-                let that=this;
+            getData(){
+                let param='';
+                if(this.date1.choosedYear==undefined||this.date1.choosedYear==''){
+                    let currentYear = new Date();
+                    let currentyear=currentYear.getFullYear(currentYear);
+                    let currentMonth=currentYear.getMonth()+1;
+                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedMonth=currentMonth;
+                    this.date1.choosedMonthEnd=currentMonth;
+                    param=currentyear+'-'+currentMonth;
+                }else{
+                    param=this.date1.choosedYear+'-'+this.date1.choosedMonth;
+                }
                 this.loading=true;
-                param = this.getParamTime(param);
                 let data={
                     accountPeriod:param,
-                    isContainUncheck:proofType,
+                    isContainUncheck:this.proofType,
                     orgid:this.orgid
                 };
                 this.$axios.get('/PVoucherMst/GetBalanceSheet',{params:data})
                     .then(res => {
-                        that.loading=false;
+                        this.loading=false;
                        let cashIn=[],cashOut=[],cash=[],cashInCount=0,cashInCountQ=0,cashOutCount=0,cashOutCountQ=0,cashCount=0,cashCountQ=0;
                        for(let i in res.Data){
                            if(res.Data[i].KType==="1"){
@@ -339,7 +334,23 @@
                     })
                     .catch(err => {that.loading=false;console.log(err)})
             },
-
+            /*
+             *时间处理方法
+             *  */
+            getParamTime(param){
+                let nowtime ='';
+                if(param==null||param==undefined||param==''){
+                    nowtime = new Date();
+                }else{
+                    nowtime = new Date(param);
+                }
+                let year=nowtime.getFullYear();
+                let month=nowtime.getMonth()+1;
+                month<10?month='0'+month:month;
+                let day=nowtime.getDate();
+                day<10?day='0'+day:day;
+                return param=year+'-'+month+'-'+day;
+            },
             /*
             *author:hyz
             *导出资产负债表Excel表格
@@ -429,8 +440,11 @@
              // 打印
             printContent(e){
                 this.$print(this.$refs.printFrom) // 使用
+            },
+        //    刷新
+            refresh:function(){
+                this.getData();
             }
-
         }
     }
 </script>

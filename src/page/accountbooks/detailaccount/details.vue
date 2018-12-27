@@ -146,7 +146,8 @@
                         <!--</div>-->
                     </div>
                 </div>
-                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" @click="voucherDataList.bool=false">
+                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" >
+                    <div class="el-icon-close" @click="voucherDataList.bool=false"></div>
                     <div class="voucherContent">
                         <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                     </div>
@@ -683,6 +684,17 @@
         z-index: 999;
         background-color: rgba(0, 0, 0, 0.7);
         padding: 0 30px;
+    }
+    .voucherCover .el-icon-close{
+        position: relative;
+        top: 80px;
+        float: right;
+        background-color: #45c0f7;
+        color: white;
+        font-size: 20px;
+        font-weight: 900;
+        padding: 7px;
+        border-radius: 20px;
     }
     .voucherContent{
         margin-top: 10%;

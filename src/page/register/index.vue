@@ -2,6 +2,7 @@
     <div class="sys-login">
         <div class="register_head">
             <img src="../../assets/images/register/register_company_log.png">
+            <div class="telPhone"><img src="../../assets/images/finance/SAAS-03.png"><span>0571-88270588</span></div>
         </div>
         <div class="login-area">
 
@@ -170,6 +171,7 @@
     import httpConfig from "../../util/ajaxConfig";
     import httpajax from "axios";
     // import TimeSelectBar from "../../components/TimeSelectBar/index";
+    import qs from 'qs'
     export default {
         name: "index",
         data(){
@@ -332,7 +334,6 @@
 
                         if(valid){
                             this.showArea=val;
-                            console.log('===========2=========')
                             let userInfo={
                                 'RealName':this.registerForm1.name,
                                 'Account':this.registerForm1.phone,
@@ -344,27 +345,33 @@
                                 'City': this.registerForm2.cityvalue,
                                 'County':this.registerForm2.countyvalue,
                                 'Street':this.registerForm2.streetvalue,
-                                'Address':this.registerForm2.addressDetail,
+                                'Address':this.registerForm2.addressDetail
                             };
-                            // this.$axios.post(
-                            //     'SysUser/PostRegister',
-                            //
                             // )
                             let base=httpConfig.getAxiosBaseConfig();
                             //测试的Header
                             let headconfig=httpConfig.getTestHeaderConfig();
-                            console.log('===========3=========')
                             httpajax.create(base)({
                                 method: 'post',
                                 url: '/SysUser/PostRegister',
-                                data: JSON.stringify({
+                                data: qs.stringify({
                                     'userInfo':userInfo,
                                     'orgInfo':orgInfo
                                 }),
                                 headers:headconfig
                             }).then(res => {
-                                console.log('===========4=========')
+                                res=JSON.parse(res.data);
                                 console.log(res);
+                                if(res.Status=='success'){
+                                    this.$message('注册成功!');
+                                    this.$router.push({ path: "/login"})
+                                }else{
+                                    this.$message(res.Msg);
+                                    this.showArea='selectArea';
+                                    this. registerForm1={name: '',code:'',phone:'',phonecode:'',};
+                                    this.registerForm2={company:'',provincevalue: '',cityvalue: '',countyvalue: '',streetvalue: '',addressDetail:'',password: '',confirmpassword:'',}
+                                    this.searchArea(0,0);
+                                }
                             }).catch(err => {
                                 console.log(err)
                             })
@@ -477,8 +484,19 @@
     }
     .register_head img{
         height: 51px;
-        margin-left: 80px;
+        margin-left: 206px;
         margin-top: 5px;
+    }
+    .telPhone{
+        color:#88b927;
+        font-size: 20px;
+        align-items: center;
+        margin-right: 206px;
+        float: right;
+    }
+    .telPhone>img{
+        height: 40px;
+        margin-top: 10px;
     }
     .register_foot{
         height:61px;
