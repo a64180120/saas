@@ -38,7 +38,7 @@
              <!--辅助项类型页面-->
             <auxiliary-type datalists="" @type-click="addTypeFinish" v-if="handleNav=='type'"></auxiliary-type>
             <!--辅助项新增编辑页面-->
-            <handle-update :PhIdList="{name:handleNav,data:PhIdList,type:navActive}" v-if="handleNav=='add'||handleNav=='update'" @add-click="addFinish"></handle-update>
+            <handle-update :PhIdList="{list:userInfo,name:handleNav,data:PhIdList,type:navActive}" v-if="handleNav=='add'||handleNav=='update'" @add-click="addFinish"></handle-update>
         </div>
     </div>
 </template>
@@ -55,18 +55,18 @@
                 unionSearchValue:'',
                 PhIdList:'',
                 userInfoCssList:[],
-                userInfo:[
-                    {PhId:'111',BaseCode:'01',BaseName:'办公室',EnabledMark:0},
-                    {PhId:'222',BaseCode:'03',BaseName:'财务科',EnabledMark:1},
+                userInfo:[     //列表信息
+                    // {PhId:'111',BaseCode:'01',BaseName:'办公室',EnabledMark:0},
+                    // {PhId:'222',BaseCode:'03',BaseName:'财务科',EnabledMark:1},
                 ],
                 handleNav:'',    //类型 add update
                 
                 navActive:{id:'',BaseName:'部门'},
                 navTab:[
-                    {PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
-                    {PhId:112,BaseCode:'02',EnabledMark:1,BaseName:'往来单位'},
-                    {PhId:113,BaseCode:'03',EnabledMark:0,BaseName:'往来个人'},
-                    {PhId:114,BaseCode:'04',EnabledMark:0,BaseName:'项目'}
+                    // {PhId:11,BaseCode:'01',EnabledMark:1,BaseName:'部门'},
+                    // {PhId:112,BaseCode:'02',EnabledMark:1,BaseName:'往来单位'},
+                    // {PhId:113,BaseCode:'03',EnabledMark:0,BaseName:'往来个人'},
+                    // {PhId:114,BaseCode:'04',EnabledMark:0,BaseName:'项目'}
                 ]
             }
         },
@@ -180,6 +180,7 @@
                             this.$message.error(res.Msg);
                             return
                         }
+                        console.log(res)
                         this.userInfo=res.list;
                         for(var i=0;i<this.userInfo.length;i++){
                             this.userInfoCssList[i]={checked:false};
@@ -223,7 +224,6 @@
                                 this.$message.error(res.Msg);
                                 return
                             }
-
                             this.getData('');
                             this.initInfoCss();
                             this.$message.success('删除成功!');  
@@ -234,7 +234,8 @@
                         })
                 }).catch((err) => {
                     console.log(err)
-                    this.$message({ showClose: true,message: "删除错误", type: "error"});      
+                    //取消不弹提示**********
+                    //this.$message({ showClose: true,message: "删除错误1", type: "error"});      
                 });
             }
         },

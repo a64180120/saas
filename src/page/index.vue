@@ -502,6 +502,7 @@
       }
       .proInfoContent{
         >div{
+          overflow: hidden;
           width:49%;
           font-size: 13px;
           color:#a0a0a0;
@@ -534,6 +535,7 @@
           }
         }
         >ul{
+          overflow: hidden;
           width:49%;
           font-size: 14px;
           margin-left:10px;

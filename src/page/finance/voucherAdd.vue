@@ -31,7 +31,6 @@
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li >保存</li></a>
                 <a>
                     <li class="mode" style="width:60px;">
@@ -559,7 +558,7 @@
                                   visible:true,
                                   delay:3000,
                                   message:res.Msg
-                               };
+                               };debugger
                         }else{
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
@@ -1012,6 +1011,7 @@
                             orgid:this.orgid,
                             id:id
                         }
+                
                         this.cut(data1);
                     }else if(val=='chongh'){
                         var Vdata=this.voucherDataList.data;
@@ -1115,6 +1115,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
+               this.clearPhId(Vdata.Mst);
                if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,

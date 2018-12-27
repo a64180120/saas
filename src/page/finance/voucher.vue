@@ -16,8 +16,7 @@
                 </li>
                 <li class="flexPublic">
                     <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
-                    <div @click.stop="testFile" class="uploaderTitle"></div>
-                    
+                    <div @click.stop="picUploadShow" class="uploaderTitle"></div>               
                 </li>
             </ul>
         </div>
@@ -188,7 +187,7 @@
             </ul>
         </div>
         <!-- 附件弹出框 -->
-        <el-dialog title="选择附件"  :visible.sync="fileVisible" width="40%">
+        <el-dialog title="选择附件"  :visible.sync="picVisible" :modal=false width="40%">
             <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
         </el-dialog>
     </div>
@@ -227,9 +226,9 @@
             //附件****************
             Attachements:[],
             loading: false,
-            fileVisible:false,
-            imglist:[],
-            balance:'',
+            picVisible:false,     //图片上传显示
+            imglist:[],//上传附件参数
+            balance:'',//余额
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
@@ -242,7 +241,7 @@
             addIcon:[],//添加删除的按钮样式参数****************
             kemuSel:[],//科目选择框显示隐藏样式参数************
             assistItem:[],//辅助项显示隐藏样式参数********************
-            assistItemMask:false,
+            assistItemMask:false,//辅助项遮罩********
             assistCheck:true,
             sideDateNew:'',
             nowTime:new Date,
@@ -854,8 +853,10 @@
             //         this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
             //     })
             // },
-            testFile(){
-                this.fileVisible=true;
+            picUploadShow(){
+                console.log(this.picVisible)
+                this.picVisible=true;
+                console.log(this.picVisible)
             },
             removeimg(item,deleValue) {//
                this.imglist=item;
