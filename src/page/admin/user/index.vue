@@ -84,11 +84,11 @@
                         v-loading="loading"
                         ref="multipleTable"
                         highlight-current-row
-                        :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                        :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
                         @row-click="handleClickRow">
                         <!-- <el-table-column type="selection" width="55" align="center"></el-table-column> -->
                         <el-table-column label="序号" type="index" width="50"></el-table-column>
-                        <el-table-column prop="Account" label="用户编码" sortable width="120"></el-table-column>
+                        <el-table-column prop="Account" label="用户编码" width="120"></el-table-column>
                         <el-table-column prop="RealName" label="用户名称" width="120"></el-table-column>
                         <el-table-column prop="MobilePhone" label="手机号码"></el-table-column>
                         <el-table-column label="角色">

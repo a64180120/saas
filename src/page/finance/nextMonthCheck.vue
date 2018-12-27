@@ -46,11 +46,17 @@
                 <span v-if="checkCss&&checkOutCss" @click.stop="handle('check')" class="btn">结账</span>
             </div>
         </div>
-        <div v-show="checkNav=='audit'" class="audit">
-            <p class="title">
+        <div v-show="(checkNav=='audit')||(checkNav=='codeReset')"  class="audit">
+             <!-- 审核 -->
+            <p  v-show="checkNav=='audit'" class="title">
                 <span >审核凭证</span><i @click="checkNavShow('month')"></i></p> 
-            <p class="auditCheck"><span>审核</span></p>  
-            <!-- <section  class="listContainer">
+            <p  v-show="checkNav=='audit'" class="auditCheck"><span @click="listHandle('audit')">审核</span></p> 
+
+            <!-- 重排 -->
+            <p v-show="checkNav=='codeReset'" class="title">
+                <span >凭证号重排</span><i @click="checkNavShow('month')"></i></p>   
+            <p v-show="checkNav=='codeReset'" class="auditCheck"><span @click="listHandle('codeReset')">开始重排</span></p>    
+            <section  class="listContainer">
                 <ul class="listTitle">
                     <li>序号</li>
                     <li>摘要</li>
@@ -93,16 +99,15 @@
                         </ul>
                     </li>
                 </ul>
-            </section>  -->
+            </section> 
         </div>
-        <div v-show="checkNav=='codeReset'" class="codeReset">
-            <p class="title">
-                <span >凭证号重排</span><i @click="checkNavShow('month')"></i></p>     
-        </div>
+         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
   </div>
 </template>
 
 <script>
+    import saasMsg from './message'
     import {mapState, mapActions} from 'vuex'
   export default {
     name: "next-month-check",
@@ -110,8 +115,17 @@
           month:'',
           year:'',
           nowTime:new Date,
+          pagesize:100,
+          pageindex:0,
           checkedTime:'',
+          voucherList:[],
+          chooseItem:'',
           checkNav:'month',
+          saasMessage:{
+              message:'',
+              visible:false,
+              delay:0
+          },
           checkFaile:[
                 'true','true','true','true'
           ],
@@ -123,6 +137,7 @@
           this.getChecked();
       },
       methods:{
+          //检查页面操作****************
         handle(val){
             switch (val){
                 case false:
@@ -132,19 +147,32 @@
                     this.matchBegin();
                     this.checkCss=true;
                     break;
-                case 'check':
+                case 'check': //结账*********
                     this.checkOut('check',this.checkedTime);                    
-                    this.$emit('child-click',false);
+                    
                     break;
-                case 'audit':
+                case 'audit': //凭证审核页面****
                     this.checkNavShow('audit')
                     break;
-                case 'codeReset':
+                case 'codeReset'://凭证号重排****
                     this.checkNavShow('codeReset')
                     break;
 
             }
         },
+        //审核重排页面**************
+        listHandle(val){
+            var PhIds=[];
+            if(val=='audit'){
+                for( var vou of this.voucherList){
+                    PhIds.push(vou.PhId);
+                }
+                this.audit(true,PhIds);
+            }else if(val=='codeReset'){
+                this.resetCode(val);
+            }
+        },
+        //开始检查*********************
         matchBegin(){
             var data={
                 orgid:this.orgid,
@@ -209,6 +237,8 @@
               this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                   .then(res=>{
                       this.checkedTime=res.Record[0].JAccountPeriod+1;
+                      this.year=this.nowTime.getFullYear();
+                      this.month=this.checkedTime;
                       loading.close();
                   })
                   .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close()})
@@ -217,6 +247,7 @@
           checkOut(str,val){
               var t;
               var url;
+              var vm=this;
               if(str=='check'){
                   url='/PBusinessConfig/UpdateBusinessConfig';
               }else if(str=='uncheck'){
@@ -236,23 +267,317 @@
               this.$axios.get(url,{params:data})
                   .then(res=>{
                       loading1.close();
-                      if(res.Status=='success'){
-                          this.$message('结账成功!');
+                      if(res.Status=='success'){  
+                          this.$message("结账成功!");
+                          this.$emit('child-click',false);
                       }else{
                           this.$message({ showClose: true,message: res.Msg, type: "error"});
                       }
                   })
                   .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
           },
-        checkNavShow(str){
+        
+        checkNavShow(str){//切换页面功能*************
             this.checkNav=str;
-        }
+            if(str=='audit'){
+                this.getvoucherList('audit');
+            }else if(str=='codeReset'){
+                this.getvoucherList();
+            }
+        },
+        //审核*****************
+            audit(bool,PhIds){
+                var chooseItem=JSON.stringify(this.chooseItem);
+                var item=JSON.parse(chooseItem);              
+                if(item.PhId<=0){
+                    this.$message("请先选择凭证!");
+                    return;
+                }
+                var data={
+                    orgid:this.orgid,
+                    uid:this.uid,
+                    uname:this.uname,
+                    infoData:PhIds
+                }
+                var url='PVoucherMst/PostAudit';
+                if(!bool){
+                    url='PVoucherMst/PostUnAudit'
+                }
+                const loading=this.$loading();
+                this.$axios.post(url,data)
+                    .then(res=>{  
+                        loading.close();      
+                        if(res.Status=='success'){
+                            if(bool){
+                                this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'审核成功!'
+                               };
+                            }else{
+                                 this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'反审核成功!'
+                               };
+                            }
+                        }else{
+                            if(bool){
+                                 this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'审核失败!'
+                               };
+                            }else{
+                                 this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'反审核成功!'
+                               };
+                            }
+                        }
+                    })
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
+            },
+        //凭证号重排确认***************
+        resetCode(val){
+                if(val){
+                    const loading5=this.$loading();
+                    var data={
+                        orgid:this.orgid,
+                        Year:this.year,
+                        Pmonth:this.month
+                    }
+                    var url='/PVoucherMst/GetRebuilder';
+                    if(this.allReset){
+                        url='PVoucherMst/GetRebuilderForAllYear';
+                        data={
+                            orgid:this.orgid,
+                            Year:this.sideDate.split('-')[0],
+                        }
+                    }
+                    this.$axios.get(url,{params:data})
+                        .then(res=>{
+                            console.log(res)
+                            if(res.Status=='error'){
+                                this.$message(res.Msg);
+                            }else if(res.Status=='success'){
+                                this.checkNav='month';
+                                this.saasMessage={
+                                    message:'重排成功,请重新检查!',
+                                    visible:true,
+                                    delay:4000
+                                };
+                                this.getvoucherList();
+                            }
+                            loading5.close();
+                        })
+                        .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
+                }else{
+                    this.resetShow=false;
+                }
+            },
+        //凭证列表***************高级搜索***********************
+        getvoucherList(str){
+            console.log(this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString())
+            var data={
+                uid:this.uid,
+                orgid:this.orgid,
+                pageindex:this.pageindex,
+                pagesize:this.pagesize,
+                sum1:'',
+                sum2:'',
+                keyword:'',
+                export2excel:str,
+                sort:['PNo DESC','PType','PDate DESC'],
+                // itemValuePhid:649181122000008,
+                itemValuePhid:'',
+                queryfilter:{
+                     //未审核****   "PAuditor*num*eq*1":0,
+                   //已审核****    "PAuditor*num*ge*1":0, 
+                    "PAccper*str*ge*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString(),
+                    "PAccper*str*le*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString()
+                    }
+            }
+             console.log(this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString())
+            if(str=='audit'){
+                data.queryfilter={
+                   "PAuditor*num*eq*1":0,  //未审核****   
+                   //已审核****    "PAuditor*num*ge*1":0, 
+                    "PAccper*str*ge*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString(),
+                    "PAccper*str*le*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString()
+                    };
+            }
+            this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                .then(res=>{
+                    if(res.Status=='success'){
+                        this.$message(res.Msg);                  
+                        return;
+                    }  
+                    if(res.Record.length<=0){
+                        this.$message('无法找到该凭证!')
+                    } else{
+                        this.voucherList= res.Record;
+                    }
+                        
+                })
+                .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});})
+        },
       },
+      filters:{
+            sum(val,dtl){
+                var sum=0;
+                var fu='';
+                if(!dtl){
+                    dtl=[]
+                }
+                function Num(value) {
+                    if(!value||(value==0)) return '';                    
+                    /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                    var intPart =  Number(value)|0; //获取整数部分
+                    var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+                    var floatPart = ".00"; //预定义小数部分
+                    var value2Array = value.toString().split(".");
+                    //=2表示数据有小数位
+                    if(value2Array.length == 2) {
+                        floatPart = value2Array[1].toString(); //拿到小数部分
+
+                        if(floatPart.length == 1) { //补0,实际上用不着
+                            return intPartFormat + "." + floatPart + '0';
+                        } else {
+                            return intPartFormat + "." + floatPart;
+                        }
+
+                    } else {
+                        return intPartFormat + floatPart;
+                    }
+
+                }
+                switch(val){
+                    case 'jie':
+                        for(var d of dtl){
+                            if(d.JSum){
+                                sum+=parseFloat(d.JSum);
+                            }
+                        }
+                        sum=Num(sum);
+                        break;
+                    case 'dai':
+                        for(var d of dtl){
+                            if(d.DSum){
+                                sum+=parseFloat(d.DSum);
+                            }
+                        }
+                        sum=Num(sum);
+                        break;
+                    case 'sum':
+                        for(var d of dtl){
+                            if(d.JSum){
+                                sum+=parseFloat(d.JSum);
+                            }
+                        }
+                        if(sum<0){
+                            sum=-1*sum;
+                            fu='(负数)'
+                        }
+                        sum=sum.toFixed(2);
+                        var arr1=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'];
+                        var arr2=['','拾','百','千','万','亿'];
+                        var str=sum.toString().split('.');
+                        var dot='元';
+                        var INTstr=str[0];
+                        var INT='';
+                        var bool=false;
+                        var zero='';
+                        if(parseInt(str[1])!=0){
+                            dot+=arr1[str[1][0]]+'角';
+                            if(str[1][1]!=0){
+                                dot+=arr1[str[1][1]]+'分'
+                            }
+                        }else{
+                            dot+='整'
+                        }
+                        for(var i=INTstr.length-1,j=0;i>=0; i--,j++){
+                            if(INTstr[i]!=0){
+                                bool=true;
+                            }
+                            if(j==4){
+                                INT=arr2[j]+INT;
+                            }else if(j==8){
+                                INT=arr2[5]+INT;
+                            }
+                            if(bool){
+                                if(INTstr[i]!=0){
+                                    if(zero=='零'){
+                                        zero='';
+                                    }
+                                    if(j==4){
+                                        INT=arr1[INTstr[i]]+INT;
+                                        bool=false;
+                                    }else if(j==8){
+                                        INT=arr1[INTstr[i]]+INT;
+                                    }else{
+                                        INT=arr1[INTstr[i]]+arr2[j%4]+INT;
+                                        bool=false;
+                                    }
+                                }else{
+                                    if(zero==''){
+                                        INT='零'+INT;
+                                        zero='零';
+                                    }
+                                    if(j==4){
+                                        INT=arr2[j]+INT;
+                                        bool=false;
+                                    }else if(j==8){
+                                        INT=arr2[5]+INT;
+                                        bool=false;
+                                    }
+                                }
+                            }
+                        }
+                        sum=fu+INT+dot;
+                        break;
+                }
+                
+                return sum;
+
+            },
+            
+            //数字转换******************
+            NUmTurn(value){
+                if(!value) return '';
+                /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+                var intPart =  Number(value)|0; //获取整数部分
+                var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+
+
+                var floatPart = ".00"; //预定义小数部分
+                var value2Array = value.toString().split(".");
+
+                //=2表示数据有小数位
+                if(value2Array.length == 2) {
+                    floatPart = value2Array[1].toString(); //拿到小数部分
+
+                    if(floatPart.length == 1) { //补0,实际上用不着
+                        return intPartFormat + "." + floatPart + '0';
+                    } else {
+                        return intPartFormat + "." + floatPart;
+                    }
+
+                } else {
+                    return intPartFormat + floatPart;
+                }
+            },
+        },
       computed:{
           ...mapState({
               orgid: state => state.user.orgid,
               uid: state => state.user.userid,
+              uname: state => state.user.username,
           })
+      },
+      components:{
+          saasMsg,
       }
   }
 </script>
@@ -368,6 +693,7 @@
     .audit{
         height:80%;
         width:85%;
+        min-width:868px;
         background: #fff;
         position:absolute;
         left:5%;
@@ -410,6 +736,7 @@
                 color:#fff;
                 border-radius: 4px;
                 background: #00b7ee;
+                cursor:pointer;
                 &:hover{
                     opacity:0.8;
                 }
@@ -423,7 +750,7 @@
     }
 
     .listContainer{
-        max-height:85%;
+        max-height:70%;
         overflow-y: auto;
         padding:5px;
         margin-top:10px;
@@ -554,4 +881,19 @@
          ul.listContent>li> ul:nth-of-type(2)>li:last-of-type>div{
              padding-left:10%;
          }
+    .wrapKemu{
+          height:30px;
+          font-size: 14px;
+         
+      }
+      ul.listContent > li > ul > li div.wrapKemu>div{
+          width:100%;
+          height:30px;
+          overflow-y: auto;         
+      }  
+      
+       .ul.listContent > li > ul > li > div{
+           text-align: left;
+           overflow-y: auto;     
+       } 
 </style>

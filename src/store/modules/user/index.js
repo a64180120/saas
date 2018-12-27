@@ -57,7 +57,7 @@ const mutations = {
         if (data) {
             data.isLogin=true;
             Auth.setUserInfoData(data);
-            console.log(data);
+
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
             state.orgcode = data.orgInfo.EnCode;
@@ -230,7 +230,6 @@ const actions = {
                 //设置用户 state ,重新加载用户缓存
                 commit("setUserInfo", userInfo);
             }
-
             //菜单
             if(menuInfo){
                 //设置用户 state ,重新加载用户缓存
@@ -242,8 +241,6 @@ const actions = {
                 //设置用户 state ,重新加载用户缓存
                 commit("Pconfig/setPConfig", config,{root: true});
             }
-
-
             resolve();
         });
     },

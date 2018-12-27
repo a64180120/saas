@@ -3,15 +3,17 @@
     <div class="asideNav"><!--右侧时间选择组件-->
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
-            <div class="monthsContainer">
-                <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)" style="bottom:0px;"  id="scrollMonth" class="months">
-                    <li v-for="item of nowTime.getFullYear()-2000"  :key="item">
-                        <ul>
-                            <li>{{2000+item}}</li>
-                            <li :class="{active:sideDate.split('-')[1]==i&&2000+item==sideDate.split('-')[0],unchecked:i>checkedTime&&2000+item==nowTime.getFullYear(),futureM:2000+item==nowTime.getFullYear()&&i>nowTime.getMonth()+1}" @click="sideMonth(i,item+2000)" v-for="i of 12" :key="i">{{i}}</li>
-                        </ul>
-                    </li>
-                </ul>
+            <div style="overflow:hidden;height:87%">
+                <div class="monthsContainer">
+                    <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
+                        <li v-for="item of nowYear-2000"  :key="item">
+                            <ul>
+                                <li>{{nowYear-item+1}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1==nowYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <!--会计期弹窗*************************************-->
             <div v-show="yearSelCss" class="yearsContainer">
@@ -69,11 +71,11 @@
 export default { 
     mounted(){
          this.getChecked();
-         if (window.addEventListener){
-                //var month= document.getElementById('scrollMonth');
-                window.addEventListener('DOMMouseScroll',this.wheel,false);
-                window.onmousewheel=document.onmousewheel=this.wheel;
-            }
+        //  if (window.addEventListener){
+        //         //var month= document.getElementById('scrollMonth');
+        //         window.addEventListener('DOMMouseScroll',this.wheel,false);
+        //         window.onmousewheel=document.onmousewheel=this.wheel;
+        //     }
     },
     data(){
         return {
@@ -84,6 +86,7 @@ export default {
             month:'',
             checkedTime:'',
             nowTime:new Date,
+            nowYear:(new Date).getFullYear(),
             monthsSelCss:'kuaiji',
             mouseDown:false,
             mouseStartY:'',
@@ -112,39 +115,7 @@ export default {
                     })
                     .catch(err=>console.log(err))
             },
-        //获取会计期凭证列表****************
-        // //  getvoucherList(val){
-        //         if(val=='reset'){
-        //             this.pageindex=0;
-        //         }
-        //         const loading1=this.$loading();
-        //         var data={
-        //             uid:this.uid,
-        //             orgid:this.orgid,
-        //             pagesize:this.pagesize,
-        //             pageindex:this.pageindex,
-        //             queryfilter:{"Uyear*str*eq*1":this.sideDate.split('-')[0],"PMonth*byte*eq*1":parseInt(this.sideDate.split('-')[1]),"OrgId*num*eq*1":this.orgid}
-        //         }
-        //         this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
-        //             .then(res=>{
-                                  
-        //                 if(res.Record.length<=0){
-        //                     this.$message('暂无新凭证');
-        //                 } else{
-        //                     this.newAddList=res.Record;
-        //                     this.count=val=='pre'?this.newAddList.length-1:0;
-        //                     this.totalRows=res.totalRows;
-        //                     this.pagesize=res.size;
-        //                     this.pageindex=res.index;
-        //                     // this.voucherDataList.data={
-        //                     //     Mst:this.newAddList[this.count]
-        //                     // };
-        //                     // this.resetVoucher();
-        //                 }
-        //                 loading1.close();
-        //             })
-        //             .catch(err=>{this.$message.error(err);loading1.close();})
-            //},
+       
          //选择会计期***************
             sideMonth(i,year){
                 this.month=i;
@@ -153,61 +124,7 @@ export default {
                 //this.getvoucherList('reset');
                 this.$emit("time-click",{sideDate:this.sideDate})
             },
-            //滚轮监听********************
-            wheel(event){
-                var delta = 0;
-                if(!event){
-                  event = window.event;
-                  if(event.whellDelta){
-                      delta=event.wheelDelta/120;
-                      if(window.opera){
-                          delta=-delta;
-                      }else if(event.detal){
-                          delta=-event.detail/3;
-                      }
-                      if(delta){
-                          this.monthsSel(delta);
-                      }
-                  }  
-                }
-            },
-            //鼠标滚轮移动月份选择****************
-            monthsSel(delta){
-                var month= document.getElementById('scrollMonth');
-                var bot=parseInt(month.style.bottom);
-                if(delta<0){
-                    if(parseInt(bot)>0){
-                        return;
-                    }else{
-                        month.style.bottom=bot-100+'px';
-                    }
-                }else{
-                    if(bot>-100){
-                        month.style.bottom='0px';
-                    }else{
-                        month.style.bottom=bot+100+'px';
-                    }
-                }
-            },
-            //火狐浏览鼠标滚轮移动****************
-            // foxMonthSel($event){
-            //     var month= document.getElementById('scrollMonth');
-            //     var bot=parseInt(month.style.bottom);
-
-            //     if($event.detail=='-3'){
-            //         if(parseInt(bot)>0){
-            //             return;
-            //         }else{
-            //             month.style.bottom=bot-100+'px';
-            //         }
-            //     }else if($event.detail=='3'){
-            //         if(bot>-100){
-            //             month.style.bottom='0px';
-            //         }else{
-            //             month.style.bottom=bot+100+'px';
-            //         }
-            //     }
-            // },
+            
             //鼠标按下***************
             dragDown(bool,$event){
                 if(bool){
@@ -352,6 +269,7 @@ export default {
         right:0px;
         top:0px;
         height: 95%;
+        min-height:490px;
         background: #fff;  
         box-shadow:0 0 20px 2px #ccc;
         >div:first-of-type{
@@ -374,16 +292,16 @@ export default {
             color:#04a9f4;
         }
         .monthsContainer{
-            height:90%;
-            //overflow-y:scroll;
-            overflow: hidden;
+            height:100%;
+            overflow-y:scroll;
+            overflow-x: hidden;     
             position: relative;
-            left:0px;
-           // width:70px;
+            left:7px;     
+            width:70px;
             >ul.months{
-                position: absolute;
-                left:6px;
-                bottom:0px;
+                position: relative;
+                left:-5px;
+                
                 // transition: all 0.1s linear;
                >li{
                    >ul> li{
@@ -400,7 +318,13 @@ export default {
                            top:-12px;
 
                        }
-
+                       &:first-of-type{
+                           margin-top:0;
+                       }
+                       &:first-of-type:after{
+                           content:"";
+                           height:0;
+                       } 
                        position: relative;
                        width:40px;
                        height:40px;

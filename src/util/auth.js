@@ -103,7 +103,7 @@ const authToken = {
         })
     },
 
-     /*******************PConfig************************** */
+    /*******************PConfig************************** */
 
     // 获取财务配置信息
     getPConfigStatus: function(){
@@ -122,6 +122,29 @@ const authToken = {
         removeStore({
             name: this.zwcnfig
         })
+    },
+
+    /*******************PConfig************************** */
+    // 获取本地的url，缓存到session中
+    getBaseUrl: function(){
+        //return  getStore({ name: 'web_baseurl' })
+        return this.getCookies('web_baseurl')
+    },
+    // 设置当前账务配置信息
+    setBaseUrl: function(data){
+        // setStore({
+        //     name: 'web_baseurl',
+        //     content: data,
+        //     type: 'session'
+        // })
+        this.setCookies('web_baseurl',data);
+    },
+    // 移除当前账务配置信息
+    removeBaseUrl: function(){
+        // removeStore({
+        //     name: 'web_baseurl'
+        // })
+        Cookies.remove('web_baseurl')
     }
 
 }

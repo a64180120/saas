@@ -4,7 +4,7 @@
             <ul class="flexPublic">
                 <li @click="addFinished(true)">保存</li>
                 <li @click="addFinished(false)">取消</li>
-                <li><a href="">刷新</a></li>
+                <li @click="fresh()">刷新</li>
             </ul>
         </div>
         <div class="addFormContainer">
@@ -260,6 +260,12 @@
             ...mapActions({
                 uploadFile: 'uploadFile/Orgupload'
             }),
+            //刷新页面
+            fresh(){
+                this.selectParentName();
+                this.selectArea("0", 0);
+                this.init();
+            },
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
             beforeAvatarUpload(file) {
                 const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');

@@ -8,11 +8,31 @@
                 <ul class="fastGps">
                     <li @click="getvoucher('pre')"></li>
                     <li @click="getvoucher('next')"></li>
-                    <li  @click.prevent="addVoucher('moreVoucher')" style="width:80px">更多凭证</li>
+                    <li  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
                     <li @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
-            <ul class=" handle">
+            <ul class="handle">
+                <a @click.prevent="addVoucher('fresh')" style="width:30px;min-width:30px;margin-left:10px"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
+                    <li class="more" style="width:80px">
+                        <ul >
+                            <li>更多</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')">复制</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')">剪切</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')">冲红</li>
+                            <li @click.prevent="addVoucher('reset')">凭证号重排</li>
+                        </ul>
+                    </li>
+                </a>
+                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a> 
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a> 
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li >反审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li >保存</li></a>
                 <a>
                     <li class="mode" style="width:60px;">
                         <span >模板</span>
@@ -20,18 +40,14 @@
                         <span @click.prevent="addVoucher('keepModel')">存为模板</span>
                     </li>
                 </a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li >保存</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li >反审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')"><li >复制</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')"><li >剪切</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')"><li >冲红</li></a>
-                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a>
-                <a @click.prevent="addVoucher('reset')"><li style="width:80px">凭证号重排</li></a>
-                <a @click.prevent="addVoucher('fresh')"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                
+                
+                
+                
+                
+                          
+                
+                
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -55,15 +71,17 @@
         <div class="asideNav">
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
-            <div class="monthsContainer">
-                <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)" @wheel.stop="monthsSel" id="scrollMonth" style="bottom: 0;" class="months">
-                    <li v-for="item of nowTime.getFullYear()-2000"  :key="item">
-                        <ul>
-                            <li>{{2000+item}}</li>
-                            <li :class="{active:sideDate.split('-')[1]==i&&2000+item==sideDate.split('-')[0],unchecked:i>checkedTime&&2000+item==nowTime.getFullYear(),futureM:2000+item==nowTime.getFullYear()&&i>nowTime.getMonth()+1}" @click="sideMonth(i,item+2000)" v-for="i of 12" :key="i">{{i}}</li>
-                        </ul>
-                    </li>
-                </ul>
+            <div style="overflow:hidden;height:87%">
+                <div class="monthsContainer">
+                    <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
+                        <li v-for="item of nowYear-2000"  :key="item">
+                            <ul>
+                                <li>{{nowYear-item+1}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1==nowYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <!--会计期弹窗*************************************-->
             <div v-show="yearSelCss" class="yearsContainer">
@@ -174,7 +192,7 @@
             </div>
         </div>
         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" @msg-click="getMsgData" v-if="saasMessage.msgShow"></saas-msg>
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -222,6 +240,7 @@
             newAddList:[],
             yearSelCss:false,
             nowTime:new Date,
+            nowYear:(new Date).getFullYear(),
             monthsSelCss:'kuaiji',
             mouseDown:false,
             mouseStartY:'',
@@ -233,7 +252,7 @@
             voucherMask:false,
             
             saasMessage:{
-                msgShow:false,  //消息弹出框*******
+                visible:false,  //消息弹出框*******
                 message:'', //消息主体内容**************
                 delay:0
             }
@@ -247,13 +266,6 @@
         },
         mounted(){  
             this.getChecked();
-            if (document.addEventListener){
-                var month= document.getElementById('scrollMonth');
-                month.addEventListener('DOMMouseScroll',this.foxMonthSel)
-            }
-        },
-        destroyed() {
-            document.removeEventListener('scroll', this.handleScroll);   //  离开页面清除（移除）滚轮滚动事件
         },
         methods:{
             //操作列表按钮********
@@ -386,10 +398,9 @@
                    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
-                          
                            if (res.Status == 'success') {
                                this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -480,7 +491,7 @@
                         loading.close();
                         if(res.Status=='success'){
                             this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -493,7 +504,7 @@
                             setTimeout(delay,10);
                         }else{
                             this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -519,13 +530,13 @@
                         if(res.Status=='success'){
                             if(bool){
                                 this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'审核成功!'
                                };
                             }else{
                                  this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'反审核成功!'
                                };
@@ -545,7 +556,7 @@
                     .then(res=>{
                         if(res.Status=='success'){
                              this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -581,6 +592,7 @@
             nextMonthHandle(data){
                 if(data===false){
                     this.nextMonthCss=false;
+                    this.getChecked();
                 }else{
                     console.log(data)
                 }
@@ -824,7 +836,7 @@
                         loading1.close();
                         if(res.Status=='success'){
                             this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -1084,16 +1096,59 @@
             },
             //剪切*****************
             cut(data1){
-                this.$message('功能暂未开放!')
+                var url='Add';
+                var Vdata=this.voucherDataList.data; 
+               if(Vdata.Mst.Dtls.length<=0){
+                   this.$message('请输入内容!')
+                   return;
+               }
+               if(Vdata.Mst.PDate){
+                   if(typeof(Vdata.Mst.PDate)=='object'){
+                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
+                       Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+                       var date=Vdata.Mst.PDate.getDate();
+                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+                   }else {
+                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
+                   }
+               }else{
+                   this.$message('请输入凭证会计期!')
+                   return;
+               }
+               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                   var data = {
+                       uid: this.uid,
+                       orgid: this.orgid,
+                       orgcode: this.orgcode,
+                       infoData: this.voucherDataList.data
+                   }
+                   if (this.voucherDataList.data.Mst.PhId) {
+                       url = 'Update';
+                   }
+                   const loading=this.$loading();
+                   this.$axios.post('/PVoucherMst/Post' + url, data)
+                       .then(res => {
+                           loading.close();      
+                           if (res.Status == 'success') {
+                                this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:res.Msg
+                               };
+                               this.delete(data1);
+                               if(str=='print'){
+                                   this.printContent();
+                               }
+                           } else {
+                               this.$message('保存失败,请重试!')
+                           }
+                       })
+                       
+                       .catch(err =>{console.log(err);loading.close()} )
+               }else{
+                   this.$message('当前月份已结账,无法修改凭证!')
+               }
             },
-            //获取message传值*****
-            getMsgData(data){
-                this.saasMessage={
-                    msgShow:false,
-                    message:'',
-                    delay:0
-                }
-            }
         },
         computed:{
             ...mapState({
@@ -1131,7 +1186,8 @@
         padding-right: 10px;
        // margin-bottom: 30px;
         >ul{
-            >a:first-of-type{
+            
+            >a:last-of-type{
                 position:relative;
                 width:70px;
                 height:30px;
@@ -1169,18 +1225,51 @@
                         color:#aaa;    
                     }
                 }
+
+            }
+            .more{
+                height:30px;
+                overflow:hidden; 
+                position: absolute;
+                z-index: 2;
+                width:100%;
+                margin:0;  
+                opacity:1;         
+                >ul{
+                    width:100%;  
+                    >li{
+                    width:100%;     
+                    background: #fff;         
+                    color:#999;
+                    &:hover{
+                        background:#ccc;
+                        color:#fff;
+                    }
+                    &:first-of-type{
+                        background: #00b7ee;
+                        border-radius: 3px;
+                        color:#fff;
+                    }
+                    
+                }
+                }
+                
+                &:hover{
+                    height:auto;
+                    background: #00b7ee;  
+                }
+                
             }
         }
 
     }
     .searcherCon{
-        min-width: 300px;
+        min-width: 432px;
         justify-content: flex-start;
     }
     .fastGps{
         display: flex;
         align-items: center;
-        width:290px;
         >li{
             &:hover{
                 opacity: 0.8;
@@ -1217,6 +1306,10 @@
                 border-width:2px 2px 0 0  ;
                 left:8px;
             }
+            &:nth-of-type(3){
+                width:70px;
+                padding:0;
+            }
             // &:nth-of-type(4){
             //     background: #6acccb;
             // }
@@ -1241,7 +1334,7 @@
     }
     .searcherBtn{
         height:30px;
-        width:20%;
+        width:60px;
         min-width: 70px;
         text-align: center;
         line-height: 30px;
@@ -1251,11 +1344,14 @@
     }
     .unionState .handle{
         margin-right:20px;
+        min-width: 590px;
     }
     .unionState .handle>a{
-        float:left;
+        float:right;
         min-width:50px;
-        margin-left:10px;
+    }
+    .unionState .handle>a>li.more:hover{
+        opacity:1;
     }
     .unionState .handle>a>li{
         border:0;
@@ -1267,7 +1363,7 @@
         background: #00b7ee;
         width:100%;
         font-size:14px;
-        min-width:50px;
+        width:50px;
         height:30px;
         line-height: 30px;    
         margin-right: 0;
@@ -1300,11 +1396,12 @@
     .asideNav{
         width:55px;
         position:absolute;
-        right:10px;
+        right:0px;
         top:0px;
-        height: 90%;
-         box-shadow:0 0 20px 2px #ccc;
-        background: #fff;
+        height: 95%;
+        min-height:490px;
+        background: #fff;  
+        box-shadow:0 0 20px 2px #ccc;
         >div:first-of-type{
             height:34px;
             line-height: 34px;
@@ -1325,13 +1422,15 @@
             color:#04a9f4;
         }
         .monthsContainer{
-            height:90%;
-            overflow: hidden;
+            height:100%;
+            overflow-y:scroll;
+            overflow-x: hidden;     
             position: relative;
+            left:7px;     
+            width:70px;
             >ul.months{
-                position: absolute;
-                left:7px;
-                transition: all 0.8s linear;
+                position: relative;
+                left:-5px;
                >li{
                    >ul> li{
                        &:nth-of-type(2):after,&:nth-of-type(1):after{
@@ -1347,7 +1446,13 @@
                            top:-12px;
 
                        }
-
+                       &:first-of-type{
+                           margin-top:0;
+                       }
+                       &:first-of-type:after{
+                           content:"";
+                           height:0;
+                       } 
                        position: relative;
                        width:40px;
                        height:40px;
@@ -1753,7 +1858,7 @@
         position: absolute;
         width:100%;
         height:100%;
-        background: rgba(0,0,0,0.3);
+        background: rgba(0,0,0,0.5);
         .voucherContainer{        
           width:80%;
           position:absolute;

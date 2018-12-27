@@ -53,13 +53,13 @@
                 <a @click.prevent="routerTo('/admin/orgin/edit')">
                     <li>修改</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>备份</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>恢复</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>导入</li>
                 </a>
             </ul>
@@ -432,7 +432,7 @@
 
     .formData > ul:first-child > li:last-of-type {
         width: 15%;
-        border-right: 1px solid #2780d1;
+        /*border-right: 1px solid #2780d1;*/
     }
 
     .formData > ul > li:first-child {

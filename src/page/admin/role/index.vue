@@ -32,7 +32,7 @@
                 v-loading="loading"
                 ref="roleListTable"
                 highlight-current-row
-                :header-cell-style="{background:'#2780d1',color:'#fff'}"
+                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
                 @row-click="handleClickRow">
                 <el-table-column label="序号" type="index" width="50"></el-table-column>
                 <el-table-column prop="EnCode" label="角色编码" sortable width="120"></el-table-column>

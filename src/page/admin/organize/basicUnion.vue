@@ -45,13 +45,13 @@
                 <a @click.prevent="routerTo('/admin/orgin/edit')">
                     <li>修改</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>备份</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>恢复</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+                <a>
                     <li>导入</li>
                 </a>
             </ul>
@@ -71,7 +71,7 @@
                         <span>会计</span>
                     </div>
                 </li>
-                <li>启用</li>
+                <li>启用/停用</li>
             </ul>
             <ul class="formDataItems">
                 <li :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item.PhId)"
@@ -89,7 +89,7 @@
                             <label><input :name="item.uid" type="radio" value="0" v-model="item.EnabledMark"
                                           @click="changeEnable(item.PhId, item.EnabledMark)">启用</label>
                             <label><input :name="item.uid" type="radio" value="1" v-model="item.EnabledMark"
-                                          @click="changeEnable(item.PhId, item.EnabledMark)">禁止</label>
+                                          @click="changeEnable(item.PhId, item.EnabledMark)">停用</label>
                         </li>
                     </ul>
                 </li>
@@ -147,8 +147,8 @@
                 ],
                 unionStateValues: [
                     {id: "", name: '全部'},
-                    {id: "0", name: '激活'},
-                    {id: "1", name: '未激活'}
+                    {id: "0", name: '启用'},
+                    {id: "1", name: '停用'}
                 ],
                 userInfoCssList: [],
                 userInfo: [],
@@ -380,7 +380,7 @@
     }
 
     .formData > ul:first-child > li:last-of-type {
-        border-right: 1px solid #2780d1;
+        /*border-right: 1px solid #2780d1;*/
     }
 
     .formDataItem > li:first-child, .formData > ul:first-child > li:first-child {

@@ -2,28 +2,34 @@
     <div class="voucherList">               
         <div class="voucherNav">
             <ul>
-                <router-link to="/home"><li >新增</li></router-link>
-                <a @click.prevent="handle('update')"><li >修改</li></a>
-                <a @click.prevent="handle('delete')"><li >删除</li></a>
-                <a @click.prevent="handle('audit')"><li >审核</li></a>
-                <a @click.prevent="handle('unaudit')"><li >反审核</li></a>
-                <a @click.prevent="handle('copy')"><li >复制</li></a>
-                <a @click.prevent="handle('cut')"><li >剪切</li></a>
-                <a @click.prevent="handle('chongh')"><li >冲红</li></a>
-                <a @click.prevent="handle('reset')"><li >凭证重排</li></a>
-                <a @click.prevent="handle('upload')">
-                    <li >
-                        <div @click.stop="1">导入</div>                       
+                <a @click.prevent="handle('fresh')" style="background:#fff;width:30px;min-width:30px;border-radius:50%;"><li ><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
+                    <li class="more" style="width:80px">
+                        <ul >
+                            <li>更多</li>
+                            <li  @click.prevent="addVoucher('copy')">复制</li>
+                            <li  @click.prevent="addVoucher('cut')">剪切</li>
+                            <li  @click.prevent="addVoucher('chongh')">冲红</li>
+                            <li @click.prevent="addVoucher('reset')">凭证号重排</li>
+                        </ul>
                     </li>
                 </a>
+                <a @click.prevent="handle('print')"><li >打印</li></a>
                 <a @click.prevent="handle('download')">
                     <li  >
                         <span>导出</span>
                     </li>
                 </a>
-                <a @click.prevent="handle('print')"><li >打印</li></a>
-                <a @click.prevent="handle('fresh')"><li style="background:#fff;width:30px;min-width:30px;border-radius:50%;"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
-                
+                 <a @click.prevent="handle('upload')">
+                    <li >
+                        <div @click.stop="1">导入</div>                       
+                    </li>
+                </a>
+                 <a @click.prevent="handle('unaudit')"><li >反审核</li></a>    
+                <a @click.prevent="handle('audit')"><li >审核</li></a>    
+                <a @click.prevent="handle('delete')"><li >删除</li></a>
+                <a @click.prevent="handle('update')"><li >修改</li></a>
+                <router-link to="/home"><li >新增</li></router-link>          
             </ul>
         </div>
         <div class="voucherSelect">
@@ -194,8 +200,7 @@
             <file-upload  @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></file-upload>
         </el-dialog>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" @msg-click="getMsgData" v-if="saasMessage.msgShow"></saas-msg>
-
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -288,7 +293,7 @@
                 fileVisible:false,
                 imglist:[], //文件上传的内容************
                 saasMessage:{
-                    msgShow:false,  //消息弹出框*******
+                    visible:false,  //消息弹出框*******
                     message:'', //消息主体内容**************
                     delay:0
                 }
@@ -306,29 +311,49 @@
                     case 'audit'://审核**********  
                     console.log(item,item.Verify)
                         if(!item.PhId){
-                            this.$message("请先选择凭证!");
+                            this.saasMessage={
+                                message:"请先选择凭证!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         if(item.Verify){
-                            this.$message("该凭证已审核!");
+                             this.saasMessage={
+                                message:"该凭证已审核!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         this.audit(true,item.PhId);
                         break;
                     case 'unaudit'://反审核************
                         if(!item.PhId){
-                            this.$message("请先选择凭证!");
+                            this.saasMessage={
+                                message:"请先选择凭证!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         if(!item.Verify){
-                            this.$message("该凭证还未审核,请先审核!");
+                            this.saasMessage={
+                                message:"该凭证还未审核,请先审核!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         this.audit(false,item.PhId);
                         break;
                     case 'delete' :
                         if(!item.PhId){
-                            this.$message("请先选择凭证!");
+                           this.saasMessage={
+                                message:"请先选择凭证!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         var data1={
@@ -348,7 +373,11 @@
                         break;
                     case 'copy':
                         if(!item.PhId){
-                            this.$message("请先选择凭证!");
+                            this.saasMessage={
+                                message:"请先选择凭证!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         this.voucherDataList.data.Mst=item;
@@ -359,7 +388,11 @@
                         break;
                     case 'cut':
                         if(!item.PhId){
-                            this.$message("请先选择凭证!");
+                            this.saasMessage={
+                                message:"请先选择凭证!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         this.voucherDataList.data.Mst=item;
@@ -369,7 +402,11 @@
                         break;
                     case 'chongh':
                         if(!item.PhId){
-                            this.$message("请先选择凭证!");
+                            this.saasMessage={
+                                message:"请先选择凭证!",
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }
                         this.voucherDataList.data.Mst=item;
@@ -442,13 +479,13 @@
                         if(res.Status=='success'){
                             if(bool){ 
                                 this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'审核成功!'
                                };
                             }else{
                                  this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'反审核成功!'
                                };
@@ -457,13 +494,13 @@
                         }else{
                             if(bool){
                                  this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'审核失败!'
                                };
                             }else{
                                  this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'反审核成功!'
                                };
@@ -481,13 +518,13 @@
                         loading.close();      
                         if(res.Status=='success'){
                              this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'删除成功!'
                                };
                         }else{
                              this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -660,7 +697,7 @@
                            loading.close();      
                            if (res.Status == 'success') {
                                 this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -670,7 +707,7 @@
                                this.getvoucherList(); 
                            } else {
                                 this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -750,7 +787,7 @@
                                         }
                                     } else {
                                          this.saasMessage={
-                                            msgShow:true,
+                                            visible:true,
                                             delay:3000,
                                             message:res.Msg
                                         };
@@ -816,7 +853,7 @@
                            loading.close();      
                            if (res.Status == 'success') {
                                 this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -855,7 +892,6 @@
                 let base=httpConfig.getAxiosBaseConfig();
                 this.superSearchVal.date1=this.dateTurn(this.superSearchVal.date1)
                 this.superSearchVal.date2=this.dateTurn(this.superSearchVal.date2)
-                const loading1=this.$loading();
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -879,25 +915,25 @@
                 this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         if(res.Status=='success'){
-                            this.$message(res.Msg);
-                            loading1.close();
+                            this.saasMessage={
+                                message:res.Msg,
+                                delay:3000,
+                                visible:true
+                            };
                             return;
                         }  
                         if(str=='yes'){
-    
                             window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
-                            loading1.close();
                             return;
                         } 
-              
                         if(res.Record.length<=0){
                             this.$message('无法找到该凭证!')
                         } else{
                             this.voucherList= res.Record;
                         }
-                         loading1.close();
+
                     })
-                    .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});loading1.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});})
             },
             getChecked(){
                 var data={
@@ -1115,14 +1151,7 @@
             // ...mapActions({
             //     uploadFile: 'uploadFile/Voucherupload'
             // }),
-            //获取message传值*****
-            getMsgData(data){
-                this.saasMessage={
-                    msgShow:false,
-                    message:'',
-                    delay:0
-                }
-            },
+            
         },
         computed:{
             ...mapState({
@@ -1435,12 +1464,19 @@
         min-width: 920px;
         height:93%;
         .voucherNav>ul{
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: flex-end;
-            align-items: center;
             margin-bottom: 10px;
-            li{
+            position:relative;
+            z-index:2;
+            >a:nth-of-type(2):hover{
+                opacity:1;
+            }
+            &:last-of-type:after{
+                    clear:both;
+                    content:"";
+                    display: block;
+                }
+            >a{
+                float:right;
                 border:0;
                 color:#fff;
                 border-radius: 3px;
@@ -1449,16 +1485,22 @@
                 margin-left:10px;
                 cursor:pointer;
                 width:60px;
+
                 text-align: center;
                 background: #00b7ee;
                 &:hover{
                     opacity: 0.8;
                    
                 }
-                >img{
-                    height:100%;
+                >li{
+                    
+                    >img{
+                        height:100%;
+                        width:100%;
+                    }
                 }
             }
+            
         }
         .voucherSelect{
             display: flex;
@@ -1669,7 +1711,7 @@
         height:100%;
         top:0;
         left:0;
-        background: rgba(0,0,0,0.3);
+        background: rgba(0,0,0,0.5);
         .voucherContainer{
           background: #fff;
           width:80%;
@@ -1955,7 +1997,39 @@
 .orgform .el-form-item{
     margin-bottom: 2px;
 }
-
+.more{
+        height:30px;
+        overflow:hidden; 
+        position: absolute;
+        z-index: 2;
+        width:100%;
+        margin:0;  
+        opacity:1;         
+        >ul{
+            width:100%;  
+            >li{
+                width:100%;     
+                background: #fff;         
+                color:#999;
+                &:hover{
+                    background:#ccc;
+                    color:#fff;
+                }
+                &:first-of-type{
+                    background: #00b7ee;
+                    border-radius: 3px;
+                    color:#fff;
+                }
+            
+            }
+        }
+        
+        &:hover{
+            height:auto;
+            background: #00b7ee;  
+        }
+        
+    }
 </style>
 <style>
     .highGradeCss .el-input--prefix .el-input__inner {
