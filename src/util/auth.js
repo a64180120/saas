@@ -83,7 +83,7 @@ const authToken = {
     // 当前是菜单
     getMenuStatus: function(){
         //return this.getCookies(this.menuKey)
-        return  getStore({ name: this.menuKey })|| []
+        return  getStore({ name: this.menuKey,type: 'session' })|| []
     },
 
     // 设置菜单缓存
