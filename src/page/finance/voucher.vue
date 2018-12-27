@@ -16,8 +16,7 @@
                 </li>
                 <li class="flexPublic">
                     <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
-                    <div @click.stop="testFile" class="uploaderTitle"></div>
-                    
+                    <div @click.stop="picUploadShow" class="uploaderTitle"></div>               
                 </li>
             </ul>
         </div>
@@ -85,7 +84,7 @@
                                         </div>
                                     </li>
                                     <li v-show="item.SubjectCode"><span v-if="item.balance">余额:</span><span v-if="item.balance">{{item.balance}}</span></li>
-                                    <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
+                                    <li v-show="kemuSel[index].checked" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
                             <searchSelect style="z-index:10" :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
@@ -188,7 +187,7 @@
             </ul>
         </div>
         <!-- 附件弹出框 -->
-        <el-dialog title="选择附件"  :visible.sync="fileVisible" width="40%">
+        <el-dialog title="选择附件"  :visible.sync="picVisible" :modal=false width="40%">
             <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
         </el-dialog>
     </div>
@@ -227,9 +226,9 @@
             //附件****************
             Attachements:[],
             loading: false,
-            fileVisible:false,
-            imglist:[],
-            balance:'',
+            picVisible:false,     //图片上传显示
+            imglist:[],//上传附件参数
+            balance:'',//余额
             voucherInfo:[],//凭证内数据****************
             deleteDtls:[],//删除行的数据************************
             itemlists:[],//科目组件参数**************
@@ -242,7 +241,7 @@
             addIcon:[],//添加删除的按钮样式参数****************
             kemuSel:[],//科目选择框显示隐藏样式参数************
             assistItem:[],//辅助项显示隐藏样式参数********************
-            assistItemMask:false,
+            assistItemMask:false,//辅助项遮罩********
             assistCheck:true,
             sideDateNew:'',
             nowTime:new Date,
@@ -455,7 +454,7 @@
                 }
             },
             //获取最新一个凭证
-            getFreshVoucher(){
+            getFreshVoucher(){console.log(222)
                 const loading1=this.$loading();
                 if(!this.sideDateNew){
                     this.sideDateNew=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth()
@@ -608,8 +607,7 @@
                 this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
-            itemClick(childMsg){
-               
+            itemClick(childMsg){               
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
@@ -637,7 +635,7 @@
                         if(res.Record.length==0){
                             this.voucherInfo[Msg.id].balance=0
                         }else{
-                             this.voucherInfo[Msg.id].balance=res.Record[0].j_sum-res.Record[0].d_sum;
+                             this.voucherInfo[Msg.id].balance=(res.Record[0].j_sum-res.Record[0].d_sum).toFixed(2);
                         }
                         if(this.voucherInfo[Msg.id].balance==0){
                             this.voucherInfo[Msg.id].balance='0';
@@ -680,13 +678,16 @@
             },
             //金额输入框键入*******************
             inputBlur($event,item,value){
+                if(!item.SubjectCode) {
+                    item.money[value]='';
+                } 
                 var input;
                 if($event.target){
                     input=$event.target;
                 }else{
                     input=$event;
                 }
-                if(!this.countJie||!this.countDai){
+                if(!this.countJie||!this.countDai){  //数据监听不好判断数组,尝试加了countJIe中间值尝试******后续研究
                     this.countJie=0;
                     this.countDai=0;
                 }else{
@@ -695,14 +696,14 @@
                 }
                 if(item.money[value]){
                     item.money[value]=parseFloat(item.money[value]);    
-                }               
+                }   
+                          
                 var val=item.money[value];
                 item.moneyInput[value]=false;
                 var children = input.parentNode.parentNode.children;
                 this.moneyInputMask=false;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
-                console.log(item)
                 //清空另一个金额框的值*************
                 if(value=='jiefang'&&item.money[value]){
                     item.money.daifang='';
@@ -854,8 +855,10 @@
             //         this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
             //     })
             // },
-            testFile(){
-                this.fileVisible=true;
+            picUploadShow(){
+                console.log(this.picVisible)
+                this.picVisible=true;
+                console.log(this.picVisible)
             },
             removeimg(item,deleValue) {//
                this.imglist=item;

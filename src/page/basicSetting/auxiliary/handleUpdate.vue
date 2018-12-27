@@ -8,7 +8,8 @@
             <ul class="contentItem">
                 <li>
                     <div>辅助项编码</div>
-                    <div>{{formData.BaseCode}}</div>
+                    <div v-if="PhIdList.name=='add'">{{'00'+(parseInt(PhIdList.list.length+1))}}</div>
+                    <div v-else>{{formData.BaseCode}}</div>
                 </li>
                 <li>
                     <div>辅助项名称</div>
