@@ -13,20 +13,7 @@
                 </ul>
             </div>
             <ul class="handle">
-                <a>
-                    <li class="mode" style="width:60px;">
-                        <span >模板</span>
-                        <span @click.prevent="addVoucher('modelList')" >引用模板</span>
-                        <span @click.prevent="addVoucher('keepModel')">存为模板</span>
-                    </li>
-                </a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li >保存</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li >反审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a>           
-                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a> 
+                <a @click.prevent="addVoucher('fresh')" style="width:30px;min-width:30px;margin-left:10px"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
                 <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
                     <li class="more" style="width:80px">
                         <ul >
@@ -38,7 +25,29 @@
                         </ul>
                     </li>
                 </a>
-                <a @click.prevent="addVoucher('fresh')" style="width:40px;margin-left:10px"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a> 
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a> 
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li >反审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')"><li >修改</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li >保存</li></a>
+                <a>
+                    <li class="mode" style="width:60px;">
+                        <span >模板</span>
+                        <span @click.prevent="addVoucher('modelList')" >引用模板</span>
+                        <span @click.prevent="addVoucher('keepModel')">存为模板</span>
+                    </li>
+                </a>
+                
+                
+                
+                
+                
+                          
+                
+                
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -1087,7 +1096,58 @@
             },
             //剪切*****************
             cut(data1){
-                this.$message('功能暂未开放!')
+                var url='Add';
+                var Vdata=this.voucherDataList.data; 
+               if(Vdata.Mst.Dtls.length<=0){
+                   this.$message('请输入内容!')
+                   return;
+               }
+               if(Vdata.Mst.PDate){
+                   if(typeof(Vdata.Mst.PDate)=='object'){
+                       Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
+                       Vdata.Mst.PMonth=Vdata.Mst.PDate.getMonth()+1;
+                       var date=Vdata.Mst.PDate.getDate();
+                       Vdata.Mst.PDate=(Vdata.Mst.Uyear+'-')+(Vdata.Mst.PMonth<10?('0'+Vdata.Mst.PMonth):Vdata.Mst.PMonth)+'-'+((date)<10?('0'+date):date);
+                   }else {
+                       Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
+                   }
+               }else{
+                   this.$message('请输入凭证会计期!')
+                   return;
+               }
+               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                   var data = {
+                       uid: this.uid,
+                       orgid: this.orgid,
+                       orgcode: this.orgcode,
+                       infoData: this.voucherDataList.data
+                   }
+                   if (this.voucherDataList.data.Mst.PhId) {
+                       url = 'Update';
+                   }
+                   const loading=this.$loading();
+                   this.$axios.post('/PVoucherMst/Post' + url, data)
+                       .then(res => {
+                           loading.close();      
+                           if (res.Status == 'success') {
+                                this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:res.Msg
+                               };
+                               this.delete(data1);
+                               if(str=='print'){
+                                   this.printContent();
+                               }
+                           } else {
+                               this.$message('保存失败,请重试!')
+                           }
+                       })
+                       
+                       .catch(err =>{console.log(err);loading.close()} )
+               }else{
+                   this.$message('当前月份已结账,无法修改凭证!')
+               }
             },
         },
         computed:{
@@ -1127,7 +1187,7 @@
        // margin-bottom: 30px;
         >ul{
             
-            >a:first-of-type{
+            >a:last-of-type{
                 position:relative;
                 width:70px;
                 height:30px;
@@ -1287,7 +1347,7 @@
         min-width: 590px;
     }
     .unionState .handle>a{
-        float:left;
+        float:right;
         min-width:50px;
     }
     .unionState .handle>a>li.more:hover{
@@ -1798,7 +1858,7 @@
         position: absolute;
         width:100%;
         height:100%;
-        background: rgba(0,0,0,0.3);
+        background: rgba(0,0,0,0.5);
         .voucherContainer{        
           width:80%;
           position:absolute;
