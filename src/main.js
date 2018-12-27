@@ -56,6 +56,8 @@ Vue.use(getPdf)
 //     });
 // }  
 
+
+
 new Vue({
     i18n,
     axios,

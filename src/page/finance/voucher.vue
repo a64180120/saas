@@ -84,7 +84,7 @@
                                         </div>
                                     </li>
                                     <li v-show="item.SubjectCode"><span v-if="item.balance">余额:</span><span v-if="item.balance">{{item.balance}}</span></li>
-                                    <li v-show="item.SubjectCode" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
+                                    <li v-show="kemuSel[index].checked" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
                             <searchSelect style="z-index:10" :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
@@ -454,7 +454,7 @@
                 }
             },
             //获取最新一个凭证
-            getFreshVoucher(){
+            getFreshVoucher(){console.log(222)
                 const loading1=this.$loading();
                 if(!this.sideDateNew){
                     this.sideDateNew=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth()
@@ -607,8 +607,7 @@
                 this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
-            itemClick(childMsg){
-               
+            itemClick(childMsg){               
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
@@ -636,7 +635,7 @@
                         if(res.Record.length==0){
                             this.voucherInfo[Msg.id].balance=0
                         }else{
-                             this.voucherInfo[Msg.id].balance=res.Record[0].j_sum-res.Record[0].d_sum;
+                             this.voucherInfo[Msg.id].balance=(res.Record[0].j_sum-res.Record[0].d_sum).toFixed(2);
                         }
                         if(this.voucherInfo[Msg.id].balance==0){
                             this.voucherInfo[Msg.id].balance='0';
@@ -679,13 +678,16 @@
             },
             //金额输入框键入*******************
             inputBlur($event,item,value){
+                if(!item.SubjectCode) {
+                    item.money[value]='';
+                } 
                 var input;
                 if($event.target){
                     input=$event.target;
                 }else{
                     input=$event;
                 }
-                if(!this.countJie||!this.countDai){
+                if(!this.countJie||!this.countDai){  //数据监听不好判断数组,尝试加了countJIe中间值尝试******后续研究
                     this.countJie=0;
                     this.countDai=0;
                 }else{
@@ -694,14 +696,14 @@
                 }
                 if(item.money[value]){
                     item.money[value]=parseFloat(item.money[value]);    
-                }               
+                }   
+                          
                 var val=item.money[value];
                 item.moneyInput[value]=false;
                 var children = input.parentNode.parentNode.children;
                 this.moneyInputMask=false;
                 this.$forceUpdate();
                 this.moneyTurn(val,children);
-                console.log(item)
                 //清空另一个金额框的值*************
                 if(value=='jiefang'&&item.money[value]){
                     item.money.daifang='';
