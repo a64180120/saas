@@ -123,14 +123,26 @@
                             <li>{{item.Pdate.slice(0,10)}}</li>
                             <li class="align-center" style=""><a @click="showvoucher" :title="item.PhIdMst">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
-                            <li class="align-right">{{item.JSum=='0.00'?'':(item.JSum)}}</li>
-                            <li class="align-right" :title="item.DSum">{{item.DSum=='0.00'?(item.Abstract=='本月累计'||item.Abstract=='本年累计'?'0.00':''):(item.DSum)}}</li>
+                            <template v-if="item.JSum==0">
+                                <li></li>
+                            </template>
+                            <template v-else>
+                                <li class="align-right">{{item.JSum |NumFormat}}</li>
+                            </template>
+                            <template v-if="item.DSum==0">
+                                <li></li>
+                            </template>
+                            <template v-else>
+                                <li class="align-right">{{item.DSum |NumFormat}}</li>
+                            </template>
+
                             <li>{{JD[item.DType]}}</li>
                             <template v-if="item.Pno!='本月累计'&&item.Pno!='本年累计'">
                                 <li></li>
                             </template>
                             <template v-else>
-                                <li class="align-right">{{item.Balance | NumFormat}}</li>
+
+                                <li class="align-right">{{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}</li>
                             </template>
 
                         </ul>
@@ -213,7 +225,8 @@
                 endCode:'',
                 startMoney:'',
                 endMoney:'',
-                que:''
+                que:'',
+                KBalanceType:''//用于判断本月累计和本年累计计算方式
             }
         },
         created() {
@@ -246,7 +259,6 @@
         methods: {
             //显示凭证
             showvoucher:function(val){
-                console.log(val.target.title);
 
                 this.getVoucherData(val.target.title);
 
@@ -315,13 +327,11 @@
                 }
                 const loading2=this.$loading();
                 this.$axios.get('/PVoucherMst/GetVoucher',{params:data})
-                    .then(res=>{console.log(res)
+                    .then(res=>{
                         if(res.Status=='success'){
                             this.voucherDataList.data.Mst=res.Data;
-                            console.log(this.voucherDataList.data.Mst);
                             this.voucherDataList.bool=true;
                             this.resetVoucher();
-                            console.log(this.voucherDataList)
                         }else{
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
@@ -370,9 +380,8 @@
                 this.loading = true;
                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
-
                         this.loading = false;
-                        res.Record=this.changeData(res.Record);
+                        //res.Record=this.changeData(res.Record);
 
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
@@ -404,10 +413,8 @@
             //查询月初数据
             getDataByMonth() {
                 this.dataInfoMonth={};
-                console.log(this.dataInfoMonth);
                 let year='';
                 let Pmonth='';
-                console.log('==============');
                 if(this.date1.choosedYear==''){
                     let currentYear = new Date();
                     let currentyear=currentYear.getFullYear(currentYear);
@@ -452,7 +459,6 @@
                 let that=this;
                 this.$axios.get("/PVoucherMst/GetDetailAccount_MonthStart",{params:data})
                     .then(res=>{
-                        console.log(res);
                         that.loading = false;
 
                         if(res.Status==='error'){
@@ -460,7 +466,6 @@
                             return
                         }
                         that.dataInfoMonth=res;
-                        console.log(that.dataInfoMonth);
                     })
                     .catch(err=>{
                         console.log(err)
@@ -488,6 +493,7 @@
                         orgid: this.orgid,
                         infoData:queryfilter
                     }).then(res => {
+
                     this.loading = false;
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
@@ -502,6 +508,8 @@
                         this.inputCode=res[0].KCode;
                         //加载第一个科目的明细
                         this.getData(res[0]);
+                        console.log(res[0]);
+                        this.KBalanceType=res[0].KBalanceType
                     }
 
                 }).catch(error =>{
@@ -577,6 +585,8 @@
             //科目选择
             handleNodeClick(data){
                 this.selectSubject=data;
+                console.log(data);
+                this.KBalanceType=data.KBalanceType;
                 this.getData();
                 this.inputCode=data.KCode;
             },
@@ -781,6 +791,7 @@
     }
     .unionLists{
         width:20%;
+        min-width: 180px;
         align-self: flex-start;
         margin-right: 10px;
         margin-top: 10px;
