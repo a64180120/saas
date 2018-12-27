@@ -164,7 +164,16 @@
                                 <li class="align-right">{{item.BudgetTotal | NumFormat}}</li>
                                 <li class="align-right">
                                     <template v-if="item.Layers==0">
-                                        <input disabled  v-bind:code="item.SubjectCode" v-bind:value="(item.ApprovedBudgetTotal-item.BudgetTotal)| NumFormat">
+                                        <!--判断有没有子级科目，有则禁用，没有则添加输入方法-->
+                                        <template v-if="budgetList[index+1].SubjectCode.substring(0,item.SubjectCode.length)!=item.SubjectCode">
+                                            <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode" v-bind:layer="item.Layers" v-on:blur="inputLis" :value="(item.ApprovedBudgetTotal-item.BudgetTotal )| NumFormat">
+                                        </template>
+                                        <template v-else>
+                                            <input disabled  v-bind:code="item.SubjectCode" v-bind:value="(item.ApprovedBudgetTotal-item.BudgetTotal)| NumFormat">
+                                        </template>
+
+
+
                                     </template>
                                     <template v-else>
                                         <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:blur="inputLis" :value="(item.ApprovedBudgetTotal-item.BudgetTotal )| NumFormat">
@@ -316,9 +325,17 @@
                             //通过截取code确定对应的一级科目
                             let len = this.budgetList[i].SubjectCode.length;
                             let codeSub = code.substring(0,len);
-                            if(codeSub==this.budgetList[i].SubjectCode&&code.length!=len){
+                            if(codeSub==this.budgetList[i].SubjectCode){
+                                console.log(i);
 
-                                this.budgetList[i].ApprovedBudgetTotal=parseFloat(this.budgetList[i].ApprovedBudgetTotal)- (this.budgetList[index].ApprovedBudgetTotal-this.budgetList[index].BudgetTotal)+in_value;
+                                let layer=val.target.attributes.layer.value;//当前修改数据时父级菜单还是子集菜单
+                                //判断是父级科目还是子级科目
+                                //如果是子级科目，则先修改数组中父级科目的值，计算之后再修改本身的值；父级科目则先计算其他值，再修改自身
+
+                                if(layer!='0'){
+                                    this.budgetList[i].ApprovedBudgetTotal=parseFloat(this.budgetList[i].ApprovedBudgetTotal)- (this.budgetList[index].ApprovedBudgetTotal-this.budgetList[index].BudgetTotal)+in_value;
+                                }
+
                                 //判断修改的数据是在收入合计之前还是在支出合计之前
                                 if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
                                     //收入合计更改
@@ -345,7 +362,11 @@
                                 this.code_firstCount[codeSub]=parseFloat(this.budgetList[i].ApprovedBudgetTotal)-parseFloat(this.budgetList[i].BudgetTotal);
                                 //计算本年结余
                                 this.budgetList[this.specialSubIndex['BNJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal;
+                                if(layer=='0'){
+                                    this.budgetList[i].ApprovedBudgetTotal=parseFloat(this.budgetList[i].ApprovedBudgetTotal)- (this.budgetList[index].ApprovedBudgetTotal-this.budgetList[index].BudgetTotal)+in_value;
+                                }
 
+                                break;
                             }
                         }
                     }

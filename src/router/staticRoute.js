@@ -202,6 +202,12 @@ const staticRoute = [
                 path: "intercourse",
                 component: () =>import("../page/report/intercourse"),
                 meta:{ requireAuth:true,type:'page'}
+            },
+            {
+                //Supcan
+                path: "supcan",
+                component: () =>import("../page/report/supcan"),
+                meta:{ requireAuth:true ,type:'page'}
             }
         ]
     },

@@ -19,7 +19,7 @@
             </div>
         </div>
         <!--15天提示弹窗-->
-        <div style="display: block;">
+        <div :style="{'display':timerShowType?'block':'none','position':'fixed','z-index':'9999'}">
             <countdownpop></countdownpop>
         </div>
     </div>
@@ -30,6 +30,7 @@ import HeaderBar from './HeaderBar'
 import NavBar from './NavBar'
 import TagNav from './TagNav'
 import countdownpop from "../../components/countDownPop";
+import { mapState, mapGetters } from "vuex";
 import Auth from "@/util/auth"
 
 export default {
@@ -42,17 +43,26 @@ export default {
         },
         excludeList(){
             return this.$store.state.tagNav.excludeName
-        }
+        },
+        ...mapState({
+            EmpowerInfo: state => state.user.EmpowerInfo
+        })
     },
     data () {
       return {
-        collapsevule: this.collapse
+          collapsevule: this.collapse,
+          timerShowType:false
       }
     },
     created() {
         // console.log('home')
         // var config = Auth.getPConfigStatus();
-        // console.log(config)
+    },
+    mounted(){
+        //判断是否要展示15天弹窗
+        if(!this.EmpowerInfo){
+            this.timerShowType=true;
+        }
     },
     methods: {
       collapseChange: function (childValue) {

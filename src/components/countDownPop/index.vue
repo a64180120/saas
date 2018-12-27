@@ -73,7 +73,6 @@
         bottom: 0;
         width: 100%;
         background-color: rgba(0, 0, 0, 0.43);
-        z-index: 999;
     }
     .pop_content{
         width: 975px;

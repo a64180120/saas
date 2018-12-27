@@ -137,7 +137,6 @@
                             <ul class="formDataItems flexPublic">
                                 <li class=" bolder">{{item.k_name}}</li>
                                 <li></li>
-
                                 <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                                 <li class="align-right">
                                     <input disabled  v-bind:value="item.BudgetTotal | NumFormat" >
@@ -155,10 +154,17 @@
                                 <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                                 <li class="align-right">
                                     <template v-if="item.Layers==0">
-                                        <input disabled  v-bind:code="item.SubjectCode" v-bind:value="code_firstCount[item.SubjectCode] | NumFormat">
+                                        <!--判断有没有子级科目，有则禁用，没有则添加输入方法-->
+                                        <template v-if="budgetList[index+1].SubjectCode.substring(0,item.SubjectCode.length)!=item.SubjectCode">
+                                            <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode" v-bind:layer="item.Layers"  v-on:blur="inputLis" v-bind:value="item.BudgetTotal | NumFormat">
+                                        </template>
+                                        <template v-else>
+                                            <input disabled  v-bind:code="item.SubjectCode" v-bind:value="code_firstCount[item.SubjectCode] | NumFormat">
+                                        </template>
+
                                     </template>
                                     <template v-else>
-                                        <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:blur="inputLis" v-bind:value="item.BudgetTotal | NumFormat">
+                                        <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode" v-bind:layer="item.Layers"   v-on:blur="inputLis" v-bind:value="item.BudgetTotal | NumFormat">
                                     </template>
                                 </li>
                                 <li>
@@ -269,6 +275,7 @@
             inputLis:function(val){
                 let code = val.target.attributes.code.value;//当前修改数据的code
                 let index=val.target.attributes.index.value;//当前修改数据在列表中的下标
+
                 let in_value = '';
                 let numList=val.target.value.split(',');
                 for(var i in numList){
@@ -278,7 +285,6 @@
                 in_value=Number(in_value);
                 if(!isNaN(in_value)){
                     if(code=='BNSHTZ'){
-
                         this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value
                         this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                     }else if(code=='BNTZ'){
@@ -286,34 +292,62 @@
                         this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                     }
                     else{
-                        //本年投资输入
-                        for(let i in this.budgetList){
-                            //通过截取code确定对应的一级科目
-                            let len = this.budgetList[i].SubjectCode.length;
-                            let codeSub = code.substring(0,len);
-                            if(codeSub==this.budgetList[i].SubjectCode&&code.length!=len){
-                                //确定修改的对应一级科目，进行计算，先减去该科目的原数据，在加上修改后的数据，得到对应一级科目的总和
-                                this.code_firstCount[codeSub]=parseFloat(this.code_firstCount[codeSub])-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
-                                this.budgetList[i].BudgetTotal=this.code_firstCount[codeSub];
-                                this.budgetList[i].ApprovedBudgetTotal=this.budgetList[i].BudgetTotal;
-                                //判断修改的数据是在收入合计之前还是在支出合计之前
-                                if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
-                                    //收入合计更改
-                                    this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
-                                    this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal;
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
-                                }else{
-                                    //支出合计更改
-                                    this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
-                                    this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+parseFloat(this.budgetList[index].BudgetTotal)-in_value;
-                                    this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
-                                }
-                                //计算本年结余
-                                this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
-                                this.budgetList[this.specialSubIndex['BNJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal;
+                        let layer=val.target.attributes.layer.value;//当前修改数据时父级菜单还是子集菜单
+                        //判断是父级科目还是子级科目
+                        if(layer=='0'){
+
+                            //判断修改的数据是在收入合计之前还是在支出合计之前
+                            if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
+                                //收入合计更改
+                                this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal;
+                                this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
+                            }else{
+                                //支出合计更改
+                                this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
+                                this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+parseFloat(this.budgetList[index].BudgetTotal)-in_value;
+                                this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
                             }
+                            //计算本年结余
+                            this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
+                            this.budgetList[this.specialSubIndex['BNJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal;
+                            //直接修改数组中的一级科目，因为没有子级
+                            this.code_firstCount[code]=in_value;
+                            this.budgetList[index].BudgetTotal=in_value;
+                            this.budgetList[index].ApprovedBudgetTotal=in_value;
+                        }else{
+                        //本年投资输入
+                            for(let i in this.budgetList){
+                                //通过截取code确定对应的一级科目
+                                let len = this.budgetList[i].SubjectCode.length;
+                                let codeSub = code.substring(0,len);
+                                if(codeSub==this.budgetList[i].SubjectCode&&code.length!=len){
+                                    //确定修改的对应一级科目，进行计算，先减去该科目的原数据，在加上修改后的数据，得到对应一级科目的总和
+                                    this.code_firstCount[codeSub]=parseFloat(this.code_firstCount[codeSub])-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                    this.budgetList[i].BudgetTotal=this.code_firstCount[codeSub];
+                                    this.budgetList[i].ApprovedBudgetTotal=this.budgetList[i].BudgetTotal;
+                                    //判断修改的数据是在收入合计之前还是在支出合计之前
+                                    if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
+                                        //收入合计更改
+                                        this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                        this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal;
+                                        this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                        this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
+                                    }else{
+                                        //支出合计更改
+                                        this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal)-parseFloat(this.budgetList[index].BudgetTotal)+in_value;
+                                        this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
+                                        this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal=parseFloat(this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal)+parseFloat(this.budgetList[index].BudgetTotal)-in_value;
+                                        this.budgetList[this.specialSubIndex['QMGCJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['QMGCJY']].BudgetTotal;
+                                    }
+                                    //计算本年结余
+                                    this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].BudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].BudgetTotal;
+                                    this.budgetList[this.specialSubIndex['BNJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNJY']].BudgetTotal;
+                                }
+                            }
+
                         }
                     }
                     //修改该科目在总list中的数据

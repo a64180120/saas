@@ -30,7 +30,7 @@
                     <li>科目名称</li>
                     <li>核定预算数(元)</li>
                     <li>决算数(元)</li>
-                    <li>完成预算(元)</li>
+                    <li>完成预算%</li>
                     <li>说明</li>
                 </ul>
                 <template v-for="(item,index) in budgetList">
@@ -45,7 +45,7 @@
                             </li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
@@ -65,7 +65,7 @@
                             </li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
@@ -148,7 +148,7 @@
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
@@ -168,7 +168,7 @@
                             </li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
@@ -370,9 +370,15 @@
                     this.budgetList=res.Record;
                     this.dataInfo=dataInfo;
                     this.getInfoStyle();
-                    /*for(let j in this.dataInfo){
+                    for(let j in this.dataInfo){
+                        if(j==0){
+                            this.timer(j,0,99)
+                        }
+                       if(j==1){
+                           this.timer(j,0,59)
+                       }
                         this.timer(j,0,this.dataInfo[j].zhixing)
-                    }*/
+                    }
                 }).catch(res=>{
                     console.log(res);
                 })
@@ -403,8 +409,14 @@
                 let that=this;
                 setTimeout(function(){
                     if(str<data){
-                        str++;
-                        that.dataInfo[index].zhixing=str;
+                        let i=Math.ceil(data/50);
+                        if(str+i<data){
+                            str+=i;
+                        }else{
+                            str=data;
+                        }
+
+                        that.dataInfo[index].zhixing=Math.floor(str);
                         if(str<30){
                             that.infoStyle[index]=`#ff0000`;
                         }else if(str>=30&&str<50){
@@ -416,7 +428,7 @@
                         }
                         that.timer(index,str,data);
                     }
-                },35)
+                },30)
             },
             postBalanceSheetExcel:function() {
                 let param = {'uid':this.uid,
@@ -675,6 +687,7 @@
         border-radius: 15px;
         background: #ebeef5;
         margin-top:13px;
+        overflow: hidden;
     }
     .progressContainer>div{
         text-align: left;
