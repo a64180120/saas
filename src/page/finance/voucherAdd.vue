@@ -62,15 +62,17 @@
         <div class="asideNav">
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
-            <div class="monthsContainer">
-                <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)" @wheel.stop="monthsSel" id="scrollMonth" style="bottom: 0;" class="months">
-                    <li v-for="item of nowTime.getFullYear()-2000"  :key="item">
-                        <ul>
-                            <li>{{2000+item}}</li>
-                            <li :class="{active:sideDate.split('-')[1]==i&&2000+item==sideDate.split('-')[0],unchecked:i>checkedTime&&2000+item==nowTime.getFullYear(),futureM:2000+item==nowTime.getFullYear()&&i>nowTime.getMonth()+1}" @click="sideMonth(i,item+2000)" v-for="i of 12" :key="i">{{i}}</li>
-                        </ul>
-                    </li>
-                </ul>
+            <div style="overflow:hidden;height:87%">
+                <div class="monthsContainer">
+                    <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
+                        <li v-for="item of nowYear-2000"  :key="item">
+                            <ul>
+                                <li>{{nowYear-item+1}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1==nowYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <!--会计期弹窗*************************************-->
             <div v-show="yearSelCss" class="yearsContainer">
@@ -181,7 +183,7 @@
             </div>
         </div>
         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" @msg-click="getMsgData" v-if="saasMessage.msgShow"></saas-msg>
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -229,6 +231,7 @@
             newAddList:[],
             yearSelCss:false,
             nowTime:new Date,
+            nowYear:(new Date).getFullYear(),
             monthsSelCss:'kuaiji',
             mouseDown:false,
             mouseStartY:'',
@@ -240,7 +243,7 @@
             voucherMask:false,
             
             saasMessage:{
-                msgShow:false,  //消息弹出框*******
+                visible:false,  //消息弹出框*******
                 message:'', //消息主体内容**************
                 delay:0
             }
@@ -254,13 +257,6 @@
         },
         mounted(){  
             this.getChecked();
-            if (document.addEventListener){
-                var month= document.getElementById('scrollMonth');
-                month.addEventListener('DOMMouseScroll',this.foxMonthSel)
-            }
-        },
-        destroyed() {
-            document.removeEventListener('scroll', this.handleScroll);   //  离开页面清除（移除）滚轮滚动事件
         },
         methods:{
             //操作列表按钮********
@@ -393,10 +389,9 @@
                    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
-                          
                            if (res.Status == 'success') {
                                this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -487,7 +482,7 @@
                         loading.close();
                         if(res.Status=='success'){
                             this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -500,7 +495,7 @@
                             setTimeout(delay,10);
                         }else{
                             this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -526,13 +521,13 @@
                         if(res.Status=='success'){
                             if(bool){
                                 this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'审核成功!'
                                };
                             }else{
                                  this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:'反审核成功!'
                                };
@@ -552,7 +547,7 @@
                     .then(res=>{
                         if(res.Status=='success'){
                              this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -588,6 +583,7 @@
             nextMonthHandle(data){
                 if(data===false){
                     this.nextMonthCss=false;
+                    this.getChecked();
                 }else{
                     console.log(data)
                 }
@@ -831,7 +827,7 @@
                         loading1.close();
                         if(res.Status=='success'){
                             this.saasMessage={
-                                  msgShow:true,
+                                  visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
@@ -1093,14 +1089,6 @@
             cut(data1){
                 this.$message('功能暂未开放!')
             },
-            //获取message传值*****
-            getMsgData(data){
-                this.saasMessage={
-                    msgShow:false,
-                    message:'',
-                    delay:0
-                }
-            }
         },
         computed:{
             ...mapState({
@@ -1348,11 +1336,12 @@
     .asideNav{
         width:55px;
         position:absolute;
-        right:10px;
+        right:0px;
         top:0px;
-        height: 90%;
-         box-shadow:0 0 20px 2px #ccc;
-        background: #fff;
+        height: 95%;
+        min-height:490px;
+        background: #fff;  
+        box-shadow:0 0 20px 2px #ccc;
         >div:first-of-type{
             height:34px;
             line-height: 34px;
@@ -1373,13 +1362,15 @@
             color:#04a9f4;
         }
         .monthsContainer{
-            height:90%;
-            overflow: hidden;
+            height:100%;
+            overflow-y:scroll;
+            overflow-x: hidden;     
             position: relative;
+            left:7px;     
+            width:70px;
             >ul.months{
-                position: absolute;
-                left:7px;
-                transition: all 0.8s linear;
+                position: relative;
+                left:-5px;
                >li{
                    >ul> li{
                        &:nth-of-type(2):after,&:nth-of-type(1):after{
@@ -1395,7 +1386,13 @@
                            top:-12px;
 
                        }
-
+                       &:first-of-type{
+                           margin-top:0;
+                       }
+                       &:first-of-type:after{
+                           content:"";
+                           height:0;
+                       } 
                        position: relative;
                        width:40px;
                        height:40px;

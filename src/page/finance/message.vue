@@ -1,13 +1,12 @@
 <template>
-    <div class="saasMsgCon">
+    <div v-show="visible" class="saasMsgCon">
         <div class="saasMsg">
             <p class="title"><span>提示</span>
                 <i @click="close"></i>
             </p>
             <div>
-                <div class="imgCon"><img src="../../assets/images/message.png"></div>
-                <span>{{message}}</span>
-                <span v-if="delay">&nbsp;({{delayTime}}s) 后自动关闭</span>
+                <div class="imgCon"><img src="../../assets/images/message.png"></div>  
+                <span v-if="delay">{{message}}&nbsp;({{delayTime}}s) 后自动关闭</span>
             </div>
             <div>
                 <span @click="close" class="btn">立即关闭</span>
@@ -21,21 +20,22 @@
 export default {
   data() {
     return {
-      delayTime:''
+        delayTime:''
     };
   },
   mounted(){
-      var vm=this;
-     vm.delayTime=parseInt(vm.delay/1000+1);
-     vm.$nextTick(vm.oneTime(vm));
+    //  var vm=this;
+    //  vm.delayTime=parseInt(vm.delay/1000+1);
+    //  console.log(vm.delayTime,vm.delay)
+    //  vm.$nextTick(vm.oneTime(vm));
   },
   methods:{
       close(){
-          this.$emit('msg-click',false);
+          this.$emit('update:visible',false);
       },
       oneTime(vm){
           var vm=this;
-          vm.delayTime=vm.delayTime-1;
+          vm.delayTime--;
           if(vm.delayTime>0){
             setTimeout(vm.oneTime,1000)
           }else{
@@ -45,8 +45,19 @@ export default {
   },
   props:{
       delay:Number,
-      message:String
+      message:String,
+      visible:{type:Boolean}
   },
+  computed:{
+      
+  },
+  watch:{
+      visible(val){
+          var vm=this;
+          vm.delayTime=parseInt(vm.delay/1000);
+          vm.oneTime(vm);
+      }
+  }
 }
 </script>
 
@@ -57,7 +68,7 @@ export default {
     top:0;
     width:100%;
     height:100%;
-    z-index:999;
+    z-index:2999;
     background:rgba(0,0,0,0.5);
     >.saasMsg{
         width: 370px;
@@ -75,6 +86,7 @@ export default {
             &:first-of-type{
                 height:50%;
                 font-size:16px;
+                overflow-y: auto;
             }
             &:nth-of-type(2){
                 margin-top: 10px;
