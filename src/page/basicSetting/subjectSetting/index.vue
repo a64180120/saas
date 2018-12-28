@@ -383,7 +383,7 @@ export default {
     },
     //修改保存   
     async saveEdit(formName) {
-           let selectSub = this.singleSelection;
+           let submodel = this.singleSelection[0]||'';
           //获取缓存 的用户 组织，角色基本信息
           let cookiesUser = Auth.getUserInfoData();
 
@@ -392,14 +392,33 @@ export default {
            * 新增科目
            *  */ 
           var subjectinfo={
-            PhId:this.form.PhId,
             PersistentState:2,
+            PhId:this.form.PhId,
+            Layers:submodel.Layers,
             KCode:this.form.KCode,
             KName:this.form.KName,
+            KBalanceType:this.form.KBalanceType,
+            KProperty:submodel.KProperty,
             KType:this.form.KType,
-            KBalanceType:this.form.KBalanceType
-            //IsSystem:selectSub[0].IsSystem,
-            //ParentId:selectSub[0].PhId
+            KAmountCheck:submodel.KAmountCheck,
+            KForeignCheck:submodel.KForeignCheck,
+            KDepartmentCheck:submodel.KDepartmentCheck,
+            OrgId:submodel.OrgId,
+            OrgCode:submodel.OrgCode,
+            IsLast:submodel.IsLast,
+            DeleteMark:submodel.DeleteMark,
+            EnabledMark:submodel.EnabledMark,
+            IsSystem:submodel.IsSystem,
+            Uyear:submodel.Uyear,
+            Description:submodel.Description,
+            CreatorName:submodel.CreatorName,
+            EditorName:submodel.EditorName,
+            ParentId:submodel.ParentId,
+            Editor:submodel.Editor,
+            Creator:submodel.Creator,
+            NgUpdateDt:submodel.NgUpdateDt,
+            NgInsertDt:submodel.NgInsertDt,
+            NgRecordVer:submodel.NgRecordVer
           };
 
           //辅助项类别 实体信息组合

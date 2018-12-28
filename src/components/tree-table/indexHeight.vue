@@ -95,9 +95,8 @@ export default {
     }
   },
   mounted(){
-    console.log(document.documentElement.clientHeight);
-    console.log(window.innerHeight);
-    debugger;
+    console.log("document.documentElement.clientHeight:"+document.documentElement.clientHeight);
+    console.log("window.innerHeight:"+window.innerHeight);
     this.tableHeight = document.documentElement.clientHeight - this.$refs.treetable.$el.offsetTop - this.extraheight;
     //document.documentElement.clientHeight:浏览器的body可用高度
     //this.$refs.table.$el.offsetTop：表格距离浏览器的高度

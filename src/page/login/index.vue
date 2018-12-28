@@ -29,11 +29,13 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item prop="captcha" >
+                                <el-form-item >
                                     <img src="@/assets/images/register/4.png">
                                     <el-input v-model="loginForm.captcha" type="text"  placeholder="请输入验证码（必填）"></el-input>
                                     <div :disabled="disabled" class="selfBtn verifyCode"
-                                         :style="{'background-color':'#fff','color':'blue'}" @click="sendCode(0)">{{changeCaptcha}}</div>
+                                         :style="{'background-color':'#fff','color':'blue'}">
+                                         <img @click="VCodeChange" style="bottom: 1px;width: 90px;right: 3px;height: 25px;line-height: 25px;" :src="Verifycode" alt="">
+                                    </div>
                                 </el-form-item>
                                 <div class="flexPublic">
                                     <p @click="selectArea='phoneLogin'">短信快捷登录</p>
@@ -133,9 +135,9 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import axios from '@/util/ajax'
 import lodash from 'lodash';
 import countdownpop from "../../components/countDownPop/index";
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 
 export default {
     data() {
@@ -297,7 +299,8 @@ export default {
             timertitle:'发送短信',
             sysMsg: '',
             loading: false,
-            isOrganize:false
+            isOrganize:false,
+            Verifycode:''
         }
     },
      //计算属性
@@ -305,10 +308,14 @@ export default {
         ...mapState({
             lang: state => state.lang,
             theme: state => state.theme
-        })
+        }),
+        loginid:function(){
+            return Math.random()
+        }
     },
     created() {
-
+        this.Verifycode=httpConfig.getAxiosBaseConfig().baseURL+'/SysToken/GetSecurityCode?v='+ Math.random()+'&loginid='+this.loginid;
+        //this.getImg();
     },
     watch: {
         //监听password变化 ，(debounce)停留0.5s获取组织信息
@@ -363,7 +370,8 @@ export default {
         ...mapActions({
             login: 'user/loginByPhone',
             getToken:'user/getToken',
-            orgByUser:'user/GetOrgByUser'
+            orgByUser:'user/GetOrgByUser',
+            GetVerifycode:'user/GetVerifycode'
         }),
         /*
         * 发送短信，用于短信验证或者登录
@@ -475,6 +483,24 @@ export default {
                     return false
                 }
             });
+        },
+        VCodeChange(){
+            this.Verifycode=httpConfig.getAxiosBaseConfig().baseURL+'/SysToken/GetSecurityCode?v='+ Math.random()+'&loginid='+this.loginid;
+        },
+        getImg(){
+
+            this.GetVerifycode({
+                v:Math.random(),
+                loginid:this.loginid
+            }).then((res)=>{
+                debugger
+                //this.Verifycode=window.URL.createObjectURL(res.data);
+
+                var binaryData = [];
+                binaryData.push(res.data);
+                this.Verifycode=window.URL.createObjectURL(new Blob(binaryData, {type: "image/png"}))
+            })
+
         }
     },
     components: {countdownpop},
