@@ -5,16 +5,6 @@
         <div class="reportBox">
             <div class="unionState flexPublic">
                 <ul class="flexPublic">
-                    <li class="flexPublic">
-                        <div>条件：</div>
-                        <div  class="block selectContainer">
-                            <select class="el-input__inner el-button--small" v-model="proofType">
-                                <option value="1">包含未审核凭证</option>
-                                <option value="0">不包含未审核凭证</option>
-                            </select>
-                        </div>
-
-                    </li>
                 </ul>
                 <ul class="flexPublic handle">
                     <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
@@ -231,7 +221,6 @@
                 showCountMsg:false,//核定显示
                 downloadLoading: false,
                 date1:[],
-                proofType:'0',
                 dataInfo:[{zhixing:30}],
                 infoStyle:[`#ff9900`],
                 budgetList:[],

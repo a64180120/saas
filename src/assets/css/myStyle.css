@@ -239,7 +239,7 @@ ul{
     border-width: 0 1px 1px 0;
     transform: rotate(45deg);
     top:-12px;
-    left:50%;
+    left:48%;
 }
 .newAddStateFalse:before,.newAddStateFalse:after{
     content:"";

@@ -1,5 +1,5 @@
 <template>
-        <div class="manageContent" v-loading="loading">
+        <div class="manageContent" v-loading="loading" id="ts">
             <div class="reportBox">
                 <div class="unionState flexPublic">
                     <ul class="flexPublic">
@@ -74,7 +74,7 @@
                     </ul>
                 </div>
                 <div class="flexPublic  p0">
-                    <div class="unionLists">
+                    <div class="unionLists" >
 
                         <div class="unionListsTitle">
 
@@ -100,7 +100,7 @@
                             </el-tree>
                         </div>
                     </div>
-                    <div class="formData" ref="printFrom"> <!--v-loading.fullscreen.lock="loading"-->
+                    <div class="formData" ref="printFrom" @mousedown="loadMore" > <!--v-loading.fullscreen.lock="loading"-->
                         <ul>
                             <li>凭证日期</li>
                             <li>凭证字号</li>
@@ -110,7 +110,7 @@
                             <li>方向</li>
                             <li>余额(元)</li>
                         </ul>
-                        <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
+                       <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
                             <li>{{dataInfoMonth.Pdate.slice(0,10)}}</li>
                             <li></li>
                             <li :class="{bolder:true,'align-center':true}">{{date1.choosedMonth==1?'本年期初':dataInfoMonth.Abstract}}</li>
@@ -122,22 +122,11 @@
                             </li>
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
-                            <li>{{item.Pdate.slice(0,10)}}</li>
+                            <li>{{item.Pdate}}</li>
                             <li class="align-center" style=""><a @click="showvoucher" :title="item.PhIdMst">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
-                            <template v-if="item.JSum==0">
-                                <li></li>
-                            </template>
-                            <template v-else>
-                                <li class="align-right">{{item.JSum |NumFormat}}</li>
-                            </template>
-                            <template v-if="item.DSum==0">
-                                <li></li>
-                            </template>
-                            <template v-else>
-                                <li class="align-right">{{item.DSum |NumFormat}}</li>
-                            </template>
-
+                            <li class="align-right">{{item.JSum |NumFormat}}</li>
+                            <li class="align-right">{{item.DSum |NumFormat}}</li>
                             <li>{{JD[item.DType]}}</li>
                             <template v-if="item.Pno!='本月累计'&&item.Pno!='本年累计'">
                                 <li></li>
@@ -147,6 +136,9 @@
                             </template>
 
                         </ul>
+                        <div :style="{'display':!busy?'block':'none'}">
+                            ...加载中
+                        </div>
                         <!--
                             v-infinite-scroll:
                             infinite-scroll-distance 指定滚动条距离底部多高时触发v-infinite-scroll指向的方法
@@ -154,26 +146,26 @@
                             infinite-scroll-listen-for-event 当vue实例触发事件时立即再次检查
                             infinite-scroll-throttle-delay 两次检查之间的时间间隔(默认值= 200)
                           -->
-                        <!--<div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">-->
-                            <!--.....加载中-->
-                        <!--</div>-->
+                        <!--<div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"  infinite-scroll-distance="10">
+                            <template v-if="!busy">.....加载中</template>
+                        </div>-->
                     </div>
                 </div>
-                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" >
+                <!--<div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" >
                     <div class="el-icon-close" @click="voucherDataList.bool=false"></div>
                     <div class="voucherContent">
                         <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                     </div>
-                </div>
+                </div>-->
 
             </div>
+
             <div class="timeSelectBox">
                 <time-select-bar @item-click="dateChoose"
                                 :showtype="'doubleTime'"
                 ></time-select-bar>
             </div>
         </div>
-
 </template>
 
 <script>
@@ -182,6 +174,7 @@
     import { SubjectList } from '@/api/subject/subjectInfo'
     import TimeSelectBar from "@/components/TimeSelectBar/index";
     import voucher from '../..//finance/voucher'
+    import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     /**
      * 明细表
      */
@@ -203,8 +196,8 @@
                 },
                 zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
                 auxiliary:0,  //显示辅助项
-                pageSize: 40, //pageSize
-                pageIndex: 1, //pageIndex
+                pageSize: 10, //pageSize
+                pageIndex: 0, //pageIndex
                 testIndex:0,
                 totalCount: 0, //总页数
                 busy:false,    //是否正在加载过程中
@@ -235,7 +228,7 @@
             this.getSubjectData();
         },
         mounted() {
-
+            window.addEventListener('scroll', this.handleScroll, true);  // 监听（绑定）滚轮滚动事件
         },
         watch: {
 
@@ -246,7 +239,7 @@
                 this.inputCode=val;
             },
             proofType:function(){
-                this.getData();
+                this.getData(false);
             }
         },
         components: {TimeSelectBar,voucher},
@@ -258,6 +251,21 @@
             })
         },
         methods: {
+            handleScroll: function () {
+                let clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+                // 设备/屏幕高度
+                let scrollObj = document.getElementById('ts'); // 滚动区域
+                let scrollTop = scrollObj.parentElement.parentElement.parentElement.scrollTop; // div 到头部的距离
+                let scrollHeight = scrollObj.scrollHeight; // 滚动条的总高度
+                //滚动条到底部的条件
+                if(scrollTop>=100){
+                    // div 到头部的距离 + 屏幕高度 = 可滚动的总高度
+
+                    if(!this.busy){
+                        this.loadMore();
+                    }
+                }
+            },
             //显示凭证
             showvoucher:function(val){
 
@@ -279,7 +287,7 @@
                     this.$message.error('开始发生金额不应大于结束发生金额');
                 }else{
                     this.showType='none';
-                    this.getData();
+                    this.getData(false);
                 }
 
             },
@@ -291,7 +299,7 @@
 
             selectBtn:function(){
                  this.que=this.inputKvalue
-                this.getData();
+                this.getData(false);
                 // let flag=true;
                 // for(let i in this.subjectLists){
                 //     if(this.subjectLists[i].KCode==this.inputCode){
@@ -308,7 +316,7 @@
             dateChoose:function(val){
                 let time=val;
                 this.date1=time;
-                this.getData();
+                this.getData(false);
             },
             //手动刷新voucher组件**************************
             resetVoucher(){
@@ -343,8 +351,12 @@
                     })
             },
             //查询详细数据
-            getData() {
-                this.getDataByMonth();
+            getData(flag) {
+                if(!flag){
+                    this.dataInfo=[];
+                    this.getDataByMonth();
+                }
+
                 let year='';
                 let Pmonth='';
                 if(this.date1.choosedYear==''){
@@ -367,7 +379,7 @@
                     // Year: this.selectSubject.Uyear|| '',
                     Year: year,
                     OrgIds: this.orgid,
-                    pageindex:this.testIndex,
+                    pageindex:this.pageIndex,
                     pagesize:this.pageSize,
                     Title:this.selectSubject.KName,
                     Verify:this.proofType,
@@ -389,21 +401,33 @@
                             this.dataInfo=[]
                             return
                         }
-                        this.dataInfo=res.Record;
+                        //this.dataInfo=res.Record;
                         this.totalCount=res.totalRows;
-                        // if(flag){//如果flag为true则表示分页
-                        //     this.dataInfo=res.Record;  //concat数组串联进行合并
-                        //
-                        //     if(res.Record.count==0){  //如果数据加载完 那么禁用滚动时间 this.busy设置为true
-                        //         this.busy=true;
-                        //     }else{
-                        //         this.busy=false;
-                        //     }
-                        // }else{
-                        //     //第一次进入页面 完全不需要数据拼接的
-                        //     this.dataInfo=res.Record;
-                        //     this.totalCount=res.totalRows;
-                        // }
+                        console.log(res);
+                        if(flag){//如果flag为true则表示分页
+                            if(res.Record.length<this.pageSize){
+                                for(var i in res.Record){
+                                    this.dataInfo.push(res.Record[i]);  //concat数组串联进行合并
+                                }
+                                this.busy=true;//禁用滚动加载
+                            }else{
+                                for(var i in res.Record){
+                                    this.dataInfo.push(res.Record[i]);  //concat数组串联进行合并
+                                }
+                                this.busy=false;//启用滚动加载
+                            }
+                        }else{
+                            //第一次进入页面 完全不需要数据拼接的
+                            for(var i in res.Record){
+                                this.dataInfo.push(res.Record[i]);  //concat数组串联进行合并
+                            }
+                            if(res.Record.length<this.pagesize){
+                                this.busy=true;//禁用滚动加载
+                            }else{
+                                this.busy=false;//启用滚动加载
+                            }
+
+                        }
                     })
                     .catch(err=>{
                         console.log(err)
@@ -475,7 +499,6 @@
                     })
             },
             async getSubjectData(queryfil){
-                console.log('查询科目');
                     let vm=this;
                     this.loading = true;
                     let queryfilter={
@@ -508,8 +531,7 @@
                         this.selectSubject=res[0];
                         this.inputCode=res[0].KCode;
                         //加载第一个科目的明细
-                        this.getData(res[0]);
-                        console.log(res[0]);
+                        this.getData(false);
                         this.KBalanceType=res[0].KBalanceType
                     }
 
@@ -586,28 +608,27 @@
             //科目选择
             handleNodeClick(data){
                 this.selectSubject=data;
-                console.log(data);
                 this.KBalanceType=data.KBalanceType;
-                this.getData();
+                this.getData(false);
                 this.inputCode=data.KCode;
             },
             //当属性滚动的时候  加载  滚动加载
             loadMore(){
-                this.busy=true  //将无限滚动给禁用
-                setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
-                    this.pageIndex++;  //滚动之后加载第二页
-                    if(this.pageIndex < this.totalCount){
+                if(!this.busy){
+                    this.busy=true;
+                    setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
+                        this.pageIndex++;  //滚动之后加载第二页
                         this.getData(true);
-                    }
-                }, 1000);
+                    }, 1000);
+                }
             },
             postBalanceSheetExcel:function() {
                 let param = {'uid':this.uid,
                     'orgid':this.orgid,
                     'infoData': this.budgetList};
 
-                let baseheader = ajaxhttp.header;
-                let base = ajaxhttp.base;
+                //let baseheader = ajaxhttp.header;
+                let base=httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true
@@ -649,19 +670,6 @@
                     document.body.removeChild(tempLink);
                     window.URL.revokeObjectURL(blobURL);
                 }
-            },
-            printLodop() {
-                const me = this
-                var html=this.$refs.printFrom.innerHTML;
-                let  LODOP = getLodop();
-                LODOP.PRINT_INIT("资产负债表");      //首先一个初始化语句
-                LODOP.SET_PRINT_STYLE("FontSize", 18);  //字体
-                LODOP.SET_PRINT_STYLE("Bold", 1);
-                //LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
-                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "资产负债表");
-                LODOP.ADD_PRINT_HTM(88, 200, 350, 600,html);
-                //LODOP.PRINT();
-                LODOP.PREVIEW();
             },
             // 打印
             printContent(e){

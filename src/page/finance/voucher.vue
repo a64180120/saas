@@ -283,64 +283,70 @@
         methods:{
             //voucher组件要返回数据的函数********************
             voucherData() {
-                if(this.jiefang!==this.daifang){
-                    alert('借方金额不等于贷方金额,请查看');
-                    return;
+                var dtls; 
+                if(!this.fatherData.PhId){
+                    dtls=[];
                 }else{
-                    var dtls; 
-                    if(!this.fatherData.PhId){
-                        dtls=[];
-                    }else{
-                        dtls= this.fatherData.Dtls;
-                    }
-                    var account;
-                    var item;
+                    dtls= this.fatherData.Dtls;
+                }
+                var account;
+                var item;
 
 
-                    for( var info of this.voucherInfo){
-                        if(info.PhId){
-                            for(var dtl of  dtls){
-                                if(dtl.PhId==info.PhId){
-                                    dtl.SubjectCode=info.SubjectCode;
-                                    dtl.SubjectName=info.SubjectName;
-                                    dtl.Abstract=info.Abstract;
-                                    dtl.JSum=info.money.jiefang;
-                                    dtl.DSum=info.money.daifang;
-                                    dtl.PersistentState=2;
-                                    if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
-                                        dtl.DtlAccounts[0].JSum=info.money.jiefang;
-                                        dtl.DtlAccounts[0].DSum=info.money.daifang;
-                                        dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
-                                        dtl.DtlAccounts[0].SubjectName=info.SubjectName;
-                                        dtl.DtlAccounts[0].Abstract=info.Abstract;
-                                        item = info.DtlAccounts.assistItem;
-                                        account=dtl.DtlAccounts[0];
-                                        for(var i of item){
-                                            account[i.GLS]=i.PhId;
-                                        }
-                                        dtl.DtlAccounts[0].PersistentState=2;
-                                    }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
-                                        dtl.DtlAccounts[0].PersistentState=3;
-                                    }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
-                                        dtl.DtlAccounts=[{
-                                        }];
-                                        dtl.DtlAccounts[0].JSum=info.money.jiefang;
-                                        dtl.DtlAccounts[0].DSum=info.money.daifang;
-                                        dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
-                                        dtl.DtlAccounts[0].SubjectName=info.SubjectName;
-                                        dtl.DtlAccounts[0].Abstract=info.Abstract;
-                                        dtl.DtlAccounts[0].PersistentState=1;
-                                        item = info.DtlAccounts.assistItem;
-                                        account=dtl.DtlAccounts[0];
-                                        for(var i of item){
-                                            account[i.GLS]=i.PhId;
-                                        }
+                for( var info of this.voucherInfo){
+                    if(info.PhId){
+                        for(var dtl of  dtls){
+                            if(dtl.PhId==info.PhId){
+                                dtl.SubjectCode=info.SubjectCode;
+                                dtl.SubjectName=info.SubjectName;
+                                dtl.Abstract=info.Abstract;
+                                dtl.JSum=info.money.jiefang;
+                                dtl.DSum=info.money.daifang;
+                                dtl.PersistentState=2;
+                                if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                    dtl.DtlAccounts[0].JSum=info.money.jiefang;
+                                    dtl.DtlAccounts[0].DSum=info.money.daifang;
+                                    dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
+                                    dtl.DtlAccounts[0].SubjectName=info.SubjectName;
+                                    dtl.DtlAccounts[0].Abstract=info.Abstract;
+                                    item = info.DtlAccounts.assistItem;
+                                    account=dtl.DtlAccounts[0];
+                                    for(var i of item){
+                                        account[i.GLS]=i.PhId;
+                                    }
+                                    dtl.DtlAccounts[0].PersistentState=2;
+                                }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
+                                    dtl.DtlAccounts[0].PersistentState=3;
+                                }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                    dtl.DtlAccounts=[{
+                                    }];
+                                    dtl.DtlAccounts[0].JSum=info.money.jiefang;
+                                    dtl.DtlAccounts[0].DSum=info.money.daifang;
+                                    dtl.DtlAccounts[0].SubjectCode=info.SubjectCode;
+                                    dtl.DtlAccounts[0].SubjectName=info.SubjectName;
+                                    dtl.DtlAccounts[0].Abstract=info.Abstract;
+                                    dtl.DtlAccounts[0].PersistentState=1;
+                                    item = info.DtlAccounts.assistItem;
+                                    account=dtl.DtlAccounts[0];
+                                    for(var i of item){
+                                        account[i.GLS]=i.PhId;
                                     }
                                 }
                             }
                         }
-                        else if(info.SubjectCode){
-                            var newDtl={
+                    }
+                    else if(info.SubjectCode){
+                        var newDtl={
+                            Abstract:info.Abstract,
+                            SubjectCode:info.SubjectCode,
+                            SubjectName:info.SubjectName,
+                            JSum:info.money.jiefang,
+                            DSum:info.money.daifang,
+                            PersistentState:1
+                        }
+                        if(info.DtlAccounts.assistItem.length>0){
+                            newDtl.DtlAccounts=[];
+                            var dt={
                                 Abstract:info.Abstract,
                                 SubjectCode:info.SubjectCode,
                                 SubjectName:info.SubjectName,
@@ -348,74 +354,61 @@
                                 DSum:info.money.daifang,
                                 PersistentState:1
                             }
-                            if(info.DtlAccounts.assistItem.length>0){
-                                newDtl.DtlAccounts=[];
-                                var dt={
-                                    Abstract:info.Abstract,
-                                    SubjectCode:info.SubjectCode,
-                                    SubjectName:info.SubjectName,
-                                    JSum:info.money.jiefang,
-                                    DSum:info.money.daifang,
-                                    PersistentState:1
-                                }
-                                item = info.DtlAccounts.assistItem;
-                                for(var i of item){
-                                    dt[i.GLS]=i.PhId;
-                                }
-                                newDtl.DtlAccounts[0]=dt;
+                            item = info.DtlAccounts.assistItem;
+                            for(var i of item){
+                                dt[i.GLS]=i.PhId;
                             }
-                            dtls.push(newDtl);
+                            newDtl.DtlAccounts[0]=dt;
                         }
-                    }
-                    this.fatherData.Dtls=dtls;
-                    for(var del of this.deleteDtls){
-                        if(del.PhId){
-                            for(var dtl of  dtls){
-                                if(dtl.PhId==del.PhId){
-                                    dtl.PersistentState=3;
-                                    if(dtl.DtlAccounts){
-                                        dtl.DtlAccounts[0].PersistentState=3;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if(!this.PhId){
-                        this.fatherData.PType='记';
-                        this.fatherData.OrgId=this.orgid;
-                        this.fatherData.OrgCode=this.orgcode;
-                        this.fatherData.PersistentState=1;
-                    }else{
-                        this.fatherData.PersistentState=2;
-                        this.fatherData.PhId=this.PhId;
-                    }
-                    this.fatherData.PDate=this.PDate;
-                    this.fatherData.PAttachment=this.PAttachment;
-                    if(!this.PMakePerson){
-                        this.PMakePerson=this.username;
-                    }
-                    this.fatherData.PMakePerson=this.PMakePerson;
-                    this.fatherData.PFinancePerson=this.PFinancePerson;
-                    this.fatherData.PKeepingPerson=this.PKeepingPerson;
-                    this.fatherData.PCashier=this.PCashier;
-                    this.fatherData.PAuditor=this.PAuditor;
-                    for(var img in this.imglist ){
-                        if(this.imglist[img]){
-                            this.Attachements[this.Attachements.length]=this.imglist[img];
-                            if(this.Attachements[this.Attachements.length-1].PhId==0){
-                                this.Attachements[this.Attachements.length-1].PersistentState=1;
-                                this.Attachements[this.Attachements.length-1].BTable='gcw3_voucher_mst';
-                                this.Attachements[this.Attachements.length-1].BusinessPrimaryKeys='';
-                                this.Attachements[this.Attachements.length-1].ForeignKeys='';
-                            }
-                        }
-                        
-                    }
-                    return {
-                        Mst:this.fatherData,
-                        Attachements: this.Attachements
+                        dtls.push(newDtl);
                     }
                 }
+                this.fatherData.Dtls=dtls;
+                for(var del of this.deleteDtls){
+                    if(del.PhId){
+                        for(var dtl of  dtls){
+                            if(dtl.PhId==del.PhId){
+                                dtl.PersistentState=3;
+                                if(dtl.DtlAccounts){
+                                    dtl.DtlAccounts[0].PersistentState=3;
+                                }
+                            }
+                        }
+                    }
+                }
+                if(!this.PhId){
+                    this.fatherData.PType='记';
+                    this.fatherData.OrgId=this.orgid;
+                    this.fatherData.OrgCode=this.orgcode;
+                    this.fatherData.PersistentState=1;
+                }else{
+                    this.fatherData.PersistentState=2;
+                    this.fatherData.PhId=this.PhId;
+                }
+                this.fatherData.PDate=this.PDate;
+                this.fatherData.PAttachment=this.PAttachment;
+                if(!this.PMakePerson){
+                    this.PMakePerson=this.username;
+                }
+                this.fatherData.PMakePerson=this.PMakePerson;
+                this.fatherData.PFinancePerson=this.PFinancePerson;
+                this.fatherData.PKeepingPerson=this.PKeepingPerson;
+                this.fatherData.PCashier=this.PCashier;
+                this.fatherData.PAuditor=this.PAuditor;
+                for(var img of this.imglist ){                   
+                    if(img.PhId==0){
+                        img.PersistentState=1;
+                        img.BTable='gcw3_voucher_mst';
+                        img.BusinessPrimaryKeys='';
+                        img.ForeignKeys='';
+                    }
+                }
+                this.Attachements=this.imglist; 
+                return {
+                    Mst:this.fatherData,
+                    Attachements: this.Attachements
+                }
+            
             },
             //添加删除行信息********************************
             handleContent(bool,index){
@@ -525,7 +518,6 @@
                     }
                 }
                 this.AbstractCss=data.PSource?data.PSource:'';//摘要样式******************
-                
             },
             //获取附件信息*******************
             getAttachements(PhId){                 
@@ -749,21 +741,47 @@
                 if(val&&val!=0) {
                     val = parseFloat(val).toFixed(2).split('.');
                     var num = val[0];
-                    var float = val[1];
+                    var float = val[1];debugger;
+                    if(num==='0'||num==='-0'){
+                        num=[];
+                    }
+                    // if(num.length==0&&float[0]==='0'&&float[1]!=='0'){
+                    //     float[0]="¥";
+                    // }
                     children[11].innerHTML = float[1];
                     children[10].innerHTML = float[0];
-                    for(var i=num.length-1,j=9;j>0;j--){
-                        if(i>=0){
-                            children[j].innerHTML=num[i] ;
+                    if(num.length>0){
+                        for(var i=num.length-1,j=9;j>0;j--){
+                            if(i>=0){
+                                children[j].innerHTML=num[i] ;
+                            }else{
+                                children[j].innerHTML='';
+                                if(j=='1'&&i=='-1'){
+                                children[j].innerHTML="¥";      
+                                }
+                            }
+                            if(i=='-2'){
+                                children[j+1].innerHTML="¥";  
+                            }
                             i--;
-                        }else{
-                            children[j].innerHTML='';
+                        }    
+                    }else{
+                        //整数位没有值***********
+                        for(var i=9;i>0;i--){
+                            children[i].innerHTML='';
                         }
-                    }
+                        if(float[0]==='0'){//小数第一位为0;
+                            children[10].innerHTML='¥';
+                        }else{
+                            children[9].innerHTML='¥';
+                        }
+                         
+                    }      
                 }else{
                     for(var i=11;i>0;i--){
                         children[i].innerHTML='';
                     }
+                   
                 }
             },
             moneyInputShow(item,val){//金额输入框展示**********************
@@ -855,12 +873,11 @@
             //         this.$message({ showClose: true,  message: '上传附件失败',  type: 'error' })
             //     })
             // },
-            picUploadShow(){
-                console.log(this.picVisible)
+            picUploadShow(){            
                 this.picVisible=true;
-                console.log(this.picVisible)
             },
             removeimg(item,deleValue) {//
+            console.log(item,deleValue)
                this.imglist=item;
                 if(item.length<1){
                     return;
@@ -894,13 +911,11 @@
                 });
             },
             uploadimg(item) {
-                //this.imglist.push(item);
-                
-                console.log(this.imglist);
+                this.imglist=item;
             },
-            ...mapActions({
-                uploadFile: 'uploadFile/Voucherupload'
-            }),
+            // ...mapActions({
+            //     uploadFile: 'uploadFile/Voucherupload'
+            // }),
         },
         computed:{
             countJie:{
@@ -1085,6 +1100,7 @@
     }
     .money{
         position:relative;
+        overflow: hidden;
     }
     .money>div{
         border-right:1px solid #ddd;
