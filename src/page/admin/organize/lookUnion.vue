@@ -29,7 +29,7 @@
             </ul>
             <div class="flexPublic">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text" style="width: 200px"
-                                                  placeholder="企业名称/单位名称/联系人名称"></div>
+                                                  placeholder="企业名称/单位名称/联系人姓名"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
             </div>
             <ul class="flexPublic handle">
@@ -66,7 +66,7 @@
                 <li :title="item.Address">{{item.Address}}</li>
                 <li class="flexPublic">
                     <div class="progressContainer">
-                        <div class="progress" :style="{background:infoStyle[index],width:item.Integrity+'%'}">
+                        <div class="progress" :style="{background:infoStyle[index],width:item.Integrity+'%'}" style="background-color: #FFFFFF">
                             {{item.Integrity < 80 ?'':item.Integrity+' %'}}
                         </div>
                         <div
@@ -114,7 +114,7 @@
             </ul>
             <div class="flexPublic">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue2" type="text" style="width: 200px"
-                                                  placeholder="企业名称/单位名称/联系人名称"></div>
+                                                  placeholder="企业名称/单位名称/联系人姓名"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
             </div>
             <!--<div class="flexPublic">-->
@@ -141,7 +141,7 @@
                 <li>{{item.TelePhone||item.MobilePhone}}</li>
                 <li :title="item.Address">{{item.Address}}</li>
                 <li><i :class="{examSuccess : item.Verify,examFailed : !item.Verify}"></i></li>
-                <li>{{item.examTime}}</li>
+                <li>{{item.VerifyDt.replace('T',' ').substr(0,16)}}</li>
             </ul>
         </div>
         <div class="formDataPages">
@@ -158,7 +158,7 @@
                 <div>条</div>
                 <div class="pagesContainer">
                     <ul class="flexPublic">
-                        <li :class="{pageDisabled:!(this.pageIndex%this.pageCount!=1)}" @click.stop="newPage('pre')">
+                        <li :class="{pageDisabled:!(this.pageIndex!=1)}" @click.stop="newPage('pre')">
                             上一页
                         </li>
                         <li :class="{pageActive:pageCssActive==index}" @click.stop="newPage(index)" :key="index"
@@ -266,8 +266,22 @@
                 this.$axios.get('/SysOrganize/GetOrgListByQuery', {params: data})
                     .then(res => {
                         if(this.verifyFlrm == "0"){
+                            let wTime = '-';
+                            let dTime = new Date();
                             this.userInfo = res;
                             for (var i = 0; i < this.userInfo.length; i++) {
+                                if(this.userInfo[i].ServiceEndTime != null && this.userInfo[i].ServiceEndTime != ''){
+                                    let sTime = new Date(this.userInfo[i].ServiceEndTime.replace('T',' ').replace(/\-/g, "/"));
+                                    console.log(sTime.getTime()- dTime.getTime());
+                                    wTime = parseInt((sTime.getTime()- dTime.getTime())/3600/24/1000);
+                                    if((sTime.getTime()- dTime.getTime()) >= 0){
+                                        this.userInfo[i].ServiceEndTime = wTime;
+                                    }else{
+                                        this.userInfo[i].ServiceEndTime = '已到期';
+                                    }
+                                } else{
+                                    this.userInfo[i].ServiceEndTime = '已到期';
+                                }
                                 this.userInfoCssList[i] = {checked: false};
                                 this.$forceUpdate();
                             }
@@ -285,10 +299,11 @@
                             }
                         }
 
-                        this.pageIndex = res.index + 1;
-                        this.pageSize = res.size;
+                        this.pageIndex = this.pageIndex;
+                        this.pageSize = this.pageSize;
+                        console.log(res);
                         var newArr = [];
-                        var maxP = Math.ceil(res.totalRows / res.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
+                        var maxP = Math.ceil(res.length / this.pageSize) > 10 ? 10 : Math.ceil(res.length / this.pageSize);
                         for (var i = 0; i < maxP; i++) {
                             newArr = i + 1;
                         }
@@ -446,31 +461,30 @@
                     orgid: "0",
                     pagesize: this.pageSize,
                     pageindex: this.pageIndex - 1,
-                    value: this.verifyFlrm
+                    value: '0'
                 };
                 this.$axios.get('/SysOrganize/GetOrganizesByAuditStatus', {params: data})
                     .then(res => {
-                        if(this.verifyFlrm == "0"){
-                            this.userInfo = res.Record;
-                            this.dVerifyNum = res.totalRows;
-                            for (var i = 0; i < this.userInfo.length; i++) {
-                                this.userInfoCssList[i] = {checked: false};
-                                this.$forceUpdate();
-                            }
-                        }else{
-                            this.examined = res.Record;
-                            this.yVerifyNum = res.totalRows;
-                            for (var i = 0; i < this.examined.length; i++) {
-                                if(this.examined[i].Verify == "1"){
-                                    this.examined[i].Verify = true;
+                        let wTime = 0;
+                        let dTime = new Date();
+                        this.userInfo = res.Record;
+                        this.dVerifyNum = res.totalRows;
+                        for (var i = 0; i < this.userInfo.length; i++) {
+                            if(this.userInfo[i].ServiceEndTime != null && this.userInfo[i].ServiceEndTime != ''){
+                                let sTime = new Date(this.userInfo[i].ServiceEndTime.replace('T',' ').replace(/\-/g, "/"));
+                                wTime = parseInt((sTime.getTime()- dTime.getTime())/3600/24/1000);
+                                console.log(wTime);
+                                if((sTime.getTime()- dTime.getTime()) >= 0){
+                                    this.userInfo[i].ServiceEndTime = wTime;
                                 }else{
-                                    this.examined[i].Verify = false;
+                                    this.userInfo[i].ServiceEndTime = '已到期';
                                 }
-                                this.userInfoCssList[i] = {checked: false};
-                                this.$forceUpdate();
+                            } else{
+                                this.userInfo[i].ServiceEndTime = '已到期';
                             }
+                            this.userInfoCssList[i] = {checked: false};
+                            this.$forceUpdate();
                         }
-
                         this.pageIndex = res.index + 1;
                         this.pageSize = res.size;
                         var newArr = [];
@@ -483,6 +497,73 @@
                     .catch(err => {
                         console.log(err)
                     })
+                let data2 = {
+                    uid: "0",
+                    orgid: "0",
+                    pagesize: this.pageSize,
+                    pageindex: this.pageIndex - 1,
+                    value: '1'
+                };
+                this.$axios.get('/SysOrganize/GetOrganizesByAuditStatus', {params: data2})
+                    .then(res => {
+                        this.examined = res.Record;
+                        this.yVerifyNum = res.totalRows;
+                        for (var i = 0; i < this.examined.length; i++) {
+                            if(this.examined[i].Verify == "1"){
+                                this.examined[i].Verify = true;
+                            }else{
+                                this.examined[i].Verify = false;
+                            }
+                            this.userInfoCssList[i] = {checked: false};
+                            this.$forceUpdate();
+                        }
+                        this.pageIndex = res.index + 1;
+                        this.pageSize = res.size;
+                        var newArr = [];
+                        var maxP = Math.ceil(res.totalRows / res.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
+                        for (var i = 0; i < maxP; i++) {
+                            newArr = i + 1;
+                        }
+                        this.pageCount = newArr;
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                // this.$axios.get('/SysOrganize/GetOrganizesByAuditStatus', {params: data})
+                //     .then(res => {
+                //         if(this.verifyFlrm == "0"){
+                //             this.userInfo = res.Record;
+                //             this.dVerifyNum = res.totalRows;
+                //             for (var i = 0; i < this.userInfo.length; i++) {
+                //                 this.userInfoCssList[i] = {checked: false};
+                //                 this.$forceUpdate();
+                //             }
+                //         }else{
+                //             this.examined = res.Record;
+                //             this.yVerifyNum = res.totalRows;
+                //             for (var i = 0; i < this.examined.length; i++) {
+                //                 if(this.examined[i].Verify == "1"){
+                //                     this.examined[i].Verify = true;
+                //                 }else{
+                //                     this.examined[i].Verify = false;
+                //                 }
+                //                 this.userInfoCssList[i] = {checked: false};
+                //                 this.$forceUpdate();
+                //             }
+                //         }
+                //
+                //         this.pageIndex = res.index + 1;
+                //         this.pageSize = res.size;
+                //         var newArr = [];
+                //         var maxP = Math.ceil(res.totalRows / res.size) > 10 ? 10 : Math.ceil(res.totalRows / res.size);
+                //         for (var i = 0; i < maxP; i++) {
+                //             newArr = i + 1;
+                //         }
+                //         this.pageCount = newArr;
+                //     })
+                //     .catch(err => {
+                //         console.log(err)
+                //     })
             }
         },
         mounted() {

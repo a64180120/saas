@@ -92,35 +92,24 @@ export default {
             //删除文件对象 
             let deleValue={
                 phid:file.phid,
-                imgPath:file.url.replace(this.picUrl,'')
+                imgPath:file.url.replace(me.picUrl,'')
             };
-
-            let item=this.curimgList.filter(function(el,index,array){
-                
-                var result= el.BName !== file.name;
-                if(!result){
-                    deleValue.phid=el.PhId
-                    deleValue.imgPath=el.BUrlPath
+            for(let ind in me.curimgList){                
+                if(me.curimgList[ind].BName === file.name){
+                    deleValue.phid=me.curimgList[ind].PhId
+                    deleValue.imgPath=me.curimgList[ind].BUrlPath
+                    me.curimgList.splice(ind,1);      
                 }
-
-                return result
-            });
-
-            this.curimgList=[];
-
-            if(item.length>0){
-                this.curimgList=item;
             }
-
-            this.$emit("removeimg", item, deleValue);
+            me.$emit("removeimg", me.curimgList, deleValue);
         },
         //附件上传前的判断
         beforeAvatarUpload(file){
-            const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
+            const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/pdf') || (file.type === 'image/gif') || (file.type === 'image/jpg');
             const isLt2M = file.size / 1024 / 1024 < 2;
             console.log(3333)
             if (!isRightType) {
-                this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
+                this.$message.error('上传图片只能是 JPG,png,gif,jpeg,pdf 格式!');
                 return false
             }
             if (!isLt2M) {
@@ -157,7 +146,7 @@ export default {
                     for (var i = 0; i < model.length; i++){
                          me.curimgList.push(model[i]);
                     }
-                    this.$emit("uploadimg", res.Data);
+                    this.$emit("uploadimg", me.curimgList);
                 }
 
             }).catch(error => {      

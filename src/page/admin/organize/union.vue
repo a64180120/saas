@@ -95,7 +95,7 @@
                 <div>条</div>
                 <div class="pagesContainer">
                     <ul class="flexPublic">
-                        <li :class="{pageDisabled:!(this.pageIndex%this.pageCount!=1)}" @click.stop="newPage('pre')">
+                        <li :class="{pageDisabled:!(this.pageIndex!=1)}" @click.stop="newPage('pre')">
                             上一页
                         </li>
                         <li :class="{pageActive:pageCssActive==index}" @click.stop="newPage(index)" :key="index"
@@ -355,12 +355,14 @@
             },
             routerTo(url) {
                 if(url == '/admin/orgin/add'){
+                    this.$store.commit("tagNav/upexcludeArr", ['manage-add']);
                     this.$router.push({path: url, query: {showFlam:false}});
                 }else{
                     if(this.PhIdList.length == 0){
                         alert('请点击你要修改的组织');
                         return;
                     }else{
+                        this.$store.commit("tagNav/upexcludeArr", ['manage-update']);
                         this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:false}});
                     }
                 }

@@ -783,7 +783,7 @@
                             orgid:this.orgid,
                             id:id
                         }
-                        this.cut(data1);
+                        this.cut(vm,data1);
                     }else if(val=='chongh'){
                         var Vdata=this.voucherDataList.data;
                         if(Vdata.Mst.Dtls.length<=0){
@@ -866,11 +866,11 @@
                 }                   
             },
             //剪切*****************
-            cut(data1){
+            cut(vm,data1){
                 var url='Add';
-                var Vdata=this.voucherDataList.data; 
+                var Vdata=vm.voucherDataList.data; 
                if(Vdata.Mst.Dtls.length<=0){
-                   this.$message('请输入内容!')
+                   vm.$message('请输入内容!')
                    return;
                }
                if(Vdata.Mst.PDate){
@@ -883,41 +883,37 @@
                        Vdata.Mst.PDate=Vdata.Mst.PDate.substring(0,10)
                    }
                }else{
-                   this.$message('请输入凭证会计期!')
+                   vm.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+               vm.clearPhId(Vdata.Mst)
+               if(Vdata.Mst.Uyear==vm.nowTime.getFullYear()&& Vdata.Mst.PMonth>=vm.checkedTime) {
                    var data = {
-                       uid: this.uid,
-                       orgid: this.orgid,
-                       orgcode: this.orgcode,
-                       infoData: this.voucherDataList.data
-                   }
-                   if (this.voucherDataList.data.Mst.PhId) {
-                       url = 'Update';
+                       uid: vm.uid,
+                       orgid: vm.orgid,
+                       orgcode: vm.orgcode,
+                       infoData: vm.voucherDataList.data
                    }
                    const loading=this.$loading();
-                   this.$axios.post('/PVoucherMst/Post' + url, data)
+                   vm.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                            loading.close();      
                            if (res.Status == 'success') {
-                                this.saasMessage={
+                                vm.saasMessage={
                                   visible:true,
                                   delay:3000,
                                   message:res.Msg
                                };
-                               this.delete(data1);
-                               if(str=='print'){
-                                   this.printContent();
-                               }
+                               vm.voucherMask=false;
+                               vm.delete(data1);
                            } else {
-                               this.$message('保存失败,请重试!')
+                               vm.$message('保存失败,请重试!')
                            }
                        })
                        
                        .catch(err =>{console.log(err);loading.close()} )
                }else{
-                   this.$message('当前月份已结账,无法修改凭证!')
+                   vm.$message('当前月份已结账,无法修改凭证!')
                }
                 
             },
@@ -985,24 +981,24 @@
                     })
                     .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});})
             },
-            getChecked(){
-                var data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
-                }
-                this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{                     
-                        this.checkedTime=res.Record[0].JAccountPeriod+1;
-                        this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
-                        this.year=this.sideDate.split('-')[0];
-                        this.month=this.sideDate.split('-')[1];
-                        this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                        this.getvoucherList();
-                        this.$forceUpdate();
-                    })
-                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"})})
-            },
+            // getChecked(){
+            //     var data={
+            //         uid:this.uid,
+            //         orgid:this.orgid,
+            //         queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
+            //     }
+            //     this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
+            //         .then(res=>{                     
+            //             this.checkedTime=res.Record[0].JAccountPeriod+1;
+            //             this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+            //             this.year=this.sideDate.split('-')[0];
+            //             this.month=this.sideDate.split('-')[1];
+            //             this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
+            //             this.getvoucherList();
+            //             this.$forceUpdate();
+            //         })
+            //         .catch(err=>{this.$message({ showClose: true,message: err, type: "error"})})
+            // },
             //获取time组件传参********************
             getSideDate(data){
                 this.checkedTime=data.checkedTime;
@@ -1391,10 +1387,11 @@
         position:relative;
         .highGradeCss{
             position:absolute;
-            width:300px !important;
+            width:400px !important;
             background: #fff;
             z-index: 9;
             top:40px;
+            right:20px;                                                                                                                                                                                                                                                                                                                                                                                              
             border:1px solid #ccc;
             >div{
                 width:100%;
@@ -1475,9 +1472,18 @@
                             width:90px;
                         }
                     }
+                    &:nth-of-type(2){
+                        .selectContainer {
+                            width:150px;
+                        }
+
+                    }
                 }
             }
         }
+    }
+    .searcherCon .highGradeCss > ul li > div:last-of-type .el-date-editor.el-input{
+        width:105px;
     }
     .searcherValue{
         border:1px solid #ddd;
@@ -1755,8 +1761,8 @@
 
     }
     .voucherMask{
-        position: absolute;
-        z-index:2;
+        position: fixed;
+        z-index:99;
         width:100%;
         height:100%;
         top:0;
@@ -1766,8 +1772,8 @@
           background: #fff;
           width:80%;
           position:absolute;
-          top:30px;
-          left:100px;
+          top:100px;
+          left:10%;
           padding:10px;
           >div:first-of-type{
               display: flex;

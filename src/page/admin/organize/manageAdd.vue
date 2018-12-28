@@ -293,6 +293,18 @@ import qs from 'qs';
                 return httpConfig.baseurl;
             }
         },
+        created(){
+            if(this.$route.query.showFlam){
+                this.$store.commit("tagNav/upexcludeArr", []);
+                this.showFlam = this.$route.query.showFlam;
+                if(this.showFlam){
+                    this.showFlam2 = false;
+                }else{
+                    this.showFlam2 = true;
+                }
+            }
+            console.log(this.showFlam);
+        },
         mounted: function () {
             //this.getNodes();
             this.selectParentName();
@@ -303,7 +315,7 @@ import qs from 'qs';
             }else{
                 this.showFlam2 = true;
             }
-            console.log(this.titleName);
+            console.log(this.showFlam);
         },
         methods: {
             ...mapActions({
@@ -311,8 +323,6 @@ import qs from 'qs';
             }),
             handleChange(value) {//地址选择器的值******************
                 this.address = value;
-                console.log(this.address);
-                console.log(value)
             },
             unionInput(bool) {
                 if (bool) {
@@ -577,7 +587,7 @@ import qs from 'qs';
                                 .then(res => {
                                     if (res.Status == 'success') {
                                         this.$message.success("新增成功");
-                                        this.$router.push({path: '/'});
+                                        // this.$router.push({path: '/'});
                                     }else{
                                         this.$message.error('新增失败,请重试!');
                                     }

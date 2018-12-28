@@ -120,7 +120,7 @@
                 var data = {
                     id: PhIdList
                 };
-                this.$axios.get('/SysOrganize/GetSysOrganize', {params: data})
+                this.$axios.get('/SysOrganize/GetAllAreaSysOrganize', {params: data})
                     .then(res => {
                         console.log(res);
                         this.form.PhId = res.PhId;

@@ -83,7 +83,7 @@
         <div class="container"  style="height: 100px">
             <div>
                 <span>
-                    基层工会工作账号不分角色，系统最多支持6名人员使用（含停用账户）。如果需要更多用户数量，需要支付额外费用。
+                    基层工会工作账号财务人员只有会计角色，不具体区分出纳、财务主管角色，系统最多支持6名人员使用（含停用账户）。如果需要更多用户数量，需要支付额外费用。
                 </span>
             </div>
             <!--<div>-->
@@ -852,6 +852,7 @@
                 userinfo.RealName = this.form.realName;
                 userinfo.NickName = this.form.realName;
                 userinfo.MobilePhone = this.form.mobilePhone;
+                userinfo.EnabledMark = this.form.enabledMark;
 
 
                 //角色-组织-用户信息 实体信息组合
