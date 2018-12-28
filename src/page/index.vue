@@ -509,6 +509,9 @@
           >div{
             overflow: hidden;
             height:185px;
+            >img{
+              
+            }
             >div{
               >p{
                 height:150px;

@@ -57,7 +57,7 @@
                     <span class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
                 <div class="voucherDisabledCon">
-                    <div :class="{voucherDisabled:voucherMask=='chongh'}"></div>
+                    <div :class="{voucherDisabled:voucherAdd}"></div>
                     <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                 </div>
                  <div v-show="!voucherMask" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
@@ -233,7 +233,8 @@
             pagesize:10,
             pageindex:0,
             totalRows:'',
-            voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
+            voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},//凭证数据***
+            oldVoucherData:'',   //凭证传参时的中间值JSON
             newAddList:[],
             yearSelCss:false,
             nowTime:new Date,
@@ -246,8 +247,8 @@
             nextMonthCss:false,
             allReset:'',
             resetShow:false,
-            voucherMask:false,
-            
+            voucherMask:false,  //凭证状态遮罩层******************
+            voucherAdd:false, //凭证能否修改的遮罩层******************       
             saasMessage:{
                 visible:false,  //消息弹出框*******
                 message:'', //消息主体内容**************
@@ -259,6 +260,8 @@
                 this.$store.commit("tagNav/upexcludeArr", []);
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
+                this.voucherAdd=true;
+                console.log(this.voucherAdd)
             } 
         },
         mounted(){  
@@ -279,7 +282,10 @@
                             }
                             return;
                         }
+                        console.log(this.voucherDataList.data);
+                        this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
                         this.voucherMaskShow('update');
+                        this.voucherAdd=false;
                         break;
                     case 'keep':
                         this.voucherData();
@@ -326,14 +332,20 @@
                         this.audit(false,this.voucherDataList.data.Mst.PhId);
                         break;
                     case 'copy'://复制
+                        this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
                         this.voucherMaskShow('copy');
+                        this.voucherAdd=false;
                         break;
                     case 'cut':  //剪切
+                        this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
                         this.voucherMaskShow('cut');
                         break;
                     case 'chongh':   //冲红
+                        this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
                         this.voucherMaskShow('chongh');
+                        this.voucherAdd=true;
                         this.chongh();
+                        
                         break;
                     case 'delete' :  //删除
                         this.voucherData();
@@ -380,7 +392,8 @@
                         }
                         this.superSearchVal.keyword='';
                         this.resetVoucher();
-                        this.getChecked();               
+                        this.getChecked();
+                        this.voucherAdd=false;               
                         break;
                 }
             },
@@ -655,7 +668,17 @@
                 }
                 const loading=this.$loading();
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{        
+                    .then(res=>{      
+                        loading.close();
+                        if(res.Record.length==0){
+                            this.saasMessage={
+                                message:'当前组织未初始化!',
+                                delay:4000,
+                                visible:true
+                            }
+                            
+                            return;
+                        }  
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
@@ -665,7 +688,7 @@
                         this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                         this.voucherDataList.bool=true;           
                         this.$forceUpdate(); 
-                        loading.close();
+                        
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close();})
             },
@@ -915,7 +938,7 @@
                 var Mst=this.voucherDataList.data.Mst;
                 if(Mst.WriteOff_PhIds.length>0){
                     if(confirm("该凭证已经冲红,需要重新冲红吗?")){
-                       
+                        
                     }else{
                         this.voucherMaskShow(false);
                         return;
@@ -1053,9 +1076,11 @@
                                                     dtl.Abstract=dtl.Abstract.replace("注销",'更正错账')
                                                 }                                            
                                             }
-                                            vm.voucherMask='gengz'; 
+                                            vm.voucherMask='gengz';
+                                            this.voucherAdd=false; 
                                         }else{
                                             vm.voucherMask=false;
+                                            this.voucherAdd=true;
                                             vm.getVoucherData(oldPhId);     
                                         }
                                     } else {
@@ -1077,10 +1102,14 @@
                             this.clearPhId(this.voucherDataList.data.Mst);
                         }
                         this.keepVoucher(val);
-                        this.voucherMask=false;   
+                        this.voucherMask=false;
+                        this.voucherAdd=true;   
                     } 
                 }else{
                     this.voucherMask=false; 
+                    this.voucherAdd=true;
+                    this.voucherDataList.data=JSON.parse(this.oldVoucherData);
+                    this.resetVoucher();
                 }
                     
             },
@@ -1146,7 +1175,7 @@
                 uname: state => state.user.username,
                 orgcode: state => state.user.orgcode,
                 cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
-            })
+            }),
         },
         components:{
             voucher,
@@ -1844,16 +1873,20 @@
          margin-right: 10px;   
     }
     .voucherMask{
-        position: absolute;
+        position: fixed;
         width:100%;
         height:100%;
+        left:0;
+        top:0;
+        z-index:99;
         background: rgba(0,0,0,0.5);
         .voucherContainer{        
           width:80%;
           position:absolute;
           background:#fff;
-          top:30px;
-          left:100px;
+          top:100px;
+          left:10%;
+          overflow-y: auto;
           padding:10px;
           >div:first-of-type{
               display: flex;
@@ -1932,7 +1965,7 @@
         height:100%;
         top:0;
         left:0;
-        position:absolute;
+        position: fixed;
         z-index: 999;
         background: rgba(0,0,0,.3);
         >div{
