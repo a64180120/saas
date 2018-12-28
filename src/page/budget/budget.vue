@@ -17,7 +17,7 @@
                             </li>
                         </ul>
                         <ul class="flexPublic handle">
-                            <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
+                            <a ><li style='margin:0 0 0px 20px;' :disabled="verify" @click="changeBtnC">{{changeBtn.title}}</li ></a>
                             <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">核定年初预算</li></a>
                             <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
                             <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
@@ -43,7 +43,7 @@
                                     <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                                 </li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -72,7 +72,7 @@
                                     <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                                 </li>
                                 <li>
-                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -86,7 +86,7 @@
                                     <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
                                 </li>
                                 <li>
-                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -100,7 +100,7 @@
                                     <input v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
                                 </li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -114,7 +114,7 @@
                                     <input  v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
                                 </li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -128,7 +128,7 @@
                                     <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
                                 </li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -142,7 +142,7 @@
                                     <input disabled  v-bind:value="item.BudgetTotal | NumFormat" >
                                 </li>
                                 <li>
-                                    其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -168,7 +168,7 @@
                                     </template>
                                 </li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description" v-bind:index="index" v-on:blur="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description" v-bind:index="index" v-on:blur="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -223,6 +223,7 @@
                 date1:[],
                 proofType:'0',
                 loading: false,
+                verify:true//判断页面是否可以修改，true默认可修改，若为false不可修改
             }
         },
         components: {TimeSelectBar},
@@ -244,7 +245,7 @@
             *
             * */
             hedin:function(){
-                this.$message('待开发');
+                this.verifyStart();
             },
 
             /*
@@ -258,16 +259,22 @@
             * 监听编辑按钮事件
             * */
             changeBtnC:function(){
-                if(this.changeBtn.flag){
-                    if(this.changeBtn.disable){
-                        this.changeBtn.title='保存';
-                        this.changeBtn.disable=false;
-                    }else{
-                        this.saveChange();
-                        this.changeBtn.title='编辑';
-                        this.changeBtn.disable=true;
+                console.log(this.verify);
+                if(this.verify){
+                    if(this.changeBtn.flag){
+                        if(this.changeBtn.disable){
+                            this.changeBtn.title='保存';
+                            this.changeBtn.disable=false;
+                        }else{
+                            this.saveChange();
+                            this.changeBtn.title='编辑';
+                            this.changeBtn.disable=true;
+                        }
                     }
+                }else{
+                    this.$message({ showClose: true, message:'已经进行过预算核定，不可进行修改',type: 'error' })
                 }
+
             },
             /*
             * 监听数据输入
@@ -394,6 +401,8 @@
                     'PSubjectBudget/GetBeginYear',
                     {params:data}
                 ).then(res=>{
+                    console.log(res);
+
                     this.loading=false;
                     let  code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
@@ -405,7 +414,9 @@
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
                         res.Record[i].Uyear=year;
-
+                        if( res.Record[i].VerifyStart==1){
+                            this.verify=false;
+                        }
                         if(res.Record[i].Layers=='0'){
                             code_firstCount[res.Record[i].SubjectCode]=res.Record[i].BudgetTotal;//本年一级科目预算数
                         }
@@ -450,8 +461,38 @@
                   that.loading=false;
                   console.log(err);
               })
-
             },
+            /*
+            * 核定
+            * */
+            verifyStart:function(){
+                if(this.verify) {
+                    let that = this;
+                    this.loading = true;
+                    for (let i in this.budgetList) {
+                        this.budgetList[i].VerifyStart = 1;
+                    }
+                    this.$axios.post(
+                        'PSubjectBudget/PostSave',
+                        {
+                            "uid": this.userid,
+                            "orgid": this.orgid,
+                            "infodata": this.budgetList
+                        }
+                    ).then(function (res) {
+                        that.loading = false;
+                        that.$message({showClose: true, message: '年初预算核定成功', type: 'success'});
+                        this.verify = false;
+                        this.showCountMsg = false;
+                    }).catch(function (err) {
+                        that.loading = false;
+                        console.log(err);
+                    })
+                }else{
+                    this.$message({ showClose: true, message:'已经核定年初预算',type: 'error' })
+                }
+            },
+
             /*
             *author:hyz
             *导出Excel表格

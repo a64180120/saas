@@ -1,11 +1,11 @@
 <template>
     <div class="tag-nav">
         <scroll-bar ref="scrollBar">
-            <router-link ref="tag" 
-            class="tag-nav-item" 
-            :class="isActive(item) ? 'cur' : ''" 
-            v-for="(item, index) in tagNavList" 
-            :to="item.path" 
+            <router-link ref="tag"
+            class="tag-nav-item"
+            :class="isActive(item) ? 'cur' : ''"
+            v-for="(item, index) in tagNavList"
+            :to="item.path"
             :key="index">
                 {{item.title}}
                 <span class='el-icon-close' @click.prevent.stop="closeTheTag(item, index)"></span>
@@ -98,7 +98,7 @@ export default {
     },
     handleTags(command){
         command === 'other' ? this.closeOther() : this.closeAll();
-    }, 
+    },
     moveToCurrentTag() {
       const tags = this.$refs.tag
       this.$nextTick(() => {
@@ -110,13 +110,13 @@ export default {
         }
       })
     },
-    // 关闭全部标签     
+    // 关闭全部标签
     closeAll(){
         this.$store.dispatch('tagNav/delAllTagNavViews').then(() => {
           this.$router.push('/home') //跳转主页
         })
     },
-    // 关闭其他标签  
+    // 关闭其他标签
     closeOther(){
         // 关闭其他标签
         const curItem = this.tagNavList.filter(item => {
@@ -140,7 +140,11 @@ export default {
     .tag-nav .tag-nav-item{
         height: 28px;
         line-height: 28px;
-        background: #00b7ee;
+        background: #fff;
+        color:#00b7ee;
+    }
+    .tag-nav .cur{
+        background: #00b7ee ;
         color:#fff;
     }
     .tags-close-box {

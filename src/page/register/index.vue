@@ -615,10 +615,11 @@
         margin: 20px auto;
     }
     .card_content{
-        display: flex;
-        flex-direction: row;
+        text-align: center;
+        margin: auto;
     }
     .card_content>div{
+        display: inline-block;
         vertical-align: middle;
         text-align: center;
         border-width: 1px;
@@ -628,7 +629,7 @@
         width: 170px;
         height: 170px;
         background-color: transparent;
-        margin: 10px 5px;
+        margin: 10px;
     }
     .card_content>div:hover{
         border-color: #0183FD;

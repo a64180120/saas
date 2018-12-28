@@ -109,7 +109,7 @@
                     </el-table>
                     <div class="pagination">
                         <el-pagination background @current-change="handleCurrentChange" layout="total,prev, pager, next"
-                                       :total="totalCount">
+                                       :total="totalCount" :page-size="pageSize" >
                         </el-pagination>
                     </div>
                 </div>
@@ -193,6 +193,7 @@
                 select_word: "", //搜索字段
                 //dialogtitle: "新增",
                 dialogState: "add",
+                queryF:'',
                 editVisible: false,
                 is_search: false,
                 form: {
@@ -245,7 +246,12 @@
             // 分页导航
             handleCurrentChange(val) {
                 this.pageIndex = val;
-                this.getData('');
+                console.log(val);
+                if(this.qOrgId != ''){
+                    this.getData('');
+                }else{
+                    this.getAllUserList(this.queryF);
+                }
             },
             //获取移交记录信息
             getTransData(userid){
@@ -557,13 +563,67 @@
             //         }
             //     );
             // },
+            //获取所有人员信息
+            getAllUserList(queryfilter){
+                this.loading = true;
+                this.$axios.get("/SysUser/GetSysUserList", {
+                    params: {
+                        pageindex: this.pageIndex - 1,
+                        pagesize: this.pageSize,
+                        uid: "",
+                        orgid: "",
+                        queryfilter: queryfilter
+                    }
+                }).then(
+                    res => {
+                        this.loading = false;
+                        console.log(res);
+                        this.tableData = res.Record;
+                        this.totalCount = Number(res.totalRows);
+
+                    },
+                    error => {
+                        this.loading = false;
+                        console.log(error);
+                    }
+                );
+            },
             //搜索按钮
             search() {
                 this.is_search = true;
                 if(this.select_word!=''){
                     var queryfilter='{"[or-dictionary0]*dictionary*or": { "RealName*str*like": "'+this.select_word+'", "MobilePhone*str*like": "'+this.select_word+'" }}';
-                    console.log(queryfilter);
-                    this.getData(queryfilter);
+                    this.queryF = queryfilter;
+                    if(this.qOrgId !=''){
+                        console.log(queryfilter);
+                        this.getData(queryfilter);
+                    }else{
+                        this.getAllUserList(queryfilter);
+                        // this.loading = true;
+                        // console.log(this.pageIndex - 1);
+                        // console.log(this.pageSize);
+                        // this.$axios.get("/SysUser/GetSysUserList", {
+                        //     params: {
+                        //         pageindex: this.pageIndex - 1,
+                        //         pagesize: this.pageSize,
+                        //         uid: "",
+                        //         orgid: "",
+                        //         queryfilter: queryfilter
+                        //     }
+                        // }).then(
+                        //     res => {
+                        //         this.loading = false;
+                        //         console.log(res);
+                        //         this.tableData = res.Record;
+                        //         this.totalCount = Number(res.totalRows);
+                        //
+                        //     },
+                        //     error => {
+                        //         this.loading = false;
+                        //         console.log(error);
+                        //     }
+                        // );
+                    }
                     this.is_search = false;
                 }else{
                     this.getData('');

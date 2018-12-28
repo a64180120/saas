@@ -117,7 +117,9 @@
                             <li class="align-right">{{dataInfoMonth.JSum| NumFormat}}</li>
                             <li class="align-right" :title="dataInfoMonth.DSum">{{dataInfoMonth.DSum| NumFormat}}</li>
                             <li>{{JD[dataInfoMonth.DType]}}</li>
-                            <li class="align-right">{{dataInfoMonth.Balance | NumFormat}}</li>
+                            <li class="align-right">
+                                {{ KBalanceType=='1' ? (Number(dataInfoMonth.JSum)-Number(dataInfoMonth.DSum)) : (Number(dataInfoMonth.DSum)-Number(dataInfoMonth.JSum))  | NumFormat}}
+                            </li>
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
                             <li>{{item.Pdate.slice(0,10)}}</li>
@@ -141,7 +143,6 @@
                                 <li></li>
                             </template>
                             <template v-else>
-
                                 <li class="align-right">{{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}</li>
                             </template>
 
