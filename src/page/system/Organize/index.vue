@@ -108,7 +108,14 @@
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">统一社会信用代码：</span></div>
-                                <div class="orgedit-value">{{orgForm.EnterpriseCode}}</div>
+                                <div class="orgedit-value">{{orgForm.EnterpriseCode}}
+                                </div>
+                                <div>
+                                    <el-popover trigger="hover">
+                                        <img :src="picUrl+orgForm.EnterpriseAttachment" style="height: 500px;width: 500px"/>
+                                        <img slot="reference" :src="picUrl+orgForm.EnterpriseAttachment" style="height: 30px;width: 30px">
+                                    </el-popover>
+                                </div>
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">单位地址：</span></div>
@@ -145,6 +152,12 @@
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">工会主席：</span></div>
                                 <div class="orgedit-value">{{orgForm.Chairman}}</div>
+                                <div>
+                                    <el-popover trigger="hover">
+                                        <img :src="picUrl+orgForm.ChairmanAttachment" style="height: 500px;width: 500px"/>
+                                        <img slot="reference" :src="picUrl+orgForm.ChairmanAttachment" style="height: 30px;width: 30px">
+                                    </el-popover>
+                                </div>
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">经审会主任：</span></div>
@@ -176,7 +189,7 @@
 <script>
     import {mapState, mapActions} from "vuex";
     import UserInfo from "@/util/auth";
-    import {SysOrgModel, SysOrgUpdate, SysOrgUploadFile, SysOrgDelete} from '@/api/organize/orgInfo'
+    import {SysOrgModel, SysOrgUpdate, SysOrgUploadFile, SysOrgDelete, AllAreaSysOrgModel} from '@/api/organize/orgInfo'
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import pictureUpload from "@/components/upload";
 
@@ -202,7 +215,7 @@
                     }
                 ],
                 orgForm: {
-                    PhId: 0,
+                    // PhId: 0,
                     OrgName: '',
                     EnterpriseCode: '',
                     EnterpriseAttachment: '',
@@ -218,7 +231,8 @@
                     ChairmanAttachment: '',
                     Director: '',
                     ServiceStartTime: '',
-                    ServiceEndTime: ''
+                    ServiceEndTime: '',
+                    Integrity: ''
                 },
                 rules: {
                     OrgName: [
@@ -271,7 +285,8 @@
             //修改编辑页显示
             edit() {
                 this.editVisible = true;
-                this.isedit = true
+                this.isedit = true;
+                this.orgForm.Address = '';
             },
             //刷新页面
             freshPage() {
@@ -291,6 +306,20 @@
                     this.getData();
                     return;
                 }
+                this.orgForm.Integrity = '60';
+                if(this.orgForm.EnterpriseAttachment != null && this.orgForm.EnterpriseAttachment != ''){
+                    this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 5;
+                }
+                if(this.orgForm.Address != null && this.orgForm.Address != ''){
+                    this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 20;
+                }
+                if(this.orgForm.TelePhone != null && this.orgForm.TelePhone != ''){
+                    this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 10;
+                }
+                if(this.orgForm.ChairmanAttachment != null && this.orgForm.ChairmanAttachment != ''){
+                    this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 5;
+                }
+                console.log(this.orgForm.Integrity);
                 //提交asiox
                 SysOrgUpdate(vm, {
                     otype: 'edit',
@@ -322,7 +351,7 @@
                 var vm = this;
                 this.loading = true;
 
-                SysOrgModel(vm, {
+                AllAreaSysOrgModel(vm, {
                     id: this.orgid,
                     uid: this.userid,
                     orgid: this.orgid
