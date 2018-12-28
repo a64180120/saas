@@ -45,7 +45,7 @@
                                     </div>
 
                                 </div>
-                                <div style="text-align: center">
+                                <div style="text-align: center;margin-top: 10px">
                                     <div class="selfBtn blueBtn" @click="submitForm('loginForm')">登录</div>
                                     <router-link to="/index"><div class="selfBtn whiteBtn">取消</div></router-link>
                                 </div>
@@ -80,7 +80,7 @@
                                     </el-select>
                                 </el-form-item>
 
-                                <div style="text-align: center">
+                                <div style="text-align: center ;margin-top: 40px">
                                     <div class="selfBtn blueBtn" @click="submitForm('loginFormPhone')">登录</div>
                                     <div class="selfBtn whiteBtn"  @click="selectArea='ordinaryLogin'">取消</div>
                                 </div>
@@ -112,7 +112,7 @@
                                     <el-input v-model="fixPwdForm.confirmPassword" type="text"  placeholder="请确认新密码"></el-input>
                                 </el-form-item>
 
-                                <div style="text-align: center">
+                                <div style="text-align: center; margin-top: 40px">
                                     <div class="selfBtn blueBtn" @click="submitForm('fixPwdForm')">修改</div>
                                     <div class="selfBtn whiteBtn" @click="selectArea='ordinaryLogin'">取消</div>
                                 </div>
@@ -293,7 +293,7 @@ export default {
                     {required: true,validator:validPwdR,trigger:'blur'}
                 ]
             },
-            changeCaptcha:'67912',//存储切换的验证码--普通登录验证码
+            changeCaptcha:'',//存储切换的验证码--普通登录验证码
             phoneCaptcha:'',// --手机号登录验证码
             passwordCaptcha:'',//--更改密码的验证码
             timertitle:'发送短信',
@@ -364,7 +364,7 @@ export default {
         // 初始化错误信息。保证单独点击input时可以弹出正确的错误提示
     },
     mounted(){
-
+        this.changeCaptcha=this.code();
     },
     methods: {
         ...mapActions({
@@ -373,6 +373,11 @@ export default {
             orgByUser:'user/GetOrgByUser',
             GetVerifycode:'user/GetVerifycode'
         }),
+        //随机数模拟验证码
+        code:function(){
+            let code= String(Math.floor(Math.random()*10))+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
+            return code;
+        },
         /*
         * 发送短信，用于短信验证或者登录
         * type  用于判断发送的验证码是哪种
@@ -382,8 +387,7 @@ export default {
         * */
         sendCode:function(type){
             if(type==0){
-               let code= String(Math.floor(Math.random()*10))+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
-               this.changeCaptcha=code;
+               this.changeCaptcha=this.code();
             }else if(type==1){
                 //发送验证码前，先进行手机验证，确保手机号正确
                 this.$refs.loginFormPhone.validateField('phoneNum',(validMessage)=>{
@@ -392,9 +396,7 @@ export default {
                     }else{
                         if(!this.disabled){
                             this.disabled=true;
-                            let code= String(Math.floor(Math.random()*10))+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
-                            this.phoneCaptcha=code;
-                            console.log('========'+code);
+                            this.phoneCaptcha=this.code();
                             this.timer(59,'phoneCaptcha');
                             this.timertitle='59S后重新发送';
                         }
@@ -408,9 +410,7 @@ export default {
                         this.$message(validMessage);
                     }else {
                         if (!this.disabled) {
-                            let code = String(Math.floor(Math.random() * 10)) + Math.floor(Math.random() * 10) + Math.floor(Math.random() * 10) + Math.floor(Math.random() * 10);
-                            this.passwordCaptcha = code;
-                            console.log(code);
+                            this.passwordCaptcha = this.code;
                             this.disabled = true;
                             this.timer(59,'passwordCaptcha');
                             this.timertitle = '59S后重新发送';

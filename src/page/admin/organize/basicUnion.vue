@@ -72,6 +72,7 @@
                     </div>
                 </li>
                 <li>启用/停用</li>
+                <li>服务期限</li>
             </ul>
             <ul class="formDataItems">
                 <li :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item.PhId)"
@@ -82,15 +83,16 @@
                         <li>{{item.EnCode}}</li>
                         <li>{{item.OrgName}}</li>
                         <li>{{item.ParentName}}</li>
-                        <li>{{item.date}}</li>
-                        <li>{{item.cjr}}</li>
-                        <li>{{item.kuaiji}}</li>
+                        <li>{{item.NgInsertDt}}</li>
+                        <li>{{item.Chairman}}</li>
+                        <li>{{item.Director}}</li>
                         <li class="stateControl flexPublic">
                             <label><input :name="item.uid" type="radio" value="0" v-model="item.EnabledMark"
                                           @click="changeEnable(item.PhId, item.EnabledMark)">启用</label>
                             <label><input :name="item.uid" type="radio" value="1" v-model="item.EnabledMark"
                                           @click="changeEnable(item.PhId, item.EnabledMark)">停用</label>
                         </li>
+                        <li>{{item.ServiceStartTime.substr(0, 10)}}-{{item.ServiceEndTime.substr(0,10)}}</li>
                     </ul>
                 </li>
             </ul>
@@ -109,7 +111,7 @@
                 <div>条</div>
                 <div class="pagesContainer">
                     <ul class="flexPublic">
-                        <li :class="{pageDisabled:!(this.pageIndex%this.pageCount!=1)}" @click.stop="newPage('pre')">
+                        <li :class="{pageDisabled:!(this.pageIndex!=1)}" @click.stop="newPage('pre')">
                             上一页
                         </li>
                         <li :class="{pageActive:pageCssActive==index}" @click.stop="newPage(index)" :key="index"
@@ -188,12 +190,12 @@
                     uid: "0",
                     orgid: "0",
                     pagesize: this.pageSize,
-                    pageindex: this.pageIndex - 1
+                    pageindex: this.pageIndex - 1,
                 }
-                this.$axios.get('/SysAdminOrganize/GetSysAdminOrganizeList', {params: data})
+                this.$axios.get('/SysAdminOrganize/GetAllAdminOrganizeByStreet', {params: data})
                     .then(res => {
-                        console.log(res.Record);
-                        this.unionNameValues = res.Record;
+                        console.log(res);
+                        this.unionNameValues = res;
                     })
                     .catch(err => {
                         console.log(err);
@@ -227,6 +229,12 @@
                             this.userInfo = res.Record;
                             for (var i = 0; i < this.userInfo.length; i++) {
                                 this.userInfoCssList[i] = {checked: false};
+                                if(this.userInfo[i].ServiceStartTime == null){
+                                    this.userInfo[i].ServiceStartTime ='';
+                                }
+                                if(this.userInfo[i].ServiceEndTime == null){
+                                    this.userInfo[i].ServiceEndTime ='';
+                                }
                             }
                             this.pageIndex = res.index + 1;
                             this.pageSize = res.size;
@@ -333,6 +341,12 @@
                         loading1.close();
                         for (var i = 0; i < this.userInfo.length; i++) {
                             this.userInfoCssList[i] = {checked: false};
+                            if(this.userInfo[i].ServiceStartTime == null){
+                                this.userInfo[i].ServiceStartTime ='';
+                            }
+                            if(this.userInfo[i].ServiceEndTime == null){
+                                this.userInfo[i].ServiceEndTime ='';
+                            }
                         }
                         this.pageIndex = res.index + 1;
                         this.pageSize = res.size;

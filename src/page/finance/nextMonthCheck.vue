@@ -236,10 +236,19 @@
               const loading=this.$loading();
               this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                   .then(res=>{
-                      this.checkedTime=res.Record[0].JAccountPeriod+1;
-                      this.year=this.nowTime.getFullYear();
-                      this.month=this.checkedTime;
-                      loading.close();
+                    loading.close();
+                    if(res.Record.length==0){
+                        this.saasMessage={
+                            message:'当前组织未初始化!',
+                            delay:4000,
+                            visible:true
+                        }
+                        
+                        return;
+                    }  
+                    this.checkedTime=res.Record[0].JAccountPeriod+1;
+                    this.year=this.nowTime.getFullYear();
+                    this.month=this.checkedTime;
                   })
                   .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close()})
           },

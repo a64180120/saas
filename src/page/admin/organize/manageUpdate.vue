@@ -8,7 +8,8 @@
             </ul>
         </div>
         <div class="addFormContainer">
-            <h6 class="addTitle">基层组织账套管理</h6>
+            <h6 class="addTitle" v-show="showFlam">基层组织账套管理</h6>
+            <h6 class="addTitle" v-show="!showFlam">机关组织账套管理</h6>
             <ul class="addFormItems ul-flexChild">
                 <li>
                     <div class="addFormItemTitle">工会名称</div>
@@ -131,7 +132,7 @@
                 <li>
                     <div class="addFormItemTitle">工会主席</div>
                     <div>
-                        <div class="inputContainer"><input type="text" v-model="Chairman" style="width: 90%" disabled>
+                        <div class="inputContainer"><input type="text" v-model="Chairman" style="width: 90%">
                         </div>
                         <div style="position: relative; top: -20px">
                             <el-upload
@@ -189,6 +190,7 @@
                 PhId: '',
                 file: '1',
                 OrgName: '',
+                EnCode:'',
                 EnterpriseCode: '',
                 Address: '',
                 phoneHead: '1',
@@ -197,6 +199,7 @@
                 Chairman: '工会主席',
                 EnableTime: '',
                 EnterpriseAttachment:'',
+                Verify:'0',
                 ChairmanAttachment:'',
                 showFlam:this.$route.query.showFlam,
                 ServiceStartTime: '',
@@ -256,6 +259,12 @@
         //     this.selectParentName();
         //     this.selectArea("0", 0);
         // },
+        created(){
+            if(this.$route.query.showFlam){
+                this.$store.commit("tagNav/upexcludeArr", []);
+                this.showFlam = this.$route.query.showFlam;
+            }
+        },
         methods: {
             ...mapActions({
                 uploadFile: 'uploadFile/Orgupload'
@@ -437,6 +446,7 @@
                             'Street': this.Street,
                             'file': this.file,
                             'OrgName': this.OrgName,
+                            'EnCode':this.EnCode,
                             'EnterpriseCode': this.EnterpriseCode,
                             'Address': this.Address,
                             //'phoneHead': this.phoneHead,
@@ -450,6 +460,7 @@
                             'ParentId': this.ParentId,
                             'ParentEnCode': this.ParentCode,
                             'AccountSystem': this.AccountSystem,
+                            'Verify': this.Verify,
                             'Director': this.Director,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
@@ -473,6 +484,8 @@
                                         this.$message.error('修改失败,请重试!');
                                     }
                                 })
+                            this.$store.commit("tagNav/removeTagNav", this.$route);
+                            this.$router.push({path: "/admin/orgin"});
                         }else{
                             this.$message.error('请将信息填写完整再保存,请重试!');
                         }
@@ -485,6 +498,7 @@
                             'Street': this.Street,
                             'file': this.file,
                             'OrgName': this.OrgName,
+                            'EnCode':this.EnCode,
                             'EnterpriseCode': this.EnterpriseCode,
                             'Address': this.Address,
                             //'phoneHead': this.phoneHead,
@@ -497,6 +511,7 @@
                             'ParentId': this.ParentId,
                             'ParentEnCode': this.ParentCode,
                             'Director': this.Director,
+                            'Verify': this.Verify,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
                             'NgRecordVer': this.NgRecordVer
@@ -519,12 +534,13 @@
                                         this.$message.error('修改失败,请重试!');
                                     }
                                 })
+                            this.$store.commit("tagNav/removeTagNav", this.$route);
+                            this.$router.push({path: "/admin/orgin"});
                         }else{
                             this.$message.error('请将信息填写完整再保存,请重试!');
                         }
                     }
-                    this.$store.commit("tagNav/removeTagNav", this.$route);
-                    this.$router.push({path: "/admin/orgin"});
+
                     // var data = {
                     //     uid: "0",
                     //     orgid: "0",
@@ -553,6 +569,7 @@
                             console.log(res);
                             this.PhId = res.PhId;
                             this.OrgName = res.OrgName;
+                            this.EnCode = res.EnCode;
                             this.EnterpriseCode = res.EnterpriseCode;
                             this.Address = res.Address;
                             this.MobilePhone = res.MobilePhone;
@@ -574,6 +591,7 @@
                             this.EnterpriseAttachment= res.EnterpriseAttachment,
                             this.ChairmanAttachment = res.ChairmanAttachment,
                             this.NgRecordVer = res.NgRecordVer;
+                            this.Verify = res.Verify;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
@@ -585,6 +603,7 @@
                             console.log(res);
                             this.PhId = res.PhId;
                             this.OrgName = res.OrgName;
+                            this.EnCode = res.EnCode;
                             this.EnterpriseCode = res.EnterpriseCode;
                             this.Address = res.Address;
                             this.MobilePhone = res.MobilePhone;
@@ -602,6 +621,7 @@
                             this.County = res.County;
                             this.Street = res.Street;
                             this.NgRecordVer = res.NgRecordVer;
+                            this.Verify = res.Verify;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);

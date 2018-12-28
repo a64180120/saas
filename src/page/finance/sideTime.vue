@@ -102,7 +102,11 @@ export default {
                     queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{                     
+                    .then(res=>{ 
+                        if(res.Record.length==0){
+                            this.$message({ showClose: true,message: '当前组织未初始化!', type: "error"})
+                            return;
+                        }                      
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
@@ -113,7 +117,7 @@ export default {
                         this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime})
                         this.$forceUpdate();
                     })
-                    .catch(err=>console.log(err))
+                    .catch(err=>this.$message({ showClose: true,message: err, type: "error"}))
             },
        
          //选择会计期***************

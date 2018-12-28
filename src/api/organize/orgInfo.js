@@ -103,6 +103,27 @@ export function SysOrgModel(object,param) {
   });
 }
 
+/**
+ * 说明: 组织信息
+ * object 当前对象 vue
+ * param 参数集合
+ */
+export function AllAreaSysOrgModel(object,param) {
+    return new Promise((resolve, reject) => {
+        object.$axios({
+            url: '/SysOrganize/GetAllAreaSysOrganize',
+            method: 'get',
+            params: param
+        }).then(res => {
+            //正确
+            resolve(res);
+        }).catch(error => {
+            //错误
+            reject(error);
+        });
+    });
+}
+
 /** 
  * 说明: 上传附件
  * object 当前对象 vue

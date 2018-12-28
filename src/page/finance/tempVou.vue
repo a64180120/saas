@@ -591,26 +591,52 @@
                 this.$forceUpdate();
 
             },
-            moneyTurn(val,children){  //金额输入框转文本样式***************
+             moneyTurn(val,children){  //金额输入框转文本样式***************
 
                 if(val&&val!=0) {
                     val = parseFloat(val).toFixed(2).split('.');
                     var num = val[0];
-                    var float = val[1];
+                    var float = val[1];debugger;
+                    if(num==='0'||num==='-0'){
+                        num=[];
+                    }
+                    // if(num.length==0&&float[0]==='0'&&float[1]!=='0'){
+                    //     float[0]="¥";
+                    // }
                     children[11].innerHTML = float[1];
                     children[10].innerHTML = float[0];
-                    for(var i=num.length-1,j=9;j>0;j--){
-                        if(i>=0){
-                            children[j].innerHTML=num[i] ;
+                    if(num.length>0){
+                        for(var i=num.length-1,j=9;j>0;j--){
+                            if(i>=0){
+                                children[j].innerHTML=num[i] ;
+                            }else{
+                                children[j].innerHTML='';
+                                if(j=='1'&&i=='-1'){
+                                children[j].innerHTML="¥";      
+                                }
+                            }
+                            if(i=='-2'){
+                                children[j+1].innerHTML="¥";  
+                            }
                             i--;
-                        }else{
-                            children[j].innerHTML='';
+                        }    
+                    }else{
+                        //整数位没有值***********
+                        for(var i=9;i>0;i--){
+                            children[i].innerHTML='';
                         }
-                    }
+                        if(float[0]==='0'){//小数第一位为0;
+                            children[10].innerHTML='¥';
+                        }else{
+                            children[9].innerHTML='¥';
+                        }
+                         
+                    }      
                 }else{
                     for(var i=11;i>0;i--){
                         children[i].innerHTML='';
                     }
+                   
                 }
             },
             moneyInputShow(item,val){//金额输入框展示**********************
