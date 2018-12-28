@@ -733,7 +733,7 @@
           width:136px;
           height:118px;
           background: url("../assets/img/g1.png");
-          z-index: 9;
+          z-index: 99;
         }
         .el-carousel__item img {
           width:100%;
