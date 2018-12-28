@@ -122,7 +122,7 @@ export default {
         }
       ],
       data: [],
-      extraheight:200,
+      extraheight:250,
       expandAll: true,
       loading: false,
       is_search: false,
