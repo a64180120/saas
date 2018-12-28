@@ -202,13 +202,13 @@ const staticRoute = [
                 path: "intercourse",
                 component: () =>import("../page/report/intercourse"),
                 meta:{ requireAuth:true,type:'page'}
-            },
+            }/*,
             {
                 //Supcan
                 path: "supcan",
                 component: () =>import("../page/report/supcan"),
                 meta:{ requireAuth:true ,type:'page'}
-            }
+            }*/
         ]
     },
     {
@@ -319,26 +319,26 @@ const staticRoute = [
         children: [
             {
                 path: "401",
-                component: () =>import(/* webpackChunkName: 'error' */ "../page/error/401"), 
-                name: 'page401', 
+                component: () =>import(/* webpackChunkName: 'error' */ "../page/error/401"),
+                name: 'page401',
                 meta: { title: 'page401', noCache: true }
             },
             {
                 path: "403",
                 component: () => import(/* webpackChunkName: 'error' */ "../page/error/403"),
-                name: 'page403', 
+                name: 'page403',
                 meta: { title: 'page403', noCache: true }
             },
             {
                 path: "404",
                 component: () => import(/* webpackChunkName: 'error' */ "../page/error/404"),
-                name: 'page404', 
+                name: 'page404',
                 meta: { title: 'page404', noCache: true }
             },
             {
                 path: "500",
                 component: () =>import(/* webpackChunkName: 'error' */ "../page/error/500"),
-                name: 'page500', 
+                name: 'page500',
                 meta: { title: 'page500', noCache: true }
             }
         ]

@@ -67,6 +67,7 @@ a {
     top: 100px;
     bottom:-20px;
     width: 60px;
+    z-index: 99;
 }
 .crumbs {
     margin: 10px 0;
