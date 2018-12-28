@@ -20,7 +20,9 @@ const state = {
     //左侧菜单权限
     navList: [],
     // 用户名
-    username: ''    
+    username: '',
+    //EmpowerInfo 判断是否是试用用户
+    EmpowerInfo:'',
 };
 
 //计算获取取新数据
@@ -50,7 +52,7 @@ const mutations = {
             Auth.removeToken();
         }
     },
-    //用户信息 包括 userInfo orgInfo 
+    //用户信息 包括 userInfo orgInfo
     setUserInfo: (state, data) => {
         if (data) {
             data.isLogin=true;
@@ -60,6 +62,7 @@ const mutations = {
             state.orgid = data.orgInfo.PhId;
             state.orgcode = data.orgInfo.EnCode;
             state.username=data.userInfo.RealName;
+            state.EmpowerInfo=data.orgInfo.EmpowerInfo;
         } else {
             Auth.removeUserInfoData();
         }
@@ -73,7 +76,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             let base=httpConfig.getAxiosBaseConfig();
             let url=httpConfig.baseurl;
-            //console.log(base);
+
             httpajax.create({
                 baseURL: base.baseURL
             }).get('/SysToken/GetToken',{
@@ -98,7 +101,7 @@ const actions = {
                     alert('网络不通:'+ url +',请检查服务接口网络！.....')
                 }
 
-                resolve(res.data);
+                resolve(res);
 
         　　}).catch((error) =>{
                 console.log(error)
@@ -192,7 +195,7 @@ const actions = {
 
         return new Promise(resolve => {
             //清除缓存
-            commit("setToken", "");  //token 
+            commit("setToken", "");  //token
             commit("setUserInfo", ""); //用户信息
             commit('setNavList',''); //菜单
             //若需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可
@@ -210,7 +213,7 @@ const actions = {
     relogin({ dispatch, commit, state }) {
         return new Promise(resolve => {
             // 根据Token进行重新登录
-            let tokenInfo = Auth.getToken(), 
+            let tokenInfo = Auth.getToken(),
             userInfo = Auth.getUserInfoData(),
             menuInfo = Auth.getMenuStatus(),
             config = Auth.getPConfigStatus();
@@ -237,7 +240,7 @@ const actions = {
             if(config){
                 //设置用户 state ,重新加载用户缓存
                 commit("Pconfig/setPConfig", config,{root: true});
-            }   
+            }
             resolve();
         });
     },

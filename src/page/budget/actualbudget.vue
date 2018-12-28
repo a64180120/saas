@@ -30,7 +30,7 @@
                     <li>科目名称</li>
                     <li>核定预算数(元)</li>
                     <li>决算数(元)</li>
-                    <li>完成预算(元)</li>
+                    <li>完成预算(%)</li>
                     <li>说明</li>
                 </ul>
                 <template v-for="(item,index) in budgetList">
@@ -45,12 +45,12 @@
                             </li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
                             <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -65,12 +65,12 @@
                             </li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
                             <li>
-                                <input type="text" v-bind:disabled="changeBtn.disable" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                <input type="text" v-bind:disabled="changeBtn.disable" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -83,7 +83,7 @@
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
-                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:placeholder="item.Description" v-on:input="inputDicription">
+                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:value="item.Description" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -96,7 +96,7 @@
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
-                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -109,7 +109,7 @@
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -122,7 +122,7 @@
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -135,7 +135,7 @@
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li></li>
                             <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -148,12 +148,12 @@
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
                             <li>
-                                其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -168,12 +168,12 @@
                             </li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
                             <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description" v-bind:index="index" v-on:input="inputDicription">
+                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description" v-bind:index="index" v-on:input="inputDicription">
                             </li>
                         </ul>
                     </template>
@@ -240,7 +240,8 @@
                     title:'编辑',
                     disable:true,
                 },
-                loading:true
+                loading:true,
+                verify:true//判断页面是否可以修改，true默认可修改，若为false不可修改
             }
         },
         components: {TimeSelectBar},
@@ -260,7 +261,7 @@
            *
            * */
             hedin:function(){
-                this.$message('待开发');
+                this.VerifyEnd();
             },
 
             dateChoose:function(val){
@@ -271,15 +272,19 @@
            * 监听编辑按钮事件
            * */
             changeBtnC:function(){
-                if(this.changeBtn.flag){
-                    if(this.changeBtn.disable){
-                        this.changeBtn.title='保存';
-                        this.changeBtn.disable=false;
-                    }else{
-                        this.saveChange();
-                        this.changeBtn.title='编辑';
-                        this.changeBtn.disable=true;
+                if(this.verify){
+                    if(this.changeBtn.flag){
+                        if(this.changeBtn.disable){
+                            this.changeBtn.title='保存';
+                            this.changeBtn.disable=false;
+                        }else{
+                            this.saveChange();
+                            this.changeBtn.title='编辑';
+                            this.changeBtn.disable=true;
+                        }
                     }
+                }else{
+                    this.$message({ showClose: true, message:'已经进行过年末决算核定，不可进行修改',type: 'error' })
                 }
             },
             /*
@@ -358,6 +363,10 @@
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
                         res.Record[i].Uyear=year;
+                        //判断是否已经核算
+                        if( res.Record[i].VerifyEnd==1){
+                            this.verify=false;
+                        }
                         if(res.Record[i].ApprovedBudgetTotal==0||res.Record[i].ApprovedBudgetTotal==''||res.Record[i].ApprovedBudgetTotal==null){
                             let anwser=0;
                             dataInfo.push({zhixing:anwser})
@@ -370,9 +379,15 @@
                     this.budgetList=res.Record;
                     this.dataInfo=dataInfo;
                     this.getInfoStyle();
-                    /*for(let j in this.dataInfo){
+                    for(let j in this.dataInfo){
+                        if(j==0){
+                            this.timer(j,0,99)
+                        }
+                       if(j==1){
+                           this.timer(j,0,59)
+                       }
                         this.timer(j,0,this.dataInfo[j].zhixing)
-                    }*/
+                    }
                 }).catch(res=>{
                     console.log(res);
                 })
@@ -399,12 +414,19 @@
                 })
 
             },
+
             timer(index,str,data){
                 let that=this;
                 setTimeout(function(){
                     if(str<data){
-                        str++;
-                        that.dataInfo[index].zhixing=str;
+                        let i=Math.ceil(data/50);
+                        if(str+i<data){
+                            str+=i;
+                        }else{
+                            str=data;
+                        }
+
+                        that.dataInfo[index].zhixing=Math.floor(str);
                         if(str<30){
                             that.infoStyle[index]=`#ff0000`;
                         }else if(str>=30&&str<50){
@@ -416,8 +438,41 @@
                         }
                         that.timer(index,str,data);
                     }
-                },35)
+                },30)
             },
+            /*
+            * 核定
+            * */
+            verifyMiddle:function(){
+                if(this.verify){
+                    let that=this;
+
+                    this.loading=true;
+                    for(let i in this.budgetList){
+                        this.budgetList[i].VerifyEnd=1;
+                    }
+                    this.$axios.post(
+                        'PSubjectBudget/PostSave',
+                        {
+                            "uid": this.userid,
+                            "orgid": this.orgid,
+                            "infodata": this.budgetList
+                        }
+                    ).then(function(res){
+                        that.loading=false;
+                        that.$message({ showClose: true, message:'年末决算核定成功',type: 'success' });
+                        this.verify=false;
+                        this.showCountMsg=false;
+                    }).catch(function(err){
+                        that.loading=false;
+                        console.log(err);
+                    })
+                }else{
+                    this.$message({ showClose: true, message:'已经核定年末决算',type: 'error' })
+                }
+            },
+
+
             postBalanceSheetExcel:function() {
                 let param = {'uid':this.uid,
                     'orgid':this.orgid,
@@ -675,6 +730,7 @@
         border-radius: 15px;
         background: #ebeef5;
         margin-top:13px;
+        overflow: hidden;
     }
     .progressContainer>div{
         text-align: left;
@@ -695,6 +751,48 @@
     }
     input.other{
         width:45%;
+    }
+
+    .cover{
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(66,66,66,0.45);
+        z-index: 99;
+        text-align: center;
+    }
+    .coverContent{
+        background-color: #fff;
+        width: 362px;
+        height: 195px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -87.5px -181px;
+
+    }
+    .coverContent div:nth-of-type(1){
+        border-bottom: 1px solid grey;
+        padding:10px 20px;
+    }
+    .coverContent div:nth-of-type(2){
+        padding: 30px 20px;
+    }
+    .coverContent ul{
+        padding: 30px 20px;
+    }
+    .coverContent ul li:nth-of-type(1){
+        border: 1px solid #3e8cbc;
+        color: #3e8cbc;
+        padding: 5px 15px;
+    }
+    .coverContent ul li:nth-of-type(2){
+        border: 1px solid #3e8cbc;
+        color: #FFF;
+        background: #3e8cbc;
+        padding: 5px 15px;
     }
 </style>
 

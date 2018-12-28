@@ -102,7 +102,7 @@
             </section> 
         </div>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" @msg-click="getMsgData" v-if="saasMessage.msgShow"></saas-msg>
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
   </div>
 </template>
 
@@ -123,7 +123,7 @@
           checkNav:'month',
           saasMessage:{
               message:'',
-              msgShow:false,
+              visible:false,
               delay:0
           },
           checkFaile:[
@@ -137,6 +137,7 @@
           this.getChecked();
       },
       methods:{
+          //检查页面操作****************
         handle(val){
             switch (val){
                 case false:
@@ -146,17 +147,29 @@
                     this.matchBegin();
                     this.checkCss=true;
                     break;
-                case 'check':
+                case 'check': //结账*********
                     this.checkOut('check',this.checkedTime);                    
-                    this.$emit('child-click',false);
+                    
                     break;
-                case 'audit':
+                case 'audit': //凭证审核页面****
                     this.checkNavShow('audit')
                     break;
-                case 'codeReset':
+                case 'codeReset'://凭证号重排****
                     this.checkNavShow('codeReset')
                     break;
 
+            }
+        },
+        //审核重排页面**************
+        listHandle(val){
+            var PhIds=[];
+            if(val=='audit'){
+                for( var vou of this.voucherList){
+                    PhIds.push(vou.PhId);
+                }
+                this.audit(true,PhIds);
+            }else if(val=='codeReset'){
+                this.resetCode(val);
             }
         },
         //开始检查*********************
@@ -234,6 +247,7 @@
           checkOut(str,val){
               var t;
               var url;
+              var vm=this;
               if(str=='check'){
                   url='/PBusinessConfig/UpdateBusinessConfig';
               }else if(str=='uncheck'){
@@ -253,8 +267,9 @@
               this.$axios.get(url,{params:data})
                   .then(res=>{
                       loading1.close();
-                      if(res.Status=='success'){
-                          this.$message('结账成功!');
+                      if(res.Status=='success'){  
+                          this.$message("结账成功!");
+                          this.$emit('child-click',false);
                       }else{
                           this.$message({ showClose: true,message: res.Msg, type: "error"});
                       }
@@ -265,17 +280,106 @@
         checkNavShow(str){//切换页面功能*************
             this.checkNav=str;
             if(str=='audit'){
-                console.log(this.year,this.month)
-                this.getvoucherList();
+                this.getvoucherList('audit');
             }else if(str=='codeReset'){
-                console.log(this.year,this.month)
                 this.getvoucherList();
             }
         },
+        //审核*****************
+            audit(bool,PhIds){
+                var chooseItem=JSON.stringify(this.chooseItem);
+                var item=JSON.parse(chooseItem);              
+                if(item.PhId<=0){
+                    this.$message("请先选择凭证!");
+                    return;
+                }
+                var data={
+                    orgid:this.orgid,
+                    uid:this.uid,
+                    uname:this.uname,
+                    infoData:PhIds
+                }
+                var url='PVoucherMst/PostAudit';
+                if(!bool){
+                    url='PVoucherMst/PostUnAudit'
+                }
+                const loading=this.$loading();
+                this.$axios.post(url,data)
+                    .then(res=>{  
+                        loading.close();      
+                        if(res.Status=='success'){
+                            if(bool){
+                                this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'审核成功!'
+                               };
+                            }else{
+                                 this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'反审核成功!'
+                               };
+                            }
+                        }else{
+                            if(bool){
+                                 this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'审核失败!'
+                               };
+                            }else{
+                                 this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'反审核成功!'
+                               };
+                            }
+                        }
+                    })
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
+            },
+        //凭证号重排确认***************
+        resetCode(val){
+                if(val){
+                    const loading5=this.$loading();
+                    var data={
+                        orgid:this.orgid,
+                        Year:this.year,
+                        Pmonth:this.month
+                    }
+                    var url='/PVoucherMst/GetRebuilder';
+                    if(this.allReset){
+                        url='PVoucherMst/GetRebuilderForAllYear';
+                        data={
+                            orgid:this.orgid,
+                            Year:this.sideDate.split('-')[0],
+                        }
+                    }
+                    this.$axios.get(url,{params:data})
+                        .then(res=>{
+                            console.log(res)
+                            if(res.Status=='error'){
+                                this.$message(res.Msg);
+                            }else if(res.Status=='success'){
+                                this.checkNav='month';
+                                this.saasMessage={
+                                    message:'重排成功,请重新检查!',
+                                    visible:true,
+                                    delay:4000
+                                };
+                                this.getvoucherList();
+                            }
+                            loading5.close();
+                        })
+                        .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
+                }else{
+                    this.resetShow=false;
+                }
+            },
         //凭证列表***************高级搜索***********************
         getvoucherList(str){
-            console.log(this.year,this.month)
-            const loading1=this.$loading();
+            console.log(this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString())
             var data={
                 uid:this.uid,
                 orgid:this.orgid,
@@ -288,13 +392,26 @@
                 sort:['PNo DESC','PType','PDate DESC'],
                 // itemValuePhid:649181122000008,
                 itemValuePhid:'',
-                queryfilter:{"PAccper*str*ge*1":this.year+(this.month>9?this.month:('0'+this.month)),"PAccper*str*le*1":this.year+(this.month>9?this.month:('0'+this.month))}
+                queryfilter:{
+                     //未审核****   "PAuditor*num*eq*1":0,
+                   //已审核****    "PAuditor*num*ge*1":0, 
+                    "PAccper*str*ge*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString(),
+                    "PAccper*str*le*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString()
+                    }
+            }
+             console.log(this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString())
+            if(str=='audit'){
+                data.queryfilter={
+                   "PAuditor*num*eq*1":0,  //未审核****   
+                   //已审核****    "PAuditor*num*ge*1":0, 
+                    "PAccper*str*ge*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString(),
+                    "PAccper*str*le*1":this.year.toString()+(this.month>9?this.month:('0'+this.month)).toString()
+                    };
             }
             this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                 .then(res=>{
                     if(res.Status=='success'){
-                        this.$message(res.Msg);
-                        loading1.close();
+                        this.$message(res.Msg);                  
                         return;
                     }  
                     if(res.Record.length<=0){
@@ -302,9 +419,9 @@
                     } else{
                         this.voucherList= res.Record;
                     }
-                        loading1.close();
+                        
                 })
-                .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});loading1.close();})
+                .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});})
         },
       },
       filters:{
@@ -456,6 +573,7 @@
           ...mapState({
               orgid: state => state.user.orgid,
               uid: state => state.user.userid,
+              uname: state => state.user.username,
           })
       },
       components:{
@@ -575,6 +693,7 @@
     .audit{
         height:80%;
         width:85%;
+        min-width:868px;
         background: #fff;
         position:absolute;
         left:5%;

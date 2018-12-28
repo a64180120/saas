@@ -44,7 +44,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
 
@@ -61,7 +61,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    <input type="text" v-bind:disabled="changeBtn.disable" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                    <input type="text" v-bind:disabled="changeBtn.disable" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -76,7 +76,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:placeholder="item.Description | NumFormat" v-on:input="inputDicription">
+                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:value="item.Description | NumFormat" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -91,7 +91,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal| NumFormat}}</li>
                                 <li>
-                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:placeholder="item.Description | NumFormat"  v-bind:index="index" v-on:input="inputDicription">
+                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description | NumFormat"  v-bind:index="index" v-on:input="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -106,7 +106,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:blur="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:blur="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -121,7 +121,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:blue="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:blue="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -136,7 +136,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:blur="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:blur="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -152,7 +152,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:placeholder="item.Description | NumFormat"  v-bind:index="index" v-on:blur="inputDicription">
+                                    其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description | NumFormat"  v-bind:index="index" v-on:blur="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -164,7 +164,16 @@
                                 <li class="align-right">{{item.BudgetTotal | NumFormat}}</li>
                                 <li class="align-right">
                                     <template v-if="item.Layers==0">
-                                        <input disabled  v-bind:code="item.SubjectCode" v-bind:value="(item.ApprovedBudgetTotal-item.BudgetTotal)| NumFormat">
+                                        <!--判断有没有子级科目，有则禁用，没有则添加输入方法-->
+                                        <template v-if="budgetList[index+1].SubjectCode.substring(0,item.SubjectCode.length)!=item.SubjectCode">
+                                            <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode" v-bind:layer="item.Layers" v-on:blur="inputLis" :value="(item.ApprovedBudgetTotal-item.BudgetTotal )| NumFormat">
+                                        </template>
+                                        <template v-else>
+                                            <input disabled  v-bind:code="item.SubjectCode" v-bind:value="(item.ApprovedBudgetTotal-item.BudgetTotal)| NumFormat">
+                                        </template>
+
+
+
                                     </template>
                                     <template v-else>
                                         <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:blur="inputLis" :value="(item.ApprovedBudgetTotal-item.BudgetTotal )| NumFormat">
@@ -172,7 +181,7 @@
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                                 <li>
-                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:placeholder="item.Description" v-bind:index="index" v-on:blur="inputDicription">
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description" v-bind:index="index" v-on:blur="inputDicription">
                                 </li>
                             </ul>
                         </template>
@@ -228,7 +237,8 @@
                 specialSubIndex:[],//特殊科目对应的下标数组，用于计算
                 date1:[],
                 proofType:'0',
-                loading:false
+                loading:false,
+                verify:true//判断页面是否可以修改，true默认可修改，若为false不可修改
             }
         },
         components: {TimeSelectBar},
@@ -244,26 +254,30 @@
         },
         methods:{
             /*
-                       *核定
-                       *
-                       * */
+           *核定
+           *
+           * */
             hedin:function(){
-                this.$message('待开发');
+                this.VerifyMiddle();
             },
 
             /*
             * 监听编辑按钮事件
             * */
             changeBtnC:function(){
-                if(this.changeBtn.flag){
-                    if(this.changeBtn.disable){
-                        this.changeBtn.title='保存';
-                        this.changeBtn.disable=false;
-                    }else{
-                        this.saveChange();
-                        this.changeBtn.title='编辑';
-                        this.changeBtn.disable=true;
+                if(this.verify){
+                    if(this.changeBtn.flag){
+                        if(this.changeBtn.disable){
+                            this.changeBtn.title='保存';
+                            this.changeBtn.disable=false;
+                        }else{
+                            this.saveChange();
+                            this.changeBtn.title='编辑';
+                            this.changeBtn.disable=true;
+                        }
                     }
+                }else{
+                    this.$message({ showClose: true, message:'已经进行过年中调整核定，不可进行修改',type: 'error' })
                 }
             },
             /*
@@ -286,6 +300,37 @@
                     console.log(err);
                 })
 
+            },
+            /*
+            * 核定
+            * */
+            verifyMiddle:function(){
+                if(this.verify){
+                    let that=this;
+
+                    this.loading=true;
+                    for(let i in this.budgetList){
+                        this.budgetList[i].VerifyMiddle=1;
+                    }
+                    this.$axios.post(
+                        'PSubjectBudget/PostSave',
+                        {
+                            "uid": this.userid,
+                            "orgid": this.orgid,
+                            "infodata": this.budgetList
+                        }
+                    ).then(function(res){
+                        that.loading=false;
+                        that.$message({ showClose: true, message:'年中调整核定成功',type: 'success' });
+                        this.verify=false;
+                        this.showCountMsg=false;
+                    }).catch(function(err){
+                        that.loading=false;
+                        console.log(err);
+                    })
+                }else{
+                    this.$message({ showClose: true, message:'已经核定年中调整',type: 'error' })
+                }
             },
             /*
             * 监听数据输入
@@ -316,9 +361,17 @@
                             //通过截取code确定对应的一级科目
                             let len = this.budgetList[i].SubjectCode.length;
                             let codeSub = code.substring(0,len);
-                            if(codeSub==this.budgetList[i].SubjectCode&&code.length!=len){
+                            if(codeSub==this.budgetList[i].SubjectCode){
+                                console.log(i);
 
-                                this.budgetList[i].ApprovedBudgetTotal=parseFloat(this.budgetList[i].ApprovedBudgetTotal)- (this.budgetList[index].ApprovedBudgetTotal-this.budgetList[index].BudgetTotal)+in_value;
+                                let layer=val.target.attributes.layer.value;//当前修改数据时父级菜单还是子集菜单
+                                //判断是父级科目还是子级科目
+                                //如果是子级科目，则先修改数组中父级科目的值，计算之后再修改本身的值；父级科目则先计算其他值，再修改自身
+
+                                if(layer!='0'){
+                                    this.budgetList[i].ApprovedBudgetTotal=parseFloat(this.budgetList[i].ApprovedBudgetTotal)- (this.budgetList[index].ApprovedBudgetTotal-this.budgetList[index].BudgetTotal)+in_value;
+                                }
+
                                 //判断修改的数据是在收入合计之前还是在支出合计之前
                                 if(parseFloat(index) < parseFloat(this.specialSubIndex['BNSRHJ'])){
                                     //收入合计更改
@@ -345,7 +398,11 @@
                                 this.code_firstCount[codeSub]=parseFloat(this.budgetList[i].ApprovedBudgetTotal)-parseFloat(this.budgetList[i].BudgetTotal);
                                 //计算本年结余
                                 this.budgetList[this.specialSubIndex['BNJY']].ApprovedBudgetTotal=this.budgetList[this.specialSubIndex['BNSRHJ']].ApprovedBudgetTotal-this.budgetList[this.specialSubIndex['BNZCHJ']].ApprovedBudgetTotal;
+                                if(layer=='0'){
+                                    this.budgetList[i].ApprovedBudgetTotal=parseFloat(this.budgetList[i].ApprovedBudgetTotal)- (this.budgetList[index].ApprovedBudgetTotal-this.budgetList[index].BudgetTotal)+in_value;
+                                }
 
+                                break;
                             }
                         }
                     }
@@ -425,6 +482,9 @@
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
                         res.Record[i].Uyear=year;
+                        if( res.Record[i].VerifyMiddle==1){
+                            this.verify=false;
+                        }
                         if(res.Record[i].k_name == 'BNSRHJ'){
                             alert('BNSRHJ');
                         }
@@ -714,6 +774,48 @@
     }
     input.other{
         width:45%;
+    }
+/*弹窗样式*/
+    .cover{
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(66,66,66,0.45);
+        z-index: 99;
+        text-align: center;
+    }
+    .coverContent{
+        background-color: #fff;
+        width: 362px;
+        height: 195px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -87.5px -181px;
+
+    }
+    .coverContent div:nth-of-type(1){
+        border-bottom: 1px solid grey;
+        padding:10px 20px;
+    }
+    .coverContent div:nth-of-type(2){
+        padding: 30px 20px;
+    }
+    .coverContent ul{
+        padding: 30px 20px;
+    }
+    .coverContent ul li:nth-of-type(1){
+        border: 1px solid #3e8cbc;
+        color: #3e8cbc;
+        padding: 5px 15px;
+    }
+    .coverContent ul li:nth-of-type(2){
+        border: 1px solid #3e8cbc;
+        color: #FFF;
+        background: #3e8cbc;
+        padding: 5px 15px;
     }
 </style>
 

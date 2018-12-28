@@ -2,6 +2,7 @@
     <div class="sys-login">
         <div class="register_head">
             <img src="../../assets/images/register/register_company_log.png">
+            <div class="telPhone"><img src="../../assets/images/finance/SAAS-03.png"><span>0571-88270588</span></div>
         </div>
         <div class="login-area">
             <div class="form-area">
@@ -510,8 +511,19 @@ export default {
     }
     .register_head img{
         height: 51px;
-        margin-left: 80px;
+        margin-left: 206px;
         margin-top: 5px;
+    }
+    .telPhone{
+        color:#88b927;
+        font-size: 20px;
+        align-items: center;
+        margin-right: 206px;
+        float: right;
+    }
+    .telPhone>img{
+        height: 40px;
+        margin-top: 10px;
     }
     .register_foot{
         height:61px;

@@ -135,7 +135,7 @@
             },
             dateChoose:function(val){
                 let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.getData(time,this.proofType);
+                this.getData(time,this.proofType)
             },
 
             getData:function(){
@@ -324,7 +324,7 @@
             },
             //打印
             printContent(){
-                //this.$print(this.$refs.printFrom) // 使用
+                this.$print(this.$refs.printFrom) // 使用
             },
             printLodop() {
                 /**
