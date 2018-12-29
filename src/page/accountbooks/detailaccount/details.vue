@@ -229,6 +229,7 @@
         },
         mounted() {
             window.addEventListener('scroll', this.handleScroll, true);  // 监听（绑定）滚轮滚动事件
+            console.log(this.user);
         },
         watch: {
 
@@ -246,8 +247,9 @@
         computed:{
             ...mapState({
                 orgid:state=>state.user.orgid,
+                orgName:state=>state.user.orgName,
                 uid:state=>state.user.userid,
-                user:state=>state.user
+                user:state=>state
             })
         },
         methods: {
@@ -355,6 +357,8 @@
                 if(!flag){
                     this.dataInfo=[];
                     this.getDataByMonth();
+                    //清除分页查询页面增长，避免数据查询出错
+                    this.pageIndex=0;
                 }
 
                 let year='';
@@ -404,6 +408,8 @@
                         //this.dataInfo=res.Record;
                         this.totalCount=res.totalRows;
                         console.log(res);
+
+                        this.pageIndex++;  //滚动之后加载第二页
                         if(flag){//如果flag为true则表示分页
                             if(res.Record.length<this.pageSize){
                                 for(var i in res.Record){
@@ -617,22 +623,47 @@
                 if(!this.busy){
                     this.busy=true;
                     setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
-                        this.pageIndex++;  //滚动之后加载第二页
+
                         this.getData(true);
                     }, 1000);
                 }
             },
             postBalanceSheetExcel:function() {
-                let param = {'uid':this.uid,
-                    'orgid':this.orgid,
-                    'infoData': this.budgetList};
+                let param = {
+                    uid: this.uid,
+                    orgid:this.orgid,
+                    OrgName:this.orgName,
+                    Kcode: this.selectSubject.KCode||'',
+                    Year: this.date1.choosedYear,
+                    OrgIds: this.orgid,
+                    pageindex:0,
+                    pagesize:this.totalCount,
+                    Title:this.selectSubject.KName,
+                    Verify:this.proofType,
+                    Pmonth:this.date1.choosedMonth+','+this.date1.choosedMonthEnd,
+                    value:this.inputKvalue==''?'':this.que,
+                    StartTime:this.zwTime[0],
+                    EndTime:this.zwTime[1],
+                    StartPNo:this.startCode,EndPno:this.endCode,
+                    StartAmount:this.startMoney,EndAmount:this.endMoney,
+                    'Title':this.selectSubject.KCode+this.selectSubject.KName,
+                };
 
                 //let baseheader = ajaxhttp.header;
                 let base=httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
-                this.downloadLoading = true
-                this.$axios({
+                this.downloadLoading = true;
+                this.$axios.get("/PVoucherMst/GetDetailAccountExcel",{params:param})
+                    .then(res=>{
+                        console.log(res);
+                        // "{\"path\":\"zcfz\",\"filename\":\"20181229103028248.xls\"}"
+                        window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
+                        this.downloadLoading = false
+                    }).catch(err=>{
+                      console.log(err);
+                    })
+                /*this.$axios({
                     method: 'post',
                     url: '/PsubjectBudget/PostExportMiddleYear',
                     data: param
@@ -641,7 +672,7 @@
                     this.downloadLoading = false
                 }).catch(err => {
                     console.log(err)
-                })
+                })*/
             },
             //下载文件
             fileDownload (data,fileName){
@@ -687,7 +718,7 @@
             },
         //刷新
             refresh:function(){
-                this.getData();
+                this.getData(false);
             }
         }
     }

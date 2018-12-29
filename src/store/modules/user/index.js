@@ -17,12 +17,15 @@ const state = {
     orgid: "",
     //组织代码
     orgcode:'',
+    //组织名称
+    orgName:'',
     //左侧菜单权限
     navList: [],
     // 用户名
     username: '',
     //EmpowerInfo 判断是否是试用用户
     EmpowerInfo:'',
+
 };
 
 //计算获取取新数据
@@ -57,10 +60,11 @@ const mutations = {
         if (data) {
             data.isLogin=true;
             Auth.setUserInfoData(data);
-
+            console.log(data);
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
             state.orgcode = data.orgInfo.EnCode;
+            state.orgName = data.orgInfo.OrgName;
             state.username=data.userInfo.RealName;
             state.EmpowerInfo=data.orgInfo.EmpowerInfo;
         } else {
