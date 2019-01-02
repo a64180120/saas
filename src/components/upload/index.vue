@@ -107,7 +107,7 @@ export default {
         beforeAvatarUpload(file){
             const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/pdf') || (file.type === 'image/gif') || (file.type === 'image/jpg');
             const isLt2M = file.size / 1024 / 1024 < 2;
-            console.log(3333)
+            console.log(file)
             if (!isRightType) {
                 this.$message.error('上传图片只能是 JPG,png,gif,jpeg,pdf 格式!');
                 return false

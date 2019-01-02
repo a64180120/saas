@@ -1,6 +1,6 @@
 <template>
     <div class="pictureupload">
-        <el-upload
+        <el-upload
             ref="upload"
             action=""
             list-type="picture-card"
@@ -9,12 +9,11 @@
             :on-exceed="handleExceed"
             :before-upload="beforeAvatarUpload"
             :http-request='uploadFileMethod'
-            :limit="limit">
-            <i class="el-icon-plus"></i>
+            :limit="limit"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
         </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-        </el-dialog>
     </div>
 </template>
 
@@ -95,38 +94,28 @@ export default {
                 imgPath:file.url.replace(this.picUrl,'')
             };
 
-            let item=this.curimgList.filter(function(el,index,array){
-                
-                var result= el.BName !== file.name;
-                if(!result){
-                    deleValue.phid=el.PhId
-                    deleValue.imgPath=el.BUrlPath
+            for(let ind in me.curimgList){                
+                if(me.curimgList[ind].BName === file.name){
+                    deleValue.phid=me.curimgList[ind].PhId
+                    deleValue.imgPath=me.curimgList[ind].BUrlPath
+                    me.curimgList.splice(ind,1);      
                 }
-
-                return result
-            });
-
-            this.curimgList=[];
-
-            if(item.length>0){
-                this.curimgList=item;
             }
-
-            this.$emit("removeimg", item, deleValue);
+            me.$emit("removeimg", me.curimgList, deleValue);
         },
         //附件上传前的判断
         beforeAvatarUpload(file){
-            // const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
-            // const isLt2M = file.size / 1024 / 1024 < 2;
-            // console.log(3333)
-            // if (!isRightType) {
-            //     this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
-            //     return false
-            // }
-            // if (!isLt2M) {
-            //     this.$message.error('上传图片大小不能超过 2MB!');
-            //     return false
-            // }
+            console.log(file)
+            const isRightType = (file.type === 'application/vnd.ms-excel')||(file.type === 'application/x-msdownload');
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            if (!isRightType) {
+                this.$message.error('上传文件只能是 xls 格式!');
+                return false
+            }
+            if (!isLt2M) {
+                this.$message.error('上传文件大小不能超过 2MB!');
+                return false
+            }
         },
         beforeRemove(file, fileList){},
         //判断图片数量

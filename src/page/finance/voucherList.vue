@@ -7,17 +7,17 @@
                     <li class="more" style="width:80px">
                         <ul >
                             <li>更多</li>
-                            <li  @click.prevent="handle('copy')">复制</li>
-                            <li  @click.prevent="handle('cut')">剪切</li>
-                            <li  @click.prevent="handle('chongh')">冲红</li>
-                            <li  @click.prevent="handle('download')">
+                            <li  @click.stop="handle('copy')">复制</li>
+                            <li  @click.stop="handle('cut')">剪切</li>
+                            <li  @click.stop="handle('chongh')">冲红</li>
+                            <li  @click.stop="handle('download')">
                                 <span>导出</span>
                             </li>
                             <li @click.prevent="handle('upload')">
-                                <div @click.stop="1">导入</div>                       
+                                <div>导入</div>                       
                             </li>
-                            <li @click.prevent="handle('print')">打印</li>
-                            <li @click.prevent="handle('reset')">凭证号重排</li>
+                            <li @click.stop="handle('print')">打印</li>
+                            <li @click.stop="handle('reset')">凭证号重排</li>
                         </ul>
                     </li>
                 </a>            
@@ -201,7 +201,8 @@
         
         <!-- 附件弹出框 -->
         <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
-            <file-upload  @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></file-upload>
+            <file-upload  @uploadimg="uploadfile" :submitUpload="submitUpload" :imgList="filelist" :limit="1" @removeimg="removefile"></file-upload>
+              
         </el-dialog>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
         <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
@@ -295,7 +296,7 @@
                 printData:[],
                 routerQuery:false,//路由是否传值************
                 fileVisible:false,
-                imglist:[], //文件上传的内容************
+                filelist:[], //文件上传的内容************
                 fresh:true,
                 saasMessage:{
                     visible:false,  //消息弹出框*******
@@ -450,6 +451,9 @@
                         break;
                     case 'download':  //下载**************
                         this.getvoucherList('yes');
+                        break;
+                    case 'upload': //导入************
+                        this.testFile();
                         break;
                     case 'fresh':  //刷新**************
                         this.fresh=false;
@@ -1170,14 +1174,17 @@
             //导入凭证***********************
             testFile(){
                 this.message('功能开发中!!')
-                //this.fileVisible=true;
+               // this.fileVisible=true;
             },
-            removeimg(item,deleValue) {//
-               this.imglist=item;
+            uploadUrl(){//文件上传地址函数
+                return 666
+            },
+            removefile(item,deleValue) {//移除文件的函数
+               this.filelist=item;
                 if(item.length<1){
                     return;
-            }
-                console.log(item,deleValue,this.imglist);
+                }
+                console.log(item,deleValue,this.filelist);
                 // var urls=deleValue.imgPath.split('/');
                 // console.log(this.imglist,item,urls,deleValue)
                 // for(var i in item[0]){ 
@@ -1205,14 +1212,15 @@
                     this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
                 });
         },
-            uploadimg(item) {
+            uploadfile(item) {
                 //this.imglist.push(item);
-                console.log(this.imglist);
+                console.log(this.filelist);
                 if(item){
                     this.ExcelValidMsg(item);    
                 }
                 
             },
+            submitUpload(){console.log(11)},
             //校验excel文件中凭证信息***********
             ExcelValidMsg(param){
                 var data={

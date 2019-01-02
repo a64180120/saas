@@ -43,7 +43,7 @@
         </div>
         <!--凭证组件*******************-->
         <div style="overflow-y:auto"  :class="{voucherMask:voucherMask}" ref="print">
-            <div class="voucherContainer">
+            <div  class="voucherContainer">
                 <p v-if="voucherMask" class="title">
                     <span v-if="voucherMask=='copy'">复制凭证</span>
                     <span v-if="voucherMask=='cut'">剪切凭证</span>
@@ -60,7 +60,7 @@
                     <div :class="{voucherDisabled:voucherAdd}"></div>
                     <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                 </div>
-                 <div v-show="!voucherMask" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
+                 <div v-show="(!voucherMask)&&voucherDataList.bool" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
             </div>
            
         </div>
