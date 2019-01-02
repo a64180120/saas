@@ -9,7 +9,7 @@
                         <li v-for="item of nowYear-2000"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
-                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1==nowYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>sideDate.split('-')[0],futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
                             </ul>
                         </li>
                     </ul>
@@ -99,7 +99,7 @@ export default {
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
-                    queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
+                    queryfilter:{"OrgId*num*eq*1":this.orgid}
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{ 
@@ -108,7 +108,7 @@ export default {
                             return;
                         }                      
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
-                        this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                        this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
                         this.checkVal=this.checkedTime;

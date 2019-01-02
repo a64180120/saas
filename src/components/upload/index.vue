@@ -105,7 +105,7 @@ export default {
         },
         //附件上传前的判断
         beforeAvatarUpload(file){
-            const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/pdf') || (file.type === 'image/gif') || (file.type === 'image/jpg');
+            const isRightType = (file.type === 'application/vnd.ms-excel') || (file.type === 'image/png') || (file.type === 'image/pdf') || (file.type === 'image/gif') || (file.type === 'image/jpg');
             const isLt2M = file.size / 1024 / 1024 < 2;
             console.log(file)
             if (!isRightType) {

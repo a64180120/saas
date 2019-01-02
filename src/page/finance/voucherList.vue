@@ -201,8 +201,9 @@
         
         <!-- 附件弹出框 -->
         <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
-            <file-upload  @uploadimg="uploadfile" :submitUpload="submitUpload" :imgList="filelist" :limit="1" @removeimg="removefile"></file-upload>
-              
+            <file-upload  @uploadimg="uploadfile" :imgList="filelist" :limit="1" @removeimg="removefile"></file-upload>
+            <div class="btn fileCon">校验</div> 
+            <div style="clear:both"></div>
         </el-dialog>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
         <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
@@ -1173,13 +1174,14 @@
             },
             //导入凭证***********************
             testFile(){
-                this.message('功能开发中!!')
-               // this.fileVisible=true;
+               // this.$message('功能开发中!!')
+                this.fileVisible=true;
             },
             uploadUrl(){//文件上传地址函数
                 return 666
             },
             removefile(item,deleValue) {//移除文件的函数
+                debugger
                this.filelist=item;
                 if(item.length<1){
                     return;
@@ -2196,6 +2198,15 @@
             margin-left:5%;
             margin-top:5%;
         }
+    }
+    .pictureupload{
+        float:left;
+        width:20%;
+        margin-right:15px;
+    }
+    .fileCon{
+        float:left;
+        margin-top:5%;
     }
 </style>
 <style>

@@ -1,19 +1,18 @@
 <template>
-    <div class="pictureupload">
+    <div class="fileUpload">
         <el-upload
+            class="upload-demo"
             ref="upload"
-            action=""
-            list-type="picture-card"
+            action=""
             :on-remove="handleRemove"
             :file-list="fileList"
             :on-exceed="handleExceed"
             :before-upload="beforeAvatarUpload"
             :http-request='uploadFileMethod'
-            :limit="limit"
-            :auto-upload="false">
+            :limit="limit">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-        </el-upload>
+            <div slot="tip" class="el-upload__tip">只能上传xls文件，且不超过2MB</div>
+        </el-upload>
     </div>
 </template>
 
@@ -88,7 +87,11 @@ export default {
         //图片移除时处理数据
         handleRemove(file, fileList) {
             var me=this;
-            //删除文件对象 
+            //删除文件对象
+            console.log(file)
+            if(!file.phid){
+                return;
+            } 
             let deleValue={
                 phid:file.phid,
                 imgPath:file.url.replace(this.picUrl,'')
@@ -106,7 +109,7 @@ export default {
         //附件上传前的判断
         beforeAvatarUpload(file){
             console.log(file)
-            const isRightType = (file.type === 'application/vnd.ms-excel')||(file.type === 'application/x-msdownload');
+            const isRightType = (file.type === 'application/vnd.ms-excel');
             const isLt2M = file.size / 1024 / 1024 < 2;
             if (!isRightType) {
                 this.$message.error('上传文件只能是 xls 格式!');
@@ -157,5 +160,10 @@ export default {
 };
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
-<style scoped>
+<style >
+.fileUpload .el-upload--text{
+    width:100px;
+    height:33px;
+    border:0;
+}
 </style>
