@@ -42,7 +42,7 @@ export default {
   name: 'treeTable',
   data() {
     return {
-      tableHeight:600
+      tableHeight:0
     }
   },
   props: {
@@ -78,7 +78,13 @@ export default {
     }
   },
   created(){
-
+    //document.documentElement.clientHeight:浏览器的body可用高度
+    //this.$refs.table.$el.offsetTop：表格距离浏览器的高度
+    //后面的50：根据需求空出的高度，自行调整
+    //this.tableHeight=680
+    console.log("document.documentElement.clientHeight:"+document.documentElement.clientHeight);
+    console.log("window.innerHeight:"+window.innerHeight);
+    this.tableHeight = document.documentElement.clientHeight - this.extraheight;
   },
   computed: {
     // 格式化数据源
@@ -94,15 +100,7 @@ export default {
       return func.apply(null, args)
     }
   },
-  mounted(){
-    console.log(document.documentElement.clientHeight);
-    console.log(window.innerHeight);
-    debugger;
-    this.tableHeight = document.documentElement.clientHeight - this.$refs.treetable.$el.offsetTop - this.extraheight;
-    //document.documentElement.clientHeight:浏览器的body可用高度
-    //this.$refs.table.$el.offsetTop：表格距离浏览器的高度
-    //后面的50：根据需求空出的高度，自行调整
-  },
+  mounted(){},
   methods: {
     showRow: function(row) {
       const show = (row.row.parent ? (row.row.parent._expanded && row.row.parent._show) : true)
