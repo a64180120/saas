@@ -1,7 +1,7 @@
 <template>
     <div class="sys-page" style="background-color: #ffffff">
         <div class="container">
-            <div class="handle-box">
+            <div class="handle-box" style="position: relative">
                 <el-row>
                     <el-col :span="24">
                         <!--<el-select v-model="state_mark" placeholder="请选择菜单状态" class="handle-select mr10">-->
@@ -23,6 +23,7 @@
             <tree-table
                 :data="tableData"
                 :columns="columns"
+                :extraheight='extraheight'
                 border
                 ref="multipleTable"
                 :expand-all="expandAll"
@@ -243,13 +244,13 @@
                 <el-button @click="editButton = false">取 消</el-button>
             </span>
         </el-dialog>
-        <div style="position: fixed; top:120px;bottom: 0px; width: 38px;background-color: #FFFFFF;right: 0px;">
+        <!--<div style="position: fixed; top:120px;bottom: 0px; width: 50px;background-color: #FFFFFF;right: 0px;">-->
 
-        </div>
+        <!--</div>-->
     </div>
 </template>
 <script>
-    import treeTable from "@/components/tree-table";
+    import treeTable from "@/components/tree-table/indexHeight";
     export default {
         name: "MenuList",
         components: { treeTable },
@@ -275,6 +276,7 @@
                 tableData: [], //table数据
                 tableDataButton:[],
                 qData: [],
+                extraheight:300,
                 // pageSize: 10, //pageSize
                 // pageIndex: 1, //pageIndex
                 // totalCount: 0, //总页数

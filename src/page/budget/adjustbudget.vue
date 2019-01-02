@@ -258,7 +258,7 @@
            *
            * */
             hedin:function(){
-                this.VerifyMiddle();
+                this.verifyMiddle();
             },
 
             /*
@@ -321,9 +321,11 @@
                         }
                     ).then(function(res){
                         that.loading=false;
+                        that.verify=false;
+                        that.showCountMsg=false;
                         that.$message({ showClose: true, message:'年中调整核定成功',type: 'success' });
-                        this.verify=false;
-                        this.showCountMsg=false;
+                        that.getMiddleYear();
+
                     }).catch(function(err){
                         that.loading=false;
                         console.log(err);

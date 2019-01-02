@@ -23,8 +23,10 @@
         </div>
         <div class="formData" ref="printFrom">
             <tree-table
+                :isindex="false"
                 :data="inMoney"
                 :expand-all="expandAll"
+                node-key="KCode"
                 :columns="columns"
                 :header-cell-style="{background:'#d3e9f9',color:'#000','text-align':'center'}"
                 v-loading="loading"
@@ -70,7 +72,7 @@
                         text: "编码",
                         value: "KCode",
                         width: 200,
-                        align:'center'
+                        'text-indent': '40px'
                     },
                     {
                         text: "名称",
@@ -134,8 +136,9 @@
                 return res;
             },
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.getData(time,this.proofType)
+                console.log(val);
+                this.date1=val;
+                this.getData()
             },
 
             getData:function(){
@@ -486,5 +489,7 @@
          background-color: transparent;
          line-height: 30px;
      }
-
+   .bolder{
+       font-weight: bold;
+   }
 </style>

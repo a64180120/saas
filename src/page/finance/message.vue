@@ -70,6 +70,7 @@ export default {
     height:100%;
     z-index:2999;
     background:rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px 2px #d3e9f9;
     >.saasMsg{
         width: 370px;
         height: 180px;

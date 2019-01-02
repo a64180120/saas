@@ -366,7 +366,7 @@
                         width:40%;
                         height:30px;
                         line-height: 30px;
-                        background: #509edc;
+                        background: #00b7e4;
                         text-align: center;
                         margin-left: 10px;
                         color:#fff;
@@ -501,7 +501,7 @@
                         margin:0 25px 25px 0;
                         >div:first-of-type{
                             height:33px;
-                            background: #6acccb;
+                            background: #00b7ee;
                             color:#fff;
                             >div{
                                 padding:5px;
@@ -525,19 +525,19 @@
                         }
                         >div:nth-of-type(2){
                             height:143px;
-                            border:2px solid #6acccb;
+                            border:2px solid #00b7e4;
                         }
                         &:first-of-type{
                             cursor:pointer;
                             >div:first-of-type{
-                                background: #ff9900;
+                                background: #00b7ee;
                                 line-height:33px;
                                 text-align: center;
                                 color:#fff;
                                 font-size: 16px;
                             }
                             >div:nth-of-type(2){
-                                border:2px solid #ff9900;
+                                border:2px solid #00b7ee;
                                 position:relative;
                                 &:before{
                                     position: absolute;
@@ -600,7 +600,7 @@
                 width:100%;
                 height:100%;
                 >div{
-                    border-bottom: 0.5px solid #bcdede;
+                    border-bottom: 0.5px solid #00b7e4;
                     width:100%;
                     height:25%;
                     &:after{
@@ -608,7 +608,7 @@
                         position: absolute;
                         width:1px;
                         height:140px;
-                        background: #bcdede;
+                        background: #00b7e4;
                         top:0;
                     }
                     &:first-of-type:after{

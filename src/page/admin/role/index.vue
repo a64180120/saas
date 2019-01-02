@@ -6,8 +6,8 @@
                     <el-col :span="24">
                         <el-select v-model="state_mark" placeholder="角色状态" class="handle-select mr10">
                             <el-option label="全部" value=""></el-option>
-                            <el-option label="激活" value="0"></el-option>
-                            <el-option label="未激活" value="1"></el-option>
+                            <el-option label="启用" value="0"></el-option>
+                            <el-option label="停用" value="1"></el-option>
                         </el-select>
                         <el-input v-model="select_word" placeholder="角色编码/名称" prefix-icon="el-icon-search"
                                   class="handle-input mr10"></el-input>

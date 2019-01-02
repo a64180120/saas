@@ -256,10 +256,10 @@ ul{
 }
 .btn{
     cursor: pointer;
-    background: #3e8cbc;
+    background: #00b7ee;
     color:#fff;
     text-align: center;
-    border:1px solid #3e8cbc;
+    border:1px solid #00b7ee;
     border-radius: 5px;
     height:30px;
     line-height: 30px;
@@ -267,7 +267,7 @@ ul{
 }
 .btn:hover{
     background: #fff;
-    color:#3e8cbc;
+    color:#00b7ee;
 }
 .content{
     height:100%;
@@ -400,3 +400,6 @@ ul{
   .el-submenu__icon-arrow{
       color:rgb(117, 74, 74) !important;
   }
+  .el-menu--popup{
+    min-width: 120px;
+}

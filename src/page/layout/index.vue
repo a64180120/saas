@@ -19,6 +19,7 @@
             </div>
         </div>
         <!--15天提示弹窗-->
+        <!--timerShowType?'block':'none'-->
         <div :style="{'display':timerShowType?'block':'none','position':'fixed','z-index':'9999'}">
             <countdownpop></countdownpop>
         </div>

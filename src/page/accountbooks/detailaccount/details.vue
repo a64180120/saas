@@ -92,7 +92,6 @@
                                 class="filter-tree"
                                 :data="subjectLists"
                                 :props="defaultProps"
-                                default-expand-all
                                 node-key="PhId"
                                 :filter-node-method="filterNode"
                                 @node-click="handleNodeClick"
@@ -122,7 +121,7 @@
                             </li>
                         </ul>
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
-                            <li>{{item.Pdate}}</li>
+                            <li>{{item.Pdate.slice(0,10)}}</li>
                             <li class="align-center" style=""><a @click="showvoucher" :title="item.PhIdMst">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
                             <li class="align-right">{{item.JSum |NumFormat}}</li>
@@ -151,12 +150,13 @@
                         </div>-->
                     </div>
                 </div>
-                <!--<div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" >
+                <!--凭证组件弹窗-->
+                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" >
                     <div class="el-icon-close" @click="voucherDataList.bool=false"></div>
                     <div class="voucherContent">
                         <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                     </div>
-                </div>-->
+                </div>
 
             </div>
 
@@ -196,7 +196,7 @@
                 },
                 zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
                 auxiliary:0,  //显示辅助项
-                pageSize: 10, //pageSize
+                pageSize: 15, //pageSize
                 pageIndex: 0, //pageIndex
                 testIndex:0,
                 totalCount: 0, //总页数
@@ -207,7 +207,7 @@
                 date1:{choosedYear:'',
                        choosedMonth:'',
                        choosedMonthEnd:''},
-                loading:false,
+                loading:true,
                 inputCode:'',//搜索框输入项目编码
                 focus:false,
                 proofType:'0,1',
@@ -229,9 +229,12 @@
         },
         mounted() {
             window.addEventListener('scroll', this.handleScroll, true);  // 监听（绑定）滚轮滚动事件
+            console.log(this.user);
+        },
+        destroyed(){
+            window.addEventListener('scroll', this.handleScroll, true);  // 监听（绑定）滚轮滚动事件
         },
         watch: {
-
             filterText(val) {
                 this.$refs.subjectTree.filter(val);
             },
@@ -246,8 +249,9 @@
         computed:{
             ...mapState({
                 orgid:state=>state.user.orgid,
+                orgName:state=>state.user.orgName,
                 uid:state=>state.user.userid,
-                user:state=>state.user
+                user:state=>state
             })
         },
         methods: {
@@ -255,16 +259,21 @@
                 let clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
                 // 设备/屏幕高度
                 let scrollObj = document.getElementById('ts'); // 滚动区域
-                let scrollTop = scrollObj.parentElement.parentElement.parentElement.scrollTop; // div 到头部的距离
-                let scrollHeight = scrollObj.scrollHeight; // 滚动条的总高度
-                //滚动条到底部的条件
-                if(scrollTop>=100){
-                    // div 到头部的距离 + 屏幕高度 = 可滚动的总高度
+                if(scrollObj==undefined){
+                    window.removeEventListener('scroll', this.handleScroll, false);  // 监听（绑定）滚轮滚动事件
 
-                    if(!this.busy){
-                        this.loadMore();
+                }else{
+                    let scrollTop = scrollObj.parentElement.parentElement.parentElement.scrollTop; // div 到头部的距离
+                    let scrollHeight = scrollObj.scrollHeight; // 滚动条的总高度
+                    //滚动条到底部的条件
+                    if(scrollTop>=100){
+                        // div 到头部的距离 + 屏幕高度 = 可滚动的总高度
+                        if(!this.busy){
+                            this.loadMore();
+                        }
                     }
                 }
+
             },
             //显示凭证
             showvoucher:function(val){
@@ -355,6 +364,8 @@
                 if(!flag){
                     this.dataInfo=[];
                     this.getDataByMonth();
+                    //清除分页查询页面增长，避免数据查询出错
+                    this.pageIndex=0;
                 }
 
                 let year='';
@@ -404,6 +415,8 @@
                         //this.dataInfo=res.Record;
                         this.totalCount=res.totalRows;
                         console.log(res);
+
+                        this.pageIndex++;  //滚动之后加载第二页
                         if(flag){//如果flag为true则表示分页
                             if(res.Record.length<this.pageSize){
                                 for(var i in res.Record){
@@ -421,7 +434,7 @@
                             for(var i in res.Record){
                                 this.dataInfo.push(res.Record[i]);  //concat数组串联进行合并
                             }
-                            if(res.Record.length<this.pagesize){
+                            if(res.Record.length<this.pageSize){
                                 this.busy=true;//禁用滚动加载
                             }else{
                                 this.busy=false;//启用滚动加载
@@ -617,22 +630,49 @@
                 if(!this.busy){
                     this.busy=true;
                     setTimeout(() => {  //发送请求有时间间隔第一个滚动时间结束后才发送第二个请求
-                        this.pageIndex++;  //滚动之后加载第二页
+
                         this.getData(true);
-                    }, 1000);
+                    }, 300);
+                }else{
+
                 }
             },
             postBalanceSheetExcel:function() {
-                let param = {'uid':this.uid,
-                    'orgid':this.orgid,
-                    'infoData': this.budgetList};
+                let param = {
+                    uid: this.uid,
+                    orgid:this.orgid,
+                    OrgName:this.orgName,
+                    Kcode: this.selectSubject.KCode||'',
+                    Year: this.date1.choosedYear,
+                    OrgIds: this.orgid,
+                    pageindex:0,
+                    pagesize:this.totalCount,
+                    Title:this.selectSubject.KName,
+                    Verify:this.proofType,
+                    Pmonth:this.date1.choosedMonth+','+this.date1.choosedMonthEnd,
+                    value:this.inputKvalue==''?'':this.que,
+                    StartTime:this.zwTime[0],
+                    EndTime:this.zwTime[1],
+                    StartPNo:this.startCode,EndPno:this.endCode,
+                    StartAmount:this.startMoney,EndAmount:this.endMoney,
+                    'Title':this.selectSubject.KCode+this.selectSubject.KName,
+                };
 
                 //let baseheader = ajaxhttp.header;
                 let base=httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
-                this.downloadLoading = true
-                this.$axios({
+                this.downloadLoading = true;
+                this.$axios.get("/PVoucherMst/GetDetailAccountExcel",{params:param})
+                    .then(res=>{
+                        console.log(res);
+                        // "{\"path\":\"zcfz\",\"filename\":\"20181229103028248.xls\"}"
+                        window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
+                        this.downloadLoading = false
+                    }).catch(err=>{
+                      console.log(err);
+                    })
+                /*this.$axios({
                     method: 'post',
                     url: '/PsubjectBudget/PostExportMiddleYear',
                     data: param
@@ -641,7 +681,7 @@
                     this.downloadLoading = false
                 }).catch(err => {
                     console.log(err)
-                })
+                })*/
             },
             //下载文件
             fileDownload (data,fileName){
@@ -687,7 +727,7 @@
             },
         //刷新
             refresh:function(){
-                this.getData();
+                this.getData(false);
             }
         }
     }

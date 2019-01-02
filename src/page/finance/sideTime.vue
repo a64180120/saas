@@ -5,7 +5,7 @@
             <p>{{sideDate.split('-')[0]}}</p>
             <div style="overflow:hidden;height:87%">
                 <div class="monthsContainer">
-                    <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
+                    <ul style="top:0" @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
                         <li v-for="item of nowYear-2000"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
@@ -149,12 +149,19 @@ export default {
                 if(this.mouseDown){
                     var Y=$event.clientY-this.mouseStartY;
                     var month= document.getElementById('scrollMonth');
-                    var bot=parseInt(month.style.bottom);
-                    if(bot>0){
-                        month.style.bottom='0px';
+                    var H=window.getComputedStyle(month).height;debugger
+                    var top=parseInt(month.style.top);
+                     console.log(month,Y,top);debugger
+                    if(top==0&&Y<0){             
                         return;
-                    }
-                        month.style.bottom=bot-Y*2+'px';
+                    }else if(top>0){
+                        month.style.top='0px';
+                        return;
+                    }else if(top<parseInt(H)*-1){
+                        month.style.top=parseInt(H)*-1+'px';
+                        return;
+                    }  
+                    month.style.top=top-Y*2+'px';
                     this.mouseStartY=$event.clientY;
                 }
 
@@ -284,7 +291,7 @@ export default {
             color:#fff;
             cursor: pointer;
             &:hover{
-               background:  #2780d1;
+               background:  #00b7ee;
             }
         }
         p{
@@ -428,10 +435,10 @@ export default {
                     font-weight: bold;
                     cursor:pointer;
                     &:hover{
-                        color:#3e8cbc;
+                        color:#00b7ee;
                     }
                     &.active{
-                        color:#3e8cbc;
+                        color:#00b7ee;
                     }
                     &:last-of-type{
                         border:0;
@@ -478,11 +485,11 @@ export default {
                         text-align: center;
                         cursor:pointer;
                         &:hover{
-                            background:#2780d1 ;
+                            background:#00b7ee ;
                             color:#fff;
                         }
                         &.active{
-                            background:#2780d1 ;
+                            background:#00b7ee ;
                             color:#fff;
                         }
                     }
@@ -497,13 +504,13 @@ export default {
                         line-height: 30px;
                         text-align: center;
                         margin-left: 40px;
-                        color:#3e8cbc;
-                        border:1px solid #3e8cbc;
+                        color:#00b7ee ;
+                        border:1px solid #00b7ee ;
                         border-radius: 3px;
                         cursor:pointer;
                         &:hover{
                             color:#fff;
-                            background: #3e8cbc;
+                            background: #00b7ee ;
                         }
                     }
                 }
@@ -523,10 +530,10 @@ export default {
                         display: block;
                         width:24px;
                         height:24px;
-                        border:1px solid #3e8cbc;
+                        border:1px solid #00b7ee ;
                         border-radius: 50%;
                         margin: 5px;
-                        background: #3e8cbc;
+                        background: #00b7ee ;
                         position: relative;
                         cursor: pointer;
                         &:first-of-type{
