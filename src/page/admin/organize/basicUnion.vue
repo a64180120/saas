@@ -314,6 +314,8 @@
                         return;
                     }else{
                         this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:true}});
+                        this.ajaxMode();
+                        this.PhIdList = '';
                     }
                 }
 
