@@ -3,14 +3,30 @@
         <div class="container">
             <el-container>
                 <el-header>
-                    <div class="choose">
+                    <div class="unionState flexPublic">
                         <ul class="flexPublic">
-                            <li v-show="!isedit" @click="edit">修改</li>
-                            <li v-show="isedit" @click="save">保存</li>
-                            <li @click="Backups">备份</li>
-                            <li>恢复</li>
-                            <li @click="testFile">附件</li>
-                            <li class="el-icon-refresh" @click="freshPage"></li>
+                            <li class="flexPublic">
+                            </li>
+                        </ul>
+                        <ul class="flexPublic handle" style="float: right">
+                            <a>
+                                <li v-show="!isedit" @click="edit">修改</li>
+                            </a>
+                            <a>
+                                <li v-show="isedit" @click="save" style='margin:0 0 0px 20px;'>保存</li>
+                            </a>
+                            <a>
+                                <li @click="Backups" style='margin:0 0 0px 20px;'>备份</li>
+                            </a>
+                            <a>
+                                <li style='margin:0 0 0px 20px;'>恢复</li>
+                            </a>
+                            <a>
+                                <li  @click="testFile" style='margin:0 0 0px 20px;'>附件</li>
+                            </a>
+                            <a>
+                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 20px;'></li>
+                            </a>
                             <!--<a @click="freshPage"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>-->
                         </ul>
                     </div>
