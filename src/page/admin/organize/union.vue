@@ -137,8 +137,8 @@
                 ],
                 unionStateValues: [
                     {id: "", name: '全部'},
-                    {id: "0", name: '激活'},
-                    {id: "1", name: '未激活'}
+                    {id: "0", name: '启用'},
+                    {id: "1", name: '停用'}
                 ],
                 userInfoCssList: [],
                 userInfo: [],
@@ -364,6 +364,8 @@
                     }else{
                         this.$store.commit("tagNav/upexcludeArr", ['manage-update']);
                         this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:false}});
+                        this.ajaxMode();
+                        this.PhIdList = '';
                     }
                 }
                 // if (url == '/admin/orgin/add') {
