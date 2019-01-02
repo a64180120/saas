@@ -200,9 +200,25 @@
         </div>
         
         <!-- 附件弹出框 -->
-        <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
+        <el-dialog title="选择附件" custom-class="fileDialog" :modal=false :visible.sync="fileVisible" width="40%">
             <file-upload  @uploadimg="uploadfile" :imgList="filelist" :limit="1" @removeimg="removefile"></file-upload>
-            <div class="btn fileCon">校验</div> 
+            <div v-show="fileErrMsg.ErrMsg.length>0||fileErrMsg.IngoreMsg.length>0||fileSuccessMsg" class="fileCon">
+                <ul class="fileErrMsg" v-show="fileErrMsg.ErrMsg.length>0">
+                    <li>不可跳过错误:</li>  
+                    <li v-for="(item,index) of fileErrMsg.ErrMsg" :key="index">{{item}}</li>
+                </ul>
+                <ul class="fileIngoreMsg" v-show="fileErrMsg.IngoreMsg.length>0">
+                    <li>可跳过错误:</li>
+                    <li v-for="(item2,index2) of fileErrMsg.IngoreMsg" :key="index2">{{item2}}</li>
+                </ul> 
+                <ul class="fileSuccessMsg">
+                    <li>{{fileSuccessMsg}}</li>
+                </ul>   
+            </div>
+            <div v-show="fileErrMsg.IngoreMsg.length>0" class="fileBtn">
+                <div class="btn" @click.stop="fileErrHandle()">跳过</div> 
+                <div class="btn" @click.stop="fileErrHandle('cover')">覆盖</div>   
+            </div> 
             <div style="clear:both"></div>
         </el-dialog>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
@@ -298,6 +314,11 @@
                 routerQuery:false,//路由是否传值************
                 fileVisible:false,
                 filelist:[], //文件上传的内容************
+                fileErrMsg:{
+                   IngoreMsg:'',
+                   ErrMsg:''     
+                },
+                fileSuccessMsg:'',
                 fresh:true,
                 saasMessage:{
                     visible:false,  //消息弹出框*******
@@ -455,6 +476,7 @@
                         break;
                     case 'upload': //导入************
                         this.testFile();
+                        this.fileSuccessMsg='';
                         break;
                     case 'fresh':  //刷新**************
                         this.fresh=false;
@@ -787,7 +809,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -870,7 +892,7 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
-                        if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                        if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
@@ -952,7 +974,7 @@
                    return;
                }
                vm.clearPhId(Vdata.Mst)
-               if(Vdata.Mst.Uyear==vm.nowTime.getFullYear()&& Vdata.Mst.PMonth>=vm.checkedTime) {
+               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: vm.uid,
                        orgid: vm.orgid,
@@ -1181,7 +1203,6 @@
                 return 666
             },
             removefile(item,deleValue) {//移除文件的函数
-                debugger
                this.filelist=item;
                 if(item.length<1){
                     return;
@@ -1216,13 +1237,12 @@
         },
             uploadfile(item) {
                 //this.imglist.push(item);
-                console.log(this.filelist);
+                //console.log(this.filelist,item);
                 if(item){
                     this.ExcelValidMsg(item);    
                 }
                 
             },
-            submitUpload(){console.log(11)},
             //校验excel文件中凭证信息***********
             ExcelValidMsg(param){
                 var data={
@@ -1232,36 +1252,71 @@
                     uyear:this.year,
                     dealwithPNo:0 //重复凭证字号处理方式: 0 禁止, 1 跳过, 2 覆盖
                 }
+                const loading=this.$loading();
                 this.$axios.get('/PVoucherMst/GetImportVoucherListFromExcelValidMsg',{params:data})
                 .then(res=>{
+                    loading.close();
                     if(res.Status=='error'){
                         this.$message({ showClose: true, message: res.Msg, type: 'error'});
-                        if(res.Data.ErrMsg.length>0){
-                            return;
-                        }else if(res.Data.IgnoreMsg.length>0){
-                            console.log(res.Data.IgnoreMsg);
-                            //忽略**************
-                            data.dealwithPNo=1;
-                            this.GetImportVoucherListFromExcel(data);
-                            //覆盖****************
+                        this.fileErrMsg={
+                            ErrMsg:res.Data.ErrMsg,
+                            IngoreMsg:res.Data.IngoreMsg
                         }
                     }else{
                         this.GetImportVoucherListFromExcel(data);
                     }
                 })
-                .catch(err=>console.log(err))
+                .catch(err=>{
+                    loading.close();
+                    this.$message({ showClose: true, message: err, type: 'error'});
+                })
+            },
+            //忽略 或者 覆盖选项****************
+            fileErrHandle(str){
+                if(this.fileErrMsg.ErrMsg.length>0){
+                    this.saasMessage={
+                        message:'请先处理不可跳过的错误,并重新提交!',
+                        delay:4000,
+                        visible:true
+                    }
+                    return;
+                }
+                var data={
+                    fileName:this.filelist[0].BUrlPath,
+                    orgid:this.orgid,
+                    orgcode:this.orgcode,
+                    uyear:this.year,
+                    dealwithPNo:0 //重复凭证字号处理方式: 0 禁止, 1 跳过, 2 覆盖
+                }
+                if(str=='cover'){
+                    data.dealwithPNo=2;
+                }else{
+                    data.dealwithPNo=1;
+                }
+                this.GetImportVoucherListFromExcel(data);
             },
             //excel文件导入**************
             GetImportVoucherListFromExcel(data){
+                const loading=this.$loading();
                 this.$axios.get('PVoucherMst/GetImportVoucherListFromExcel',{params:data})
                     .then(res=>{
+                        loading.close();
                         if(res.Status=='success'){
-                            this.message(res.Msg)
+                            this.saasMessage={
+                                message:res.Msg,
+                                delay:4000,
+                                visible:true
+                            }
+                            this.fileErrMsg={
+                                IngoreMsg:[],
+                                ErrMsg:[]     
+                            }
+                            this.fileSuccessMsg=res.Msg;                              
                         }
-                        console.log(res)
                     })
                     .catch(err=>{
-                        console.log(err)
+                        loading.close();
+                        this.$message({ showClose: true, message: err, type: 'error'});
                     })
             },
             // ...mapActions({
@@ -2199,22 +2254,43 @@
             margin-top:5%;
         }
     }
-    .pictureupload{
-        float:left;
-        width:20%;
-        margin-right:15px;
-    }
+
     .fileCon{
         float:left;
-        margin-top:5%;
+        width:50%;
+        height:120px;
+        overflow-y: auto;
+        border:1px dotted #ccc;
+        padding:10px;
+        >.fileIngoreMsg{
+            color:rgb(45, 142, 221)
+        }
+        >.fileErrMsg{
+            color:rgb(255, 0, 0)
+        }
     }
+    .fileBtn{
+        float:left;
+        margin-left:5px;
+        >div{
+            width:70px;
+            margin-bottom:20px;
+        }
+    }
+   .fileSuccessMsg{
+       color:#6aca25;
+   }
+       
+    
 </style>
 <style>
     .highGradeCss .el-input--prefix .el-input__inner {
         padding-left: 24px;
         font-size:12px;
     }
-    
+     .fileDialog .el-dialog__header{
+            background: #d3e9f9;
+    }
     /* .voucherList   .el-dialog{
             z-index:2008;
         }

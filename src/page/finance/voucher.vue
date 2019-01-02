@@ -615,7 +615,8 @@
                 var data={
                     Year:nowTime.getFullYear(),
                     OrgIds:this.orgid,
-                    Kcode:Kcode
+                    Kcode:Kcode,
+                    IsStart:''
                 } 
                 const loading5=this.$loading();
                 this.$axios.get('/PVoucherMst/GetSubjectBalance',{params:data})
