@@ -136,8 +136,9 @@
                 return res;
             },
             dateChoose:function(val){
-                let time=val.choosedYear+'-'+ val.choosedMonth;
-                this.getData(time,this.proofType)
+                console.log(val);
+                this.date1=val;
+                this.getData()
             },
 
             getData:function(){

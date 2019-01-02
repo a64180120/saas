@@ -153,9 +153,10 @@
               this.aocType.choose=type;
               if(type==0){
                   this.aocType.title='新增往来款项明细';
-                  this.getCodeData();
+                  this.getCodeData(0);
               }else{
-                  this.aocType.title='修改往来款项明细'
+                  this.aocType.title='修改往来款项明细';
+                  this.getCodeData(1);
               }
             },
             //时间选择器选择时间返回值
@@ -222,6 +223,9 @@
                     console.log(res);
                     this.subjectList=res.Record;
                     this.chooseSubject=res.Record[0];
+                    if(type==1){
+                        this.getCodeDetailData();
+                    }
                 }).catch(err=>{
                     this.loading=false;
                     this.$message(err);
@@ -249,7 +253,7 @@
                 this.loading=true;
                 this.$axios.get(
                     // 'PSubjectBudget/GetBeginYear',
-                    'DealingsMst/GetPSubjectByType',
+                    'DealingsMst/GetDealingDtlByOrgidUyearTypeKcode',
                     {params:data}
                 ).then(res=>{
                     this.loading=false;
