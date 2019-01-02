@@ -54,7 +54,7 @@
                                     <div :disabled="disabled" class="selfBtn verifyCode"
                                          :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode">{{timertitle}}</div>
                                 </el-form-item>
-                                <div>
+                                <div style="text-align: center">
                                     <div class="selfBtn blueBtn" @click="changeshowArea('secondStep')">下一步</div>
                                     <router-link to="/index"><button class="selfBtn whiteBtn">取消</button></router-link>
                                 </div>
@@ -127,7 +127,7 @@
                                     <img src="@/assets/images/register/2-1.png">
                                     <el-input v-model="registerForm2.confirmpassword" type="password" placeholder="请输入确认密码（必填）"></el-input>
                                 </el-form-item>
-                                <div>
+                                <div style="text-align: center">
                                     <div class="default selfBtn blueBtn" @click="changeshowArea('firstStep')">上一步</div>
                                     <div class="selfBtn whiteBtn" @click="changeshowArea('sub')">注册</div>
                                 </div>

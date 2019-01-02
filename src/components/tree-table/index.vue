@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="formatData" :row-style="showRow" v-bind="$attrs" 
+  <el-table :data="formatData" :row-style="showRow" v-bind="$attrs"
   @row-click="handleClickRow"
   @current-change="handleCurrentChange"
   >

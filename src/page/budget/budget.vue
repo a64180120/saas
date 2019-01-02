@@ -259,7 +259,6 @@
             * 监听编辑按钮事件
             * */
             changeBtnC:function(){
-                console.log(this.verify);
                 if(this.verify){
                     if(this.changeBtn.flag){
                         if(this.changeBtn.disable){
@@ -482,6 +481,7 @@
                     ).then(function (res) {
                         that.loading = false;
                         that.$message({showClose: true, message: '年初预算核定成功', type: 'success'});
+                        this.getBeginYear();
                         this.verify = false;
                         this.showCountMsg = false;
                     }).catch(function (err) {

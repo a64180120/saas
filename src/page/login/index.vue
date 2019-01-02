@@ -29,11 +29,13 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item prop="captcha" >
+                                <el-form-item >
                                     <img src="@/assets/images/register/4.png">
                                     <el-input v-model="loginForm.captcha" type="text"  placeholder="请输入验证码（必填）"></el-input>
                                     <div :disabled="disabled" class="selfBtn verifyCode"
-                                         :style="{'background-color':'#fff','color':'blue'}" @click="sendCode(0)">{{changeCaptcha}}</div>
+                                         :style="{'background-color':'#fff','color':'blue'}">
+                                         <img @click="VCodeChange" style="bottom: 1px;width: 90px;right: 3px;height: 25px;line-height: 25px;" :src="Verifycode" alt="">
+                                    </div>
                                 </el-form-item>
                                 <div class="flexPublic">
                                     <p @click="selectArea='phoneLogin'">短信快捷登录</p>
@@ -43,7 +45,7 @@
                                     </div>
 
                                 </div>
-                                <div style="text-align: center">
+                                <div style="text-align: center;margin-top: 10px">
                                     <div class="selfBtn blueBtn" @click="submitForm('loginForm')">登录</div>
                                     <router-link to="/index"><div class="selfBtn whiteBtn">取消</div></router-link>
                                 </div>
@@ -78,7 +80,7 @@
                                     </el-select>
                                 </el-form-item>
 
-                                <div style="text-align: center">
+                                <div style="text-align: center ;margin-top: 40px">
                                     <div class="selfBtn blueBtn" @click="submitForm('loginFormPhone')">登录</div>
                                     <div class="selfBtn whiteBtn"  @click="selectArea='ordinaryLogin'">取消</div>
                                 </div>
@@ -110,7 +112,7 @@
                                     <el-input v-model="fixPwdForm.confirmPassword" type="text"  placeholder="请确认新密码"></el-input>
                                 </el-form-item>
 
-                                <div style="text-align: center">
+                                <div style="text-align: center; margin-top: 40px">
                                     <div class="selfBtn blueBtn" @click="submitForm('fixPwdForm')">修改</div>
                                     <div class="selfBtn whiteBtn" @click="selectArea='ordinaryLogin'">取消</div>
                                 </div>
@@ -133,9 +135,9 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import axios from '@/util/ajax'
 import lodash from 'lodash';
 import countdownpop from "../../components/countDownPop/index";
+import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 
 export default {
     data() {
@@ -291,13 +293,14 @@ export default {
                     {required: true,validator:validPwdR,trigger:'blur'}
                 ]
             },
-            changeCaptcha:'67912',//存储切换的验证码--普通登录验证码
+            changeCaptcha:'',//存储切换的验证码--普通登录验证码
             phoneCaptcha:'',// --手机号登录验证码
             passwordCaptcha:'',//--更改密码的验证码
             timertitle:'发送短信',
             sysMsg: '',
             loading: false,
-            isOrganize:false
+            isOrganize:false,
+            Verifycode:''
         }
     },
      //计算属性
@@ -305,10 +308,14 @@ export default {
         ...mapState({
             lang: state => state.lang,
             theme: state => state.theme
-        })
+        }),
+        loginid:function(){
+            return Math.random()
+        }
     },
     created() {
-
+        this.Verifycode=httpConfig.getAxiosBaseConfig().baseURL+'/SysToken/GetSecurityCode?v='+ Math.random()+'&loginid='+this.loginid;
+        //this.getImg();
     },
     watch: {
         //监听password变化 ，(debounce)停留0.5s获取组织信息
@@ -357,14 +364,20 @@ export default {
         // 初始化错误信息。保证单独点击input时可以弹出正确的错误提示
     },
     mounted(){
-
+        this.changeCaptcha=this.code();
     },
     methods: {
         ...mapActions({
             login: 'user/loginByPhone',
             getToken:'user/getToken',
-            orgByUser:'user/GetOrgByUser'
+            orgByUser:'user/GetOrgByUser',
+            GetVerifycode:'user/GetVerifycode'
         }),
+        //随机数模拟验证码
+        code:function(){
+            let code= String(Math.floor(Math.random()*10))+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
+            return code;
+        },
         /*
         * 发送短信，用于短信验证或者登录
         * type  用于判断发送的验证码是哪种
@@ -374,8 +387,7 @@ export default {
         * */
         sendCode:function(type){
             if(type==0){
-               let code= String(Math.floor(Math.random()*10))+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
-               this.changeCaptcha=code;
+               this.changeCaptcha=this.code();
             }else if(type==1){
                 //发送验证码前，先进行手机验证，确保手机号正确
                 this.$refs.loginFormPhone.validateField('phoneNum',(validMessage)=>{
@@ -384,9 +396,7 @@ export default {
                     }else{
                         if(!this.disabled){
                             this.disabled=true;
-                            let code= String(Math.floor(Math.random()*10))+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
-                            this.phoneCaptcha=code;
-                            console.log('========'+code);
+                            this.phoneCaptcha=this.code();
                             this.timer(59,'phoneCaptcha');
                             this.timertitle='59S后重新发送';
                         }
@@ -400,9 +410,7 @@ export default {
                         this.$message(validMessage);
                     }else {
                         if (!this.disabled) {
-                            let code = String(Math.floor(Math.random() * 10)) + Math.floor(Math.random() * 10) + Math.floor(Math.random() * 10) + Math.floor(Math.random() * 10);
-                            this.passwordCaptcha = code;
-                            console.log(code);
+                            this.passwordCaptcha = this.code;
                             this.disabled = true;
                             this.timer(59,'passwordCaptcha');
                             this.timertitle = '59S后重新发送';
@@ -475,6 +483,24 @@ export default {
                     return false
                 }
             });
+        },
+        VCodeChange(){
+            this.Verifycode=httpConfig.getAxiosBaseConfig().baseURL+'/SysToken/GetSecurityCode?v='+ Math.random()+'&loginid='+this.loginid;
+        },
+        getImg(){
+
+            this.GetVerifycode({
+                v:Math.random(),
+                loginid:this.loginid
+            }).then((res)=>{
+                debugger
+                //this.Verifycode=window.URL.createObjectURL(res.data);
+
+                var binaryData = [];
+                binaryData.push(res.data);
+                this.Verifycode=window.URL.createObjectURL(new Blob(binaryData, {type: "image/png"}))
+            })
+
         }
     },
     components: {countdownpop},

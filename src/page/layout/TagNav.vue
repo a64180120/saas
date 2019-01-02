@@ -141,11 +141,20 @@ export default {
         height: 28px;
         line-height: 28px;
         background: #fff;
-        color:#00b7ee;
+        color:#ccc;
+        border-color: #ccc;
     }
     .tag-nav .cur{
         background: #00b7ee ;
         color:#fff;
+        border-color:#00b7ee
+    }
+    .tag-nav .tag-nav-item span{
+        color:#fff
+    }
+    .tag-nav .tag-nav-item span:hover{
+        color:#00b7ee;
+        background: #cfff;
     }
     .tags-close-box {
         position: absolute;

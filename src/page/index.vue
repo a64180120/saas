@@ -122,28 +122,34 @@
               <img src="@/assets/img/t1.png" class="t1" />
             </li>
             <li>
-              <img src="@/assets/img/d1.png" />
-              <p>0571-88270588</p>
+                <img src="@/assets/img/d1.png" />
+                <p>联系电话：</p>
+                <p>0571-88270588</p>
             </li>
             <li>
               <img src="@/assets/img/d2.png"  />
+                <p>客服QQ：</p>
               <p>2749634478</p>
             </li>
             <li>
               <img src="@/assets/img/d3.png"  />
+                <p>公司传真：</p>
               <p>0571-88290562</p>
             </li>
             <li>
               <img src="@/assets/img/d4.png"  />
-              <p>www.newgrand.cn</p>
+                <p>联系邮箱：</p>
+              <p>wanggang@newgrand.cn</p>
             </li>
             <li>
               <img src="@/assets/img/d5.png"  />
+                <p>公司网址：</p>
               <p>www.gdataware.com</p>
             </li>
             <li>
               <img  src="@/assets/img/d6.png" />
-              <p>杭州市拱墅区祥园路88号中国（杭州）智慧信息产业园N座9F</p>
+                <p>公司地址：</p>
+              <p style="margin-top: 20px;white-space: pre-wrap">杭州市拱墅区祥园路88号中国（杭州）智慧信息产业园N座9F</p>
             </li>
           </ul>
         </div>
@@ -183,17 +189,27 @@
 
             <h1>关于政云数据</h1>
           </div>
+
+            <div class="footInfo">
+                <p>Copyright  @ 1993-2018NEWGRAND.All Rights Reserved</p>
+                <p>新中大科技股份有限公司     杭州政云数据技术有限公司    版权所有</p>
+                <p>浙ICP证05021872    浙公网安备    33010502000837号</p>
+            </div>
         </div>
         <div class="pictrue">
-          <img src="@/assets/img/r1.png" class="g1" />
-          <img src="@/assets/img/r2.png" class="g1" />
+            <div>
+                <img src="@/assets/img/r1.png" class="g1" />
+                <div>新中大</div>
+            </div>
+            <div>
+                <img src="@/assets/img/r2.png" class="g1" />
+                <div>政云</div>
+
+            </div>
+
         </div>
       </div>
-      <div class="footInfo">
-        <p>Copyright  @ 1993-2018NEWGRAND.All Rights Reserved</p>
-        <p>新中大科技股份有限公司     杭州政云数据技术有限公司    版权所有</p>
-        <p>浙ICP证05021872    浙公网安备    33010502000837号</p>
-      </div>
+
     </footer>
   </div>
 </template>
@@ -249,7 +265,7 @@
       },
       //打开网址
       openUrl(object){
-        window.open(object.url); 
+        window.open(object.url);
       },
       typeclick(object){
         //alert(object);
@@ -772,6 +788,7 @@
             margin-left: 145px;
             display: flex;
             align-items: center;
+            white-space: nowrap;
             >img{
               width:7%;
               margin:0 9px 0 0;
@@ -840,24 +857,42 @@
                 color:#fff;
                 margin-right:20px;
                 font-size: 20px;
-          }
-        }
-        &.pictrue{
-             display: flex;
-            justify-content: center;
-            >img{
-                width:141px;
-                height:125px;
-                margin-left: 80px;
             }
         }
-      }
-      &.footInfo{
+          &.words>.footInfo{
           display: flex;
           flex-flow: column nowrap;
           align-items: center;
           color:#fff;
+          >p{
+              font-size: 13px;
+              line-height: 25px;
+          }
       }
+        &.pictrue{
+             display: flex;
+            justify-content: center;
+            >div{
+                width:180px;
+                height:180px;
+                margin-left: 80px;
+                >img{
+                    width:180px;
+
+
+                }
+                >div{    color: white;
+                    text-align: center;
+                    margin-top: 5px;
+                    font-size: 17px;
+                    font-weight: 900;
+
+                }
+            }
+
+        }
+      }
+
     }
   }
 </style>

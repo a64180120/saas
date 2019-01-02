@@ -5,16 +5,6 @@
         <div class="reportBox">
             <div class="unionState flexPublic">
                 <ul class="flexPublic">
-                    <li class="flexPublic">
-                        <div>条件：</div>
-                        <div  class="block selectContainer">
-                            <select class="el-input__inner el-button--small" v-model="proofType">
-                                <option value="1">包含未审核凭证</option>
-                                <option value="0">不包含未审核凭证</option>
-                            </select>
-                        </div>
-
-                    </li>
                 </ul>
                 <ul class="flexPublic handle">
                     <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
@@ -147,10 +137,10 @@
                             <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
                             <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
                             <li>
-                                <div class="progressContainer" >
+                                <!--<div class="progressContainer" >
                                     <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
-                                </div>
+                                </div>-->
                             </li>
                             <li>
                                 其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
@@ -231,7 +221,6 @@
                 showCountMsg:false,//核定显示
                 downloadLoading: false,
                 date1:[],
-                proofType:'0',
                 dataInfo:[{zhixing:30}],
                 infoStyle:[`#ff9900`],
                 budgetList:[],
@@ -261,7 +250,7 @@
            *
            * */
             hedin:function(){
-                this.VerifyEnd();
+                this.verifyEnd();
             },
 
             dateChoose:function(val){
@@ -299,7 +288,7 @@
                 var infos=this.dataInfo;
                 var val=[];
                 for(var i in infos){
-                    infos[i].zhixing=parseInt(infos[i].zhixing);
+                    infos[i].zhixing=infos[i].zhixing.toFixed(2);
                     val[i]=infos[i].zhixing;
                     if(val[i]<30){
                         val[i]=`#ff0000`;
@@ -371,21 +360,15 @@
                             let anwser=0;
                             dataInfo.push({zhixing:anwser})
                         }else{
-                            let anwser=parseFloat(res.Record[i].ThisaccountsTotal)/parseFloat(res.Record[i].ApprovedBudgetTotal)*100;
+                            let anwser=res.Record[i].ThisaccountsTotal/res.Record[i].ApprovedBudgetTotal*100;
+                            console.log(anwser);
                             dataInfo.push({zhixing:anwser});
-
                         }
                     }
                     this.budgetList=res.Record;
                     this.dataInfo=dataInfo;
                     this.getInfoStyle();
-                    for(let j in this.dataInfo){
-                        if(j==0){
-                            this.timer(j,0,99)
-                        }
-                       if(j==1){
-                           this.timer(j,0,59)
-                       }
+                   for(let j in this.dataInfo){
                         this.timer(j,0,this.dataInfo[j].zhixing)
                     }
                 }).catch(res=>{
@@ -419,14 +402,14 @@
                 let that=this;
                 setTimeout(function(){
                     if(str<data){
-                        let i=Math.ceil(data/50);
+                        let i=data/50;
                         if(str+i<data){
                             str+=i;
                         }else{
                             str=data;
                         }
-
-                        that.dataInfo[index].zhixing=Math.floor(str);
+                        console.log(str);
+                        that.dataInfo[index].zhixing=str;
                         if(str<30){
                             that.infoStyle[index]=`#ff0000`;
                         }else if(str>=30&&str<50){
@@ -443,7 +426,7 @@
             /*
             * 核定
             * */
-            verifyMiddle:function(){
+            verifyEnd:function(){
                 if(this.verify){
                     let that=this;
 
@@ -461,8 +444,9 @@
                     ).then(function(res){
                         that.loading=false;
                         that.$message({ showClose: true, message:'年末决算核定成功',type: 'success' });
-                        this.verify=false;
-                        this.showCountMsg=false;
+                        that.getEndYear();
+                        that.verify=false;
+                        that.showCountMsg=false;
                     }).catch(function(err){
                         that.loading=false;
                         console.log(err);
