@@ -56,7 +56,7 @@
                         <div class="selectarea">
                             <el-radio label="4" v-model="checkType">资产类科目</el-radio>
                             <el-radio label="5" v-model="checkType">负债类科目</el-radio>
-                            <el-select v-model="chooseSubject" placeholder="请选择"  @change="getCodeDetailData">
+                            <el-select v-model="chooseSubject" :value="chooseSubject.KName" placeholder="请选择"  @change="getCodeDetailData">
                                 <el-option
                                     v-for="item in subjectList"
                                     :key="item.KCode"
@@ -136,6 +136,7 @@
         watch:{
             checkType:function(){
                 this.getCodeData();
+
             }
         },
         methods:{
@@ -220,6 +221,7 @@
                     this.loading=false;
                     console.log(res);
                     this.subjectList=res.Record;
+                    this.chooseSubject=res.Record[0];
                 }).catch(err=>{
                     this.loading=false;
                     this.$message(err);

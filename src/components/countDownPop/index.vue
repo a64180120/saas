@@ -108,7 +108,7 @@
         text-align: center;
         vertical-align: middle;
         color: #00b7ee;
-        font-size: 49pt;
+        font-size:95px;
         padding-top: 30px;
         letter-spacing: 12px;
 
