@@ -68,7 +68,7 @@
                             </el-select>
                             <div class="btnArea">
                                 <div class=""  @click="aocType.show=false">取消</div>
-                                <div class="">保存</div>
+                                <div class="" @click="saveList">保存</div>
                             </div>
 
                         </div>
@@ -77,14 +77,27 @@
                                 <li style="width:80%">具体内容</li>
                                 <li style="width:20%">金额(元)</li>
                             </ul>
-                            <ul class="formDataItems flexPublic" v-for="item in changeList">
-                                <li style="width:80%"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.content"></li>
-                                <li style="width:20%" class="align-right"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.money"></li>
-                            </ul>
-                            <ul class="formDataItems flexPublic">
-                                <li style="width:80%"><input class="bolder"value="合计"></li>
-                                <li style="width:20%" class="align-right"><input disabled class="bolder" :value="countMoney"></li>
-                            </ul>
+                            <template v-if="aocType.choose==0">
+                                <ul class="formDataItems flexPublic" v-for="item in changeList">
+                                    <li style="width:80%"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.content"></li>
+                                    <li style="width:20%" class="align-right"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.money"></li>
+                                </ul>
+                                <ul class="formDataItems flexPublic">
+                                    <li style="width:80%"><input class="bolder"value="合计"></li>
+                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="countMoney"></li>
+                                </ul>
+                            </template>
+                            <template v-else>
+                                <ul class="formDataItems flexPublic" v-for="item in changeListFix">
+                                    <li style="width:80%"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.content"></li>
+                                    <li style="width:20%" class="align-right"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.money"></li>
+                                </ul>
+                                <ul class="formDataItems flexPublic">
+                                    <li style="width:80%"><input class="bolder"value="合计"></li>
+                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="countMoney"></li>
+                                </ul>
+                            </template>
+
                         </div>
                     </div>
                 </div>
@@ -117,6 +130,7 @@
                 chooseSubject:'',//选择的资产科目
                 aocType:{show:false,choose:0,title:'新增往来明细'}, //选择的增加还是修改,0增加，1修改
                 changeList:[{'content':'','money':''}],//默认添加的空白表格
+                changeListFix:[],//修改保存的数据
                 countMoney:0
             }
         },
@@ -258,13 +272,22 @@
                 ).then(res=>{
                     this.loading=false;
                     console.log(res);
-                    //this.changeList=res.Record;
+                    this.changeListFix=res.Record;
                 }).catch(err=>{
                     this.loading=false;
                     this.$message(err);
                 })
             },
-
+            /*
+            * 保存信息，
+            * 新增this.aocType.choose==0
+            * 修改this.aocType.choose==1
+            *
+            * 接口：同一个  DealingsMst/PostSaveDealings
+            * */
+            saveList:function(){
+                console.log(this.chooseSubject);
+            },
             //刷新
             refresh:function(){
                 this.getData();
