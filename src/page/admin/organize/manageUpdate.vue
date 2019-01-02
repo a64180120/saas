@@ -199,6 +199,7 @@
                 Chairman: '工会主席',
                 EnableTime: '',
                 EnterpriseAttachment:'',
+                Verify:'0',
                 ChairmanAttachment:'',
                 showFlam:this.$route.query.showFlam,
                 ServiceStartTime: '',
@@ -459,6 +460,7 @@
                             'ParentId': this.ParentId,
                             'ParentEnCode': this.ParentCode,
                             'AccountSystem': this.AccountSystem,
+                            'Verify': this.Verify,
                             'Director': this.Director,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
@@ -509,6 +511,7 @@
                             'ParentId': this.ParentId,
                             'ParentEnCode': this.ParentCode,
                             'Director': this.Director,
+                            'Verify': this.Verify,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
                             'NgRecordVer': this.NgRecordVer
@@ -588,6 +591,7 @@
                             this.EnterpriseAttachment= res.EnterpriseAttachment,
                             this.ChairmanAttachment = res.ChairmanAttachment,
                             this.NgRecordVer = res.NgRecordVer;
+                            this.Verify = res.Verify;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
@@ -617,6 +621,7 @@
                             this.County = res.County;
                             this.Street = res.Street;
                             this.NgRecordVer = res.NgRecordVer;
+                            this.Verify = res.Verify;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);

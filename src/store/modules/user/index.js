@@ -148,6 +148,30 @@ const actions = {
             });
         });
     },
+    // 验证码信息
+    GetVerifycode({ commit, state },params) {
+        return new Promise((resolve, reject) => {
+            let base=httpConfig.getAxiosBaseConfig();
+
+            httpajax.create({
+                baseURL: base.baseURL
+            }).get('/SysToken/GetSecurityCode',{
+                params: params
+                // headers:{
+                //     'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
+                //     'Accept': "application/json; charset=utf-8"
+                // }
+            }).then(res => {
+
+                resolve(res);
+
+        　　}).catch((error) =>{
+                console.log(error)
+                //错误
+                reject(error);
+            });
+        });
+    },
     // 获取当前用户的组织信息
     GetOrgByUser({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
