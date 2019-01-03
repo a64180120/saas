@@ -400,3 +400,16 @@ ul{
   .el-submenu__icon-arrow{
       color:rgb(117, 74, 74) !important;
   }
+  /*设置按钮样式--王冠冠*/
+    .el-button--info:hover, .el-button--info:focus {
+        /*background: #a6a9ad;*/
+        /*border-color: #a6a9ad;*/
+        /*color: #fff;*/
+        background: #fff;
+        color: #00B8EE;
+    }
+    .el-button--info {
+        color: #fff;
+        background-color: #00B8EE;
+        border-color: #00B8EE;
+    }
