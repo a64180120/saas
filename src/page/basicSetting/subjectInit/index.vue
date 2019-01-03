@@ -1,11 +1,54 @@
 <template>
-  <div class="sys-page">
     <div class="container">
-      <el-button type="primary" @click="printClick">打印</el-button>
+        <div class="manageContent" v-loading="loading">
+            <div class="unionSetting">
+                <ul class="handle">
+                    <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
+                    <a><li style='margin:0 0 0px 20px;'>科目设置</li ></a>
+                    <a><li style='margin:0 0 0px 20px;'>反初始化</li ></a>
+                    <a><li style='margin:0 0 0px 20px;'>开始初始化</li ></a>
+                    <li style='margin:0 0 0px 20px;'>系统默认启用日期：2019年1月</li >
+                    <li>
+                        <div><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></div>
+                        <div @click="selectBtn">搜索</div>
+                    </li>
+                </ul>
+            </div>
 
-      <div style="margin-top: 20px">{{ sumvalue| NumtoCHN}} </div>
+            <div class="lineUl">
+                <ul>
+                    <li>资产类<i></i></li>
+                    <li>负债类<i></i></li>
+                    <li>净资产类<i></i></li>
+                    <li>收入类<i></i></li>
+                    <li>支出类<i></i></li>
+                </ul>
 
-      <print-tem ref="print" :printData="voucherdata"></print-tem>
+            </div>
+            <div class="formData" ref="printFrom">
+                <ul>
+                    <li>科目编码</li>
+                    <li>科目名称</li>
+                    <li>余额方向</li>
+                    <li>辅助核算</li>
+                    <li>停用/启用</li>
+                    <li>年初余额</li>
+                </ul>
+                <div>
+                    <template v-for="n in 15">
+                        <ul class="formDataItems">
+                            <li>101</li>
+                            <li>库存现金</li>
+                            <li class="align-center">借</li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </template>
+
+                </div>
+
+            </div>
 
       <!--<timerBtn ref="timerbtn" class="btn btn-default" @run="sendCode"></timerBtn>-->
     </div>
@@ -92,5 +135,176 @@ export default {
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style scoped>
+    .formData>ul>li,.formData>div>ul>li{
+        border-right:1px solid #fff;
+        height:50px;
+        line-height:50px;
+        text-align: center;
+        width:15%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .formData>ul>li:nth-of-type(2),.formData>div>ul>li:nth-of-type(2){
+        width:20%;
+    }
+    .formData>ul>li:nth-of-type(3),.formData>div>ul>li:nth-of-type(3){
+        width:10%;
+    }
+    .formData>ul>li:nth-of-type(4),.formData>div>ul>li:nth-of-type(4){
+        width:30%;
+    }
+    .formData>ul>li:nth-of-type(5),.formData>div>ul>li:nth-of-type(5){
+        width:10%;
+    }
+    .formData>ul>li:nth-of-type(6),.formData>div>ul>li:nth-of-type(6){
+        width:15%;
+    }
+    .formData>ul:first-child>li:last-of-type{
+        border-right:1px solid #d3e9f9;
+    }
 
+    .formData>ul>li:first-child{
+        padding:0 2px;
+    }
+
+
+    .formDataItems{
+        background-color: white;
+    }
+    .formData>div{
+        overflow-y: auto;
+        position: relative;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+    .formData>div>ul.formDataItems>li{
+        border-right:1px solid #ddd;
+        border-left:0;
+        border-bottom:1px solid #ddd;
+        text-align: left;
+        line-height: 40px;
+        height:40px;
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-left: 15px;
+        float: left;
+    }
+    .formData>div>ul.formDataItems>li:first-child{
+        border-left:1px solid #ddd;
+    }
+    .formData>div>ul.formDataItems>li.bolder{
+        font-weight: bold;
+    }
+    .formData>div>ul.formDataItems>li.align-center{
+        text-align: center;
+        padding:0;
+    }
+    .formData>div>ul.formDataItems>li.align-right{
+        text-align: right;
+        padding-right: 15px;
+    }
+    .unionSetting{
+        display: table;
+        width: 100%;
+    }
+    .unionSetting .handle{
+        margin-right:20px;
+        min-width: 590px;
+    }
+    .unionSetting .handle>a{
+        float:right;
+        width: auto;
+        margin-right: 10px;
+    }
+    .unionSetting .handle>li{
+        float: right;
+    }
+    .unionSetting .handle>li:last-child{
+        float: left;
+    }
+    .unionSetting .handle>li>div{
+        display: inline-block;
+    }
+    .unionSetting .handle>li>div:first-child{
+         border: 1px solid #ddd;
+         border-radius: 10px 0 0 10px;
+         padding-left: 10px;
+        margin-top: 1px;
+        height: 34px;
+     }
+    .unionSetting .handle>li>div>input{
+        border: none;
+        height: 28px;
+    }
+    .unionSetting .handle>li>div:last-child{
+        height: 34px;
+        width: 60px;
+        text-align: center;
+        line-height: 30px;
+        background: #00B8EE;
+        color: #fff;
+        cursor: pointer;
+        margin-left: -5px;
+    }
+    .unionSetting .handle>a>li:hover{
+        background-color: #fff;
+        color: #00b7ee;
+        border: 1px solid #00b7ee;
+    }
+    .unionSetting .handle>a>li {
+        border: 1px solid #00b7ee;
+        border: 0;
+        padding: 0 10px;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 3px;
+        text-align: center;
+        background: #00b7ee;
+        width: auto;
+        min-width:50px;
+        font-size: 14px;
+        height: 30px;
+        line-height: 30px;
+    }
+    .lineUl{
+        width: 100%;
+        height: 80px;
+        line-height: 40px;
+        border-top: 2px solid #ccc;
+        margin-top: 15px;
+    }
+    .lineUl li{
+        display: inline-block;
+        width: 20%;
+        float: left;
+        font-size: 20px;
+        padding: 0 20px;
+        text-align: center;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+    .lineUl li:hover{
+        color: #00b7ee;
+    }
+    .lineUl li .select{
+        color: #00b7ee;
+    }
+    .lineUl ul li i{
+        display: block;
+        width: 80%;
+        border-bottom:3px solid #cccccc;
+        margin-left: 10%;
+    }
+    .lineUl li .select i{
+        border-color: #e6a23c;
+    }
+    .lineUl li:hover >i{
+        border-color: #e6a23c;
+    }
+    .lineUl:after{
+        float: none;
+    }
 </style>

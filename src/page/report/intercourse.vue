@@ -28,18 +28,16 @@
                                     <li :class="{'bolder':item.Layer==1,'algin-center':item.Layer==2}">{{item.Asset_Name}}</li>
                                     <li>{{item.Asset_Content}}</li>
                                     <li class="align-right">
-                                        <template v-if="item.Asset_Name">
+                                       <template v-if="item.Asset_Content">
                                             {{item.Asset_Amount | NumFormat}}
                                         </template>
-                                        <template v-else></template>
                                     </li>
                                     <li :class="{'bolder':item.Layer==1,'algin-center':item.Layer==2}">{{item.Liability_Name}}</li>
                                     <li>{{item.Liability_Content}}</li>
                                     <li class="align-right">
-                                        <template v-if="item.Liability_Name">
+                                        <template v-if="item.Liability_Content">
                                             {{item.Liability_Amount | NumFormat}}
                                         </template>
-                                        <template v-else></template>
                                     </li>
                                 </ul>
                             </template>
@@ -56,45 +54,79 @@
                         <div class="selectarea">
                             <el-radio label="4" v-model="checkType">资产类科目</el-radio>
                             <el-radio label="5" v-model="checkType">负债类科目</el-radio>
-                            <el-select v-model="chooseSubject" :value="chooseSubject.KName" placeholder="请选择"  @change="getCodeDetailData">
+                            <select v-model="chooseSubject">
+                                <template  v-for="item in subjectList">
+                                    <option :value="item">{{item.KName}}</option>
+                                </template>
+                            </select>
+                            <!--<el-select  v-model="chooseSubject" :value="chooseSubject.KName" placeholder="请选择"  @change="getCodeDetailData">
                                 <el-option
-                                    v-for="item in subjectList"
+                                    v-for="(item,index) in subjectList"
                                     :key="item.KCode"
                                     :label="item.KName"
                                     :value="item.KCode"
                                     :style="{'margin-left':'30px'}"
                                 >
                                 </el-option>
-                            </el-select>
+                            </el-select>-->
                             <div class="btnArea">
                                 <div class=""  @click="aocType.show=false">取消</div>
-                                <div class="" @click="saveList">保存</div>
+                                <template v-if="aocType.choose==0">
+                                    <div class="" @click="saveList(1)">保存</div>
+                                </template>
+                               <template v-else>
+                                   <div class="" @click="saveList(2)">保存</div>
+                               </template>
                             </div>
 
                         </div>
-                        <div class="formData" ref="printFrom">
+                        <div class="formData"  style="overflow-y: auto;height: 420px;overflow-x: hidden; ">
                             <ul>
                                 <li style="width:80%">具体内容</li>
                                 <li style="width:20%">金额(元)</li>
                             </ul>
+                            <!--新增-->
                             <template v-if="aocType.choose==0">
-                                <ul class="formDataItems flexPublic" v-for="item in changeList">
-                                    <li style="width:80%"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.content"></li>
-                                    <li style="width:20%" class="align-right"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.money"></li>
-                                </ul>
+                                <template v-for="(item,index) in changeList">
+                                    <div class="delArea areaf">
+                                        <i @click="delChangeList(index)">—</i>
+                                        <i class="el-icon-lx-add" @click="addChangeList(index)"></i>
+                                    </div>
+                                    <ul class="formDataItems flexPublic" @mouseenter="showIcon"><!-- @mouseleave="hideIcon"-->
+
+                                        <li style="width:80%"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" data-type="0" :data-index="index" :value="item.content" @change="newChildAdd"></li>
+                                        <li style="width:20%" class="align-right"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.money" data-type="1" :data-index="index" @change="newChildAdd"></li>
+                                    </ul>
+                                </template>
                                 <ul class="formDataItems flexPublic">
                                     <li style="width:80%"><input class="bolder"value="合计"></li>
-                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="countMoney"></li>
+                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="addCountMoney"></li>
                                 </ul>
                             </template>
+
+                            <!--修改-->
                             <template v-else>
-                                <ul class="formDataItems flexPublic" v-for="item in changeListFix">
-                                    <li style="width:80%"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.content"></li>
-                                    <li style="width:20%" class="align-right"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.money"></li>
-                                </ul>
+                                <template  v-for="(item,index) in changeListFix">
+                                    <div class="delArea areat" style="top: 13px">
+                                        <i @click="delChangeListFix(index)" >—</i>
+                                        <!--<i class="el-icon-lx-add" @click="addChangeListFix(index)"></i>-->
+                                    </div>
+                                    <ul class="formDataItems flexPublic" @mouseenter="showIconT">
+                                         <li style="width:80%"><input :disabled="item.Content=='合计'" :class="{bolder:item.Content=='合计'}" :value="item.Content" data-type="0" :data-index="index" @change="newChildFix"></li>
+                                        <li style="width:20%" class="align-right"><input :disabled="item.Content=='合计'" :class="{bolder:item.Content=='合计'}" :value="item.AccountSum" data-type="1" :data-index="index"  @change="newChildFix"></li>
+                                    </ul>
+                                </template>
+                                <template v-if="changeListFix.length<8">
+                                    <template v-for="n in (8-changeListFix.length)">
+                                        <ul class="formDataItems flexPublic">
+                                            <li  style="width:80%"></li>
+                                            <li style="width:20%"></li>
+                                        </ul>
+                                    </template>
+                                </template>
                                 <ul class="formDataItems flexPublic">
                                     <li style="width:80%"><input class="bolder"value="合计"></li>
-                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="countMoney"></li>
+                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="fixCountMoney"></li>
                                 </ul>
                             </template>
 
@@ -103,7 +135,7 @@
                 </div>
             </div>
             <div class="timeSelectBox">
-                <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
+                <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
             </div>
         </div>
     </div>
@@ -113,6 +145,7 @@
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { mapState, mapGetters } from "vuex";
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
+    import qs from 'qs'
     export default {
         name: "user",
         data(){
@@ -124,14 +157,13 @@
                 date1:[],
                 proofType:'1',
                 checkType:'4',//新增往来明细 4选择资产类  5选择负债类
-                subjectList:[
-                    {value:0,label:'资产明细'}
-                ],//选择资产类，查询详细的资产类科目
+                subjectList:[],//选择资产类，查询详细的资产类科目
                 chooseSubject:'',//选择的资产科目
                 aocType:{show:false,choose:0,title:'新增往来明细'}, //选择的增加还是修改,0增加，1修改
-                changeList:[{'content':'','money':''}],//默认添加的空白表格
+                changeList:[],//默认添加的空白表格
+                addCountMoney:0,
                 changeListFix:[],//修改保存的数据
-                countMoney:0
+                fixCountMoney:0
             }
         },
         computed:{
@@ -142,6 +174,11 @@
             }),
         },
         mounted(){
+            let currentYear = new Date();
+            let currentyear=currentYear.getFullYear(currentYear);
+            let currentMonth=currentYear.getMonth()+1;
+            this.date1.choosedYear=currentyear;
+            this.date1.choosedMonth=currentMonth;
             this.getData();
             this.addBlock();
 
@@ -150,15 +187,22 @@
         watch:{
             checkType:function(){
                 this.getCodeData();
-
+            },
+            chooseSubject:function(){
+                console.log(this.chooseSubject);
+                this.changeList=[];
+                this.addBlock();
+                this.changeListFix=[];
+                this.getCodeDetailData();
             }
         },
         methods:{
             //页面加载，默认添加表格
             addBlock:function (){
-                let c={'content':'','money':''};
-                for(let i=0;i<6;i++){
-                    this.changeList.push(c)//默认添加的空白表格
+
+                for(let i=0;i<8;i++){
+                    let c={'content':'','money':''};
+                    this.changeList[i]=c//默认添加的空白表格
                 }
             },
             //选择增加还是隐藏
@@ -187,9 +231,9 @@
                     let currentMonth=currentYear.getMonth()+1;
                     this.date1.choosedYear=currentyear;
                     this.date1.choosedMonth=currentMonth;
-                    param=currentyear+'-'+currentMonth;
+                    param=currentyear;
                 }else{
-                    param=this.date1.choosedYear+'-'+this.date1.choosedMonth;
+                    param=this.date1.choosedYear;
                 }
                 let data={
                     "orgid":this.orgid,
@@ -218,9 +262,9 @@
                     let currentMonth=currentYear.getMonth()+1;
                     this.date1.choosedYear=currentyear;
                     this.date1.choosedMonth=currentMonth;
-                    param=currentyear+'-'+currentMonth;
+                    param=currentyear;
                 }else{
-                    param=this.date1.choosedYear+'-'+this.date1.choosedMonth;
+                    param=this.date1.choosedYear;
                 }
                 let data={
                     "orgid":this.orgid,
@@ -247,6 +291,7 @@
             },
             //根据科目类型获取明细列表
             getCodeDetailData:function(){
+                this.changeListFix='';
                 let param='';
                 if(this.date1.choosedYear==undefined){
                     let currentYear = new Date();
@@ -254,25 +299,28 @@
                     let currentMonth=currentYear.getMonth()+1;
                     this.date1.choosedYear=currentyear;
                     this.date1.choosedMonth=currentMonth;
-                    param=currentyear+'-'+currentMonth;
+                    param=currentyear;
                 }else{
-                    param=this.date1.choosedYear+'-'+this.date1.choosedMonth;
+                    param=this.date1.choosedYear;
                 }
                 let data={
                     "orgid":this.orgid,
                     "Year":  param,
-                    'Type': this.chooseSubject.Type,
+                    'Type': this.chooseSubject.KType,
                     'KCode':this.chooseSubject.KCode
                 }
                 this.loading=true;
                 this.$axios.get(
-                    // 'PSubjectBudget/GetBeginYear',
                     'DealingsMst/GetDealingDtlByOrgidUyearTypeKcode',
                     {params:data}
                 ).then(res=>{
                     this.loading=false;
                     console.log(res);
                     this.changeListFix=res.Record;
+                    this.fixCountMoney=0;
+                    for(var i in res.Record){
+                        this.fixCountMoney+=res.Record[i].AccountSum;
+                    }
                 }).catch(err=>{
                     this.loading=false;
                     this.$message(err);
@@ -282,11 +330,143 @@
             * 保存信息，
             * 新增this.aocType.choose==0
             * 修改this.aocType.choose==1
-            *
+            *type:1保存  2修改
             * 接口：同一个  DealingsMst/PostSaveDealings
             * */
-            saveList:function(){
+            saveList:function(type){
                 console.log(this.chooseSubject);
+               let saveList= [{
+                   'OptionType':type,
+                   'PhId':this.chooseSubject.PhId_DealingMst,
+                   'OrgId':this.orgid,
+                   'OrgCode':this.OrgCode,
+                   'Type':this.chooseSubject.KType,
+                   'PhidSubject':this.chooseSubject.PhId,
+                   'SubjectCode':this.chooseSubject.KCode,
+                   'TotalSum':    0 ,
+                   'Uyear':this.date1.choosedYear,
+                   'NgRecordVer':this.chooseSubject.NgRecordVer_DealingMst,
+                   'Dtls':[]
+               }];
+               let dtls=[];
+               if(this.aocType.choose==0){
+                   for(var i in this.changeList){
+                       if(this.changeList[i].content!=''){
+                           let dtl={
+                               PhId:0,
+                               DealPhid:this.chooseSubject.PhId_DealingMst,
+                               Content:this.changeList[i].content,
+                               AccountSum:this.changeList[i].money,
+                           };
+                           dtls.push(dtl);
+                       }
+                   };
+               }else{
+                   console.log(222222222222);
+                   dtls=this.changeListFix;
+                   /*for(var i in this.changeListFix){
+                       let dtl={
+                           PhId:this.changeListFix[i].PhId,
+                           DealPhid:this.changeListFix[i].DealPhid,
+                           Content:this.changeListFix[i].Content,
+                           AccountSum:this.changeListFix[i].AccountSum,
+                           NgRecordVer:this.changeListFix[i].NgRecordVer
+                       };
+                       dtls.push(dtl);
+                   };*/
+               }
+
+                saveList[0].Dtls=dtls;
+                let data={infoData:saveList};//JSON.stringify(JSON.stringify(saveList))
+                this.$axios.post(
+                    'DealingsMst/PostSaveDealings',
+                    data
+                ).then(res=>{
+                    console.log(res);
+                    this.$message(res.Msg,'success');
+                    if(res.Status=='success'){
+                        this.aocType.show=false;
+                        this.getCodeData();//每次保存成功之后都要测重新获取科目列表，刷新版本号
+                    }else{
+
+                    }
+
+                }).catch(err=>{
+                    console.log(err);
+                })
+            },
+            /*
+            *新增 input输入监听
+            * type:0--content   1--money
+            * index:修改的哪个数组
+            * */
+            newChildAdd:function(val){
+                console.log(val);
+                let type=val.target.dataset.type,index=val.target.dataset.index,value=val.target.value;
+                console.log(type+'===='+index+'===='+value);
+                if(type==0){
+                    this.changeList[index].content=value;
+                }else{
+                    if(this.changeList[index].money!=''){
+                        //先计算后赋值
+                        this.addCountMoney=this.addCountMoney-this.changeList[index].money+value;
+                    }
+                    this.changeList[index].money=value;
+                }
+                console.log(this.changeList);
+            },
+            /*
+            *修改 input输入监听
+            * */
+            newChildFix:function(val){
+                console.log(val);
+                let type=val.target.dataset.type,index=val.target.dataset.index,value=val.target.value;
+                if(type==0){
+                    this.changeListFix[index].Content=value;
+                }else{
+                    this.fixCountMoney=this.fixCountMoney-Number(this.changeListFix[index].AccountSum)+Number(value);
+                    this.changeListFix[index].AccountSum=value;
+                }
+            },
+            //显示隐藏的小图标
+            showIcon:function(val){
+                let list=document.getElementsByClassName('areaf');
+                console.log(list);
+                for(var i=0;i<list.length;i++){
+                    console.log(list[i]);
+                    list[i].style.display='none';
+                }
+                val.target.previousElementSibling.style.display='block';
+            },
+            showIconT:function(val){
+                let list=document.getElementsByClassName('areat');
+                console.log(list);
+                for(var i=0;i<list.length;i++){
+                    console.log(list[i]);
+                    list[i].style.display='none';
+                }
+                val.target.previousElementSibling.style.display='block';
+            },
+            //隐藏小图标
+            hideIcon:function(val){
+                val.target.previousElementSibling.style.display='none';
+            },
+            //删除行
+            delChangeList:function(index){
+                console.log(index);
+                this.changeList.splice(index,1);
+                if(this.changeList.length<8){
+                    this.changeList.push({'content':'','money':''});
+                }
+            },
+            //删除数据
+            delChangeListFix:function(index){
+                console.log(index);
+                this.changeListFix.splice(index,1);
+            },
+            //添加行
+            addChangeList:function(index){
+                this.changeList.push({'content':'','money':''});
             },
             //刷新
             refresh:function(){
@@ -304,20 +484,17 @@
           *
           * */
             postBalanceSheetExcel:function() {
-                let param = {'uid':this.uid,
+                console.log(this.chooseSubject);
+                let param = {'uid':this.userid,
                     'orgid':this.orgid,
-                    'infoData': this.budgetList};
+                    'Title': this.chooseSubject.KName};
 
                 //let baseheader = httpConfig.header;
                 let base = httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true
-                this.$axios({
-                    method: 'post',
-                    url: '/PsubjectBudget/PostExportBeginYear',
-                    data: param
-                }).then(res => {
+                this.$axios.get('/DealingsMst/GetDetailAccountExcel',{params:param}).then(res => {
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
@@ -359,6 +536,48 @@
 </script>
 
 <style scoped>
+    .delArea{
+        position: relative;
+        left: 4px;
+        top:4px;
+        z-index: 999;
+        display: none;
+        height: 0;
+        margin-top: -4px;
+    }
+    .delArea i:last-child{
+        width: 14px;
+        height: 14px;
+        background-color: #00B8EE;
+        color:white;
+        border-radius: 10px;
+        display: block;
+        margin-top:4px;
+    }
+    .delArea i:first-child{
+        width: 14px;
+        height: 14px;
+        font-size: 10px;
+        background-color: red;
+        border-radius: 10px;
+        display: block;
+        text-align: center;
+        margin-top:5px;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    select{
+        margin-left: 150px;
+        width: 178px;
+        height:30px;
+        font-size: 14px;
+        line-height: 30px;
+        padding-left: 10px;
+        color: #6f6f6f;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+    }
     .cover{
         position: fixed;
         top: 0;
@@ -372,6 +591,7 @@
         height: 40px;
         width: 90%;
         border: 0;
+        padding-left: 20px;
     }
     .coverdiv{
         margin: auto;
