@@ -74,7 +74,7 @@ export default {
     box-shadow: 0 0 10px 2px #d3e9f9;
     >.saasMsg{
         width: 370px;
-        height: 180px;
+        height: 220px;
         position:absolute;
         top:100px;
         left:40%;

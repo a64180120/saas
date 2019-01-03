@@ -4,8 +4,8 @@
       <div class="loginContainer flexPublic">
         <img src="../assets/images/logo2.png" alt="">
         <div class="login">
-          <div><img src="@/assets/img/ren.png" alt=""><span> &nbsp;0571-88270588</span></div>
-          <div><img src="@/assets/img/d1.png" alt=""><router-link to="/login">登录</router-link><router-link to="/register">注册</router-link></div>
+          <div><img src="@/assets/img/d1.png" alt=""><span> &nbsp;0571-88270588</span></div>
+          <div><img src="@/assets/img/ren.png" alt=""><router-link to="/login">登录</router-link><router-link to="/register">注册</router-link></div>
           <div><img src="@/assets/img/fdj.png" alt=""></div>
         </div>
       </div>
@@ -31,8 +31,8 @@
       <div class="headerBGindex"></div>
     </header>
     <nav>
-      <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('finance')"><router-link to="/home"><img src="@/assets/img/cai.png" alt=""><span :class="{moveHide:nav=='finance'}">工会财务管理</span></router-link></div>
-      <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('info')"><a href=""><img src="@/assets/img/shu.png" alt=""><span :class="{moveHide:nav=='info'}">数据直报平台</span></a></div>
+      <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('finance')"><router-link to="/home"><img :class="{moveShow:nav=='finance'}" src="@/assets/img/cai.png" alt=""><span :class="{moveHide:nav=='finance'}">工会财务管理</span></router-link></div>
+      <div @mouseleave.stop="navLeave" @mouseenter.stop="navEnter('info')"><a href=""><img :class="{moveShow:nav=='info'}" src="@/assets/img/shu.png" alt=""><span :class="{moveHide:nav=='info'}">数据直报平台</span></a></div>
     </nav>
     <section>
       <div class="proInfoContainer">
@@ -42,8 +42,8 @@
         <div class="flexPublic proInfoContent" >
           <div  style="position:relative;top:-10px">
             <div class="flexPublic">
-              <img src="@/assets/img/img1.jpg" alt="">
-              <div>
+              <img style="width:40%" src="@/assets/img/img1.jpg" alt="">
+              <div style="width:60%">
                 <h4>新版企业所得税</h4>
                 <p>为进一步落实企业所得税优惠政策，统一规范企业所得税优惠事项的办理，根据《国家税务总局关于发布修订后的&lt;企业所得税优惠政策事项办理办法&gt;的公告》（国家税务总局公告2018年第23号，以下简称23号公告）的规定，结合我省实际，现就企业所得税优惠事项办理有关问题公告如下：</p>
               </div>
@@ -64,16 +64,15 @@
         <img src="@/assets/img/c1.png" alt="">
         <div class="proBannerCon">
             <ul>
-                <li><a href="#"><img src="@/assets/img/s1.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s2.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s3.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s4.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s1.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s1.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s2.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s3.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s4.png" alt=""></a></li>
-                <li><a href="#"><img src="@/assets/img/s1.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s1.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s2.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s3.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s4.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s1.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s2.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s3.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s4.png" alt=""></a></li>
+                <li><a href="#"><img src="@/assets/images/s1.png" alt=""></a></li>
             </ul>
         </div>
       </div>
@@ -148,8 +147,9 @@
             </li>
             <li>
               <img  src="@/assets/img/d6.png" />
-                <p>公司地址：</p>
-              <p style="margin-top: 20px;white-space: pre-wrap">杭州市拱墅区祥园路88号中国（杭州）智慧信息产业园N座9F</p>
+              <span>公司地址：</span>
+              <p style="white-space: pre-wrap"><span>杭州市拱墅区祥园路88号中国（杭州）智慧信息产业园N座9F</span></p>
+              
             </li>
           </ul>
         </div>
@@ -374,19 +374,20 @@
     }
   @keyframes proBanner {
       0% {margin-left:0}
-      100% {margin-left:-970px}
+      100% {margin-left:-780px}
   }
   .loginContainer{
   margin:0 auto;
   width:1200px;
   height:70px;
+  line-height: 70px;
   >img{
     height:50px;
+    margin-top: 10px;
   }
   .login{
     float:right;
-    display: flex;
-    align-items: center;
+
     color:#7fa409;
     // ********弹性布局***************************
     >div,>span,>img{
@@ -394,10 +395,18 @@
     }
     >div{
       margin-left: 10px;
-      display: flex;
-      align-items: center;
+
+      height:70px;
+      line-height: 70px;
+      >img{
+        margin-top:10px;
+      }
       &:first-of-type{
         width:200px;
+        font-size: 18px;
+        >img{
+          margin-top:20px;
+        }
       }
       &:nth-of-type(2){
         width:140px;
@@ -411,6 +420,9 @@
       }
       &:nth-of-type(3){
         width:70px;
+        >img{
+          margin-top:0;
+        }
       }
     }
   }
@@ -421,7 +433,7 @@
     height:626px;
     margin:0 auto;
     z-index:1;
-    margin-top: 10px;
+    margin-top: 5px;
     background: url("../assets/img/q1.png");
       animation: head-z 1s ease;
       animation-delay: 0.5s;
@@ -458,27 +470,31 @@
     position:relative;
     margin:0 auto;
     width:1200px;
-    display: flex;
-    align-items: center;
+    height:160px;
+    line-height: 160px;
     // ********弹性布局***************************
     >div,>span,>img{
       float:left;
     }
     >div{
       width:50%;
-      height:192px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height:160px;
       // ********弹性布局***************************
       >div,>span,>img{
         float:left;
       }
         >a{
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
             transition: all .3s;
+            >img{
+              margin-top:35px;
+              transition: all .5s;
+              &.moveShow{
+                transform: translateX(200%);
+                transform: translateX(0)\9\0;
+                transition: all .5s;
+              }
+            }
             >span{
                 margin-left: 20px;
                 font-weight: 400;
@@ -487,7 +503,9 @@
                 transition: all .3s;
                 &.moveHide{
                     opacity: 0;
+                    opacity: 1\9\0;
                     margin: -170px;
+                    margin: 0\9\0;
                 }
             }
         }
@@ -498,7 +516,7 @@
     position:relative;
     width:1200px;
     margin: 0 auto;
-    padding:0 0 0 70px;
+    padding:0 0 0 0px;
     .proInfoContainer{
         width: 1132px;
         height: 335px;
@@ -600,8 +618,6 @@
       height:200px;
       width:100%;
       margin-top:30px;
-      display: flex;
-      align-items: center;
       // ********弹性布局***************************
       >div,>span,>img{
         float:left;
@@ -617,17 +633,17 @@
     .proBannerCon{
           overflow: hidden;
           >ul{
-              display: flex;
               width:1800px;
               height:100%;
-              align-items: center;
               // ********弹性布局***************************
-              >div,>span,>img{
+              >li{
                 float:left;
               }
-              animation:proBanner 10s linear infinite;
+             // margin-left:-780px;
+               animation:proBanner 10s linear infinite;
               >li{
                   margin-right: 30px;
+                  margin-top: 10px;
                   height:110px;
                   >a{
                       display: block;
@@ -648,8 +664,6 @@
       border:1px solid #dde;
       border-radius: 3px;
       padding:8px;
-      display: flex;
-      justify-content: space-between;
       // ********弹性布局***************************
       >div,>span,>img{
         float:left;
@@ -664,14 +678,16 @@
           height:33px;
           line-height: 33px;
           ul{
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
             color:#fff;
             li{
               margin-right:40px;
               font-size: 13px;
               position:relative;
+              
+              float:right;
+              >a{
+                color:#fff;
+              }
               &.roleActive{
                   color: #fff;
                   >a:after{
@@ -695,6 +711,7 @@
           margin-left:10px;
           >li{
             height:40px;
+            width:98%;
             line-height: 40px;
             padding:0 8px 0 3px;
             position:relative;
@@ -744,6 +761,7 @@
       .unionHome{
         height:400px;
         position:relative;
+        float:right;
         >i{
           content:"";
           position:absolute;
@@ -774,10 +792,11 @@
       height:360px;
       background: #282828;
       padding:19px 7px 10px 10px;
-      display: flex;
+
       >div{
         width:50%;
         padding:5px;
+        float:left;
         >ul{
           margin:0 auto;
 
@@ -786,17 +805,44 @@
             height:40px;
             color:#fff;
             margin-left: 145px;
-            display: flex;
-            align-items: center;
+            padding:10px 0 0 0 ;
             white-space: nowrap;
             >img{
               width:7%;
               margin:0 9px 0 0;
+              float:left;
             }
             >p{
               margin:0;
               text-align: left;
               color:#fff;
+              float:left;
+              &:nth-of-type(2){
+                padding:2px;
+              }
+            }
+            &:first-of-type{
+              margin-bottom: 10px;
+              >img{
+                width:32%;
+                margin-top:5px;
+              }
+            }
+            &:last-of-type{
+              width:400px;
+              >img{    
+                margin:0;
+                width:21px;
+              }
+              >span{
+                width:18%;
+                margin-left: 9px;
+                float:left;
+              }
+              >p{
+                width:60%;
+                
+              }
             }
           }
         }
@@ -820,12 +866,13 @@
           li.onlineBtn{
             width: 100px;
             height: 31px;
+            line-height:31px;
+            padding:0;
             background: #8ba42f;
             border-radius: 5px;
             color: #fff;
-            font-size: 12px;
-            display: flex;
-            justify-content: center;
+            font-size: 14px;
+            text-align: center;
             margin-top:70px;
             margin-left:250px;
               cursor:pointer;
@@ -842,27 +889,22 @@
     >div{
       width:1200px;
       margin:0 auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding:50px 0 10px;
       &.aboutContainer>div{
         width:50%;
+        float:left;
         &.words>div{
             margin:0 auto 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-align: center;
             >p,>h1{
+                display: inline-block;
                 color:#fff;
                 margin-right:20px;
                 font-size: 20px;
             }
         }
           &.words>.footInfo{
-          display: flex;
-          flex-flow: column nowrap;
-          align-items: center;
+
           color:#fff;
           >p{
               font-size: 13px;
@@ -870,18 +912,18 @@
           }
       }
         &.pictrue{
-             display: flex;
-            justify-content: center;
+
             >div{
                 width:180px;
                 height:180px;
                 margin-left: 80px;
+                float:left;
                 >img{
                     width:180px;
-
-
+                    height:180px;
                 }
-                >div{    color: white;
+                >div{    
+                    color: white;
                     text-align: center;
                     margin-top: 5px;
                     font-size: 17px;

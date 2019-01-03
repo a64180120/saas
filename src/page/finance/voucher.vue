@@ -15,9 +15,10 @@
                     </div>
                 </li>
                 <li class="flexPublic">
-                    <div class="flexPublic">附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>
-                    <div @click.stop="picUploadShow" class="uploaderTitle"></div>               
+                    <div @click.stop="picUploadShow" class="uploaderTitle"></div>    
+                    <div >附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>                         
                 </li>
+                
             </ul>
         </div>
         <div  class="voucherContent">
@@ -447,7 +448,7 @@
                 }
             },
             //获取最新一个凭证
-            getFreshVoucher(){console.log(222)
+            getFreshVoucher(){
                 const loading1=this.$loading();
                 if(!this.sideDateNew){
                     this.sideDateNew=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth()
@@ -998,14 +999,47 @@
     }
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
     .voucher{
         width:100%;
         text-align: left;
         padding:8px 15px 0 25px;
         margin-right:10px;
         font-size:18px;
+        >.voucherHead{
+            >ul{
+                height:36px;
+                line-height:36px;
+            }
+            >ul>li{
+                display: block;
+                width:33.33%;
+                &:nth-of-type(2){
+                        
+                    >div{
+                        height:100%;
+                        width:400px;
+                        margin:0 auto;
+                        >div{
+                            >input{
+                                margin-top:6px;
+                            }
+                        }
+                        >span{
+                            line-height:30px;
+                        }
+                    }
+                }
+                &:last-of-type{
+
+                    >div{
+                        float:right;
+                    }
+                }
+            }
+        }
     }
+    
     .assistItemMask{
         position: absolute;
         width:100%;
@@ -1168,11 +1202,11 @@
         text-align: center;
 
     }
-    .voucherFoot>ul>li>label{
+    /* .voucherFoot>ul>li>label{
         display: flex;
         justify-content: center;
         align-items: center;
-    }
+    } */
     .voucherFoot>ul>li>label>input{
         width:100px;
         border:1px solid #ccc;
@@ -1235,16 +1269,10 @@
      }   
     .kemu>div>ul{
         height:100%;
-        display: flex;
-        flex-flow: column nowrap;
-        justify-content: space-between;
-        align-items: flex-start;
+        
     }
     .kemu>div>ul>li{
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: flex-start;
-        align-items: flex-start;
+        float:left;
         padding:0 3px;
         font-size: 13px;
         line-height: 15px;
@@ -1294,9 +1322,6 @@
         padding:5px;
     }
     .kemu>.assistContainer>ul>li{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         margin-bottom:5px;
     }
     .kemu>.assistContainer>ul>li>div:first-of-type{
@@ -1385,5 +1410,10 @@
 }
 .chongHcss{
     color:red;
+}
+</style>
+<style>
+.voucherHead .el-input--suffix .el-input__inner{
+    line-height:30px;
 }
 </style>

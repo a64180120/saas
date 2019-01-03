@@ -19,6 +19,7 @@ ul{
     list-style: none;
 }
 .flexPublic>i,
+.flexPublic>li,
 .flexPublic>img,
 .flexPublic>span,
 .flexPublic>div{
@@ -153,7 +154,7 @@ ul{
 }
 .datepick .el-date-editor.el-input{
     width:120px;
-    height:100%;
+    
     font-size: 12px;
     padding-right:10px !important;
     margin:0;
@@ -255,6 +256,7 @@ ul{
     transform: rotate(-45deg);
 }
 .btn{
+    display: inline-block;
     cursor: pointer;
     background: #00b7ee;
     color:#fff;
