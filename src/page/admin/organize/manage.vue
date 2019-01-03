@@ -142,7 +142,8 @@
     }
 
     .asideNav > ul > li.asideActive {
-        background: #ff9900;
+        background: #00B8EE;
+        text-align: center;
         color: #fff;
     }
 

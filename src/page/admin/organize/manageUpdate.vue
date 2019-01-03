@@ -12,13 +12,30 @@
             <h6 class="addTitle" v-show="!showFlam">机关组织账套管理</h6>
             <ul class="addFormItems ul-flexChild">
                 <li>
-                    <div class="addFormItemTitle">工会名称</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>工会名称</span>
+                    </div>
                     <div class="inputContainer"><input  @blur="unionInput(true)" type="text" v-model="OrgName">
                     </div>
                     <div v-show="unionCss.name">请输入工会名称</div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">统一社会信用代码</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>工会编码</span>
+                    </div>
+                    <div class="inputContainer"><input  @blur="unionInput(true)" type="text" v-model="EnCode">
+                    </div>
+                    <div v-show="unionCss.name">请输入工会编码</div>
+                </li>
+                <li>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            统一社会信用代码
+                        </span>
+                    </div>
                     <div class="inputContainer"><input  @blur="unionInput(false)" type="text" style="width: 90%"
                                                        v-model="EnterpriseCode"></div>
                     <div v-show="unionCss.id">请输入信用代码</div>
@@ -36,7 +53,12 @@
                     </div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">单位地址</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            单位地址
+                        </span>
+                    </div>
                     <div class="block flexPublic">
                         <div class="selectContainer">
                             <select v-model="Province" @change="changeProvince">
@@ -99,13 +121,33 @@
                     <div></div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">隶属工会</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            隶属工会
+                        </span>
+                    </div>
                     <div class="selectContainer">
                         <select name="unionOwner" v-model="Parent" @change="changeParentOrg">
                             <option v-for="item of ParentNameValues" :key="item.PhId" :value="item">{{item.OrgName}}
                             </option>
                         </select>
                     </div>
+                    <div></div>
+                </li>
+                <li v-show="showFlam">
+                    <div class="addFormItemTitle">财务账户账号</div>
+                    <div class="inputContainer"><input type="text" v-model="FinanceAccount"></div>
+                    <div></div>
+                </li>
+                <li v-show="showFlam">
+                    <div class="addFormItemTitle">开户行名称</div>
+                    <div class="inputContainer"><input type="text" v-model="BankName"></div>
+                    <div></div>
+                </li>
+                <li v-show="showFlam">
+                    <div class="addFormItemTitle">开户行号</div>
+                    <div class="inputContainer"><input type="text" v-model="BankAccount"></div>
                     <div></div>
                 </li>
                 <li v-show="showFlam">
@@ -130,7 +172,12 @@
                     <div></div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">工会主席</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            工会主席
+                        </span>
+                    </div>
                     <div>
                         <div class="inputContainer"><input type="text" v-model="Chairman" style="width: 90%">
                         </div>
@@ -150,7 +197,12 @@
                     </div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">经审会主任</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            经审会主任
+                        </span>
+                    </div>
                     <div class="inputContainer"><input type="text" v-model="Director"></div>
                     <div></div>
                 </li>
@@ -200,6 +252,8 @@
                 EnableTime: '',
                 EnterpriseAttachment:'',
                 Verify:'0',
+                VerifyDt:'',
+                VerifyOpinion:'',
                 ChairmanAttachment:'',
                 showFlam:this.$route.query.showFlam,
                 ServiceStartTime: '',
@@ -215,7 +269,11 @@
                 City:"",
                 County:"",
                 Street:"",
+                Integrity:'',
                 NgRecordVer:'',
+                FinanceAccount:'',
+                BankName:'',
+                BankAccount:'',
                 ProvinceValue:[],
                 CityValue:[],
                 CountyValue:[],
@@ -254,6 +312,18 @@
                 },
             };
         },
+        components: {
+            pictureUpload
+        },
+        computed:{
+            ...mapState({
+                userid: state => state.user.userid,
+                orgid: state => state.user.orgid
+            }),
+            picUrl:function(){
+                return httpConfig.baseurl;
+            }
+        },
         // mounted: function () {
         //     //this.getNodes();
         //     this.selectParentName();
@@ -271,7 +341,7 @@
             }),
             //刷新页面
             fresh(){
-                this.selectParentName();
+                //this.selectParentName();
                 this.selectArea("0", 0);
                 this.init();
             },
@@ -356,8 +426,6 @@
                 this.ParentId = this.Parent.PhId;
                 this.ParentName = this.Parent.OrgName;
                 this.ParentCode = this.Parent.EnCode;
-                console.log(this.ParentId);
-                console.log(this.ParentCode);
             },
             changeProvince(){
                 console.log(this.Province);
@@ -370,10 +438,39 @@
                 this.StreetValue = [];
                 this.CountyValue = [];
                 this.selectArea(this.City, 2);
+                if(!this.showFlam){
+                    this.getParentByArea(1, this.Province);
+                }
             },
             changeCounty(){
                 this.StreetValue = [];
                 this.selectArea(this.County, 3);
+                if(!this.showFlam){
+                    this.getParentByArea(2, this.City);
+                }
+            },
+            //改变街道后的点击事件
+            changeStreet(){
+                if(!this.showFlam){
+                    this.getParentByArea(3, this.County);
+                }else{
+                    this.getParentByArea(4, this.Street);
+                }
+            },
+            //根据选择的地址获取父级机关工会
+            getParentByArea(i, area){
+                var data = {
+                    rank: i,
+                    areaCode: area
+                }
+                this.$axios.get('/SysAdminOrganize/GetParentAdminOrganizeByArea', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        this.ParentNameValues = res;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             },
             selectArea(Area,i){
                 var data = {
@@ -422,6 +519,18 @@
                         console.log(err);
                     })
             },
+            getAdminOrganize(phid){
+                var data = {
+                    id: phid
+                };
+                this.$axios.get('/SysAdminOrganize/GetSysAdminOrganize', {params: data})
+                    .then(res => {
+                        this.Parent = res;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
             addFinished(bool) {//添加文件上传**************************
                 if (!bool) {
                     //this.$router.go(-1);
@@ -438,6 +547,7 @@
                      formData.append('unionId',this.unionId);
                      formData.append('file',this.file);*/
                     if(this.$route.query.showFlam){
+                        this.Integrity = '80';
                         var page = {
                             'PhId': this.PhId,
                             'Province': this.Province,
@@ -461,14 +571,30 @@
                             'ParentEnCode': this.ParentCode,
                             'AccountSystem': this.AccountSystem,
                             'Verify': this.Verify,
+                            'Integrity': this.Integrity,
                             'Director': this.Director,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
+                            'FinanceAccount': this.FinanceAccount,
+                            'BankName': this.BankName,
+                            'BankAccount': this.BankAccount,
                             'NgRecordVer': this.NgRecordVer
                         };
                         if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
-                            && this.EnterpriseCode !='' && this.Chairman !='' && this.EnableTime != "" && this.ServiceStartTime !=''
-                            && this.ServiceEndTime !='' && this.ParentName != '' && this.AccountSystem !=''&& this.Director !=''){
+                            && this.EnterpriseCode !='' && this.Chairman !='' && this.EnCode != ''
+                            && this.ParentId != '' && this.Director !=''&& this.Province!=null && this.City !=null && this.County!= null
+                            && this.Street != null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
+                            && this.EnCode != null && this.ParentId != null && this.Director !=null){
+                            if(this.EnterpriseAttachment != null && this.EnterpriseAttachment != ''){
+                                this.Integrity = parseInt(this.Integrity) + 5;
+                            }
+                            if(this.ChairmanAttachment != null && this.ChairmanAttachment != ''){
+                                this.Integrity = parseInt(this.Integrity) + 5;
+                            }
+                            if(this.MobilePhone != null && this.MobilePhone != ''){
+                                this.Integrity = parseInt(this.Integrity) + 10;
+                            }
+                            page.Integrity = this.Integrity;
                             var data = {
                                 uid: "0",
                                 orgid: "0",
@@ -487,7 +613,7 @@
                             this.$store.commit("tagNav/removeTagNav", this.$route);
                             this.$router.push({path: "/admin/orgin"});
                         }else{
-                            this.$message.error('请将信息填写完整再保存,请重试!');
+                            this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
                     }else{
                         var page = {
@@ -516,9 +642,10 @@
                             'ChairmanAttachment': this.ChairmanAttachment,
                             'NgRecordVer': this.NgRecordVer
                         };
-                        if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
-                            && this.EnterpriseCode !='' && this.Chairman !='' && this.ServiceStartTime !=''
-                            && this.ServiceEndTime !='' && this.Director !=''){
+                        if(this.Province!=''&& this.OrgName!='' && this.EnterpriseCode !='' && this.Chairman !=''
+                             && this.Director !='' && this.EnCode !=''
+                            && this.Province!=null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
+                            && this.Director !=null && this.EnCode !=null){
                             var data = {
                                 uid: "0",
                                 orgid: "0",
@@ -537,7 +664,7 @@
                             this.$store.commit("tagNav/removeTagNav", this.$route);
                             this.$router.push({path: "/admin/orgin"});
                         }else{
-                            this.$message.error('请将信息填写完整再保存,请重试!');
+                            this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
                     }
 
@@ -579,7 +706,7 @@
                             this.EnableTime = res.EnableTime;
                             this.ServiceStartTime = res.ServiceStartTime;
                             this.ServiceEndTime = res.ServiceEndTime;
-                            //this.Parent = res.ParentId;
+                            this.Parent = res.ParentId;
                             this.ParentId = res.ParentId;
                             this.ParentCode = res.ParentEnCode;
                             this.ParentName = res.ParentName;
@@ -588,14 +715,20 @@
                             this.City = res.City;
                             this.County = res.County;
                             this.Street = res.Street;
-                            this.EnterpriseAttachment= res.EnterpriseAttachment,
-                            this.ChairmanAttachment = res.ChairmanAttachment,
+                            this.EnterpriseAttachment= res.EnterpriseAttachment;
+                            this.ChairmanAttachment = res.ChairmanAttachment;
                             this.NgRecordVer = res.NgRecordVer;
+                            this.FinanceAccount= res.FinanceAccount;
+                            this.BankName=res.BankName,
+                            this.BankAccount= res.BankAccount,
                             this.Verify = res.Verify;
+                            this.Integrity = res.Integrity;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
                             this.selectArea(this.County, 3);
+                            this.getParentByArea(4, res.Street);
+                            this.getAdminOrganize(res.ParentId);
                         })
                 }else{
                     this.$axios.get('/SysAdminOrganize/GetSysAdminOrganize', {params: data})
@@ -614,6 +747,7 @@
                             this.ServiceEndTime = res.ServiceEndTime;
                             //this.Parent = res.ParentId;
                             this.ParentId = res.ParentId;
+                            this.Parent = res.ParentName;
                             this.ParentCode = res.ParentEnCode;
                             this.ParentName = res.ParentName;
                             this.Province = res.Province;
@@ -626,12 +760,26 @@
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
                             this.selectArea(this.County, 3);
+                            if(res.Street != null && res.Street != ""){
+                                this.getParentByArea(3, res.County);
+                            }else{
+                                if(res.County != null && res.County != ""){
+                                    this.getParentByArea(2, res.City);
+                                }else{
+                                    if(res.City != null && res.City != ""){
+                                        this.getParentByArea(1, res.Province);
+                                    }
+                                }
+                            }
+                            if(res.ParentId != "0"){
+                                this.getAdminOrganize(res.ParentId);
+                            }
                         })
                 }
             }
         },
         mounted() {
-            this.selectParentName();
+            //this.selectParentName();
             this.selectArea("0", 0);
             this.init();
         }

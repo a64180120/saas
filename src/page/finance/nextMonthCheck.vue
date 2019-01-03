@@ -594,7 +594,7 @@
 <style lang="scss" scoped>
     .nextMonthCheck{
         background: rgba(0,0,0,0.5);
-        position: absolute;
+        position: fixed;
         z-index: 99;
         left:0;
         top:0;
@@ -608,6 +608,7 @@
             min-height:380px;
             margin:100px auto 0;
             border-radius: 10px;
+            box-shadow: 0 0 10px 2px #444;
             >p{
                 font-size:20px;
                 font-weight: 800;
@@ -687,8 +688,8 @@
     .checkRight{
         position:absolute;
         right:40px;
-        color:#2473eb;
-        border:2px solid #2473eb;
+        color:#00b7ee;
+        border:2px solid #00b7ee;
         font-weight:400;
         font-size:16px;
         padding:3px 10px;
@@ -696,7 +697,7 @@
         cursor:pointer;
         &:hover{
             color:#fff;
-            background:#2473eb;
+            background:#00b7ee;
         }
     }
     .audit{

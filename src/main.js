@@ -22,6 +22,9 @@ import getPdf from './plugins/PDF/getPdf'
 //import Auth from "./util/auth";
 
 import '../static/css/icon.css';  //阿里的图标样式
+import saasMessage from "@/components/message"
+
+Vue.use(saasMessage)
 
 // 注册组件到Vue
 Vue.prototype.$axios = axios

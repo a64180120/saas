@@ -44,8 +44,8 @@
                             :options="options"
                             @active-item-change="handleItemChange"
                             filterable
-                            :clearable="clearable"
                             @change ="changeArea"
+                            change-on-select
                             style="width: 83%;text-align: center;margin-top: 10px;margin-left: 22px"
                         ></el-cascader>
                     </div>
@@ -181,6 +181,7 @@
                 loading: false,
                 data2: [],
                 qOrgId: "",
+                qOrgCode:'',
                 flam: 0,
                 highlightCurrent: true,
                 expandOnClickNode: false,
@@ -191,13 +192,14 @@
                 singleSelection: [], //选中行
                 state_mark: "", //用户状态
                 select_word: "", //搜索字段
+                jsonFlam:'',//用来账号移交
                 //dialogtitle: "新增",
                 dialogState: "add",
                 queryF:'',
                 editVisible: false,
                 is_search: false,
                 form: {
-                    phid: 0,
+                    // phid: 0,
                     realName: "",
                     mobilePhone: "",
                     rolesid: [],
@@ -382,71 +384,11 @@
             changeArea(val){
                 this.data2 = [];
                 this.tableData = [];
+                this.getNodes(val);
                 this.aresId = val;
                 console.log(this.aresId);
                 this.getOrgtree(this.aresId);
             },
-            // getNodes(val) {
-            //     console.log('active item:', val);
-            //     this.aresId = val;
-            //     let idArea;
-            //     let sizeArea;
-            //     if (!val) {
-            //         idArea = "0";
-            //         sizeArea = 0
-            //     } else if (val.length === 1) {
-            //         idArea = val[0];
-            //         sizeArea = val.length // 3:一级 4:二级 6:三级
-            //     } else if (val.length === 2) {
-            //         idArea = val[1];
-            //         sizeArea = val.length // 3:一级 4:二级 6:三级
-            //     }else if (val.length === 3) {
-            //         idArea = val[2];
-            //         sizeArea = val.length;// 3:一级 4:二级 6:三级
-            //     }
-            //     this.$axios.get("/SysArea/GetAreaList", {
-            //         params: {
-            //             uid: "0",
-            //             orgid: this.qOrgId,
-            //             id: idArea
-            //         }
-            //     }).then(
-            //         res => {
-            //             console.log(res);
-            //             if(idArea == "0"){
-            //                 this.options = res;
-            //             }else{
-            //                 for(let i = 0; i < this.options.length; i++) {
-            //                     if(this.options[i].value == val[0]) {
-            //                         this.options[i].children = res;
-            //                     }
-            //                 }
-            //             }
-            //             //this.options[i].children = res;
-            //         },
-            //         error => {
-            //             console.log(error);
-            //         }
-            //     );
-            // },
-            //获取行政地址信息
-            // getAreaData(){
-            //     this.$axios.get("/SysArea/GetAreaList", {
-            //         params: {
-            //             uid: "0",
-            //             orgid: this.qOrgId,
-            //             id: "0"
-            //         }
-            //     }).then(
-            //         res => {
-            //             console.log(res);
-            //             this.options = res;
-            //         },
-            //         error => {
-            //             console.log(error);
-            //         }
-            //     );
-            // },
             //获取角色数据
             async getRoleData(){
                 var vm=this;
@@ -481,6 +423,7 @@
             changeTable(CheckedKeys, CheckedNodes){
                 let key = CheckedKeys;
                 this.qOrgId = key.OrgId;
+                this.qOrgCode = key.ItemCode;
                 this.getData('');
                 console.log(key);
             },
@@ -488,27 +431,47 @@
             getOrgtree(array){
                 this.loading = true;
                 console.log(array);
-                this.$axios.get("/SysOrganize/GetOrgListForUser", {
-                    params: {
-                        PageIndex: this.pageIndex - 1,
-                        PageSize: this.pageSize,
-                        uid: this.uid,
-                        orgid: this.qOrgId,
-                        value: array[0] + ","+ array[1]+"," + array[2]+","+ array[3]
-                    }
-                }).then(
-                    res => {
-                        console.log(res);
-                        this.loading = false;
-                        this.data2 = res;
+                if(array.length > 0){
+                    this.$axios.get("/SysAdminOrganize/GetAllOrgForUser", {
+                        params: {
+                            rank: array.length,
+                            areaCode: array[array.length - 1]
+                        }
+                    }).then(
+                        res => {
+                            console.log(res);
+                            this.loading = false;
+                            this.data2 = res;
 
-                        console.log(this.data2);
-                    },
-                    error => {
-                        console.log(error);
-                        this.loading = false;
-                    }
-                );
+                            console.log(this.data2);
+                        },
+                        error => {
+                            console.log(error);
+                            this.loading = false;
+                        }
+                    );
+                }
+                // this.$axios.get("/SysOrganize/GetOrgListForUser", {
+                //     params: {
+                //         PageIndex: this.pageIndex - 1,
+                //         PageSize: this.pageSize,
+                //         uid: this.uid,
+                //         orgid: this.qOrgId,
+                //         value: array[0] + ","+ array[1]+"," + array[2]+","+ array[3]
+                //     }
+                // }).then(
+                //     res => {
+                //         console.log(res);
+                //         this.loading = false;
+                //         this.data2 = res;
+                //
+                //         console.log(this.data2);
+                //     },
+                //     error => {
+                //         console.log(error);
+                //         this.loading = false;
+                //     }
+                // );
             },
             /**
              * 用户列表获取数据
@@ -651,10 +614,14 @@
                 //this.pdChecked();
                 if(this.qOrgId != ""){
                     this.dialogState = "add";
+                    this.form = { realName: "",
+                        mobilePhone: "",
+                        rolesid: [],
+                        enabledMark: "0",};
                     this.editVisible = true;
                 }else{
                     this.$message({
-                        message: "请选中左边组织中的一行",
+                        message: "请先在左侧选取组织！",
                         type: "warning"
                     });
                 }
@@ -666,6 +633,12 @@
                     var me=this;
                     //debugger;
                     let id = object.length > 0 ? object[0].PhId : 0;
+                    if(object.length > 0){
+                        if(object[0].EnabledMark == '2'){
+                            this.messageTs();
+                            return;
+                        }
+                    }
                     if (id != 0) {
                         //this.form=object[0];
 
@@ -693,7 +666,7 @@
                     }
                 }else{
                     this.$message({
-                        message: "请选中左边组织中的一行",
+                        message: "请先在左侧选取组织！",
                         type: "warning"
                     });
                 }
@@ -727,11 +700,21 @@
                     this.$refs[formName].resetFields();
                 })
             },
+            //永久停用账号的提示
+            messageTs(){
+                this.$message.success("无法对永久停用的用户进行操作！");
+            },
             //删除按钮
             PageDelete() {
                 if(this.qOrgId != ""){
                     let object = this.singleSelection;
                     let length = object.length;
+                    if(length> 0){
+                        if(object[0].EnabledMark == '2'){
+                            this.messageTs();
+                            return;
+                        }
+                    }
                     if (length > 0) {
                         this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
                             confirmButtonText: "确定",
@@ -779,7 +762,7 @@
                     }
                 }else{
                     this.$message({
-                        message: "请选中左边组织中的一行",
+                        message: "请先在左侧选取组织！",
                         type: "warning"
                     });
                 }
@@ -792,6 +775,12 @@
                     var vm=this;
 
                     let id = object.length > 0 ? object[0].PhId : 0;
+                    if(object.length > 0){
+                        if(object[0].EnabledMark == '2'){
+                            this.messageTs();
+                            return;
+                        }
+                    }
                     if (id != 0) {
                         this.$confirm('确定对账号进行密码重置?', '提示', {
                             confirmButtonText: '确定',
@@ -820,7 +809,7 @@
                     }
                 }else{
                     this.$message({
-                        message: "请选中左边组织中的一行",
+                        message: "请先在左侧选取组织！",
                         type: "warning"
                     });
                 }
@@ -832,6 +821,12 @@
                     let object = this.singleSelection;
                     console.log(this.orgid);
                     let id = object.length > 0 ? object[0].PhId : 0;
+                    if(object.length > 0){
+                        if(object[0].EnabledMark == '2'){
+                            this.messageTs();
+                            return;
+                        }
+                    }
                     if (id != 0) {
                         var roles=[];
                         if(object[0].Roles.length>0){
@@ -841,12 +836,12 @@
                         }
 
                         this.form.phid=object[0].PhId;
-                        //this.form.realName=object[0].RealName;
-                        //this.form.mobilePhone=object[0].MobilePhone;
+                        this.form.realName='';
+                        this.form.mobilePhone='';
                         this.form.rolesid=roles;
                         this.form.enabledMark= String(object[0].EnabledMark);
 
-
+                        this.jsonFlam = JSON.stringify(object[0]);
                         //改变更新状态
                         this.dialogState = "trans";
                         this.dialogTitle = "账号移交";
@@ -860,7 +855,7 @@
                     }
                 }else{
                     this.$message({
-                        message: "请选中左边组织中的一行",
+                        message: "请先在左侧选取组织！",
                         type: "warning"
                     });
                 }
@@ -910,6 +905,7 @@
             // },
             //选择行
             handleClickRow(row) {
+                this.singleSelection = [];
                 this.singleSelection.push(row);
                 console.log(row);
                 console.log(this.singleSelection);
@@ -932,7 +928,7 @@
             //新增
             addUser(){
                 //获取缓存 的用户 组织，角色基本信息
-                let cookiesUser = Auth.getUserInfoData();
+                //let cookiesUser = Auth.getUserInfoData();
                 var vm=this;
                 /**
                  * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
@@ -965,7 +961,8 @@
                         UserId:'',
                         UserAccount:vm.form.mobilePhone,
                         OrgId:this.qOrgId,
-                        OrgCode:cookiesUser.orgInfo.EnCode,
+                        OrgCode: this.qOrgCode,
+                        // OrgCode:cookiesUser.orgInfo.EnCode,
                         RoleId:roles[i],
                         RoleCode:roleItem[0].Name
                     })
@@ -1018,6 +1015,7 @@
                 userinfo.RealName=this.form.realName;
                 userinfo.NickName=this.form.realName;
                 userinfo.MobilePhone=this.form.mobilePhone;
+                userinfo.EnabledMark = this.form.enabledMark;
 
 
                 //角色-组织-用户信息 实体信息组合
@@ -1033,7 +1031,8 @@
                         UserId:userinfo.PhId,
                         UserAccount:userinfo.MobilePhone,
                         OrgId:vm.qOrgId,
-                        OrgCode:cookiesUser.orgInfo.EnCode,
+                        OrgCode: vm.qOrgCode,
+                        //OrgCode:cookiesUser.orgInfo.EnCode,
                         RoleId:roles[i],
                         RoleCode:roleItem[0].Name
                     })
@@ -1076,7 +1075,7 @@
                 let cookiesUser = Auth.getUserInfoData();
                 var vm=this;
                 //选中用户
-                let selectUser = this.singleSelection[0];
+                let selectUser = JSON.parse(this.jsonFlam);
 
                 var userinfo=this.singleSelection[0];
                 userinfo.PersistentState=2;
@@ -1099,7 +1098,8 @@
                         UserId:userinfo.PhId,
                         UserAccount:userinfo.MobilePhone,
                         OrgId:vm.qOrgId,
-                        OrgCode:cookiesUser.orgInfo.EnCode,
+                        OrgCode: vm.qOrgCode,
+                        //OrgCode:cookiesUser.orgInfo.EnCode,
                         RoleId:roles[i],
                         RoleCode:roleItem[0].Name
                     })

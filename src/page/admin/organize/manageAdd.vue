@@ -12,13 +12,30 @@
             <h6 class="addTitle" v-show="showFlam2">机关组织账套管理</h6>
             <ul class="addFormItems ul-flexChild">
                 <li>
-                    <div class="addFormItemTitle">工会名称</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>工会名称</span>
+                    </div>
                     <div class="inputContainer"><input @blur="unionInput(true)" type="text" placeholder="必填"
                                                        v-model="OrgName"></div>
                     <div v-show="unionCss.name">请输入工会名称</div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">统一社会信用代码</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>工会编码</span>
+                    </div>
+                    <div class="inputContainer"><input @blur="unionInput(true)" type="text" placeholder="必填"
+                                                       v-model="EnCode"></div>
+                    <div v-show="unionCss.name">请输入工会名称</div>
+                </li>
+                <li>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            统一社会信用代码
+                        </span>
+                    </div>
                     <div class="inputContainer"><input @blur="unionInput(false)" type="text" placeholder="必填" style="width: 90%"
                                                        v-model="EnterpriseCode"></div>
                     <div v-show="unionCss.id">请输入信用代码</div>
@@ -36,7 +53,12 @@
                     </div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">单位地址</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            单位地址
+                        </span>
+                    </div>
                     <div class="block flexPublic">
                         <div class="selectContainer">
                             <select v-model="Province" @change="changeProvince">
@@ -102,13 +124,33 @@
                     <div></div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">隶属工会</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            隶属工会
+                        </span>
+                    </div>
                     <div class="selectContainer">
                         <select name="unionOwner" v-model="Parent" @change="changeParentOrg">
                             <option v-for="item of ParentNameValues" :key="item.PhId" :value="item">{{item.OrgName}}
                             </option>
                         </select>
                     </div>
+                    <div></div>
+                </li>
+                <li v-show="showFlam">
+                    <div class="addFormItemTitle">财务账户账号</div>
+                    <div class="inputContainer"><input type="text" v-model="FinanceAccount"></div>
+                    <div></div>
+                </li>
+                <li v-show="showFlam">
+                    <div class="addFormItemTitle">开户行名称</div>
+                    <div class="inputContainer"><input type="text" v-model="BankName"></div>
+                    <div></div>
+                </li>
+                <li v-show="showFlam">
+                    <div class="addFormItemTitle">开户行号</div>
+                    <div class="inputContainer"><input type="text" v-model="BankAccount"></div>
                     <div></div>
                 </li>
                 <li v-show="showFlam">
@@ -133,7 +175,12 @@
                     <div></div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">工会主席</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            工会主席
+                        </span>
+                    </div>
                     <div>
                         <div class="inputContainer"><input style="width: 90%" type="text" v-model="Chairman"></div>
                         <!--<div @click="testFile">附件</div>-->
@@ -154,7 +201,12 @@
                     </div>
                 </li>
                 <li>
-                    <div class="addFormItemTitle">经审会主任</div>
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>
+                            经审会主任
+                        </span>
+                    </div>
                     <div class="inputContainer"><input type="text" v-model="Director"></div>
                     <div></div>
                 </li>
@@ -199,6 +251,7 @@ import qs from 'qs';
                 //PhId: '1',
                 file: '1',
                 OrgName: '',
+                EnCode: '',
                 EnterpriseCode: '',
                 showFlam2:'',
                 EnterpriseAttachment:'',
@@ -222,6 +275,10 @@ import qs from 'qs';
                 Parent:'',
                 ParentName: '',
                 AccountSystem: '',
+                FinanceAccount:'',
+                BankName:'',
+                BankAccount:'',
+                Integrity: '80',
                 ParentNameValues: [],
                 Province:"",
                 City:"",
@@ -307,7 +364,7 @@ import qs from 'qs';
         },
         mounted: function () {
             //this.getNodes();
-            this.selectParentName();
+            //this.selectParentName();
             this.selectArea("0", 0);
             this.showFlam = this.$route.query.showFlam;
             if(this.showFlam){
@@ -439,7 +496,7 @@ import qs from 'qs';
                 console.log(this.ParentId);
                 console.log(this.ParentCode);
             },
-            //改变省后的点击时间
+            //改变省后的点击事件
             changeProvince(){
                 console.log(this.Province);
                 this.StreetValue = [];
@@ -447,16 +504,45 @@ import qs from 'qs';
                 this.CityValue = [];
                 this.selectArea(this.Province, 1);
             },
-            //改变城市后的点击时间
+            //改变城市后的点击事件
             changeCity(){
                 this.StreetValue = [];
                 this.CountyValue = [];
                 this.selectArea(this.City, 2);
+                if(!this.showFlam){
+                    this.getParentByArea(1, this.Province);
+                }
             },
-            //改变区后的点击时间
+            //改变区后的点击事件
             changeCounty(){
                 this.StreetValue = [];
                 this.selectArea(this.County, 3);
+                if(!this.showFlam){
+                    this.getParentByArea(2, this.City);
+                }
+            },
+            //改变街道后的点击事件
+            changeStreet(){
+                if(!this.showFlam){
+                    this.getParentByArea(3, this.County);
+                }else{
+                    this.getParentByArea(4, this.Street);
+                }
+            },
+            //根据选择的地址获取父级机关工会
+            getParentByArea(i, area){
+                var data = {
+                    rank: i,
+                    areaCode: area
+                }
+                this.$axios.get('/SysAdminOrganize/GetParentAdminOrganizeByArea', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        this.ParentNameValues = res;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             },
             //查询地区
             selectArea(Area,i){
@@ -506,6 +592,7 @@ import qs from 'qs';
                     //this.$router.go(-1);
                 } else {
                     if(this.$route.query.showFlam){
+                        this.Integrity = '80';
                         var page = {
                             'Province': this.Province,
                             'City': this.City,
@@ -513,6 +600,7 @@ import qs from 'qs';
                             'Street': this.Street,
                             'file': this.file,
                             'OrgName': this.OrgName,
+                            'EnCode': this.EnCode,
                             'EnterpriseCode': this.EnterpriseCode,
                             'Address': this.Address,
                             //'phoneHead': this.phoneHead,
@@ -525,14 +613,30 @@ import qs from 'qs';
                             'ParentName': this.ParentName,
                             'ParentId': this.ParentId,
                             'ParentEnCode': this.ParentCode,
+                            'FinanceAccount': this.FinanceAccount,
+                            'BankName': this.BankName,
+                            'BankAccount': this.BankAccount,
                             'AccountSystem': this.AccountSystem,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
-                            'Director': this.Director
+                            'Director': this.Director,
+                            'Integrity': this.Integrity
                         };
                         if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
-                            && this.EnterpriseCode !='' && this.Chairman !='' && this.EnableTime != "" && this.ServiceStartTime !=''
-                            && this.ServiceEndTime !='' && this.ParentName != '' && this.AccountSystem !=''&& this.Director !=''){
+                            && this.EnterpriseCode !='' && this.Chairman !='' && this.EnCode != ''
+                            && this.ParentId != '' && this.Director !=''&& this.Province!=null && this.City !=null && this.County!= null
+                            && this.Street != null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
+                            && this.EnCode != null && this.ParentId != null && this.Director !=null){
+                            if(this.EnterpriseAttachment != null && this.EnterpriseAttachment != ''){
+                                this.Integrity = parseInt(this.Integrity) + 5;
+                            }
+                            if(this.ChairmanAttachment != null && this.ChairmanAttachment != ''){
+                                this.Integrity = parseInt(this.Integrity) + 5;
+                            }
+                            if(this.MobilePhone != null && this.MobilePhone != ''){
+                                this.Integrity = parseInt(this.Integrity) + 10;
+                            }
+                            page.Integrity = this.Integrity;
                             var data = {
                                 uid: "0",
                                 orgid: "0",
@@ -542,7 +646,7 @@ import qs from 'qs';
                                 .then(res => {
                                     if (res.Status == 'success') {
                                         this.$message.success("新增成功");
-                                        this.$router.push({path: '/'});
+                                        // this.$router.push({path: '/'});
                                     }else{
                                         this.$message.error('新增失败,请重试!');
                                     }
@@ -550,7 +654,7 @@ import qs from 'qs';
                             this.$store.commit("tagNav/removeTagNav", this.$route);
                             this.$router.push({path: "/admin/orgin"});
                         }else{
-                            this.$message.error('请将信息填写完整再保存,请重试!');
+                            this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
                     }else{
                         var page = {
@@ -558,6 +662,7 @@ import qs from 'qs';
                             'City': this.City,
                             'County': this.County,
                             'Street': this.Street,
+                            'EnCode': this.EnCode,
                             'file': this.file,
                             'OrgName': this.OrgName,
                             'EnterpriseCode': this.EnterpriseCode,
@@ -575,9 +680,10 @@ import qs from 'qs';
                             'ChairmanAttachment': this.ChairmanAttachment,
                             'Director': this.Director
                         };
-                        if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
-                            && this.EnterpriseCode !='' && this.Chairman !='' && this.ServiceStartTime !=''
-                            && this.ServiceEndTime !='' && this.Director !=''){
+                        if(this.Province!=''&& this.OrgName!='' && this.EnterpriseCode !='' && this.Chairman !=''
+                            && this.Director !='' && this.EnCode !=''
+                            && this.Province!=null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
+                            && this.Director !=null && this.EnCode !=null ){
                             var data = {
                                 uid: "0",
                                 orgid: "0",
@@ -595,7 +701,7 @@ import qs from 'qs';
                             this.$store.commit("tagNav/removeTagNav", this.$route);
                             this.$router.push({path: "/admin/orgin"});
                         }else{
-                            this.$message.error('请将信息填写完整再保存,请重试!');
+                            this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
                     }
 

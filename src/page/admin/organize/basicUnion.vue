@@ -33,7 +33,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="flexPublic">
+            <div class="flexPublic" style="margin-right: -400px">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"
                                                   placeholder="组织编码/名称"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
@@ -314,6 +314,8 @@
                         return;
                     }else{
                         this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:true}});
+                        this.ajaxMode();
+                        this.PhIdList = '';
                     }
                 }
 

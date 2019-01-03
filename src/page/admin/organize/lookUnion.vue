@@ -27,7 +27,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="flexPublic">
+            <div class="flexPublic" style="margin-right: -650px">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text" style="width: 200px"
                                                   placeholder="企业名称/单位名称/联系人姓名"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
@@ -141,7 +141,7 @@
                 <li>{{item.TelePhone||item.MobilePhone}}</li>
                 <li :title="item.Address">{{item.Address}}</li>
                 <li><i :class="{examSuccess : item.Verify,examFailed : !item.Verify}"></i></li>
-                <li>{{item.VerifyDt.replace('T',' ').substr(0,16)}}</li>
+                <li>{{item.VerifyDt}}</li>
             </ul>
         </div>
         <div class="formDataPages">
@@ -513,6 +513,11 @@
                                 this.examined[i].Verify = true;
                             }else{
                                 this.examined[i].Verify = false;
+                            }
+                            if(this.examined[i].VerifyDt != null && this.examined[i].VerifyDt != ''){
+                                this.examined[i].VerifyDt = this.examined[i].VerifyDt.replace('T',' ').substr(0,16);
+                            }else{
+                                this.examined[i].VerifyDt = "-";
                             }
                             this.userInfoCssList[i] = {checked: false};
                             this.$forceUpdate();
