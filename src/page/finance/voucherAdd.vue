@@ -43,7 +43,7 @@
         </div>
         <!--凭证组件*******************-->
         <div style="overflow-y:auto"  :class="{voucherMask:voucherMask}" ref="print">
-            <div class="voucherContainer">
+            <div  class="voucherContainer">
                 <p v-if="voucherMask" class="title">
                     <span v-if="voucherMask=='copy'">复制凭证</span>
                     <span v-if="voucherMask=='cut'">剪切凭证</span>
@@ -60,7 +60,7 @@
                     <div :class="{voucherDisabled:voucherAdd}"></div>
                     <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                 </div>
-                 <div v-show="!voucherMask" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
+                 <div v-show="(!voucherMask)&&voucherDataList.bool" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
             </div>
            
         </div>
@@ -70,11 +70,11 @@
             <p>{{sideDate.split('-')[0]}}</p>
             <div style="overflow:hidden;height:87%">
                 <div class="monthsContainer">
-                    <ul @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
+                    <ul style="top:0" @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false,$event)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
                         <li v-for="item of nowYear-2000"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
-                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1==nowYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>sideDate.split('-')[0],futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
                             </ul>
                         </li>
                     </ul>
@@ -425,8 +425,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               
-               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -664,7 +663,7 @@
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
-                    queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
+                    queryfilter:{"OrgId*num*eq*1":this.orgid}
                 }
                 const loading=this.$loading();
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
@@ -680,7 +679,7 @@
                             return;
                         }  
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
-                        this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
+                        this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
                         this.checkVal=this.checkedTime;
@@ -790,6 +789,7 @@
                     this.mouseDown=false;
                     this.mouseStartY='';
                 }
+                console.log($event);
             },
             //鼠标离开*********************
             dragLeave(){
@@ -799,14 +799,21 @@
             //鼠标移动拖拽*********************
             dragMove($event){
                 if(this.mouseDown){
-                    var Y=$event.clientY-this.mouseStartY;
-                    var month= document.getElementById('scrollMonth');
-                    var bot=parseInt(month.style.bottom);
-                    if(bot>0){
-                        month.style.bottom='0px';
+                    var Y=$event.clientY-this.mouseStartY;  //鼠标移动距离
+                    var month= document.getElementById('scrollMonth'); 
+                    var H=window.getComputedStyle(month).height;  //元素高度
+                    console.log(month)
+                    var top=parseInt(month.style.top);
+                    if(top==0&&Y<0){           
+                        return;
+                    }else if(top>0){
+                        month.style.top='0px';
+                        return;
+                    }else if(top<parseInt(H)*-1){
+                        month.style.top=parseInt(H)*-1+'px';
                         return;
                     }
-                        month.style.bottom=bot-Y*2+'px';
+                    month.style.top=top-Y*2+'px';
                     this.mouseStartY=$event.clientY;
                 }
 
@@ -1571,10 +1578,10 @@
                     font-weight: bold;
                     cursor:pointer;
                     &:hover{
-                        color:#3e8cbc;
+                        color:#00b7ee ;
                     }
                     &.active{
-                        color:#3e8cbc;
+                        color:#00b7ee ;
                     }
                     &:last-of-type{
                         border:0;
@@ -1640,13 +1647,13 @@
                         line-height: 30px;
                         text-align: center;
                         margin-left: 40px;
-                        color:#3e8cbc;
-                        border:1px solid #3e8cbc;
+                        color:#00b7ee ;
+                        border:1px solid #00b7ee ;
                         border-radius: 3px;
                         cursor:pointer;
                         &:hover{
                             color:#fff;
-                            background: #3e8cbc;
+                            background: #00b7ee ;
                         }
                     }
                 }
@@ -1666,10 +1673,10 @@
                         display: block;
                         width:24px;
                         height:24px;
-                        border:1px solid #3e8cbc;
+                        border:1px solid #00b7ee ;
                         border-radius: 50%;
                         margin: 5px;
-                        background: #3e8cbc;
+                        background: #00b7ee ;
                         position: relative;
                         cursor: pointer;
                         &:first-of-type{
@@ -1822,13 +1829,13 @@
                         line-height: 30px;
                         text-align: center;
                         margin-left: 40px;
-                        color:#3e8cbc;
-                        border:1px solid #3e8cbc;
+                        color:#00b7ee ;
+                        border:1px solid #00b7ee ;
                         border-radius: 3px;
                         cursor:pointer;
                         &:hover{
                             color:#fff;
-                            background: #3e8cbc;
+                            background: #00b7ee ;
                         }
                     }
                 }

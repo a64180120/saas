@@ -77,6 +77,18 @@ const staticRoute = [
                 path: "menu",
                 component: () =>import("../page/admin/menu"),
                 meta:{ requireAuth:true ,type:'page'}
+            },
+            {
+                //文章管理
+                path: "article",
+                component: () =>import( "../page/admin/article/List"),
+                meta:{ requireAuth:true ,type:'page'}
+            },
+            {
+                //图片管理
+                path: "picture",
+                component: () =>import( "../page/admin/picture/List"),
+                meta:{ requireAuth:true ,type:'page'}
             }
         ]
     },

@@ -1,20 +1,18 @@
 <template>
-    <div class="pictureupload">
-        <el-upload
+    <div class="fileUpload">
+        <el-upload
+            class="upload-demo"
             ref="upload"
-            action=""
-            list-type="picture-card"
+            action=""
             :on-remove="handleRemove"
             :file-list="fileList"
             :on-exceed="handleExceed"
             :before-upload="beforeAvatarUpload"
             :http-request='uploadFileMethod'
             :limit="limit">
-            <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-        </el-dialog>
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传xls文件，且不超过2MB</div>
+        </el-upload>
     </div>
 </template>
 
@@ -89,44 +87,37 @@ export default {
         //图片移除时处理数据
         handleRemove(file, fileList) {
             var me=this;
-            //删除文件对象 
+            //删除文件对象
+            console.log(file)
+            if(!file.phid){
+                return;
+            } 
             let deleValue={
                 phid:file.phid,
                 imgPath:file.url.replace(this.picUrl,'')
             };
-
-            let item=this.curimgList.filter(function(el,index,array){
-                
-                var result= el.BName !== file.name;
-                if(!result){
-                    deleValue.phid=el.PhId
-                    deleValue.imgPath=el.BUrlPath
+            for(let ind in me.curimgList){                
+                if(me.curimgList[ind].BName === file.name){
+                    deleValue.phid=me.curimgList[ind].PhId
+                    deleValue.imgPath=me.curimgList[ind].BUrlPath
+                    me.curimgList.splice(ind,1);      
                 }
-
-                return result
-            });
-
-            this.curimgList=[];
-
-            if(item.length>0){
-                this.curimgList=item;
             }
-
-            this.$emit("removeimg", item, deleValue);
+            me.$emit("removeimg", me.curimgList, deleValue);
         },
         //附件上传前的判断
         beforeAvatarUpload(file){
-            // const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif') || (file.type === 'image/jpg');
-            // const isLt2M = file.size / 1024 / 1024 < 2;
-            // console.log(3333)
-            // if (!isRightType) {
-            //     this.$message.error('上传图片只能是 JPG,png,gif,jpeg 格式!');
-            //     return false
-            // }
-            // if (!isLt2M) {
-            //     this.$message.error('上传图片大小不能超过 2MB!');
-            //     return false
-            // }
+            console.log(file)
+            const isRightType = (file.type === 'application/vnd.ms-excel');
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            if (!isRightType) {
+                this.$message.error('上传文件只能是 xls 格式!');
+                return false
+            }
+            if (!isLt2M) {
+                this.$message.error('上传文件大小不能超过 2MB!');
+                return false
+            }
         },
         beforeRemove(file, fileList){},
         //判断图片数量
@@ -168,5 +159,14 @@ export default {
 };
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
-<style scoped>
+<style >
+.fileUpload{
+    min-width:250px;
+    float: left;
+}
+.fileUpload .el-upload--text{
+    width:100px;
+    height:33px;
+    border:0;
+}
 </style>

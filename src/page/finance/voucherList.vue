@@ -7,24 +7,20 @@
                     <li class="more" style="width:80px">
                         <ul >
                             <li>更多</li>
-                            <li  @click.prevent="handle('copy')">复制</li>
-                            <li  @click.prevent="handle('cut')">剪切</li>
-                            <li  @click.prevent="handle('chongh')">冲红</li>
-                            <li @click.prevent="handle('reset')">凭证号重排</li>
+                            <li  @click.stop="handle('copy')">复制</li>
+                            <li  @click.stop="handle('cut')">剪切</li>
+                            <li  @click.stop="handle('chongh')">冲红</li>
+                            <li  @click.stop="handle('download')">
+                                <span>导出</span>
+                            </li>
+                            <li @click.prevent="handle('upload')">
+                                <div>导入</div>                       
+                            </li>
+                            <li @click.stop="handle('print')">打印</li>
+                            <li @click.stop="handle('reset')">凭证号重排</li>
                         </ul>
                     </li>
-                </a>
-                <a @click.prevent="handle('print')"><li >打印</li></a>
-                <a @click.prevent="handle('download')">
-                    <li  >
-                        <span>导出</span>
-                    </li>
-                </a>
-                 <a @click.prevent="handle('upload')">
-                    <li >
-                        <div @click.stop="1">导入</div>                       
-                    </li>
-                </a>
+                </a>            
                  <a @click.prevent="handle('unaudit')"><li >反审核</li></a>    
                 <a @click.prevent="handle('audit')"><li >审核</li></a>    
                 <a @click.prevent="handle('delete')"><li >删除</li></a>
@@ -195,10 +191,35 @@
                 </div>
             </div>            
         </div>
-        <!-- <print-tem  ref="print" :printData="printdata"></print-tem> -->
+        <!-- 打印************ -->
+        <div v-show="printCss" class="printCon">
+            <span @click="printCss=false"><img src="../../assets/icon/close-white.svg" alt=""> </span>
+            <div class="container">
+                <print-tem  ref="print" :printData="printData"></print-tem>
+            </div>
+        </div>
+        
         <!-- 附件弹出框 -->
-        <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
-            <file-upload  @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></file-upload>
+        <el-dialog title="选择附件" custom-class="fileDialog" :modal=false :visible.sync="fileVisible" width="40%">
+            <file-upload  @uploadimg="uploadfile" :imgList="filelist" :limit="1" @removeimg="removefile"></file-upload>
+            <div v-show="fileErrMsg.ErrMsg.length>0||fileErrMsg.IngoreMsg.length>0||fileSuccessMsg" class="fileCon">
+                <ul class="fileErrMsg" v-show="fileErrMsg.ErrMsg.length>0">
+                    <li>不可跳过错误:</li>  
+                    <li v-for="(item,index) of fileErrMsg.ErrMsg" :key="index">{{item}}</li>
+                </ul>
+                <ul class="fileIngoreMsg" v-show="fileErrMsg.IngoreMsg.length>0">
+                    <li>可跳过错误:</li>
+                    <li v-for="(item2,index2) of fileErrMsg.IngoreMsg" :key="index2">{{item2}}</li>
+                </ul> 
+                <ul class="fileSuccessMsg">
+                    <li>{{fileSuccessMsg}}</li>
+                </ul>   
+            </div>
+            <div v-show="fileErrMsg.IngoreMsg.length>0" class="fileBtn">
+                <div class="btn" @click.stop="fileErrHandle()">跳过</div> 
+                <div class="btn" @click.stop="fileErrHandle('cover')">覆盖</div>   
+            </div> 
+            <div style="clear:both"></div>
         </el-dialog>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
         <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
@@ -231,7 +252,7 @@
             this.getAssist();        
         },
         data(){
-            return {                 
+            return {               
                 sum1:'',
                 sum2:'',
                 chooseItem:'',
@@ -289,16 +310,22 @@
                 resetShow:false,
                 voucherMask:false,
                 voucherDisabled:true,
-                printdata:{},
+                printData:[],
                 routerQuery:false,//路由是否传值************
                 fileVisible:false,
-                imglist:[], //文件上传的内容************
+                filelist:[], //文件上传的内容************
+                fileErrMsg:{
+                   IngoreMsg:'',
+                   ErrMsg:''     
+                },
+                fileSuccessMsg:'',
                 fresh:true,
                 saasMessage:{
                     visible:false,  //消息弹出框*******
                     message:'', //消息主体内容**************
                     delay:0
-                }
+                },
+                printCss:false    //凭证打印显示***********
             }
         },
         methods:{
@@ -308,6 +335,14 @@
                 var item=JSON.parse(chooseItem);    
                 switch(str){
                     case 'update'://修改**********
+                        if(!item.PhId){
+                            this.saasMessage={
+                                message:"请先选择凭证!",
+                                delay:3000,
+                                visible:true
+                            };
+                            return;
+                        }
                         if(item.Verify){
                             this.saasMessage={
                                 visible:true,
@@ -390,10 +425,10 @@
                             this.resetShow=true;
                         }
                         break;
-                    case 'print':
-                        this.printContent();
+                    case 'print': 
+                        this.printVoucher(); 
                         break;
-                    case 'copy':
+                    case 'copy':  
                         if(!item.PhId){
                             this.saasMessage={
                                 message:"请先选择凭证!",
@@ -408,7 +443,7 @@
                         this.voucherDataList.bool=true;
                    
                         break;
-                    case 'cut':
+                    case 'cut':   //剪切**************
                         if(!item.PhId){
                             this.saasMessage={
                                 message:"请先选择凭证!",
@@ -422,7 +457,7 @@
                         this.voucherDataList.bool=true;
                     
                         break;
-                    case 'chongh':
+                    case 'chongh':  //冲红**************
                         if(!item.PhId){
                             this.saasMessage={
                                 message:"请先选择凭证!",
@@ -436,10 +471,14 @@
                         this.voucherMaskShow('chongh');
                         this.voucherDataList.bool=true;    
                         break;
-                    case 'download':
+                    case 'download':  //下载**************
                         this.getvoucherList('yes');
                         break;
-                    case 'fresh':
+                    case 'upload': //导入************
+                        this.testFile();
+                        this.fileSuccessMsg='';
+                        break;
+                    case 'fresh':  //刷新**************
                         this.fresh=false;
                         this.sum1='';
                         this.sum2='';
@@ -596,37 +635,85 @@
                 
             //     this.$print(this.$refs.printList) // 使用
             // },
-            //获取打印凭证数据***************
-            printVoucher() {
-            //日期
-
-            //拼凑数据供打印使用,凭证头，尾信息
+            //打印数据转换**************
+            printDataTurn(vm,data){
+                // Correct_PhIds: (...)
+                // Creator: (...)
+                // CreatorName: (...)
+                // CurOrgId: (...)
+                // DealWithPNo: (...)
+                // DeleteMark: (...)
+                // Description: (...)
+                // Dtls: (...)
+                // Editor: (...)
+                // EditorName: (...)
+                // EnabledMark: (...)
+                // ExcelLineNo: (...)
+                // NgInsertDt: (...)
+                // NgRecordVer: (...)
+                // NgUpdateDt: (...)
+                // OrgCode: (...)
+                // OrgId: (...)
+                // PAccper: (...)
+                // PAttachment: (...)
+                // PAuditor: (...)
+                // PAuditorName: (...)
+                // PCashier: (...)
+                // PDate: (...)
+                // PFinancePerson: (...)
+                // PKeepingPerson: (...)
+                // PMakePerson: (...)
+                // PMonth: (...)
+                // PNo: (...)
+                // PSource: (...)
+                // PType: (...)
+                // PersistentState: (...)
+                // PhId: (...)
+                // PhidTransaction: (...)
+                // Uyear: (...)
+                // Verify: (...)
+                // WriteOff_PhIds: (...)
                 var mst = {
                     voucherTitle: "记账凭证", //记账凭证
-                    billNum: 4, //附件数
-                    orgName: "测试单位", //核算单位
-                    billdate:"2018-12-20", //日期
-                    voucherNum: "记-0001", //凭证号：记-0001
-                    lotal: '23987.20', //合计
-                    supervisor: "张三", //记账
-                    auditor: "张伟", //审核
-                    cashier: "王五", //出纳
+                    billNum: data.PAttachment, //附件数
+                    orgName: vm.uname, //核算单位
+                    billdate:data.PDate.split('T')[0], //日期
+                    voucherNum: "记-"+data.PNo, //凭证号：记-0001
+                    lotal: 0, //合计
+                    supervisor: data.PKeepingPerson, //记账
+                    auditor: data.PAuditorName, //审核
+                    cashier: data.PCashier, //出纳
                     producer: this.username //制单
                 };
-
                 var list=[
-                    { abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  deVal: '5071.00',  crVal: ''},
-                    { abstract: "代理收入",  subject: "11220002 应收账款_陕西咸阳佳佳",  deVal: '18916.20',  crVal: ''},
-                    { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '4783.96'},
-                    { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '17845.47'},
-                    { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-                    { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'}
-                ];
+                    //{ abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  JSum: '5071.00', DSum: ''},
+                   ];
+                for(var dtl of data.Dtls){  //获取合计和list***
+                    mst.lotal=parseFloat(dtl.JSum)+parseFloat(mst.lotal);
+                    list.push({
+                        abstract:dtl.Abstract,
+                        subject:dtl.SubjectCode+' '+dtl.SubjectName,
+                        JSum:dtl.JSum?dtl.JSum:'',
+                        DSum:dtl.DSum?dtl.DSum:''
+                    })
+                }
+                mst.lotal=mst.lotal.toFixed(2);
+                
 
-                this.printdata={
+                return {
                     mst:mst,
                     list:list
                 };
+            },
+            //获取打印凭证数据***************
+            printVoucher(data) {
+                var vm=this;
+                this.printData=[];
+                this.printCss=true;
+                //拼凑数据供打印使用,凭证头，尾信息
+                for(var vou of this.voucherList){
+                    this.printData.push(vm.printDataTurn(vm,vou));  
+                }
             },
              //冲红***********************
             chongh(){
@@ -722,7 +809,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -743,9 +830,9 @@
                                   delay:3000,
                                   message:res.Msg
                                };
-                               if(str=='print'){
-                                   this.printContent();
-                               }
+                            //    if(str=='print'){
+                            //        this.printContent();
+                            //    }
                                this.getvoucherList(); 
                            } else {
                                 this.saasMessage={
@@ -805,7 +892,7 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
-                        if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                        if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
@@ -887,7 +974,7 @@
                    return;
                }
                vm.clearPhId(Vdata.Mst)
-               if(Vdata.Mst.Uyear==vm.nowTime.getFullYear()&& Vdata.Mst.PMonth>=vm.checkedTime) {
+               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: vm.uid,
                        orgid: vm.orgid,
@@ -1107,16 +1194,20 @@
                 this.superSearchVal.assistItem=childData.data;
                 this.superSearchVal.show=false;
             },
+            //导入凭证***********************
             testFile(){
-                this.message('功能开发中!!')
-                //this.fileVisible=true;
+               // this.$message('功能开发中!!')
+                this.fileVisible=true;
             },
-            removeimg(item,deleValue) {//
-               this.imglist=item;
+            uploadUrl(){//文件上传地址函数
+                return 666
+            },
+            removefile(item,deleValue) {//移除文件的函数
+               this.filelist=item;
                 if(item.length<1){
                     return;
-            }
-                console.log(item,deleValue,this.imglist);
+                }
+                console.log(item,deleValue,this.filelist);
                 // var urls=deleValue.imgPath.split('/');
                 // console.log(this.imglist,item,urls,deleValue)
                 // for(var i in item[0]){ 
@@ -1144,9 +1235,9 @@
                     this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
                 });
         },
-            uploadimg(item) {
+            uploadfile(item) {
                 //this.imglist.push(item);
-                console.log(this.imglist);
+                //console.log(this.filelist,item);
                 if(item){
                     this.ExcelValidMsg(item);    
                 }
@@ -1161,36 +1252,71 @@
                     uyear:this.year,
                     dealwithPNo:0 //重复凭证字号处理方式: 0 禁止, 1 跳过, 2 覆盖
                 }
+                const loading=this.$loading();
                 this.$axios.get('/PVoucherMst/GetImportVoucherListFromExcelValidMsg',{params:data})
                 .then(res=>{
+                    loading.close();
                     if(res.Status=='error'){
                         this.$message({ showClose: true, message: res.Msg, type: 'error'});
-                        if(res.Data.ErrMsg.length>0){
-                            return;
-                        }else if(res.Data.IgnoreMsg.length>0){
-                            console.log(res.Data.IgnoreMsg);
-                            //忽略**************
-                            data.dealwithPNo=1;
-                            this.GetImportVoucherListFromExcel(data);
-                            //覆盖****************
+                        this.fileErrMsg={
+                            ErrMsg:res.Data.ErrMsg,
+                            IngoreMsg:res.Data.IngoreMsg
                         }
                     }else{
                         this.GetImportVoucherListFromExcel(data);
                     }
                 })
-                .catch(err=>console.log(err))
+                .catch(err=>{
+                    loading.close();
+                    this.$message({ showClose: true, message: err, type: 'error'});
+                })
+            },
+            //忽略 或者 覆盖选项****************
+            fileErrHandle(str){
+                if(this.fileErrMsg.ErrMsg.length>0){
+                    this.saasMessage={
+                        message:'请先处理不可跳过的错误,并重新提交!',
+                        delay:4000,
+                        visible:true
+                    }
+                    return;
+                }
+                var data={
+                    fileName:this.filelist[0].BUrlPath,
+                    orgid:this.orgid,
+                    orgcode:this.orgcode,
+                    uyear:this.year,
+                    dealwithPNo:0 //重复凭证字号处理方式: 0 禁止, 1 跳过, 2 覆盖
+                }
+                if(str=='cover'){
+                    data.dealwithPNo=2;
+                }else{
+                    data.dealwithPNo=1;
+                }
+                this.GetImportVoucherListFromExcel(data);
             },
             //excel文件导入**************
             GetImportVoucherListFromExcel(data){
+                const loading=this.$loading();
                 this.$axios.get('PVoucherMst/GetImportVoucherListFromExcel',{params:data})
                     .then(res=>{
+                        loading.close();
                         if(res.Status=='success'){
-                            this.message(res.Msg)
+                            this.saasMessage={
+                                message:res.Msg,
+                                delay:4000,
+                                visible:true
+                            }
+                            this.fileErrMsg={
+                                IngoreMsg:[],
+                                ErrMsg:[]     
+                            }
+                            this.fileSuccessMsg=res.Msg;                              
                         }
-                        console.log(res)
                     })
                     .catch(err=>{
-                        console.log(err)
+                        loading.close();
+                        this.$message({ showClose: true, message: err, type: 'error'});
                     })
             },
             // ...mapActions({
@@ -1625,7 +1751,7 @@
     }
     .codeResetContainer{
         background: rgba(0,0,0,0.5);
-        position: absolute;
+        position: fixed;
         z-index: 99;
         left:0;
         top:0;
@@ -2086,13 +2212,85 @@
         }
         
     }
+    .printCon{
+        position: fixed;
+        width:1366px;
+        height:100%;
+        overflow-y: auto;
+        overflow-x: auto;
+        left:0;
+        top:0;
+        z-index:99;
+        background:rgba(0,0,0,0.5);
+        >.container{
+            padding:0;
+            >.sys-page{
+               padding:0;     
+            }
+        }
+        >span{
+            position:absolute;
+            width:30px;
+            height:30px;
+            border-radius: 50%;
+            border:1px solid #fff;
+            background-size:cover;
+            left:49%;
+            margin-top:3%;
+            padding:5px;         
+            cursor:pointer;
+            >img{
+                width:100%;
+                height:100%;
+            }
+            &:hover{
+                opacity:0.7;
+            }
+        }
+        >div{
+            background: #fff;
+            width:90%;
+            margin-left:5%;
+            margin-top:5%;
+        }
+    }
+
+    .fileCon{
+        float:left;
+        width:50%;
+        height:120px;
+        overflow-y: auto;
+        border:1px dotted #ccc;
+        padding:10px;
+        >.fileIngoreMsg{
+            color:rgb(45, 142, 221)
+        }
+        >.fileErrMsg{
+            color:rgb(255, 0, 0)
+        }
+    }
+    .fileBtn{
+        float:left;
+        margin-left:5px;
+        >div{
+            width:70px;
+            margin-bottom:20px;
+        }
+    }
+   .fileSuccessMsg{
+       color:#6aca25;
+   }
+       
+    
 </style>
 <style>
     .highGradeCss .el-input--prefix .el-input__inner {
         padding-left: 24px;
         font-size:12px;
     }
-    
+     .fileDialog .el-dialog__header{
+            background: #d3e9f9;
+    }
     /* .voucherList   .el-dialog{
             z-index:2008;
         }

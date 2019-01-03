@@ -106,7 +106,7 @@
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
-                                <input type="text"  v-model="item.money.jiefang" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                                <input type="text"  v-model="item.money.jiefang" @focus="inputFocus" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i @click.stop="moneyCancle(item,'jiefang')" class="inputCancle">X</i>
                              </span>
@@ -615,7 +615,8 @@
                 var data={
                     Year:nowTime.getFullYear(),
                     OrgIds:this.orgid,
-                    Kcode:Kcode
+                    Kcode:Kcode,
+                    IsStart:''
                 } 
                 const loading5=this.$loading();
                 this.$axios.get('/PVoucherMst/GetSubjectBalance',{params:data})
@@ -668,7 +669,11 @@
                 console.log(item,val)
                 item.money[val]='';
             },
-            //金额输入框键入*******************
+            //金额输入框键入***************
+            inputFocus(){
+               
+            },
+            //金额输入框失去焦点*******************
             inputBlur($event,item,value){
                 if(!item.SubjectCode) {
                     item.money[value]='';
@@ -741,7 +746,7 @@
                 if(val&&val!=0) {
                     val = parseFloat(val).toFixed(2).split('.');
                     var num = val[0];
-                    var float = val[1];debugger;
+                    var float = val[1];
                     if(num==='0'||num==='-0'){
                         num=[];
                     }
@@ -787,8 +792,14 @@
             moneyInputShow(item,val){//金额输入框展示**********************
                 if(item.SubjectCode){
                     item.moneyInput[val]=true;
+                    debugger;
                     this.moneyInputMask=true;
                 }
+                for(var item of this.kemuSel){   //隐藏科目选择****解决bug
+                    item.checked=false;
+                }
+                this.$forceUpdate();
+                console.log(this.kemuSel)
             },
             moneyInputHide(){//输入框隐藏**********************
                 for(var input of this.voucherInfo){
@@ -798,6 +809,7 @@
                 for(var item of this.kemuSel){
                     item.checked=false;
                 }
+                console.log(this.kemuSel)
                 for(var assist of this.assistItem){
                     assist.checked=false;
                 }
@@ -1110,34 +1122,34 @@
         position: relative;
     }
     .money>div:nth-of-type(1){
-        border-color:#53bff0;
+        border-color:#91d7f8;
     }
     .money>div:nth-of-type(2){
-        border-color:#5dc2f0;
+        border-color:#83d0f3;
     }
     .money>div:nth-of-type(3){
-        border-color:#8ed2ac;
+        border-color:#aee0c4;
     }
     .money>div:nth-of-type(4){
-        border-color:#6dc594;
+        border-color:#90c9aa;
     }
     .money>div:nth-of-type(5){
-        border-color:#8ad0a9;
+        border-color:#a2ceb6;
     }
     .money>div:nth-of-type(6){
-        border-color:#ffdf8b;
+        border-color:#ffe8af;
     }
     .money>div:nth-of-type(7){
-        border-color:#ffe18f;
+        border-color:#f5e4b7;
     }
     .money>div:nth-of-type(8){
-        border-color:#ffdd80;
+        border-color:#f8e8bc;
     }
     .money>div:nth-of-type(9){
-        border-color:#ffdc7e;
+        border-color:#f8e9be;
     }
     .money>div:nth-of-type(10){
-        border-color:#fe7b7b;
+        border-color:#fca9a9;
     }
     .money>div:last-of-type{
         border:0;
