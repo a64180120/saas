@@ -5,8 +5,8 @@
                 <el-row>
                     <el-col :span="24">
                         <el-input v-model="select_word" placeholder="用户姓名/手机号码" prefix-icon="el-icon-search"
-                                  class="handle-input mr10"></el-input>
-                        <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                                  class="handle-input mr10" size="small"></el-input>
+                        <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
                         <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add">
                             新增
                         </el-button>
