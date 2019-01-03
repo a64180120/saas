@@ -41,6 +41,9 @@
                         <li>{{item.Publisher}}</li>
                         <li>{{item.PublishTime}}</li>
                     </ul>
+                    <div v-if="listInfo.length==0" class="NoDataflex">
+                         当前页没有数据
+                    </div>
                     <ul>
                         <li>
                         <el-pagination
@@ -56,15 +59,19 @@
                     </ul>
                 </div>
             </div>
+
+            <!--辅助项类型页面-->
+            <article-type datalists="" @type-click="addTypeFinish" v-if="handleNav=='type'"></article-type>
         </div>
     </div>
 </template>
 
 <script>
     import { mapState, mapActions } from 'vuex'
-    import { dealAddString } from "@/util/validate";
+    import articleType from './Type'
 
     export default {
+        name: "article_list",
         data(){
             return {
                 unionSearchValue:'',
@@ -76,7 +83,7 @@
                 navTab:[],
                 pageSize: 20, //pageSize
                 pageIndex: 1, //pageIndex
-                total:100
+                total:0
             }
         },
         created(){
@@ -94,11 +101,11 @@
             ...mapState({
                 orgid:state=>state.user.orgid,
                 uid:state=>state.user.userid,
-                user:state=>state.user
+                username: state => state.user.username
             })
         },
         //组件
-        components:{ },
+        components:{ articleType },
         methods:{
             initInfoCss(){
                 for(var i in this.listInfo){
@@ -115,7 +122,7 @@
                     pagesize:this.pageSize,
                     pageindex:this.pageIndex-1
                 };
-                var vm=this;
+
                 this.$axios.get('/SysNews/GetSysNewsListFirst',{ params:data })
                     .then(res=>{
 
@@ -126,6 +133,7 @@
 
                         this.listInfo=res.List;
                         this.navTab=res.Type;
+                        this.total=Number(res.Total);
 
                         if(this.navTab.length>0){
                             this.navActive=this.navTab[0];
@@ -161,14 +169,18 @@
              * 分页控件
              */
             handleSizeChange(val){
-                console.log(`每页 ${val} 条`);
+                //console.log(`每页 ${val} 条`);
+                this.pageSize=Number(val);
+                this.getData('')
             },
             /**
              * currentPage 改变时会触发
              * 分页控件
              */
             handleCurrentChange(val){
-                console.log(`当前页: ${val}`);
+                //console.log(`当前页: ${val}`);
+                this.pageIndex=Number(val);
+                this.getData('')
             },
              /**
              * 获取新闻信息
@@ -183,6 +195,8 @@
                     pageindex:this.pageIndex-1
                 };
 
+                //debugger
+
                 this.$axios.get('/SysNews/GetSysNewsListByTypeId',{params:data})
                     .then(res=>{
                         if(res.Status==='error'){
@@ -191,6 +205,7 @@
                         }
 
                         this.listInfo=res.List;
+                        this.total=Number(res.Total);
                         for(var i=0;i<this.listInfo.length;i++){
                             this.listInfoCssList[i]={checked:false};
                         }
@@ -206,13 +221,23 @@
             handlePage(val){
                 switch(val){
                     case 'add':
+                        //新增的按钮
                         this.handleNav='add';
+                        this.$router.push({path: '/admin/article/add', query: { type:this.handleNav, phid:0 }});
                         break;
                     case 'edit':
+                        //编辑按钮
                         this.handleNav='edit';
+                        this.$router.push({path: '/admin/article/add', query: { type:this.handleNav, phid:this.selectedItem.PhId }});
                         break;
                     case 'delete':
                         this.deleteBase();
+                        break;
+                    case 'publish':
+                        this.PublishNews(1);
+                        break;
+                    case 'nopublish':
+                        this.PublishNews(0);
                         break;
                     case 'type':
                         this.handleNav='type';
@@ -230,7 +255,6 @@
             */
             deleteBase(){
 
-                this.selectedItem.DeleteMark=1;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -242,7 +266,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$axios.post('/SysNews/PostDeleteType',data)
+                    this.$axios.post('/SysNews/PostDelete',data)
                         .then(res=>{
                             if(res.Status==='error'){
                                 this.$message.error(res.Msg);
@@ -259,7 +283,53 @@
                 }).catch((err) => {
                     console.log(err)   
                 });
-            }
+            },
+            /**
+             * 取消发布
+             */
+            PublishNews(state){
+
+                var pubmodel=this.selectedItem;
+                pubmodel.Publish=state;
+                pubmodel.Publisher=this.username;
+                //pubmodel.PublishTime=state;
+
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    infoData:pubmodel
+                }
+
+                this.$confirm('取消发布该文章, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post('/SysNews/PostPutSysNews',data)
+                        .then(res=>{
+                            if(res.Status==='error'){
+                                this.$message.error(res.Msg);
+                                return
+                            }
+                            this.getData('');
+                            this.initInfoCss();
+                            this.$message.success('发布成功!');  
+                        })
+                        .catch(err=>{
+                            console.log(err)
+                            this.$message({ showClose: true,message: "发布错误", type: "error"});
+                        })
+                }).catch((err) => {
+                    console.log(err)   
+                });
+            },
+            //分类管理弹窗完成*************
+            addTypeFinish(val){
+                this.handleNav=false;
+                if(val){
+                    this.getTypeData();
+                }
+            },
         }
 
     }
@@ -385,6 +455,12 @@
     .listContent{
         width:85%;
     }
-
+    .NoDataflex{
+        height: 40px;
+        border: 1px solid #d3e9f9;
+        display: block;
+        text-align: center;
+        padding-top: 10px;
+    }
 
 </style>
