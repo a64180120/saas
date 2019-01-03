@@ -210,7 +210,7 @@
         name: "user",
         data(){
             return{
-                showCountMsg:false,//核定显示
+                showCountMsg:false,//核定显示false隐藏 true显示
                 downloadLoading: false,
                 changeBtn:{
                     flag:true,
@@ -415,6 +415,8 @@
                         res.Record[i].Uyear=year;
                         if( res.Record[i].VerifyStart==1){
                             this.verify=false;
+                        }else{
+                            this.verify=true;
                         }
                         if(res.Record[i].Layers=='0'){
                             code_firstCount[res.Record[i].SubjectCode]=res.Record[i].BudgetTotal;//本年一级科目预算数
@@ -481,9 +483,9 @@
                     ).then(function (res) {
                         that.loading = false;
                         that.$message({showClose: true, message: '年初预算核定成功', type: 'success'});
-                        this.getBeginYear();
-                        this.verify = false;
-                        this.showCountMsg = false;
+                        that.showCountMsg = false;
+                        that.getBeginYear();
+
                     }).catch(function (err) {
                         that.loading = false;
                         console.log(err);
@@ -563,7 +565,8 @@
             },
             // 打印
             printContent(e){
-                this.$print(this.$refs.printFrom) // 使用
+                this.getPdf(this.$refs.printFrom);
+                //this.$print(this.$refs.printFrom) // 使用
             },
             //刷新
             refresh:function(){

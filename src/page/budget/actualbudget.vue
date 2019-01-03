@@ -463,13 +463,13 @@
                     'infoData': this.budgetList};
 
                 //let baseheader = ajaxhttp.header;
-                let base = ajaxhttp.getAxiosBaseConfig();
+                let base = httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true
                 this.$axios({
                     method: 'post',
-                    url: '/PsubjectBudget/PostExportMiddleYear',
+                    url: '/PsubjectBudget/PostExportEndYear',
                     data: param
                 }).then(res => {
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;

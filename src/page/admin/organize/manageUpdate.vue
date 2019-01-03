@@ -271,6 +271,9 @@
                 Street:"",
                 Integrity:'',
                 NgRecordVer:'',
+                FinanceAccount:'',
+                BankName:'',
+                BankAccount:'',
                 ProvinceValue:[],
                 CityValue:[],
                 CountyValue:[],
@@ -338,7 +341,7 @@
             }),
             //刷新页面
             fresh(){
-                this.selectParentName();
+                //this.selectParentName();
                 this.selectArea("0", 0);
                 this.init();
             },
@@ -423,8 +426,6 @@
                 this.ParentId = this.Parent.PhId;
                 this.ParentName = this.Parent.OrgName;
                 this.ParentCode = this.Parent.EnCode;
-                console.log(this.ParentId);
-                console.log(this.ParentCode);
             },
             changeProvince(){
                 console.log(this.Province);
@@ -437,10 +438,39 @@
                 this.StreetValue = [];
                 this.CountyValue = [];
                 this.selectArea(this.City, 2);
+                if(!this.showFlam){
+                    this.getParentByArea(1, this.Province);
+                }
             },
             changeCounty(){
                 this.StreetValue = [];
                 this.selectArea(this.County, 3);
+                if(!this.showFlam){
+                    this.getParentByArea(2, this.City);
+                }
+            },
+            //改变街道后的点击事件
+            changeStreet(){
+                if(!this.showFlam){
+                    this.getParentByArea(3, this.County);
+                }else{
+                    this.getParentByArea(4, this.Street);
+                }
+            },
+            //根据选择的地址获取父级机关工会
+            getParentByArea(i, area){
+                var data = {
+                    rank: i,
+                    areaCode: area
+                }
+                this.$axios.get('/SysAdminOrganize/GetParentAdminOrganizeByArea', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        this.ParentNameValues = res;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             },
             selectArea(Area,i){
                 var data = {
@@ -484,6 +514,18 @@
                             }
                         };
                         console.log(this.Parent);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
+            getAdminOrganize(phid){
+                var data = {
+                    id: phid
+                };
+                this.$axios.get('/SysAdminOrganize/GetSysAdminOrganize', {params: data})
+                    .then(res => {
+                        this.Parent = res;
                     })
                     .catch(err => {
                         console.log(err);
@@ -533,6 +575,9 @@
                             'Director': this.Director,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
+                            'FinanceAccount': this.FinanceAccount,
+                            'BankName': this.BankName,
+                            'BankAccount': this.BankAccount,
                             'NgRecordVer': this.NgRecordVer
                         };
                         if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
@@ -598,9 +643,9 @@
                             'NgRecordVer': this.NgRecordVer
                         };
                         if(this.Province!=''&& this.OrgName!='' && this.EnterpriseCode !='' && this.Chairman !=''
-                             && this.Director !='' && this.EnCode !='' && this.ParentId !=''
+                             && this.Director !='' && this.EnCode !=''
                             && this.Province!=null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
-                            && this.Director !=null && this.EnCode !=null && this.ParentId !=null){
+                            && this.Director !=null && this.EnCode !=null){
                             var data = {
                                 uid: "0",
                                 orgid: "0",
@@ -661,7 +706,7 @@
                             this.EnableTime = res.EnableTime;
                             this.ServiceStartTime = res.ServiceStartTime;
                             this.ServiceEndTime = res.ServiceEndTime;
-                            //this.Parent = res.ParentId;
+                            this.Parent = res.ParentId;
                             this.ParentId = res.ParentId;
                             this.ParentCode = res.ParentEnCode;
                             this.ParentName = res.ParentName;
@@ -670,15 +715,20 @@
                             this.City = res.City;
                             this.County = res.County;
                             this.Street = res.Street;
-                            this.EnterpriseAttachment= res.EnterpriseAttachment,
-                            this.ChairmanAttachment = res.ChairmanAttachment,
+                            this.EnterpriseAttachment= res.EnterpriseAttachment;
+                            this.ChairmanAttachment = res.ChairmanAttachment;
                             this.NgRecordVer = res.NgRecordVer;
+                            this.FinanceAccount= res.FinanceAccount;
+                            this.BankName=res.BankName,
+                            this.BankAccount= res.BankAccount,
                             this.Verify = res.Verify;
                             this.Integrity = res.Integrity;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
                             this.selectArea(this.County, 3);
+                            this.getParentByArea(4, res.Street);
+                            this.getAdminOrganize(res.ParentId);
                         })
                 }else{
                     this.$axios.get('/SysAdminOrganize/GetSysAdminOrganize', {params: data})
@@ -697,6 +747,7 @@
                             this.ServiceEndTime = res.ServiceEndTime;
                             //this.Parent = res.ParentId;
                             this.ParentId = res.ParentId;
+                            this.Parent = res.ParentName;
                             this.ParentCode = res.ParentEnCode;
                             this.ParentName = res.ParentName;
                             this.Province = res.Province;
@@ -709,12 +760,26 @@
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
                             this.selectArea(this.County, 3);
+                            if(res.Street != null && res.Street != ""){
+                                this.getParentByArea(3, res.County);
+                            }else{
+                                if(res.County != null && res.County != ""){
+                                    this.getParentByArea(2, res.City);
+                                }else{
+                                    if(res.City != null && res.City != ""){
+                                        this.getParentByArea(1, res.Province);
+                                    }
+                                }
+                            }
+                            if(res.ParentId != "0"){
+                                this.getAdminOrganize(res.ParentId);
+                            }
                         })
                 }
             }
         },
         mounted() {
-            this.selectParentName();
+            //this.selectParentName();
             this.selectArea("0", 0);
             this.init();
         }

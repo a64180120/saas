@@ -48,7 +48,7 @@
                         <!--<span v-else>啦啦</span>-->
                     <!--</template>-->
                 </el-table-column>
-                <el-table-column prop="Description" label="备注"></el-table-column>
+                <el-table-column prop="Description" label="备注" align="center"></el-table-column>
             </el-table>
             <div class="pagination">
                 <el-pagination background @current-change="handleCurrentChange" layout="total,prev, pager, next"
@@ -498,5 +498,19 @@
     }
     .red {
         color: #ff0000;
+    }
+</style>
+<style>
+    .el-button--info:hover, .el-button--info:focus {
+        /*background: #a6a9ad;*/
+        /*border-color: #a6a9ad;*/
+        /*color: #fff;*/
+        background: #fff;
+        color: #00B8EE;
+    }
+    .el-button--info {
+        color: #fff;
+        background-color: #00B8EE;
+        border-color: #00B8EE;
     }
 </style>

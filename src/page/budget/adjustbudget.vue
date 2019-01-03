@@ -534,7 +534,7 @@
                 this.downloadLoading = true
                 this.$axios({
                     method: 'post',
-                    url: '/PsubjectBudget/PostExportEndYear',
+                    url: '/PsubjectBudget/PostExportMiddleYear',
                     data: param
                 }).then(res => {
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;

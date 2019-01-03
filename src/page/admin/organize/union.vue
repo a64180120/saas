@@ -13,6 +13,7 @@
                             :clearable="clearable"
                             @change ="changeArea"
                             style="width: 90%; margin-top: 10px"
+                            change-on-select
                         ></el-cascader>
                         <!--<select v-model="unionName">-->
                             <!--<option v-for="item in unionNameValues" :key="item.id" :value="item.id">{{item.name}}-->
@@ -41,7 +42,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="flexPublic">
+            <div class="flexPublic" style="margin-right: -330px">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"
                                                   placeholder="组织编码/名称"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
@@ -277,6 +278,8 @@
                 this.getNodes(val);
             },
             changeArea(val){
+                console.log(val);
+                this.getNodes(val);
                 this.areaId = val;
             },
             unionSearch() {
@@ -285,8 +288,13 @@
                 if(this.date1 == null){
                     this.date1 = '';
                 }
-                if(this.areaId.length < 1){
+                let l = this.areaId.length;
+                if(l < 1){
                     this.areaId = ["","","",""];
+                }else{
+                    for(let j = l; j < 4; j++){
+                        this.areaId[j] = "";
+                    }
                 }
                 if(this.areaId =='' && this.date1 =='' && this.unionState =='' && this.unionSearchValue == ''){
                     this.ajaxMode('');

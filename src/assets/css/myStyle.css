@@ -256,10 +256,10 @@ ul{
 }
 .btn{
     cursor: pointer;
-    background: #00b7ee;
+    background: #3e8cbc;
     color:#fff;
     text-align: center;
-    border:1px solid #00b7ee;
+    border:1px solid #3e8cbc;
     border-radius: 5px;
     height:30px;
     line-height: 30px;
@@ -267,7 +267,7 @@ ul{
 }
 .btn:hover{
     background: #fff;
-    color:#00b7ee;
+    color:#3e8cbc;
 }
 .content{
     height:100%;
@@ -400,6 +400,16 @@ ul{
   .el-submenu__icon-arrow{
       color:rgb(117, 74, 74) !important;
   }
-  .el-menu--popup{
-    min-width: 120px;
-}
+  /*设置按钮样式--王冠冠*/
+    .el-button--info:hover, .el-button--info:focus {
+        /*background: #a6a9ad;*/
+        /*border-color: #a6a9ad;*/
+        /*color: #fff;*/
+        background: #fff;
+        color: #00B8EE;
+    }
+    .el-button--info {
+        color: #fff;
+        background-color: #00B8EE;
+        border-color: #00B8EE;
+    }
