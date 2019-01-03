@@ -1,7 +1,7 @@
 <template>
     <div class="sys-page" style="background-color: #ffffff">
         <div class="container">
-            <div class="handle-box">
+            <div class="handle-box" style="float: right">
                 <el-row>
                     <el-col :span="24">
                         <el-input v-model="select_word" placeholder="用户姓名/手机号码" prefix-icon="el-icon-search"
