@@ -1,8 +1,8 @@
 <template>
     <div class="manageContent">
-        <div class="unionState flexPublic">
-            <ul class="flexPublic">
-                <li class="flexPublic">
+        <div class="unionState" style="height: 45px">
+            <ul class="flexPublic" style="float: left">
+                <li class="flexPublic" style="float: left">
                     <div>隶属工会:</div>
                     <div class="selectContainer">
                         <select v-model="unionName">
@@ -12,7 +12,7 @@
                         </select>
                     </div>
                 </li>
-                <li class="flexPublic datepick">
+                <li class="flexPublic datepick" style="float: left">
                     <div>使用期限:</div>
                     <div class="block">
                         <el-date-picker
@@ -23,7 +23,7 @@
                         </el-date-picker>
                     </div>
                 </li>
-                <li class="flexPublic">
+                <li class="flexPublic" style="float: right">
                     <div>状态:</div>
                     <div class="selectContainer">
                         <select name="phoneHead" v-model="unionState">
@@ -33,28 +33,28 @@
                     </div>
                 </li>
             </ul>
-            <div class="flexPublic" style="margin-right: -400px">
-                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"
-                                                  placeholder="组织编码/名称"></div>
-                <div @click="unionSearch" class="searcherBtn">搜索</div>
-            </div>
-            <ul class="flexPublic handle">
-                <a @click.prevent="routerTo('/admin/orgin/add')">
+            <ul class="flexPublic handle" style="float: right">
+                <a @click.prevent="routerTo('/admin/orgin/add')" style="float: right">
                     <li>新增</li>
                 </a>
-                <a @click.prevent="routerTo('/admin/orgin/edit')">
+                <a @click.prevent="routerTo('/admin/orgin/edit')" style="float: right">
                     <li>修改</li>
                 </a>
-                <a>
+                <a style="float: right">
                     <li>备份</li>
                 </a>
-                <a>
+                <a style="float: right">
                     <li>恢复</li>
                 </a>
-                <a>
+                <a style="float: right">
                     <li>导入</li>
                 </a>
             </ul>
+            <div class="flexPublic" style="float: right">
+                <div class="searcherValue" style="float: left"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"
+                                                                      placeholder="组织编码/名称"></div>
+                <div @click="unionSearch" class="searcherBtn" style="float: right">搜索</div>
+            </div>
         </div>
         <div class="formData">
             <ul>

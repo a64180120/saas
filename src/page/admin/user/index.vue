@@ -11,26 +11,27 @@
                             <!--<el-option label="永久停用" value="2"></el-option>-->
                         <!--</el-select>-->
                         <el-input v-model="select_word" placeholder="用户名称/手机号码" prefix-icon="el-icon-search"
-                                  class="handle-input mr10"></el-input>
-                        <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                                  class="handle-input mr10" size="small"></el-input>
+                        <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
 
-                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10"
-                                   @click="PageAdd">添加
+                        <el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10" style="float: right"
+                                   @click="Transfer">账号移交
                         </el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10"
-                                   @click="PageEdit">修改
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10"
-                                   @click="PageDelete">删除
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10"
+                        <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" style="float: right"
                                    @click="PageReset">密码重置
                         </el-button>
+                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageDelete">删除
+                        </el-button>
+
                         <!--<el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10"-->
                                    <!--@click="SendCode">发送邀请码-->
                         <!--</el-button>-->
-                        <el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10"
-                                   @click="Transfer">账号移交
+                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageEdit">修改
+                        </el-button>
+                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageAdd">添加
                         </el-button>
                     </el-col>
                 </el-row>
@@ -42,6 +43,7 @@
                         <el-cascader
                             placeholder="请选择要查看的组织所在区域"
                             :options="options"
+                            class="wggcascader"
                             @active-item-change="handleItemChange"
                             filterable
                             @change ="changeArea"
@@ -386,8 +388,14 @@
                 this.tableData = [];
                 this.getNodes(val);
                 this.aresId = val;
-                console.log(this.aresId);
-                this.getOrgtree(this.aresId);
+                // console.log(this.aresId);
+                let timer = null;
+                timer = setTimeout(this.click, 200);
+                console.log(timer);
+
+                if(timer){
+                    this.getOrgtree(this.aresId);
+                }
             },
             //获取角色数据
             async getRoleData(){
@@ -1211,5 +1219,20 @@
     }
     .red {
         color: #ff0000;
+    }
+</style>
+<style>
+    .wggcascader .el-cascader-menu{
+        display: inline-block;
+        vertical-align: top;
+        height: 204px;
+        overflow: auto;
+        border-right: solid 1px #e4e7ed;
+        background-color: #fff;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 6px 0;
+        min-width: 160px;
+        width: 210px;
     }
 </style>
