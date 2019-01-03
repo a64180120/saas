@@ -364,7 +364,7 @@ import qs from 'qs';
         },
         mounted: function () {
             //this.getNodes();
-            this.selectParentName();
+            //this.selectParentName();
             this.selectArea("0", 0);
             this.showFlam = this.$route.query.showFlam;
             if(this.showFlam){
@@ -496,7 +496,7 @@ import qs from 'qs';
                 console.log(this.ParentId);
                 console.log(this.ParentCode);
             },
-            //改变省后的点击时间
+            //改变省后的点击事件
             changeProvince(){
                 console.log(this.Province);
                 this.StreetValue = [];
@@ -504,16 +504,45 @@ import qs from 'qs';
                 this.CityValue = [];
                 this.selectArea(this.Province, 1);
             },
-            //改变城市后的点击时间
+            //改变城市后的点击事件
             changeCity(){
                 this.StreetValue = [];
                 this.CountyValue = [];
                 this.selectArea(this.City, 2);
+                if(!this.showFlam){
+                    this.getParentByArea(1, this.Province);
+                }
             },
-            //改变区后的点击时间
+            //改变区后的点击事件
             changeCounty(){
                 this.StreetValue = [];
                 this.selectArea(this.County, 3);
+                if(!this.showFlam){
+                    this.getParentByArea(2, this.City);
+                }
+            },
+            //改变街道后的点击事件
+            changeStreet(){
+                if(!this.showFlam){
+                    this.getParentByArea(3, this.County);
+                }else{
+                    this.getParentByArea(4, this.Street);
+                }
+            },
+            //根据选择的地址获取父级机关工会
+            getParentByArea(i, area){
+                var data = {
+                    rank: i,
+                    areaCode: area
+                }
+                this.$axios.get('/SysAdminOrganize/GetParentAdminOrganizeByArea', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        this.ParentNameValues = res;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             },
             //查询地区
             selectArea(Area,i){
@@ -617,7 +646,7 @@ import qs from 'qs';
                                 .then(res => {
                                     if (res.Status == 'success') {
                                         this.$message.success("新增成功");
-                                        this.$router.push({path: '/'});
+                                        // this.$router.push({path: '/'});
                                     }else{
                                         this.$message.error('新增失败,请重试!');
                                     }
@@ -633,6 +662,7 @@ import qs from 'qs';
                             'City': this.City,
                             'County': this.County,
                             'Street': this.Street,
+                            'EnCode': this.EnCode,
                             'file': this.file,
                             'OrgName': this.OrgName,
                             'EnterpriseCode': this.EnterpriseCode,
@@ -651,9 +681,9 @@ import qs from 'qs';
                             'Director': this.Director
                         };
                         if(this.Province!=''&& this.OrgName!='' && this.EnterpriseCode !='' && this.Chairman !=''
-                            && this.Director !='' && this.EnCode !='' && this.ParentId !=''
+                            && this.Director !='' && this.EnCode !=''
                             && this.Province!=null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
-                            && this.Director !=null && this.EnCode !=null && this.ParentId !=null){
+                            && this.Director !=null && this.EnCode !=null ){
                             var data = {
                                 uid: "0",
                                 orgid: "0",

@@ -44,8 +44,8 @@
                             :options="options"
                             @active-item-change="handleItemChange"
                             filterable
-                            :clearable="clearable"
                             @change ="changeArea"
+                            change-on-select
                             style="width: 83%;text-align: center;margin-top: 10px;margin-left: 22px"
                         ></el-cascader>
                     </div>
@@ -199,7 +199,7 @@
                 editVisible: false,
                 is_search: false,
                 form: {
-                    phid: 0,
+                    // phid: 0,
                     realName: "",
                     mobilePhone: "",
                     rolesid: [],
@@ -384,6 +384,7 @@
             changeArea(val){
                 this.data2 = [];
                 this.tableData = [];
+                this.getNodes(val);
                 this.aresId = val;
                 console.log(this.aresId);
                 this.getOrgtree(this.aresId);
@@ -430,27 +431,47 @@
             getOrgtree(array){
                 this.loading = true;
                 console.log(array);
-                this.$axios.get("/SysOrganize/GetOrgListForUser", {
-                    params: {
-                        PageIndex: this.pageIndex - 1,
-                        PageSize: this.pageSize,
-                        uid: this.uid,
-                        orgid: this.qOrgId,
-                        value: array[0] + ","+ array[1]+"," + array[2]+","+ array[3]
-                    }
-                }).then(
-                    res => {
-                        console.log(res);
-                        this.loading = false;
-                        this.data2 = res;
+                if(array.length > 0){
+                    this.$axios.get("/SysAdminOrganize/GetAllOrgForUser", {
+                        params: {
+                            rank: array.length,
+                            areaCode: array[array.length - 1]
+                        }
+                    }).then(
+                        res => {
+                            console.log(res);
+                            this.loading = false;
+                            this.data2 = res;
 
-                        console.log(this.data2);
-                    },
-                    error => {
-                        console.log(error);
-                        this.loading = false;
-                    }
-                );
+                            console.log(this.data2);
+                        },
+                        error => {
+                            console.log(error);
+                            this.loading = false;
+                        }
+                    );
+                }
+                // this.$axios.get("/SysOrganize/GetOrgListForUser", {
+                //     params: {
+                //         PageIndex: this.pageIndex - 1,
+                //         PageSize: this.pageSize,
+                //         uid: this.uid,
+                //         orgid: this.qOrgId,
+                //         value: array[0] + ","+ array[1]+"," + array[2]+","+ array[3]
+                //     }
+                // }).then(
+                //     res => {
+                //         console.log(res);
+                //         this.loading = false;
+                //         this.data2 = res;
+                //
+                //         console.log(this.data2);
+                //     },
+                //     error => {
+                //         console.log(error);
+                //         this.loading = false;
+                //     }
+                // );
             },
             /**
              * 用户列表获取数据
@@ -593,7 +614,10 @@
                 //this.pdChecked();
                 if(this.qOrgId != ""){
                     this.dialogState = "add";
-                    this.form = {};
+                    this.form = { realName: "",
+                        mobilePhone: "",
+                        rolesid: [],
+                        enabledMark: "0",};
                     this.editVisible = true;
                 }else{
                     this.$message({

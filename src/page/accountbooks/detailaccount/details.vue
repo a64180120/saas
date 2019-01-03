@@ -110,7 +110,7 @@
                             <li>余额(元)</li>
                         </ul>
                        <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
-                            <li>{{dataInfoMonth.Pdate.slice(0,10)}}</li>
+                            <li>{{dataInfoMonth.Pdate.slice(0,10).split(' ')[0]}}</li>
                             <li></li>
                             <li :class="{bolder:true,'align-center':true}">{{date1.choosedMonth==1?'本年期初':dataInfoMonth.Abstract}}</li>
                             <li class="align-right">{{dataInfoMonth.JSum| NumFormat}}</li>
@@ -120,10 +120,12 @@
                                 {{ KBalanceType=='1' ? (Number(dataInfoMonth.JSum)-Number(dataInfoMonth.DSum)) : (Number(dataInfoMonth.DSum)-Number(dataInfoMonth.JSum))  | NumFormat}}
                             </li>
                         </ul>
+
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
-                            <li>{{item.Pdate.slice(0,10)}}</li>
+                            <li>{{item.Pdate.slice(0,10).split(' ')[0]}}</li>
                             <li class="align-center" style=""><a @click="showvoucher" :title="item.PhIdMst">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
                             <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
+                            <template></template>
                             <li class="align-right">{{item.JSum |NumFormat}}</li>
                             <li class="align-right">{{item.DSum |NumFormat}}</li>
                             <li>{{JD[item.DType]}}</li>
@@ -338,6 +340,10 @@
             },
 //获取单个凭证**************
             getVoucherData(PhId){
+                if(PhId==''){
+                    this.$message('当前凭证不支持查看','error')
+                    return
+                }
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
