@@ -532,9 +532,16 @@
                     this.qParentId = "0";
                     this.qParentName = "父级菜单";
                 }
-                this.form ={};
+                this.form ={
+                    IsMenu: false,
+                    IsPublic: false,
+                    IsExpand: false,
+                    EnabledMark: true,
+                    AllowEdit: false,
+                    AlowDelete: false
+                };
                 this.form.ParentName = this.qParentName;
-                this.form.EnabledMark = true;
+                // this.form.EnabledMark = true;
                 this.dialogState = "add";
                 this.editVisible = true;
             },

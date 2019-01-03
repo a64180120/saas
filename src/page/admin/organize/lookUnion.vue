@@ -27,7 +27,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="flexPublic">
+            <div class="flexPublic" style="margin-right: -650px">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text" style="width: 200px"
                                                   placeholder="企业名称/单位名称/联系人姓名"></div>
                 <div @click="unionSearch" class="searcherBtn">搜索</div>
