@@ -168,8 +168,6 @@
                         this.$message.error(res.Msg);
                         return
                     }
-                    res.Data=this.changeData(res.Data);
-
                     var data=res.Data;
                     var indata=data.filter((value,key,arr) => {
                         //1-资产,2-负债,3-净资产,4-收入,5-支出
@@ -202,7 +200,8 @@
                     })
 
                     var newdata=new Array();
-
+                    indata=this.changeData(indata);
+                    outdata=this.changeData(outdata);
                     this.inMoney=newdata.concat([{
                         KCode:'一、收入',
                         KName:'',

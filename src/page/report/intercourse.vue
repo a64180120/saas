@@ -488,14 +488,14 @@
                 console.log(this.chooseSubject);
                 let param = {'uid':this.userid,
                     'orgid':this.orgid,
-                    'Title': this.chooseSubject.KName};
+                    'Year': this.date1.choosedYear};
 
                 //let baseheader = httpConfig.header;
                 let base = httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true
-                this.$axios.get('/DealingsMst/GetDetailAccountExcel',{params:param}).then(res => {
+                this.$axios.get('DealingsMst/GetDealingsExcel',{params:param}).then(res => {
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
