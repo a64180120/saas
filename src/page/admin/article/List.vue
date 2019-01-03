@@ -41,6 +41,9 @@
                         <li>{{item.Publisher}}</li>
                         <li>{{item.PublishTime}}</li>
                     </ul>
+                    <ul v-if="listInfo.length==0" class="formDataItems flexPublic">
+                         <li>当前页没有数据</li>
+                    </ul>
                     <ul>
                         <li>
                         <el-pagination
@@ -62,9 +65,9 @@
 
 <script>
     import { mapState, mapActions } from 'vuex'
-    import { dealAddString } from "@/util/validate";
 
     export default {
+        name: "article_list",
         data(){
             return {
                 unionSearchValue:'',
@@ -76,7 +79,7 @@
                 navTab:[],
                 pageSize: 20, //pageSize
                 pageIndex: 1, //pageIndex
-                total:100
+                total:0
             }
         },
         created(){
@@ -115,7 +118,7 @@
                     pagesize:this.pageSize,
                     pageindex:this.pageIndex-1
                 };
-                var vm=this;
+
                 this.$axios.get('/SysNews/GetSysNewsListFirst',{ params:data })
                     .then(res=>{
 
@@ -126,6 +129,7 @@
 
                         this.listInfo=res.List;
                         this.navTab=res.Type;
+                        this.total=Number(res.Total);
 
                         if(this.navTab.length>0){
                             this.navActive=this.navTab[0];
@@ -161,14 +165,18 @@
              * 分页控件
              */
             handleSizeChange(val){
-                console.log(`每页 ${val} 条`);
+                //console.log(`每页 ${val} 条`);
+                this.pageSize=Number(val);
+                this.getData('')
             },
             /**
              * currentPage 改变时会触发
              * 分页控件
              */
             handleCurrentChange(val){
-                console.log(`当前页: ${val}`);
+                //console.log(`当前页: ${val}`);
+                this.pageIndex=Number(val);
+                this.getData('')
             },
              /**
              * 获取新闻信息
@@ -183,6 +191,8 @@
                     pageindex:this.pageIndex-1
                 };
 
+                //debugger
+
                 this.$axios.get('/SysNews/GetSysNewsListByTypeId',{params:data})
                     .then(res=>{
                         if(res.Status==='error'){
@@ -191,6 +201,7 @@
                         }
 
                         this.listInfo=res.List;
+                        this.total=Number(res.Total);
                         for(var i=0;i<this.listInfo.length;i++){
                             this.listInfoCssList[i]={checked:false};
                         }
@@ -206,9 +217,12 @@
             handlePage(val){
                 switch(val){
                     case 'add':
+                        //新增的按钮
                         this.handleNav='add';
+                        this.$router.push({path: '/admin/article/add', query: { type:this.handleNav, phid:0 }});
                         break;
                     case 'edit':
+                        //编辑按钮
                         this.handleNav='edit';
                         break;
                     case 'delete':
