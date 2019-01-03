@@ -387,6 +387,7 @@
                     if(res.Status=='success'){
                         this.aocType.show=false;
                         this.getCodeData();//每次保存成功之后都要测重新获取科目列表，刷新版本号
+                        this.getData();//页面数据刷新
                     }else{
 
                     }
@@ -487,14 +488,14 @@
                 console.log(this.chooseSubject);
                 let param = {'uid':this.userid,
                     'orgid':this.orgid,
-                    'Title': this.chooseSubject.KName};
+                    'Year': this.date1.choosedYear};
 
                 //let baseheader = httpConfig.header;
                 let base = httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true
-                this.$axios.get('/DealingsMst/GetDetailAccountExcel',{params:param}).then(res => {
+                this.$axios.get('DealingsMst/GetDealingsExcel',{params:param}).then(res => {
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {

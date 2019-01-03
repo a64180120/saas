@@ -41,7 +41,19 @@
                             <li>库存现金</li>
                             <li class="align-center">借</li>
                             <li></li>
-                            <li></li>
+                            <li>
+                                <svg preserveAspectRatio="none"  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64">
+                                    <path class="cls-1" d="M4,55a1,1,0,0,0,1,1H49a1,1,0,0,0,1-1V28a1,1,0,0,0-2,0V54H6V12H48v5a1,1,0,1,0,2,0V11a1,1,0,0,0-1-1H5a1,1,0,0,0-1,1V55Z" style="fill:#3EBEC1 !important;"></path>
+                                    <path class="cls-1" d="M59.71,12.29a1,1,0,0,0-1.41,0L27,43.59,17.71,34.3a1,1,0,0,0-1.41,1.41l10,10A1,1,0,0,0,27,46a1,1,0,0,0,.71-0.29l32-32A1,1,0,0,0,59.71,12.29Z" style="fill:#3EBEC1 !important;"></path>
+                                </svg>
+
+                                <svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 64 64">
+                                    <path d="M53.49,15.56l-32,29.87-9.67-9.66a2.24,2.24,0,1,0-3.17,3.17L19.85,50.13a2.23,2.23,0,0,0,3.11.06L56.54,18.84A2.24,2.24,0,0,0,53.49,15.56Z" style="fill:#3EBEC1 !important;"></path>
+                                </svg>
+                                <svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 64 64">
+                                    <path d="M13.414 12l10.293-10.293c.391-.391.391-1.023 0-1.414s-1.023-.391-1.414 0l-10.293 10.293-10.293-10.293c-.391-.391-1.023-.391-1.414 0s-.391 1.023 0 1.414l10.293 10.293-10.293 10.293c-.391.391-.391 1.023 0 1.414.195.195.451.293.707.293s.512-.098.707-.293l10.293-10.293 10.293 10.293c.195.195.451.293.707.293s.512-.098.707-.293c.391-.391.391-1.023 0-1.414l-10.293-10.293z" style="fill:#FF0000 !important;"></path>
+                                </svg>
+                            </li>
                             <li></li>
                         </ul>
                     </template>
@@ -66,14 +78,16 @@ export default {
   name: "subjectInit",
   components: { printTem,timerBtn },
   data() {
-    return {
-      voucherdata:'',
-      fileVisible:false,
-      sumvalue:999999999999.123
-    }
+      return {
+          voucherdata:'',
+          fileVisible:false,
+          sumvalue:999999999999.123,
+          inputKvalue:'',
+          loading:false,
+      }
   },
   created() {
-    this.printVoucher()
+      this.printVoucher()
   },
   //加载数据
   mounted:function(){
@@ -88,6 +102,12 @@ export default {
       })
   },
   methods: {
+      //搜索
+      selectBtn:function(){
+
+      },
+      //刷新
+      refresh:function(){},
      //打印凭证
      printVoucher() {
        //日期
