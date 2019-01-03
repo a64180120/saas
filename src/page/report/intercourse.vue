@@ -387,6 +387,7 @@
                     if(res.Status=='success'){
                         this.aocType.show=false;
                         this.getCodeData();//每次保存成功之后都要测重新获取科目列表，刷新版本号
+                        this.getData();//页面数据刷新
                     }else{
 
                     }
