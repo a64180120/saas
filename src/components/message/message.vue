@@ -31,13 +31,12 @@ export default {
   },
   methods:{
       close(){
-          
+          console.log(111)
           this.$emit('update:visible',false);
       },
       oneTime(vm){
           var vm=this;
-          vm.delayTime--;
-          console.log(vm.delayTime)
+          vm.delayTime--;console.log(vm.delayTime)
           if(vm.delayTime>0){
             setTimeout(vm.oneTime,1000)
           }else{

@@ -96,7 +96,6 @@ export default {
                 phid:file.phid,
                 imgPath:file.url.replace(this.picUrl,'')
             };
-
             for(let ind in me.curimgList){                
                 if(me.curimgList[ind].BName === file.name){
                     deleValue.phid=me.curimgList[ind].PhId
@@ -161,6 +160,10 @@ export default {
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style >
+.fileUpload{
+    min-width:250px;
+    float: left;
+}
 .fileUpload .el-upload--text{
     width:100px;
     height:33px;
