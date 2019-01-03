@@ -41,9 +41,9 @@
                         <li>{{item.Publisher}}</li>
                         <li>{{item.PublishTime}}</li>
                     </ul>
-                    <ul v-if="listInfo.length==0" class="formDataItems flexPublic">
-                         <li>当前页没有数据</li>
-                    </ul>
+                    <div v-if="listInfo.length==0" class="NoDataflex">
+                         当前页没有数据
+                    </div>
                     <ul>
                         <li>
                         <el-pagination
@@ -59,12 +59,16 @@
                     </ul>
                 </div>
             </div>
+
+            <!--辅助项类型页面-->
+            <article-type datalists="" @type-click="addTypeFinish" v-if="handleNav=='type'"></article-type>
         </div>
     </div>
 </template>
 
 <script>
     import { mapState, mapActions } from 'vuex'
+    import articleType from './Type'
 
     export default {
         name: "article_list",
@@ -97,11 +101,11 @@
             ...mapState({
                 orgid:state=>state.user.orgid,
                 uid:state=>state.user.userid,
-                user:state=>state.user
+                username: state => state.user.username
             })
         },
         //组件
-        components:{ },
+        components:{ articleType },
         methods:{
             initInfoCss(){
                 for(var i in this.listInfo){
@@ -224,9 +228,16 @@
                     case 'edit':
                         //编辑按钮
                         this.handleNav='edit';
+                        this.$router.push({path: '/admin/article/add', query: { type:this.handleNav, phid:this.selectedItem.PhId }});
                         break;
                     case 'delete':
                         this.deleteBase();
+                        break;
+                    case 'publish':
+                        this.PublishNews(1);
+                        break;
+                    case 'nopublish':
+                        this.PublishNews(0);
                         break;
                     case 'type':
                         this.handleNav='type';
@@ -244,7 +255,6 @@
             */
             deleteBase(){
 
-                this.selectedItem.DeleteMark=1;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -256,7 +266,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$axios.post('/SysNews/PostDeleteType',data)
+                    this.$axios.post('/SysNews/PostDelete',data)
                         .then(res=>{
                             if(res.Status==='error'){
                                 this.$message.error(res.Msg);
@@ -273,7 +283,53 @@
                 }).catch((err) => {
                     console.log(err)   
                 });
-            }
+            },
+            /**
+             * 取消发布
+             */
+            PublishNews(state){
+
+                var pubmodel=this.selectedItem;
+                pubmodel.Publish=state;
+                pubmodel.Publisher=this.username;
+                //pubmodel.PublishTime=state;
+
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    infoData:pubmodel
+                }
+
+                this.$confirm('取消发布该文章, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post('/SysNews/PostPutSysNews',data)
+                        .then(res=>{
+                            if(res.Status==='error'){
+                                this.$message.error(res.Msg);
+                                return
+                            }
+                            this.getData('');
+                            this.initInfoCss();
+                            this.$message.success('发布成功!');  
+                        })
+                        .catch(err=>{
+                            console.log(err)
+                            this.$message({ showClose: true,message: "发布错误", type: "error"});
+                        })
+                }).catch((err) => {
+                    console.log(err)   
+                });
+            },
+            //分类管理弹窗完成*************
+            addTypeFinish(val){
+                this.handleNav=false;
+                if(val){
+                    this.getTypeData();
+                }
+            },
         }
 
     }
@@ -399,6 +455,12 @@
     .listContent{
         width:85%;
     }
-
+    .NoDataflex{
+        height: 40px;
+        border: 1px solid #d3e9f9;
+        display: block;
+        text-align: center;
+        padding-top: 10px;
+    }
 
 </style>
