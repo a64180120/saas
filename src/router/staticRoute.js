@@ -93,7 +93,7 @@ const staticRoute = [
             {
                 //图片管理
                 path: "picture",
-                component: () =>import( "../page/admin/picture/List"),
+                component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page'}
             }
         ]

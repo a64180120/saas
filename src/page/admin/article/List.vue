@@ -146,7 +146,7 @@
                     })
                     .catch(err=>{
                         console.log(err)
-                        this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
+                        this.$message({ showClose: true,message: "新闻列表获取错误", type: "error"});
                     })
             },
 
