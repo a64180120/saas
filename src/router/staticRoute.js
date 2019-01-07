@@ -93,7 +93,7 @@ const staticRoute = [
             {
                 //图片管理
                 path: "picture",
-                component: () =>import( "../page/admin/picture/List"),
+                component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page'}
             }
         ]
@@ -312,7 +312,8 @@ const staticRoute = [
             {
                 //组织账套管理
                 path: "organization",
-                component: () =>import( "../page/system/Organize"),
+                //component: () =>import( "../page/system/Organize"),
+                component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page'}
             }
         ]
