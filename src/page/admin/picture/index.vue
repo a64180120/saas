@@ -10,7 +10,8 @@
                         </ul>
                         <ul class="flexPublic handle" style="float: right">
                             <a>
-                                <li @click="publish" style='margin:0 0 0px 10px;'>发布</li>
+                                <li v-show="publishData===0" @click="publish" style='margin:0 0 0px 10px;'>发布</li>
+                                <li v-show="publishData===1" @click="publish" style='margin:0 0 0px 10px;'>取消发布</li>
                             </a>
                         </ul>
                     </div>
@@ -44,6 +45,7 @@ export default {
     return {
         listInfo:[],      //图片列表信息
         fileList: [],     //图片信息
+        publishData:0,    //发布信息
         pageSize: 20, //pageSize
         pageIndex: 1, //pageIndex
         total:0
@@ -94,6 +96,7 @@ export default {
 
                     if (this.listInfo.length != 0) {
                         var url=this.picUrl;
+                        this.publishData=this.listInfo[0].Publish;
                         this.listInfo.forEach(el =>{
                             this.fileList.push({ phid:el.PhId,url: url+ el.Picpath,name:el.Title });
                         })
@@ -110,9 +113,40 @@ export default {
 
         },
         //发布按钮
-        publish(){
+        publish(val){
+
+            var val=this.publishData===0 ? 1 : 0;
+
             //发布图片
-            
+           var newArry= this.listInfo.map(el =>{
+                el.Publisher=this.username;
+                el.Publish=val;
+                return el
+            });
+            var me=this;
+            this.$axios({
+                url: '/SysPicture/PostUpdatePublish',
+                method: "post",
+                data: {
+                    uid: this.uid,
+                    orgid: this.orgid,
+                    infoData:newArry
+                }
+            }).then(res => {
+                if (res.Status === "error") {
+                    this.$message({showClose: true, message: res.Msg, type: 'error'});
+                    return;
+                }
+
+                this.publishData=val;
+                this.$message.success("成功！");
+
+
+            }).catch(error => {
+                console.log(error);
+                this.$message({showClose: true, message: '附件删除错误', type: 'error'});
+            });
+
         },
         //图片类型判断
         beforeUploadPic(file){
@@ -177,6 +211,7 @@ export default {
                     this.$message({showClose: true, message: res.Msg, type: 'error'});
                     return;
                 }
+
             }).catch(error => {
                 console.log(error);
                 this.$message({showClose: true, message: '附件删除错误', type: 'error'});

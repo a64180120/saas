@@ -312,8 +312,7 @@ const staticRoute = [
             {
                 //组织账套管理
                 path: "organization",
-                //component: () =>import( "../page/system/Organize"),
-                component: () =>import( "../page/admin/picture"),
+                component: () =>import( "../page/system/Organize"),
                 meta:{ requireAuth:true ,type:'page'}
             }
         ]
