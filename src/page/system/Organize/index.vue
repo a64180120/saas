@@ -13,19 +13,19 @@
                                 <li v-show="!isedit" @click="edit">修改</li>
                             </a>
                             <a>
-                                <li v-show="isedit" @click="save" style='margin:0 0 0px 20px;'>保存</li>
+                                <li v-show="isedit" @click="save" style='margin:0 0 0px 10px;'>保存</li>
                             </a>
                             <a>
-                                <li @click="Backups" style='margin:0 0 0px 20px;'>备份</li>
+                                <li @click="Backups" style='margin:0 0 0px 10px;'>备份</li>
                             </a>
                             <a>
-                                <li style='margin:0 0 0px 20px;'>恢复</li>
+                                <li style='margin:0 0 0px 10px;'>恢复</li>
                             </a>
                             <a>
-                                <li  @click="testFile" style='margin:0 0 0px 20px;'>附件</li>
+                                <li  @click="testFile" style='margin:0 0 0px 10px;'>附件</li>
                             </a>
                             <a>
-                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 20px;'></li>
+                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;'></li>
                             </a>
                             <!--<a @click="freshPage"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>-->
                         </ul>

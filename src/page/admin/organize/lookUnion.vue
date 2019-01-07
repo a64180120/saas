@@ -5,8 +5,8 @@
             <div @click="examineTabFn(false)" :class="{examineTabAct:!examineTab}">已审核({{yVerifyNum}})</div>
         </div>
         <!--******待审核********-->
-        <div v-show="examineTab" class="unionState flexPublic">
-            <ul class="flexPublic">
+        <div v-show="examineTab" class="unionState" style="height: 40px">
+            <ul class="flexPublic" style="float: left">
                 <li class="flexPublic">
                     <div>信息完整度:</div>
                     <div class="selectContainer">
@@ -27,12 +27,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="flexPublic" style="margin-right: -650px">
-                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text" style="width: 200px"
-                                                  placeholder="企业名称/单位名称/联系人姓名"></div>
-                <div @click="unionSearch" class="searcherBtn">搜索</div>
-            </div>
-            <ul class="flexPublic handle">
+            <ul class="flexPublic handle" style="float: right">
                 <!--<router-link to="/organize/add">-->
                     <!--<li>审核</li>-->
                 <!--</router-link>-->
@@ -43,6 +38,11 @@
                     <li>批量审核</li>
                 </a>
             </ul>
+            <div class="flexPublic" style="float: right">
+                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text" style="width: 200px"
+                                                  placeholder="企业名称/单位名称/联系人姓名"></div>
+                <div @click="unionSearch" class="searcherBtn">搜索</div>
+            </div>
         </div>
         <div v-show="examineTab" class="formData">
             <ul>

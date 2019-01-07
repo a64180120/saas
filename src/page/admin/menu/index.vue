@@ -9,14 +9,14 @@
                         <!--<el-option label="无效" value="0"></el-option>-->
                         <!--<el-option label="有效" value="1"></el-option>-->
                         <!--</el-select>-->
-                        <el-input v-model="select_word" placeholder="菜单名称" prefix-icon="el-icon-search" class="handle-input mr10"></el-input>
-                        <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                        <el-input v-model="select_word" placeholder="菜单名称" prefix-icon="el-icon-search" class="handle-input mr10" size="small"></el-input>
+                        <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
+                        <el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10" @click="ButtonManagement" style="float:right">按钮管理</el-button>
+                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="PageDelete" style="float:right">删除菜单</el-button>
+                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="PageEdit" style="float:right">修改菜单</el-button>
 
-                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="PageAdd">添加菜单</el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="PageEdit">修改菜单</el-button>
-                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="PageDelete">删除菜单</el-button>
                         <!--<el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="PageReset">查看菜单</el-button>-->
-                        <el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10" @click="ButtonManagement">按钮管理</el-button>
+                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="PageAdd" style="float:right">添加菜单</el-button>
                     </el-col>
                 </el-row>
             </div>
