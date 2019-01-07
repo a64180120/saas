@@ -46,6 +46,7 @@
                             class="wggcascader"
                             @active-item-change="handleItemChange"
                             filterable
+                            @dblclick="changeAreaForOrg"
                             @change ="changeArea"
                             change-on-select
                             style="width: 83%;text-align: center;margin-top: 10px;margin-left: 22px"
@@ -388,14 +389,19 @@
                 this.tableData = [];
                 this.getNodes(val);
                 this.aresId = val;
+                //this.getOrgtree(this.aresId);
                 // console.log(this.aresId);
-                let timer = null;
-                timer = setTimeout(this.click, 200);
-                console.log(timer);
-
-                if(timer){
-                    this.getOrgtree(this.aresId);
-                }
+                // let timer = null;
+                // timer = setTimeout(this.click, 200);
+                // console.log(timer);
+                //
+                // if(timer){
+                //     this.getOrgtree(this.aresId);
+                // }
+            },
+            changeAreaForOrg(){
+                console.log(this.aresId);
+                this.getOrgtree(this.aresId);
             },
             //获取角色数据
             async getRoleData(){

@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 </li>
-                <li>{{item.ServiceEndTime}}</li>
+                <li>{{item.EnableTime}}</li>
             </ul>
             <el-dialog :title="'批量审核'" :visible.sync="editVisible" width="30%" :close="dialogClose">
                 <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
@@ -270,17 +270,19 @@
                             let dTime = new Date();
                             this.userInfo = res;
                             for (var i = 0; i < this.userInfo.length; i++) {
-                                if(this.userInfo[i].ServiceEndTime != null && this.userInfo[i].ServiceEndTime != ''){
-                                    let sTime = new Date(this.userInfo[i].ServiceEndTime.replace('T',' ').replace(/\-/g, "/"));
-                                    console.log(sTime.getTime()- dTime.getTime());
-                                    wTime = parseInt((sTime.getTime()- dTime.getTime())/3600/24/1000);
-                                    if((sTime.getTime()- dTime.getTime()) >= 0){
-                                        this.userInfo[i].ServiceEndTime = wTime;
+                                if(this.userInfo[i].EnableTime != null && this.userInfo[i].EnableTime != ''){
+                                    let sTime = new Date(this.userInfo[i].EnableTime.replace('T',' ').replace(/\-/g, "/"));
+                                    wTime = parseInt((sTime.getTime() + 15*3600*24*1000- dTime.getTime() )/3600/24/1000);
+                                    console.log(wTime);
+                                    if((sTime.getTime() - dTime.getTime()) >= 0){
+                                        this.userInfo[i].EnableTime = '未启用';
+                                    } else if((sTime.getTime()+ 15*3600*24*1000- dTime.getTime()) < 0){
+                                        this.userInfo[i].EnableTime = '已到期';
                                     }else{
-                                        this.userInfo[i].ServiceEndTime = '已到期';
+                                        this.userInfo[i].EnableTime = wTime;
                                     }
                                 } else{
-                                    this.userInfo[i].ServiceEndTime = '已到期';
+                                    this.userInfo[i].EnableTime = '已到期';
                                 }
                                 this.userInfoCssList[i] = {checked: false};
                                 this.$forceUpdate();
@@ -470,18 +472,32 @@
                         this.userInfo = res.Record;
                         this.dVerifyNum = res.totalRows;
                         for (var i = 0; i < this.userInfo.length; i++) {
-                            if(this.userInfo[i].ServiceEndTime != null && this.userInfo[i].ServiceEndTime != ''){
-                                let sTime = new Date(this.userInfo[i].ServiceEndTime.replace('T',' ').replace(/\-/g, "/"));
-                                wTime = parseInt((sTime.getTime()- dTime.getTime())/3600/24/1000);
+                            if(this.userInfo[i].EnableTime != null && this.userInfo[i].EnableTime != ''){
+                                let sTime = new Date(this.userInfo[i].EnableTime.replace('T',' ').replace(/\-/g, "/"));
+                                wTime = parseInt((sTime.getTime() + 15*3600*24*1000- dTime.getTime() )/3600/24/1000);
                                 console.log(wTime);
-                                if((sTime.getTime()- dTime.getTime()) >= 0){
-                                    this.userInfo[i].ServiceEndTime = wTime;
+                                if((sTime.getTime() - dTime.getTime()) >= 0){
+                                    this.userInfo[i].EnableTime = '未启用';
+                                } else if((sTime.getTime()+ 15*3600*24*1000- dTime.getTime()) < 0){
+                                    this.userInfo[i].EnableTime = '已到期';
                                 }else{
-                                    this.userInfo[i].ServiceEndTime = '已到期';
+                                    this.userInfo[i].EnableTime = wTime;
                                 }
                             } else{
-                                this.userInfo[i].ServiceEndTime = '已到期';
+                                this.userInfo[i].EnableTime = '已到期';
                             }
+                            // if(this.userInfo[i].ServiceEndTime != null && this.userInfo[i].ServiceEndTime != ''){
+                            //     let sTime = new Date(this.userInfo[i].ServiceEndTime.replace('T',' ').replace(/\-/g, "/"));
+                            //     wTime = parseInt((sTime.getTime()- dTime.getTime())/3600/24/1000);
+                            //     console.log(wTime);
+                            //     if((sTime.getTime()- dTime.getTime()) >= 0){
+                            //         this.userInfo[i].ServiceEndTime = wTime;
+                            //     }else{
+                            //         this.userInfo[i].ServiceEndTime = '已到期';
+                            //     }
+                            // } else{
+                            //     this.userInfo[i].ServiceEndTime = '已到期';
+                            // }
                             this.userInfoCssList[i] = {checked: false};
                             this.$forceUpdate();
                         }
