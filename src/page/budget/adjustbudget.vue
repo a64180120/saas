@@ -171,12 +171,9 @@
                                         <template v-else>
                                             <input disabled  v-bind:code="item.SubjectCode" v-bind:value="(item.ApprovedBudgetTotal-item.BudgetTotal)| NumFormat">
                                         </template>
-
-
-
                                     </template>
                                     <template v-else>
-                                        <input  v-bind:disabled="changeBtn.disable"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:blur="inputLis" :value="(item.ApprovedBudgetTotal-item.BudgetTotal )| NumFormat">
+                                        <input  v-bind:disabled="changeBtn.disable"  :index="index" :code="item.SubjectCode" v-bind:layer="item.Layers"  v-on:blur="inputLis" :value="(item.ApprovedBudgetTotal-item.BudgetTotal )| NumFormat">
                                     </template>
                                 </li>
                                 <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
@@ -295,8 +292,11 @@
                     }
                 ).then(function(res){
                     that.loading=false;
-                    that.$message({ showClose: true, message:res.Msg,type: 'success' })
+                    that.$message({ showClose: true, message:res.Msg,type: 'success' });
+                    that.getMiddleYear();
                 }).catch(function(err){
+                    that.loading=false;
+                    that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
                     console.log(err);
                 })
 
@@ -338,6 +338,7 @@
             * 监听数据输入
             * */
             inputLis:function(val){
+                console.log(111111);
                 // console.log(val.target.value);
                 //val.target.value=val.target.value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g);
                 let code = val.target.attributes.code.value;//当前修改数据的code
@@ -345,11 +346,13 @@
                /* let in_value = parseFloat(val.target.value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g));//input数据转数字*/
                 let in_value = '';
                 let numList=val.target.value.split(',');
+
                 for(var i in numList){
                     in_value+=numList[i];
                 }
                 // input数据转数字
                 in_value=Number(in_value);
+                console.log(in_value);
                 let code_first=this.code_first;//一级科目数据列表
                 if(!isNaN(in_value)){
                     if(code=='BNSHTZ'){
@@ -424,9 +427,12 @@
                 let in_value = val.target.value;//input数据转数字
                 this.budgetList[index].Description=in_value;
             },
+            //时间选择器
             dateChoose:function(val){
                 this.date1=val;
                 this.getMiddleYear();
+                this.changeBtn.title='编辑';
+                this.changeBtn.disable=true;
             },
             /*
              *时间处理方法

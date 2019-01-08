@@ -254,6 +254,8 @@
             dateChoose:function(val){
                 this.date1=val;
                 this.getBeginYear();
+                this.changeBtn.title='编辑';
+                this.changeBtn.disable=true;
             },
             /*
             * 监听编辑按钮事件
@@ -457,9 +459,11 @@
                   }
               ).then(function(res){
                   that.loading=false;
-                  that.$message({ showClose: true, message:res.Msg,type: 'success' })
+                  that.$message({ showClose: true, message:res.Msg,type: 'success' });
+                  that.getBeginYear();
               }).catch(function(err){
                   that.loading=false;
+                  that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
                   console.log(err);
               })
             },

@@ -158,7 +158,7 @@
                             </li>
                             <li>
                                 <div class="progressContainer" >
-                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%','color':'#fff'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
                                     <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                 </div>
                             </li>
@@ -252,10 +252,12 @@
             hedin:function(){
                 this.verifyEnd();
             },
-
+            //时间选择器
             dateChoose:function(val){
                 this.date1=val;
                 this.getEndYear();
+                this.changeBtn.title='编辑';
+                this.changeBtn.disable=true;
             },
             /*
            * 监听编辑按钮事件
@@ -361,16 +363,21 @@
                             dataInfo.push({zhixing:anwser})
                         }else{
                             let anwser=res.Record[i].ThisaccountsTotal/res.Record[i].ApprovedBudgetTotal*100;
-                            console.log(anwser);
                             dataInfo.push({zhixing:anwser});
                         }
                     }
                     this.budgetList=res.Record;
                     this.dataInfo=dataInfo;
                     this.getInfoStyle();
-                   for(let j in this.dataInfo){
-                        this.timer(j,0,this.dataInfo[j].zhixing)
-                    }
+
+                    //动态进度条
+                   /*for(let j in this.dataInfo){
+
+                       if(this.dataInfo[j].zhixing<=100){
+                           this.timer(j,0,this.dataInfo[j].zhixing)
+                       }
+
+                    }*/
                 }).catch(res=>{
                     console.log(res);
                 })
@@ -390,9 +397,11 @@
                     }
                 ).then(function(res){
                     that.loading=false;
-                    that.$message({ showClose: true, message:res.Msg,type: 'success' })
+                    that.$message({ showClose: true, message:res.Msg,type: 'success' });
+                    that.getEndYear();
                 }).catch(function(err){
                     that.loading=false;
+                    that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
                     console.log(err);
                 })
 
@@ -408,8 +417,7 @@
                         }else{
                             str=data;
                         }
-                        console.log(str);
-                        that.dataInfo[index].zhixing=str;
+                        that.dataInfo[index].zhixing=str.toFixed(2);
                         if(str<30){
                             that.infoStyle[index]=`#ff0000`;
                         }else if(str>=30&&str<50){
