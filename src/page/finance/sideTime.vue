@@ -3,7 +3,7 @@
     <div class="asideNav"><!--右侧时间选择组件-->
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
-            <div style="overflow:hidden;height:87%">
+            <div style="overflow:hidden;height:91%">
                 <div class="monthsContainer">
                     <ul style="top:0" @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
                         <li v-for="item of nowYear-2000"  :key="item">
@@ -279,10 +279,10 @@ export default {
 <style lang="scss" scoped>
    .asideNav{
         width:55px;
-        position:absolute;
-        right:0px;
-        top:0px;
-        height: 95%;
+        position: fixed;
+        right:10px;
+        top:110px;
+        height: 83%;
         min-height:490px;
         background: #fff;  
         box-shadow:0 0 20px 2px #ccc;

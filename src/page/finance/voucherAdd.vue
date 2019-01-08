@@ -267,6 +267,7 @@
                 this.voucherAdd=true;
                 console.log(this.voucherAdd)
             } 
+            
         },
         mounted(){  
             this.getChecked();
@@ -429,7 +430,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -442,6 +443,7 @@
                    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
+                           loading1.close();
                            if (res.Status == 'success') {
                                this.saasMessage={
                                   visible:true,
@@ -464,12 +466,10 @@
                                 if(oldPhId){
                                     this.getVoucherData(oldPhId);
                                 }  
-                               
-                                
                            } else {
                                this.$message(res.Msg)
                            }
-                           loading1.close();
+                           
                        })
                        .catch(err =>{
                            this.$message(err);loading1.close();
@@ -679,7 +679,7 @@
                                 delay:4000,
                                 visible:true
                             }
-                            this.$router.push()
+                            this.$router.push({path:'/setting/subjectstart'})
                             return;
                         }
                           
@@ -780,7 +780,7 @@
                             vm.resetVoucher();                          
                         }
                     })
-                    .catch(err=>{vm.$message({ showClose: true,message: err, type: "error"});loading1.close();})
+                    .catch(err=>{vm.$message({ showClose: true,message: err, type: "error"});})
             },
             
             //选择会计期***************
@@ -801,7 +801,6 @@
                     this.mouseDown=false;
                     this.mouseStartY='';
                 }
-                console.log($event);
             },
             //鼠标离开*********************
             dragLeave(){
@@ -814,7 +813,6 @@
                     var Y=$event.clientY-this.mouseStartY;  //鼠标移动距离
                     var month= document.getElementById('scrollMonth'); 
                     var H=window.getComputedStyle(month).height;  //元素高度
-                    console.log(month)
                     var top=parseInt(month.style.top);
                     if(top==0&&Y<0){           
                         return;

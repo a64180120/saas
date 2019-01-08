@@ -690,8 +690,10 @@
                     supervisor: data.PKeepingPerson, //记账
                     auditor: data.PAuditorName, //审核
                     cashier: data.PCashier, //出纳
-                    producer: this.username //制单
+                    producer: data.PMakePerson //制单
                 };
+                 console.log(mst)
+                 debugger
                 var list=[
                     //{ abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  JSum: '5071.00', DSum: ''},
                    ];
@@ -706,7 +708,7 @@
                 }
                 mst.lotal=mst.lotal.toFixed(2);
                 
-
+                console.log(mst,list)
                 return {
                     mst:mst,
                     list:list
@@ -1652,7 +1654,7 @@
         cursor:pointer;
     }
     .voucherList{
-        padding:8px 70px 0 18px;
+        padding:8px 60px 0 18px;
         margin-right:10px;
         font-size:14px;
         position:relative;
@@ -1930,15 +1932,20 @@
     .listContainer{
         max-height:85%;
         overflow-y: auto;
-        padding:5px;
+        
         margin-top:10px;
+        position:relative;
+        padding-top:40px;
         padding-bottom: 20px;
     }
     .listContainer ul.listTitle{
         height:40px;
+        width:100%;
         background: #d3e9f9 ;
         color:#333;
-        
+        position:absolute;
+        top:0;
+        margin-right:5px;
     }
     .listContainer ul.listTitle li{
         float:left;
@@ -1964,6 +1971,7 @@
     ul.listContent{
         border-top:1px solid #ccc;
         margin-bottom: 20px;
+        width:100%;
         background: #fff;
     }    
     ul.listContent.choosed>li>ul.listIndex{
