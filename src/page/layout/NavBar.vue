@@ -1,6 +1,6 @@
 <template>
 
-    <div class="sidebar">
+    <div class="side-nav top">
         <!-- 
             unique-opened 是否只保持一个子菜单的展开
             default-active 当前激活菜单的 index
@@ -15,15 +15,19 @@
         -->
         
         <el-menu 
-        class="sidebar-el-menu" 
-        router ref="navbar" 
-        :default-active="defActive" 
+        router 
+        ref="navbar" 
+        :mode="navMode" 
+        :default-active="defActive"
+        :collapse="isCollapse"
         menu-trigger="click" 
         @select="selectMenu"
-        :collapse="isCollapse"
+        @open="openMenu" 
+		    @close="closeMenu" 
         unique-opened>
             <nav-bar-item v-for="(item, n) in navList" :item="item" :navIndex="String(n)" :key="n"></nav-bar-item>
         </el-menu>
+        <div v-show="navBgShow" class="full-screen-navBg" @click.self="closeAll"></div>
     </div>
 </template>
 
@@ -35,6 +39,7 @@ export default {
   data() {
     return {
       //isCollapse: false
+      navBgShow: false
     };
   },
   props: ["isCollapse"],
@@ -47,6 +52,9 @@ export default {
     },
     isDark() {
       return this.$store.state.theme;
+    },
+    navMode(){
+        return "horizontal"
     }
   },
   watch: {
@@ -81,6 +89,21 @@ export default {
       openMenuList.forEach(ele => {
         this.$refs.navbar.closeMenu(ele);
       });
+    },
+    openMenu(){
+      this.navBgShow = true 
+    },
+    closeMenu(){
+      this.navBgShow = false    
+    },
+    closeAll(){
+      console.log("背景遮罩图")
+      let openMenu = this.$refs.navbar.openedMenus.concat([])
+      openMenu = openMenu.reverse()
+      openMenu.forEach((ele) => {
+          this.$refs.navbar.closeMenu(ele)
+      })
+      this.navBgShow = false  
     }
   },
   components: { NavBarItem }

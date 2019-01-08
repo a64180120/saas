@@ -2,11 +2,12 @@
     <div class="sys-header">
          <!-- 折叠按钮 -->
         <div class="collapse-btn" >
-            <i class="el-icon-menu" @click="collapseChage">政云数据</i>
+            <i class="el-icon-menu" @click="collapseChage"></i>
         </div>
         <div class="logo">
             <slot name="logo"></slot>
         </div>
+        <slot name="topnav"></slot>
         <div class="header-right">
             
             <div class="header-user-con">
@@ -174,10 +175,10 @@ export default {
     },
     collapseChage() {
       // 侧边栏折叠
-      this.collapseprop = !this.collapseprop;
+      //this.collapseprop = !this.collapseprop;
       // childByValue是在父组件on监听的方法
       // 第二个参数this.childValue是需要传的值
-      this.$emit("collapseByValue", this.collapseprop);
+      //this.$emit("collapseByValue", this.collapseprop);
     },
     editPawSubmit() {
       this.$refs.editPaw.validate(valid => {

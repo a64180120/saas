@@ -204,14 +204,7 @@ export default {
                     this.getCodePic();
                     console.log(err);
                 })
-
-
-                // if (value!=this.changeCaptcha){
-                //     this.sendCode(0)
-                //     callback(new Error('验证码错误'))
-                // }else{
-                //     callback()
-                // }
+                
             }
         };
         let validPhoneCaptcha=(rule,value,callback)=>{
@@ -343,42 +336,42 @@ export default {
         //监听password变化 ，(debounce)停留0.5s获取组织信息
         'loginForm.password': lodash.debounce(function(val){
 
-                const loading = this.$loading({
-                    lock: true,
-                    text: '正在加载数据.....',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(0, 0, 0, 0.7)'
-                });
+            const loading = this.$loading({
+                lock: true,
+                text: '正在加载数据.....',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
 
-                this.orgByUser({
-                    uname_login:this.loginForm.name,
-                    password:this.loginForm.password
-                }).then(res => {
-                    loading.close();
-                    if(res){
-                        if(res.Status==='error'){
-                            this.$message.error(res.Msg);
-                            return;
-                        }
-                        //获取组织信息，当前组织只有一个时，直接登录
-                        let orgData=res.Record;
-                        if(orgData.length===1){
-                            this.loginForm.orgid=orgData[0].PhId;
-                            this.isOrganize=true;
-                            this.options=orgData;
-                            //this.submitForm('loginForm');
-                        } else if(orgData.length===0){
-                             this.$message.error("当前用户组织不存在!");
-                        }
-                        else{
-                            this.isOrganize=true;
-                            this.options=orgData;
-                        }
+            this.orgByUser({
+                uname_login:this.loginForm.name,
+                password:this.loginForm.password
+            }).then(res => {
+                loading.close();
+                if(res){
+                    if(res.Status==='error'){
+                        this.$message.error(res.Msg);
+                        return;
                     }
-                }).catch(err => {
-                     loading.close();
-                     console.log(err)
-                })
+                    //获取组织信息，当前组织只有一个时，直接登录
+                    let orgData=res.Record;
+                    if(orgData.length===1){
+                        this.loginForm.orgid=orgData[0].PhId;
+                        this.isOrganize=true;
+                        this.options=orgData;
+                        //this.submitForm('loginForm');
+                    } else if(orgData.length===0){
+                            this.$message.error("当前用户组织不存在!");
+                    }
+                    else{
+                        this.isOrganize=true;
+                        this.options=orgData;
+                    }
+                }
+            }).catch(err => {
+                    loading.close();
+                    console.log(err)
+            })
 
         },500)
     },
@@ -476,6 +469,7 @@ export default {
                         text: '正在登录.....',
                         spinner: 'el-icon-loading'
                     });
+                    console.log(this.loginid);
                     this.login({
                         name: this.loginForm.name,
                         password: this.loginForm.password,
