@@ -4,23 +4,26 @@
             <div class="handle-box">
                 <el-row>
                     <el-col :span="24">
-                        <el-select v-model="state_mark" placeholder="角色状态" class="handle-select mr10">
-                            <el-option label="全部" value=""></el-option>
-                            <el-option label="启用" value="0"></el-option>
-                            <el-option label="停用" value="1"></el-option>
-                        </el-select>
-                        <el-input v-model="select_word" placeholder="角色编码/名称" prefix-icon="el-icon-search"
-                                  class="handle-input mr10"></el-input>
-                        <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                        <div style="float: left;margin-right: 10px;width: 8%">
+                            <el-select v-model="state_mark" placeholder="角色状态"  style="margin-top: 0px;width: 100%">
+                                <el-option label="全部" value=""></el-option>
+                                <el-option label="启用" value="0"></el-option>
+                                <el-option label="停用" value="1"></el-option>
+                            </el-select>
+                        </div>
 
-                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10"
-                                   @click="PageAdd">新增
+                        <el-input v-model="select_word" placeholder="角色编码/名称" prefix-icon="el-icon-search" size="small"
+                                  class="handle-input mr10"></el-input>
+                        <el-button type="primary" icon="el-icon-search" @click="search" size="small">搜索</el-button>
+
+                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageDelete">删除
                         </el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10"
+                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" style="float: right"
                                    @click="PageEdit">修改
                         </el-button>
-                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10"
-                                   @click="PageDelete">删除
+                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageAdd">新增
                         </el-button>
                     </el-col>
                 </el-row>
@@ -418,6 +421,7 @@
                             orgid: "0",
                             infoData: {Role:this.form, RoleAuthorizes:this.$refs.tree.getCheckedNodes()}
                         };
+                        console.log(this.$refs.tree.getCheckedNodes());
                         console.log(this.form);
                         if (this.dialogState == "add") {
                             this.$axios

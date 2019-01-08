@@ -16,9 +16,9 @@
                 </li>
             </ul>
             <ul class="flexPublic handle">
-                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-mail" @click="printLodop" size="small" plain>打印</li ></a>
-                <a><li style='margin:0 0 0px 20px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
-                <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
+                <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printLodop" size="small" plain>打印</li ></a>
+                <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
+                <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
             </ul>
         </div>
         <div class="formData" ref="printFrom">
@@ -80,12 +80,12 @@
                         align:'center'
                     },
                     {
-                        text: "本月数",
+                        text: "本月数(元)",
                         value: "StartSum",
                         align:'right'
                     },
                     {
-                        text: "本年累计数",
+                        text: "本年累计数(元)",
                         value: "EndSum",
                         align:'right'
                     }
@@ -168,8 +168,6 @@
                         this.$message.error(res.Msg);
                         return
                     }
-                    res.Data=this.changeData(res.Data);
-
                     var data=res.Data;
                     var indata=data.filter((value,key,arr) => {
                         //1-资产,2-负债,3-净资产,4-收入,5-支出
@@ -202,7 +200,8 @@
                     })
 
                     var newdata=new Array();
-
+                    indata=this.changeData(indata);
+                    outdata=this.changeData(outdata);
                     this.inMoney=newdata.concat([{
                         KCode:'一、收入',
                         KName:'',

@@ -4,7 +4,7 @@
             <ul class="flexPublic">
                 <li @click="addFinished(true)">保存</li>
                 <li @click="addFinished(false)">取消</li>
-                <li><a href="">附件?</a></li>
+                <!--<li><a href="">附件?</a></li>-->
             </ul>
         </div>
         <div class="addFormContainer">

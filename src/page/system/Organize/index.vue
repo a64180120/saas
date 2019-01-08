@@ -13,19 +13,19 @@
                                 <li v-show="!isedit" @click="edit">修改</li>
                             </a>
                             <a>
-                                <li v-show="isedit" @click="save" style='margin:0 0 0px 20px;'>保存</li>
+                                <li v-show="isedit" @click="save" style='margin:0 0 0px 10px;'>保存</li>
                             </a>
                             <a>
-                                <li @click="Backups" style='margin:0 0 0px 20px;'>备份</li>
+                                <li @click="Backups" style='margin:0 0 0px 10px;'>备份</li>
                             </a>
                             <a>
-                                <li style='margin:0 0 0px 20px;'>恢复</li>
+                                <li style='margin:0 0 0px 10px;'>恢复</li>
                             </a>
+                            <!--<a>-->
+                                <!--<li  @click="testFile" style='margin:0 0 0px 10px;'>附件</li>-->
+                            <!--</a>-->
                             <a>
-                                <li  @click="testFile" style='margin:0 0 0px 20px;'>附件</li>
-                            </a>
-                            <a>
-                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 20px;'></li>
+                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;'></li>
                             </a>
                             <!--<a @click="freshPage"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>-->
                         </ul>
@@ -54,14 +54,77 @@
                                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                 </el-upload>
                             </el-form-item>
-                            <el-form-item label="单位地址：">
+                            <el-form-item label="单位地址：" prop="Address">
+                                <div style="width: 20%;float: left">
+                                    <el-select v-model="orgForm.Province" placeholder="" class="pic-input-area" @change="changeProvince">
+                                        <el-option
+                                            v-for="item in Provinces"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                            {{item.label}}
+                                        </el-option>
+                                    </el-select>
+                                    <span style="float: right;text-align: center">省&nbsp&nbsp&nbsp&nbsp</span>
+                                </div>
+                                <div style="width: 20%;float: left">
+                                    <el-select v-model="orgForm.City" placeholder="" class="pic-input-area" @change="changeCity">
+                                        <el-option
+                                            v-for="item in Citys"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                            {{item.label}}
+                                        </el-option>
+                                    </el-select>
+                                    <span style="float: right">市&nbsp&nbsp&nbsp&nbsp</span>
+                                </div>
+                                <div style="width: 20%;float: left">
+                                    <el-select v-model="orgForm.County" placeholder="" class="pic-input-area" @change="changeCounty">
+                                        <el-option
+                                            v-for="item in Countys"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                            {{item.label}}
+                                        </el-option>
+                                    </el-select>
+                                    <span style="float: right">区(县)&nbsp</span>
+                                </div>
+                                <div style="width: 20%;float: left">
+                                    <el-select v-model="orgForm.Street" placeholder="" class="pic-input-area" @change="changeStreet">
+                                        <el-option
+                                            v-for="item in Streets"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                            {{item.label}}
+                                        </el-option>
+                                    </el-select>
+                                    <span style="float: right">街道&nbsp&nbsp</span>
+                                </div>
+                                <!--<el-input v-model="orgForm.Address" class="pic-input"></el-input>-->
+                            </el-form-item>
+                            <el-form-item>
                                 <el-input v-model="orgForm.Address" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="联系电话：">
                                 <el-input v-model="orgForm.TelePhone" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="隶属工会：" prop="ParentName">
-                                <el-input v-model="orgForm.ParentName" class="pic-input"></el-input>
+                                <div style="width: 100%; height: 100%">
+                                    <el-select v-model="orgForm.Parent" placeholder="" class="pic-input" @change="changeParentOrg">
+                                        <el-option
+                                            v-for="item in ParentLists"
+                                            :key="item.PhId"
+                                            :label="item.OrgName"
+                                            :value="item">
+                                            {{item.OrgName}}
+                                        </el-option>
+                                    </el-select>
+                                    <!--<el-input v-model="orgForm.ParentName" class="pic-input"></el-input>-->
+                                </div>
+
                             </el-form-item>
                             <el-form-item label="财务账户账号：" prop="FinanceAccount">
                                 <el-input v-model="orgForm.FinanceAccount" class="pic-input"></el-input>
@@ -72,9 +135,9 @@
                             <el-form-item label="开户行号：" prop="BankAccount">
                                 <el-input v-model="orgForm.BankAccount" class="pic-input"></el-input>
                             </el-form-item>
-                            <el-form-item label="会计制度：">
-                                <el-input v-model="orgForm.AccountSystem" class="pic-input"></el-input>
-                            </el-form-item>
+                            <!--<el-form-item label="会计制度：">-->
+                                <!--<el-input v-model="orgForm.AccountSystem" class="pic-input"></el-input>-->
+                            <!--</el-form-item>-->
                             <!--<el-form-item label="启用日期：">-->
                             <!--<el-date-picker-->
                             <!--v-model="orgForm.EnableTime"-->
@@ -185,7 +248,10 @@
                             </li>
                         </ul>
                     </div>
+                    <div v-if='!isedit' class="inf-change-rec">
+                    </div>
                 </el-main>
+
             </el-container>
             <!-- 附件弹出框 -->
             <el-dialog title="选择附件" :visible.sync="fileVisible" width="40%">
@@ -193,6 +259,7 @@
                                 @removeimg="removeimg"></picture-upload>
             </el-dialog>
         </div>
+
         <!--<div class="footInfo " >-->
             <!--<router-link to="">服务协议</router-link>-->
             <!--<router-link to="">运营规范</router-link>-->
@@ -213,6 +280,8 @@
         name: 'demo',
         data() {
             return {
+                beforeChange:{},
+                afterChange:{},
                 isedit: false,
                 loading: false,
                 fileVisible: false,
@@ -230,6 +299,11 @@
                         RelPhid: ''
                     }
                 ],
+                Provinces:[],
+                Citys:[],
+                Countys:[],
+                Streets:[],
+                ParentLists:[],
                 orgForm: {
                     // PhId: 0,
                     OrgName: '',
@@ -237,8 +311,15 @@
                     EnterpriseAttachment: '',
                     Address: '',
                     TelePhone: '',
-                    ParentName: '',
                     FinanceAccount:'',
+                    Province:'',
+                    City:'',
+                    County:'',
+                    Street:'',
+                    Parent:'',
+                    ParentId:'',
+                    ParentName:'',
+                    ParentEnCode:'',
                     BankName:'',
                     BankAccount:'',
                     AccountSystem: '',
@@ -251,6 +332,9 @@
                     Integrity: ''
                 },
                 rules: {
+                    Address: [
+                        {required: true, message: '请输入详细地址信息', trigger: 'blur'},
+                    ],
                     OrgName: [
                         {required: true, message: '请输入工会名称', trigger: 'blur'},
                     ],
@@ -278,6 +362,10 @@
         },
         mounted() {
             this.getData();
+            // this.selectArea(0, 0);
+            // this.selectArea(this.orgForm.Province, 1);
+            // this.selectArea(this.orgForm.City, 2);
+            // this.selectArea(this.orgForm.County, 3);
         },
         computed: {
             ...mapState({
@@ -302,7 +390,106 @@
             edit() {
                 this.editVisible = true;
                 this.isedit = true;
-                this.orgForm.Address = '';
+                this.getData();
+                this.selectArea(0, 0);
+                this.selectArea(this.orgForm.Province, 1);
+                this.selectArea(this.orgForm.City, 2);
+                this.selectArea(this.orgForm.County, 3);
+                this.getParentByArea(4, this.orgForm.Street);
+                this.getAdminOrganize(this.orgForm.ParentId);
+            },
+            //改变省后的点击事件
+            changeProvince(){
+                console.log(this.orgForm.Province);
+                this.Streets = [];
+                this.Countys = [];
+                this.Citys = [];
+                this.selectArea(this.orgForm.Province, 1);
+            },
+            //改变城市后的点击事件
+            changeCity(){
+                this.Streets = [];
+                this.Countys = [];
+                this.selectArea(this.orgForm.City, 2);
+            },
+            //改变区后的点击事件
+            changeCounty(){
+                this.Streets = [];
+                this.selectArea(this.orgForm.County, 3);
+            },
+            //改变街道后的点击事件
+            changeStreet(){
+                this.getParentByArea(4, this.orgForm.Street);
+                // this.orgForm.Parent = '';
+            },
+            //查询地区
+            selectArea(Area,i){
+                var data = {
+                    uid: "0",
+                    orgid: "0",
+                    id: Area
+                }
+                this.$axios.get('/SysArea/GetAreaList', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        if(i == 0){
+                            this.Provinces = res;
+                        }else if(i == 1){
+                            this.Citys = res;
+                        }else if(i == 2){
+                            this.Countys = res;
+                        }else if(i == 3){
+                            this.Streets = res;
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
+            //修改隶属工会的点击事件
+            changeParentOrg(){
+                console.log(this.orgForm.Parent);
+                this.orgForm.ParentId = this.orgForm.Parent.PhId;
+                this.orgForm.ParentEnCode = this.orgForm.Parent.EnCode;
+                this.orgForm.ParentName = this.orgForm.Parent.OrgName;
+            },
+            //根据地址信息获取父级机关工会
+            getParentByArea(i, area){
+                var data = {
+                    rank: i,
+                    areaCode: area
+                }
+                this.$axios.get('/SysAdminOrganize/GetParentAdminOrganizeByArea', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        this.ParentLists = res;
+                        if(res.length > 0){
+                            this.orgForm.Parent = res[0];
+                            this.orgForm.ParentId = res[0].PhId;
+                            this.orgForm.ParentEnCode = res[0].EnCode;
+                            this.orgForm.ParentName = res[0].OrgName;
+                        }else{
+                            this.orgForm.Parent = '';
+                            this.orgForm.ParentId = '';
+                            this.orgForm.ParentEnCode = '';
+                            this.orgForm.ParentName = '';
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
+            getAdminOrganize(phid){
+                var data = {
+                    id: phid
+                };
+                this.$axios.get('/SysAdminOrganize/GetSysAdminOrganize', {params: data})
+                    .then(res => {
+                        this.orgForm.Parent = res;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             },
             //刷新页面
             freshPage() {
@@ -316,19 +503,21 @@
                 var vm = this;
                 this.loading = true;
                 console.log(this.orgForm.Director);
-                if(this.orgForm.OrgName ==null|| this.orgForm.EnterpriseCode == null || this.orgForm.ParentName == null || this.orgForm.Chairman == null || this.orgForm.Director == null
-                    || this.orgForm.OrgName ==''|| this.orgForm.EnterpriseCode == '' || this.orgForm.ParentName == '' || this.orgForm.Chairman == '' || this.orgForm.Director == '') {
+                if(this.orgForm.OrgName ==null|| this.orgForm.EnterpriseCode == null || this.orgForm.Parent == null || this.orgForm.Chairman == null || this.orgForm.Director == null
+                    || this.orgForm.OrgName ==''|| this.orgForm.EnterpriseCode == '' || this.orgForm.Parent == '' || this.orgForm.Chairman == '' || this.orgForm.Director == ''
+                    || this.orgForm.Province ==null|| this.orgForm.City == null  || this.orgForm.County == null || this.orgForm.Street == null || this.orgForm.Address == null
+                    || this.orgForm.Province ==''|| this.orgForm.City == '' || this.orgForm.County == '' || this.orgForm.Street == '' || this.orgForm.Address == '' ) {
                     this.$message.error('保存失败,请将必填信息填写完整!');
                     this.getData();
                     return;
                 }
-                this.orgForm.Integrity = '60';
+                this.orgForm.Integrity = '80';
                 if(this.orgForm.EnterpriseAttachment != null && this.orgForm.EnterpriseAttachment != ''){
                     this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 5;
                 }
-                if(this.orgForm.Address != null && this.orgForm.Address != ''){
-                    this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 20;
-                }
+                // if(this.orgForm.Address != null && this.orgForm.Address != ''){
+                //     this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 20;
+                // }
                 if(this.orgForm.TelePhone != null && this.orgForm.TelePhone != ''){
                     this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 10;
                 }
@@ -336,6 +525,7 @@
                     this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 5;
                 }
                 console.log(this.orgForm.Integrity);
+                this.afterChange = this.orgForm;
                 //提交asiox
                 SysOrgUpdate(vm, {
                     otype: 'edit',
@@ -361,33 +551,58 @@
                     this.loading = false;
                     this.$message.error('保存组织错误');
                 })
+                console.log(this.afterChange);
             },
             //获取组织信息
             getData() {
                 var vm = this;
                 this.loading = true;
-
-                AllAreaSysOrgModel(vm, {
-                    id: this.orgid,
-                    uid: this.userid,
-                    orgid: this.orgid
-                }).then(res => {
-                    this.loading = false;
-                    if (res.Status === "error") {
-                        this.$message({showClose: true, message: res.Msg, type: 'error'});
-                        return;
-                    }
-                    this.orgForm = res;
-
-                }).catch(error => {
-                    console.log(error);
-                    this.loading = false;
-                    this.$message({
-                        showClose: true,
-                        message: '组织信息获取错误',
-                        type: 'error'
+                if(this.isedit){
+                    SysOrgModel(vm, {
+                        id: this.orgid,
+                        uid: this.userid,
+                        orgid: this.orgid
+                    }).then(res => {
+                        this.loading = false;
+                        if (res.Status === "error") {
+                            this.$message({showClose: true, message: res.Msg, type: 'error'});
+                            return;
+                        }
+                        this.orgForm = res;
+                        this.beforeChange = res;
+                    }).catch(error => {
+                        console.log(error);
+                        this.loading = false;
+                        this.$message({
+                            showClose: true,
+                            message: '组织信息获取错误',
+                            type: 'error'
+                        })
                     })
-                })
+
+                }else{
+                    AllAreaSysOrgModel(vm, {
+                        id: this.orgid,
+                        uid: this.userid,
+                        orgid: this.orgid
+                    }).then(res => {
+                        this.loading = false;
+                        if (res.Status === "error") {
+                            this.$message({showClose: true, message: res.Msg, type: 'error'});
+                            return;
+                        }
+                        this.orgForm = res;
+
+                    }).catch(error => {
+                        console.log(error);
+                        this.loading = false;
+                        this.$message({
+                            showClose: true,
+                            message: '组织信息获取错误',
+                            type: 'error'
+                        })
+                    })
+                }
             },
             //备份
             Backups() {
@@ -495,6 +710,17 @@
 </script>
 <style lang="scss" scoped>
 
+    .inf-change-rec{
+        position: absolute;
+        bottom: 200px;
+        border-top: 40px solid transparent;
+        border-bottom: 40px solid transparent;
+        border-right: 60px solid #00B8EE;
+        height: 300px;
+        width: 50px;
+        line-height: 500px;
+        right: 0;
+    }
     .choose {
         background: #fff;
         padding: 5px;
@@ -544,12 +770,20 @@
         text-align: center;
         padding-bottom: 10px;
     }
-
+    .el-input--suffix .el-input__inner {
+        height: 100%;
+        margin: 0;
+        padding-right: 0;
+    }
     .pic-input {
         width: 80%;
         float: left;
     }
-
+    .pic-input-area{
+        width: 70%;
+        float: left;
+        height: 100%;
+    }
     .orgedit-linehight {
         height: 40px;
         border: 1px solid #d9d9d9;
@@ -584,7 +818,12 @@
         right: 25px;
         top: -20px;
     }
-
+    .el-input--suffix .el-input__inner {
+        height: 100%;
+        margin: 0;
+        padding-right: 0;
+        width: 100%;
+    }
     .avatar-uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;

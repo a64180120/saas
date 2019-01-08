@@ -1,5 +1,5 @@
 
-/** 
+/**
  * 说明:科目列表
  * object 当前对象 vue
  * param 参数集合
@@ -11,7 +11,7 @@ export function SubjectList(object,param) {
         method: 'post',
         data: param
     }).then(res => {
-        resolve(res)
+        resolve(res.Data)
     }).catch(error => {
         //错误
         reject(error);
@@ -20,7 +20,7 @@ export function SubjectList(object,param) {
 }
 
 
-/** 
+/**
  * 说明:科目列表
  * object 当前对象 vue
  * param 参数集合
@@ -40,7 +40,7 @@ export function SubjectList2(object,param) {
     });
   }
 
-/** 
+/**
  * 说明: 新增科目
  * object 当前对象 vue
  * param 参数集合
@@ -53,7 +53,7 @@ export function SubjectAdd(object,param) {
             data: param,
         }).then(res => {
             //正确
-            resolve(res);               
+            resolve(res);
         }).catch(error => {
             //错误
             reject(error);
@@ -61,7 +61,7 @@ export function SubjectAdd(object,param) {
     });
 }
 
-/** 
+/**
  * 说明: 修改科目
  * object 当前对象 vue
  * param 参数集合
@@ -74,7 +74,7 @@ export function SubjectUpdate(object,param) {
             data: param,
         }).then(res => {
             //正确
-            resolve(res);               
+            resolve(res);
         }).catch(error => {
             //错误
             reject(error);
@@ -82,7 +82,7 @@ export function SubjectUpdate(object,param) {
     });
 }
 
-/** 
+/**
  * 说明:删除科目
  * object 当前对象 vue
  * param 参数集合
@@ -95,7 +95,7 @@ export function SubjectDelete(object,param) {
             data: param,
         }).then(res => {
             //正确
-            resolve(res);               
+            resolve(res);
         }).catch(error => {
             //错误
             reject(error);

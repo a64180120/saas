@@ -13,7 +13,7 @@
       </ul>
       <div class="flexPublic">
         <div class="seacherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="科目编码/名称"></div>
-        <div @click="unionSearch" class="seacherBtn">搜索</div>
+        <div @click="unionSearch" class="seacherBtn" >搜索</div>
       </div>
       <ul class="flexPublic handle">
         <a @click.prevent="routerTo('add')"><li>增加</li></a>
@@ -72,7 +72,7 @@
 <script>
     import newadd from './newAdd'
     import { mapState, mapActions } from 'vuex'
-    
+
     export default {
       data(){
         return {

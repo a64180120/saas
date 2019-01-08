@@ -1,7 +1,9 @@
 <template>
     <div class="box">
         <div class="box1">
-            <div class="Time" @click="showTogg">年度</div>
+            <div class="Time" @click="showTogg">
+                {{showtype=='doubleTime'?'会计期':'年度'}}
+            </div>
             <div class="Time_name">{{choosedYear}}</div>
             <!--侧边时间选择器  月-->
             <div class="vertical dragscroll"  v-bind:style="{'display':(showtype=='doubleTime'||showtype=='singleTime'?'block':'none')}" >
@@ -73,7 +75,7 @@
                     </div>
                     <ul id="Month">
                         <template v-for="n in 12">
-                            <li :class="{'selectMonth':n==choosedMonthEnd,'uncatchMont':n<choosedMonth}"
+                            <li :class="{'selectMonth':n==choosedMonthEnd,'uncatchMont':n>currentmonth&&choosedYear==currentyear||n<choosedMonth}"
                                 @click="(n>=choosedMonth)?chosedataS(n,2):''"
                             >{{n}}月</li>
                         </template>
@@ -232,11 +234,14 @@
             checkOutSel(val){
                 this.monthsSelCss=val;
             },
-            /*月份点击事件*/
+            /*侧边月份点击事件*/
             chosedata:function(res){
 
                 let time=res.target.attributes.date.value;
                 let timeLis=time.split('-');
+                if(timeLis[0]==this.currentyear&&timeLis[1]>this.currentmonth){
+                    return
+                };
                 this.choosedYear=timeLis[0];
                 this.choosedMonth = timeLis[1];
                 this.choosedMonthEnd = timeLis[1];
@@ -248,13 +253,21 @@
                 }
                 this.$emit('item-click',data)
             },
-            /*月份点击事件*/
+            /*弹窗月份点击事件*/
             chosedataS:function(n,level){
                 if(level==1){
-                    this.choosedMonth = n ;
-                    this.choosedMonthEnd = this.choosedMonthEnd>=n?this.choosedMonthEnd:n;
+                    if(this.choosedYear==this.currentyear&&n>this.currentmonth){
+                        return
+                    }else{
+                        this.choosedMonth = n ;
+                        this.choosedMonthEnd = this.choosedMonthEnd>=n?this.choosedMonthEnd:n;
+                    }
                 }else{
-                    this.choosedMonthEnd = n;
+                    if(this.choosedYear==this.currentyear&&n>this.currentmonth){
+                        return
+                    }else{
+                        this.choosedMonthEnd = n;
+                    }
                 }
                 let data={
                     'choosedYear':this.choosedYear,
@@ -400,10 +413,20 @@
         text-align: center;
         line-height: 40px;
         color: #45c0f7;
+        cursor: pointer;
+    }
+    .list div ul .Font_color{
+        cursor: not-allowed;
     }
     .list div ul li:hover{
         background:#00B8EE;
         color:#fff;
+    }
+    .list div ul .Font_color:hover{
+        background-color: #fff;
+        color:#CCC !important;
+        border:#ececec 1px solid !important;
+        box-shadow: 0px 2px 2px #e0e0e0 !important;
     }
     .list div ul li.selectMonth{
         background:#00B8EE;
@@ -443,6 +466,7 @@
         line-height: 30px;
         color: #ffffff;
         background:#45c0f7;
+        cursor: pointer;
     }
     .Popup{
         width: auto;
@@ -518,6 +542,7 @@
         float: left !important;
         margin-left: 3%;
         margin-top: 6.5%;
+        cursor: pointer;
     }
     .date ul li:hover{
         background:#09F;
@@ -562,6 +587,7 @@
         color:#CCC !important;
         border:#ececec 1px solid !important;
         box-shadow: 0px 2px 2px #e0e0e0 !important;
+        cursor: default;
     }
     .anniu{
         width: 216px;

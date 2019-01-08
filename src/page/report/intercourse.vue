@@ -7,11 +7,11 @@
                         <ul class="flexPublic">
                         </ul>
                         <ul class="flexPublic handle">
-                            <a><li style='margin:0 0 0px 20px;' @click="aoc(0)">新增</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' @click="aoc(1)">修改</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
+                            <a><li style='margin:0 0 0px 10px;' @click="aoc(0)">新增</li ></a>
+                            <a><li style='margin:0 0 0px 10px;' @click="aoc(1)">修改</li ></a>
+                            <a><li style='margin:0 0 0px 10px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                            <a><li style='margin:0 0 0px 10px;' @click="printContent">打印</li ></a>
+                            <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
                         </ul>
                     </div>
                         <div class="formData" ref="printFrom">
@@ -82,8 +82,8 @@
                         </div>
                         <div class="formData"  style="overflow-y: auto;height: 420px;overflow-x: hidden; ">
                             <ul>
-                                <li style="width:80%">具体内容</li>
-                                <li style="width:20%">金额(元)</li>
+                                <li style="width:60%">具体内容</li>
+                                <li style="width:40%">金额(元)</li>
                             </ul>
                             <!--新增-->
                             <template v-if="aocType.choose==0">
@@ -94,39 +94,54 @@
                                     </div>
                                     <ul class="formDataItems flexPublic" @mouseenter="showIcon"><!-- @mouseleave="hideIcon"-->
 
-                                        <li style="width:80%"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" data-type="0" :data-index="index" :value="item.content" @change="newChildAdd"></li>
-                                        <li style="width:20%" class="align-right"><input :disabled="item.content=='合计'" :class="{bolder:item.content=='合计'}" :value="item.money" data-type="1" :data-index="index" @change="newChildAdd"></li>
+                                        <li style="width:60%"><input data-type="0" :data-index="index" :value="item.content" @change="newChildAdd"></li>
+                                        <li style="width:40%" class="align-right"><input  :value="item.money" data-type="1" :data-index="index" @change="newChildAdd"></li>
                                     </ul>
                                 </template>
-                                <ul class="formDataItems flexPublic">
-                                    <li style="width:80%"><input class="bolder"value="合计"></li>
-                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="addCountMoney"></li>
+                                <ul class="formDataItems flexPublic" style="height: 80px;">
+                                    <li style="width:60%;height: 80px;line-height: 80px;font-size: 20px;font-weight: 600;padding-left: 0;text-align: center">合计</li>
+                                    <li style="width:40%;height: 80px;font-size: 15px;line-height: 40px" class="align-right">
+                                        <div>
+                                             {{addCountMoney | NumtoCHN}}
+                                        </div>
+                                        <div style="color: red;font-size: 13px;">
+                                           系统总计： {{addCountMoney | NumFormat}}
+                                        </div>
+                                    </li>
                                 </ul>
                             </template>
 
                             <!--修改-->
                             <template v-else>
                                 <template  v-for="(item,index) in changeListFix">
-                                    <div class="delArea areat" style="top: 13px">
+                                    <div class="delArea areat" >
                                         <i @click="delChangeListFix(index)" >—</i>
-                                        <!--<i class="el-icon-lx-add" @click="addChangeListFix(index)"></i>-->
+                                        <i class="el-icon-lx-add" @click="addChangeListFix(index)"></i>
                                     </div>
-                                    <ul class="formDataItems flexPublic" @mouseenter="showIconT">
-                                         <li style="width:80%"><input :disabled="item.Content=='合计'" :class="{bolder:item.Content=='合计'}" :value="item.Content" data-type="0" :data-index="index" @change="newChildFix"></li>
-                                        <li style="width:20%" class="align-right"><input :disabled="item.Content=='合计'" :class="{bolder:item.Content=='合计'}" :value="item.AccountSum" data-type="1" :data-index="index"  @change="newChildFix"></li>
+                                    <ul class="formDataItems flexPublic" @mouseenter="showIconT" style="border-color: #00B8EE">
+                                         <li style="width:60%"><input :disabled="item.Content=='合计'" :class="{bolder:item.Content=='合计'}" :value="item.Content" data-type="0" :data-index="index" @change="newChildFix"></li>
+                                        <li style="width:40%" class="align-right"><input :disabled="item.Content=='合计'" :class="{bolder:item.Content=='合计'}" :value="item.AccountSum" data-type="1" :data-index="index"  @change="newChildFix"></li>
                                     </ul>
                                 </template>
                                 <template v-if="changeListFix.length<8">
-                                    <template v-for="n in (8-changeListFix.length)">
+                                    <template v-for="n in (7-changeListFix.length)">
                                         <ul class="formDataItems flexPublic">
-                                            <li  style="width:80%"></li>
-                                            <li style="width:20%"></li>
+                                            <li  style="width:60%"></li>
+                                            <li style="width:40%"></li>
                                         </ul>
                                     </template>
                                 </template>
-                                <ul class="formDataItems flexPublic">
-                                    <li style="width:80%"><input class="bolder"value="合计"></li>
-                                    <li style="width:20%" class="align-right"><input disabled class="bolder" :value="fixCountMoney"></li>
+                                <ul class="formDataItems flexPublic" style="height: 80px;">
+                                    <li style="width:60%;height: 80px;line-height: 80px;font-size: 20px;font-weight: 600;padding-left: 0;text-align: center">合计</li>
+                                    <li style="width:40%;height: 80px;font-size: 15px;line-height: 40px" class="align-right">
+                                        <div>
+                                            {{fixCountMoney | NumtoCHN}}
+                                        </div>
+                                        <div style="color: red;font-size: 13px;">
+                                            系统总计： {{fixCountMoney | NumFormat}}
+                                        </div>
+
+                                    </li>
                                 </ul>
                             </template>
 
@@ -189,18 +204,20 @@
                 this.getCodeData();
             },
             chooseSubject:function(){
-                console.log(this.chooseSubject);
                 this.changeList=[];
                 this.addBlock();
                 this.changeListFix=[];
-                this.getCodeDetailData();
+                if(this.aocType.choose==1){
+                    this.getCodeDetailData(true);
+                }
+
             }
         },
         methods:{
             //页面加载，默认添加表格
             addBlock:function (){
 
-                for(let i=0;i<8;i++){
+                for(let i=0;i<7;i++){
                     let c={'content':'','money':''};
                     this.changeList[i]=c//默认添加的空白表格
                 }
@@ -278,11 +295,10 @@
                     {params:data}
                 ).then(res=>{
                     this.loading=false;
-                    console.log(res);
                     this.subjectList=res.Record;
                     this.chooseSubject=res.Record[0];
                     if(type==1){
-                        this.getCodeDetailData();
+                        this.getCodeDetailData(true);
                     }
                 }).catch(err=>{
                     this.loading=false;
@@ -290,41 +306,47 @@
                 })
             },
             //根据科目类型获取明细列表
-            getCodeDetailData:function(){
-                this.changeListFix='';
-                let param='';
-                if(this.date1.choosedYear==undefined){
-                    let currentYear = new Date();
-                    let currentyear=currentYear.getFullYear(currentYear);
-                    let currentMonth=currentYear.getMonth()+1;
-                    this.date1.choosedYear=currentyear;
-                    this.date1.choosedMonth=currentMonth;
-                    param=currentyear;
-                }else{
-                    param=this.date1.choosedYear;
-                }
-                let data={
-                    "orgid":this.orgid,
-                    "Year":  param,
-                    'Type': this.chooseSubject.KType,
-                    'KCode':this.chooseSubject.KCode
-                }
-                this.loading=true;
-                this.$axios.get(
-                    'DealingsMst/GetDealingDtlByOrgidUyearTypeKcode',
-                    {params:data}
-                ).then(res=>{
-                    this.loading=false;
-                    console.log(res);
-                    this.changeListFix=res.Record;
-                    this.fixCountMoney=0;
-                    for(var i in res.Record){
-                        this.fixCountMoney+=res.Record[i].AccountSum;
+            getCodeDetailData:function(type){
+                if(type){
+                    this.changeListFix='';
+                    let param='';
+                    if(this.date1.choosedYear==undefined){
+                        let currentYear = new Date();
+                        let currentyear=currentYear.getFullYear(currentYear);
+                        let currentMonth=currentYear.getMonth()+1;
+                        this.date1.choosedYear=currentyear;
+                        this.date1.choosedMonth=currentMonth;
+                        param=currentyear;
+                    }else{
+                        param=this.date1.choosedYear;
                     }
-                }).catch(err=>{
-                    this.loading=false;
-                    this.$message(err);
-                })
+                    let data={
+                        "orgid":this.orgid,
+                        "Year":  param,
+                        'Type': this.chooseSubject.KType,
+                        'KCode':this.chooseSubject.KCode
+                    }
+                    this.loading=true;
+                    this.$axios.get(
+                        'DealingsMst/GetDealingDtlByOrgidUyearTypeKcode',
+                        {params:data}
+                    ).then(res=>{
+                        this.loading=false;
+                        console.log(res);
+                        if(res.Record.length==0){
+                            this.$message('当前科目不存在可修改内容，清先添加');
+                        }
+                        this.changeListFix=res.Record;
+
+                        this.fixCountMoney=0;
+                        for(var i in res.Record){
+                            this.fixCountMoney+=res.Record[i].AccountSum;
+                        }
+                    }).catch(err=>{
+                        this.loading=false;
+                        this.$message(err);
+                    })
+                }
             },
             /*
             * 保存信息，
@@ -334,7 +356,6 @@
             * 接口：同一个  DealingsMst/PostSaveDealings
             * */
             saveList:function(type){
-                console.log(this.chooseSubject);
                let saveList= [{
                    'OptionType':type,
                    'PhId':this.chooseSubject.PhId_DealingMst,
@@ -362,7 +383,12 @@
                        }
                    };
                }else{
-                   console.log(222222222222);
+                   for(var i in this.changeListFix){
+                       if(this.changeListFix[i].Content==''||this.changeListFix.AccountSum==''){
+                           this.$message({showClose: true, message:'存在未填写的内容，请补全信息，或删除不必要的数据',type: 'error' });
+                           return
+                       }
+                   }
                    dtls=this.changeListFix;
                    /*for(var i in this.changeListFix){
                        let dtl={
@@ -382,7 +408,6 @@
                     'DealingsMst/PostSaveDealings',
                     data
                 ).then(res=>{
-                    console.log(res);
                     this.$message(res.Msg,'success');
                     if(res.Status=='success'){
                         this.aocType.show=false;
@@ -402,9 +427,7 @@
             * index:修改的哪个数组
             * */
             newChildAdd:function(val){
-                console.log(val);
                 let type=val.target.dataset.type,index=val.target.dataset.index,value=val.target.value;
-                console.log(type+'===='+index+'===='+value);
                 if(type==0){
                     this.changeList[index].content=value;
                 }else{
@@ -414,13 +437,11 @@
                     }
                     this.changeList[index].money=value;
                 }
-                console.log(this.changeList);
             },
             /*
             *修改 input输入监听
             * */
             newChildFix:function(val){
-                console.log(val);
                 let type=val.target.dataset.type,index=val.target.dataset.index,value=val.target.value;
                 if(type==0){
                     this.changeListFix[index].Content=value;
@@ -432,18 +453,14 @@
             //显示隐藏的小图标
             showIcon:function(val){
                 let list=document.getElementsByClassName('areaf');
-                console.log(list);
                 for(var i=0;i<list.length;i++){
-                    console.log(list[i]);
                     list[i].style.display='none';
                 }
                 val.target.previousElementSibling.style.display='block';
             },
             showIconT:function(val){
                 let list=document.getElementsByClassName('areat');
-                console.log(list);
                 for(var i=0;i<list.length;i++){
-                    console.log(list[i]);
                     list[i].style.display='none';
                 }
                 val.target.previousElementSibling.style.display='block';
@@ -452,23 +469,33 @@
             hideIcon:function(val){
                 val.target.previousElementSibling.style.display='none';
             },
-            //删除行
+            //新增删除行
             delChangeList:function(index){
-                console.log(index);
                 this.changeList.splice(index,1);
-                if(this.changeList.length<8){
+                if(this.changeList.length<7){
                     this.changeList.push({'content':'','money':''});
                 }
             },
-            //删除数据
-            delChangeListFix:function(index){
-                console.log(index);
-                this.changeListFix.splice(index,1);
-            },
-            //添加行
+            //新增添加行
             addChangeList:function(index){
                 this.changeList.push({'content':'','money':''});
             },
+            //修改删除数据
+            delChangeListFix:function(index){
+                this.changeListFix.splice(index,1);
+            },
+            //修改增加行
+            addChangeListFix:function(index){
+                console.log(index);
+                console.log(this.changeListFix[0]);
+                let addList=JSON.stringify( this.changeListFix[0]);
+                addList=JSON.parse(addList);
+                addList.Content='';
+                addList.AccountSum='';
+                console.log(addList);
+                this.changeListFix.push(addList);
+            },
+
             //刷新
             refresh:function(){
                 this.getData();
@@ -488,14 +515,14 @@
                 console.log(this.chooseSubject);
                 let param = {'uid':this.userid,
                     'orgid':this.orgid,
-                    'Title': this.chooseSubject.KName};
+                    'Year': this.date1.choosedYear};
 
                 //let baseheader = httpConfig.header;
                 let base = httpConfig.getAxiosBaseConfig();
 
                 //下载Excel
                 this.downloadLoading = true
-                this.$axios.get('/DealingsMst/GetDetailAccountExcel',{params:param}).then(res => {
+                this.$axios.get('DealingsMst/GetDealingsExcel',{params:param}).then(res => {
                     window.location.href = base.baseURL + "/File/GetExportFile?filePath=" + res.path + "&fileName=" + res.filename;
                     this.downloadLoading = false
                 }).catch(err => {
@@ -576,8 +603,8 @@
         line-height: 30px;
         padding-left: 10px;
         color: #6f6f6f;
-        border: 1px solid #cccccc;
-        border-radius: 4px;
+        border: none;
+        border-bottom: 1px solid #cccccc;
     }
     .cover{
         position: fixed;
@@ -633,8 +660,8 @@
     .cover .selectarea .btnArea div:first-child{
         width: 90px;
         height: 30px;
-        border: 1px solid #3e8cbc;
-        color: #3e8cbc;
+        border: 1px solid #00B8EE;
+        color: #00B8EE;
         display: inline-block;
         line-height: 30px;
         text-align:center ;
@@ -644,8 +671,8 @@
     .cover .selectarea .btnArea div:last-child{
         width: 90px;
         height: 30px;
-        border: 1px solid #3e8cbc;
-        background-color: #3e8cbc;
+        border: 1px solid #00B8EE;
+        background-color: #00B8EE;
         color: #fff;
         display: inline-block;
         margin-left: 10px;

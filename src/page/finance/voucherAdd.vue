@@ -679,6 +679,7 @@
                                 delay:4000,
                                 visible:true
                             }
+                            this.$router.push()
                             return;
                         }
                           

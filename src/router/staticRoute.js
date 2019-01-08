@@ -85,9 +85,15 @@ const staticRoute = [
                 meta:{ requireAuth:true ,type:'page'}
             },
             {
+                //文章管理 -新增
+                path: "article/add",
+                component: () => import("../page/admin/article/Add"),
+                meta:{ requireAuth:true,type:'button',name:'文章新增'}
+            },
+            {
                 //图片管理
                 path: "picture",
-                component: () =>import( "../page/admin/picture/List"),
+                component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page'}
             }
         ]

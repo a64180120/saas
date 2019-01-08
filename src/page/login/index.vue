@@ -29,9 +29,9 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item >
+                                <el-form-item prop="verifyCode">
                                     <img src="@/assets/images/register/4.png">
-                                    <el-input v-model="loginForm.captcha" type="text"  placeholder="请输入验证码（必填）"></el-input>
+                                    <el-input v-model="loginForm.verifyCode" type="text"  placeholder="请输入验证码（必填）"></el-input>
                                     <div :disabled="disabled" class="selfBtn verifyCode"
                                          :style="{'background-color':'#fff','color':'blue'}">
                                          <img @click="VCodeChange" style="bottom: 1px;width: 90px;right: 3px;height: 25px;line-height: 25px;" :src="Verifycode" alt="">
@@ -152,7 +152,6 @@ export default {
             }
         };
         let validPwd=(rule,value,callback)=>{
-            console.log(rule);
             if(value==''||value==undefined){
                 callback()
             }else{
@@ -184,12 +183,35 @@ export default {
             if(value==''||value==undefined){
                 callback()
             }else{
-                if (value!=this.changeCaptcha){
-                    this.sendCode(0)
-                    callback(new Error('验证码错误'))
-                }else{
-                    callback()
-                }
+                /*
+                * 此处将值发回后台，进行校验
+                * */
+                let data={
+                    loginid:this.loginid,
+                    code:value
+                };
+                this.$axios.get(
+                    '/SysToken/GetCheckCode',
+                    {params:data}
+                ).then(res=>{
+                    if(res.Msg=='验证码错误'){
+                        callback(new Error('验证码错误'))
+                        this.getCodePic();
+                    }else{
+                        callback()
+                    }
+                }).catch(err=>{
+                    this.getCodePic();
+                    console.log(err);
+                })
+
+
+                // if (value!=this.changeCaptcha){
+                //     this.sendCode(0)
+                //     callback(new Error('验证码错误'))
+                // }else{
+                //     callback()
+                // }
             }
         };
         let validPhoneCaptcha=(rule,value,callback)=>{
@@ -223,7 +245,7 @@ export default {
                 name: '',
                 password: '',
                 orgid: '',
-                captcha: ''
+                verifyCode: ''
             },
             options: [],
             getDatas:'',
@@ -238,15 +260,15 @@ export default {
                 orgid :[
                     {required: true, message: '请选择当前用户组织', trigger: 'blur'}
                 ],
-                captcha: [
+                verifyCode: [
                     {required: true, message: '请输入验证码', trigger: 'blur'},
                     {required:true, validator:validCaptcha, trigger: 'blur'}
                 ]
-            },
+            },/*
             captcha: {
                 show: false,
                 src: ''
-            },
+            },*/
 
             //手机登录表单
             loginFormPhone: {
@@ -314,7 +336,7 @@ export default {
         }
     },
     created() {
-        this.Verifycode=httpConfig.getAxiosBaseConfig().baseURL+'/SysToken/GetSecurityCode?v='+ Math.random()+'&loginid='+this.loginid;
+        this.getCodePic();
         //this.getImg();
     },
     watch: {
@@ -373,6 +395,12 @@ export default {
             orgByUser:'user/GetOrgByUser',
             GetVerifycode:'user/GetVerifycode'
         }),
+        //获取验证么图片
+        getCodePic:function(){
+            this.Verifycode=httpConfig.getAxiosBaseConfig().baseURL+'/SysToken/GetSecurityCode?v='+ Math.random()+'&loginid='+this.loginid;
+        },
+
+
         //随机数模拟验证码
         code:function(){
             let code= String(Math.floor(Math.random()*10))+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
@@ -441,7 +469,6 @@ export default {
             },1000)
         },
         submitForm(formName){
-
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     const loading = this.$loading({
@@ -449,14 +476,11 @@ export default {
                         text: '正在登录.....',
                         spinner: 'el-icon-loading'
                     });
-
-
-
-
                     this.login({
                         name: this.loginForm.name,
                         password: this.loginForm.password,
-                        orgid: this.loginForm.orgid
+                        orgid: this.loginForm.orgid,
+                        loginid:this.loginid
                     }).then(res => {
                         loading.close();
                         if(res.Status==="success"){

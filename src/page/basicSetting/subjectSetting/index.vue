@@ -3,24 +3,28 @@
     <div class="container">
         <div class="handle-box">
             <el-row>
-                <el-col :span="24">
-                    <el-select v-model="s_type" placeholder="请选择科目类别" class="handle-select mr10">
-                        <el-option label="全部" value=""></el-option>
-                        <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
-                    </el-select>
-                    <el-input v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10"></el-input>
-                    <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                <el-col :span="14">
+                    <div style="float: left;margin-right: 10px">
+                        <el-select v-model="s_type" placeholder="请选择科目类别" class="handle-select mr10" style="margin-top: 0px">
+                            <el-option label="全部" value=""></el-option>
+                            <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                        </el-select>
+                    </div>
+                    <el-input v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10" size="small"></el-input>
+                    <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
 
-                    <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add">新增</el-button>
-                    <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="Edit">修改</el-button>
-                    <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="Delete">删除</el-button>
-                    <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad">导入</el-button>
+                </el-col>
+                <el-col :span="10">
+                    <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad" style="float: right;margin-left: 10px">导入</el-button>
+                    <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="Delete" style="float: right">删除</el-button>
+                    <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="Edit" style="float: right">修改</el-button>
+                    <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add" style="float: right">新增</el-button>
                 </el-col>
             </el-row>
         </div>
-        <tree-table 
-        :data="data" 
-        :expand-all="expandAll" 
+        <tree-table
+        :data="data"
+        :expand-all="expandAll"
         :columns="columns"
         :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
         v-loading="loading"
@@ -48,7 +52,7 @@
             </el-table-column>
             <el-table-column label="辅助核算">
                 <template slot-scope="scope">
-                    <span v-for="(v,index) in scope.row.AuxiliaryTypes" :key="v.PhId">       
+                    <span v-for="(v,index) in scope.row.AuxiliaryTypes" :key="v.PhId">
                         <span v-if="index<( scope.row.AuxiliaryTypes.length-1)">{{v.BaseName}},</span>
                         <span v-else>{{v.BaseName}}</span>
                     </span>
@@ -65,7 +69,7 @@
         <!-- 编辑弹出框 -->
         <el-dialog :title="dialogState=='add'?'新增':'编辑'" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
-                <el-form-item label="科目编码：" prop="KCode">               
+                <el-form-item label="科目编码：" prop="KCode">
                     <el-input v-model="form.KCode">
                         <template v-if="parentKCode!==''" slot="prepend">{{parentKCode}}</template>
                     </el-input>
@@ -191,6 +195,7 @@ export default {
 
       //科目列表
       SubjectList(vm,{
+          Ryear:'2018',
           uid: this.userid,
           orgid: this.orgid,
           infoData:query
@@ -330,7 +335,7 @@ export default {
         }).then(() => {
           var vm=this;
           this.loading = true;
-         
+
           //提交asiox
           SubjectDelete(vm,{
               id:object[0].PhId,
@@ -338,10 +343,10 @@ export default {
               orgid:this.orgid
           }).then(res => {
               this.loading = false;
-              if(res.Status=='success'){              
+              if(res.Status=='success'){
                   //设置状态，隐藏新增页面
                   this.$message.success("删除成功");
-                  this.singleSelection = [];  
+                  this.singleSelection = [];
                   //刷新列表
                   this.getData('');
               }else{
@@ -381,7 +386,7 @@ export default {
         }
       });
     },
-    //修改保存   
+    //修改保存
     async saveEdit(formName) {
            let submodel = this.singleSelection[0]||'';
           //获取缓存 的用户 组织，角色基本信息
@@ -390,7 +395,7 @@ export default {
            /**
            * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
            * 新增科目
-           *  */ 
+           *  */
           var subjectinfo={
             PersistentState:2,
             PhId:this.form.PhId,
@@ -425,7 +430,7 @@ export default {
           var auxiliarytypeInfo=[];
           var types=this.form.AuxiliaryType;
           for(let i=0; i<types.length;i++){
-            
+
             var typeModel=this.auxiliaryTypes.filter(v =>{
                 return v.PhId==types[i];
             })
@@ -451,7 +456,7 @@ export default {
                     return
                 }
                 this.$message.success('保存成功!');
-                  
+
                 //设置状态，隐藏新增页面
                 this.dialogState = "";
                 //隐藏弹出框
@@ -464,7 +469,7 @@ export default {
                 this.form.KType=''
                 this.form.KBalanceType='0'
                 this.form.AuxiliaryType=[]
-                
+
                 //清空选中项
                 this.singleSelection=[];
                 //清空父级code值
@@ -491,7 +496,7 @@ export default {
            /**
            * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
            * 新增科目
-           *  */ 
+           *  */
           var subjectinfo={
             PhId:this.form.PhId,
             PersistentState:1,
@@ -536,7 +541,7 @@ export default {
                 }
 
                 this.$message.success('保存成功!');
-                  
+
                 //设置状态，隐藏新增页面
                 this.dialogState = "";
                 //隐藏弹出框
@@ -598,6 +603,7 @@ export default {
 .handle-input {
   width: 300px;
   display: inline-block;
+    height: 32px;
 }
 .del-dialog-cnt {
   font-size: 16px;

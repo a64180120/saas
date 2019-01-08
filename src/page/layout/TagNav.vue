@@ -150,9 +150,10 @@ export default {
         border-color:#00b7ee
     }
     .tag-nav .tag-nav-item span{
-        color:#fff
+        color:#fff;
+        text-align: center;
     }
-    .tag-nav .tag-nav-item span:hover{
+    .tag-nav .tag-nav-item:hover span{
         color:#00b7ee;
         background: #cfff;
     }

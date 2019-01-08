@@ -11,6 +11,19 @@ import Auth from "@/util/auth"
 
 
 export default {
+    data() {
+        return {
+
+        }
+    },
+    computed: {
+        loginid:function(){
+            return this.$store.state.user.loginid
+        },
+        userid:function(){
+            return this.$store.state.user.userid
+        }
+    },
     created() {
         
     },
@@ -63,6 +76,38 @@ export default {
             }
 
         })
+
+        this.getloginState(this.loginid,this.userid);
+    },
+    methods: {
+        getloginState(sessionid,userid){
+            var me=this;
+            window.setInterval(() => {
+                setTimeout(() => {
+                    var userinfo=Auth.getUserInfoData();
+                    if(sessionid!='' && userinfo){
+                        console.log(sessionid);
+                        me.$axios.get('/SysUser/GetLoginState',{params:{
+                            sessionid:sessionid,
+                            userid:userid
+                        }})
+                        .then(res=>{
+                            if(res.Status==='error'){
+                                me.$alert('当前用户在别处登录', '提示', {
+                                    confirmButtonText: '退出',
+                                    callback: action => {
+                                        me.$store.dispatch('user/logout')
+                                    }
+                                });
+                            }
+                        })
+                        .catch(err=>{
+                            console.log(err)
+                        })
+                    }
+                }, 0)
+            }, 30000)
+        }
     }
 }
 </script>
