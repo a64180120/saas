@@ -9,7 +9,7 @@
                         <li v-for="item of nowYear-2000"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
-                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>sideDate.split('-')[0],futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>checkedYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
                             </ul>
                         </li>
                     </ul>
@@ -17,11 +17,11 @@
             </div>
             <!--会计期弹窗*************************************-->
             <div v-show="yearSelCss" class="yearsContainer">
-                <p class="yearsTitle">
+                <div class="yearsTitle">
                     <span @click="checkOutSel('kuaiji')" :class="{active:monthsSelCss=='kuaiji'}">会计期</span>
                     <span @click="checkOutSel('jiezhang')" :class="{active:monthsSelCss=='jiezhang'}">结账</span>
                     <span @click="checkOutSel('fanjiezhang')" :class="{active:monthsSelCss=='fanjiezhang'}">反结账</span>
-                </p>
+                </div>
                 <div v-show="monthsSelCss=='kuaiji'" class="yearsContent">
                     <div class="flexPublic">
                         <div>{{year}}</div>
@@ -29,6 +29,7 @@
                             <img @click="nextYear(false)" src="../../assets/icon/leftArr.svg" alt="">
                             <img @click="nextYear(true)" src="../../assets/icon/leftArr.svg" alt="">
                         </div>
+                        <div style="clear:both"></div>
                     </div>
                     <ul @click="yearMonthClick"  class="year-month">
                         <li :class="{active:month==index}" v-for="index of 12" :key="index">{{index}}月</li>
@@ -85,6 +86,7 @@ export default {
             year:'',
             month:'',
             checkedTime:'',
+            checkedYear:'',
             nowTime:new Date,
             nowYear:(new Date).getFullYear(),
             monthsSelCss:'kuaiji',
@@ -103,18 +105,19 @@ export default {
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{ 
-                        if(res.Record.length==0){
-                            this.$message({ showClose: true,message: '当前组织未初始化!', type: "error"})
+                        if(!res.CheckRes){
+                            this.$message({ showClose: true,message: '当前组织未初始化,请开始初始化!', type: "error"});
                             return;
-                        }                      
+                        }                        
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
+                        this.checkedYear=res.Record[0].JYear;
                         this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                         //this.getvoucherList('reset');
-                        this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime})
+                        this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear})
                         this.$forceUpdate();
                     })
                     .catch(err=>this.$message({ showClose: true,message: err, type: "error"}))
@@ -425,20 +428,26 @@ export default {
             }
             .yearsTitle{
                 border-bottom:1px solid #ccc;
-                display: flex;
-                align-items: center;
                 color:#aaa;
                 padding-bottom: 10px;
+                &:after{
+                    content:"";
+                    display:block;
+                    clear: both;
+                }
                 >span{
+                    float:left;
                     width:33.33%;
+                    text-align: center;
                     border-right:1px solid #aaa;
                     font-weight: bold;
+                    font-size:18px;
                     cursor:pointer;
                     &:hover{
-                        color:#00b7ee;
+                        color:#00b7ee ;
                     }
                     &.active{
-                        color:#00b7ee;
+                        color:#00b7ee ;
                     }
                     &:last-of-type{
                         border:0;
@@ -450,9 +459,10 @@ export default {
                 >div:first-of-type{
                     font-size: 18px;
                     font-weight: bold;
-                    padding:10px;
+                    padding:10px 10px 0 10px ;
                     margin-left: 10px;
                     >div:nth-of-type(2){
+                        float:right;
                         width:70px;
                         margin-right: 30px;
                         >img{
@@ -466,22 +476,26 @@ export default {
                                 transform: rotate(90deg);
                                 top:0px;
                             }
+                            &:nth-of-type(2){
+                                float:right;
+                            }
                         }
                     }
                 }
 
-                >ul{
-                    display: flex;
-                    align-items: center;
-                    flex-flow: row wrap;
-                    justify-content: space-between;
+                >ul{          
                     padding:5px 20px;
                     width:100%;
-                    height:160px;
+                    &:after{
+                        content:"";
+                        display:list-item;
+                        clear:both;
+                    }
                     >li{
-                        width:50px;
-                        height:50px;
-                        line-height: 50px;
+                        float:left;
+                        width:60px;
+                        height:60px;
+                        line-height: 60px;
                         text-align: center;
                         cursor:pointer;
                         &:hover{
@@ -489,14 +503,13 @@ export default {
                             color:#fff;
                         }
                         &.active{
-                            background:#00b7ee ;
+                            background:#00b7ee;
                             color:#fff;
                         }
                     }
                 }
                 >p{
-                    display: flex;
-                    align-items: center;
+                 
                     font-size: 15px;
                     >span{
                         width:80px;
@@ -516,23 +529,28 @@ export default {
                 }
             }
             .jiezhang{
-                >div{
+                >div:first-of-type{
                     width:230px;
-                    margin: 50px auto ;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    height:100px;
+                    line-height:40px;
+                    margin: 40px auto ;
+                    padding:30px 0px;
+                    >span{
+                        float:left;
+                    }
                     >div{
                         width:50px;
-
+                        float:left;
                     }
                     >i{
+                        float:left;
                         display: block;
                         width:24px;
                         height:24px;
                         border:1px solid #00b7ee ;
                         border-radius: 50%;
-                        margin: 5px;
+                        margin:0 5px;
+                        margin-top:8px;
                         background: #00b7ee ;
                         position: relative;
                         cursor: pointer;
@@ -561,6 +579,11 @@ export default {
                             top:4.5px;
                             left:11px;
                         }
+                    }
+                }
+                >p{
+                    >span{
+                        float:left;
                     }
                 }
             }
