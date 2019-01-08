@@ -134,7 +134,7 @@
                                 </li>
                             </template>
                             <template v-else>
-                                <li>{{item.Abstract=='本月合计'||item.Abstract=='本年累计'?item.Pdate.split('/')[0]+'/'+item.Pdate.split('/')[1]:item.Pdate.slice(0,10).split(' ')[0]}}</li>
+                                <li>{{item.Abstract=='本月合计'||item.Abstract=='本年累计'?item.Pdate.split('-')[0]+'-'+item.Pdate.split('-')[1]:item.Pdate.slice(0,10).split(' ')[0]}}</li>
                                 <li class="align-center" style=""><a @click="showvoucher" :data-title="item.PhIdMst">{{item.Pno!='本月合计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
                                 <li :class="{bolder:item.Abstract=='本月合计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
                                 <template></template>
