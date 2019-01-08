@@ -109,17 +109,22 @@
             handlePage(val){
                 switch(val){
                     case 'save':
-                        this.saveInfo();
+                        if(this.updatePage){
+                            this.saveInfo();
+                        }
+                        
                         break;
                     case 'update':
-                        this.updatePage=true;
+                        if(!this.updatePage){
+                            this.updatePage=true;
+                        }
+                        
                         break;
                     case 'type':
                         this.handleNav='type';
                         break;
                     case 'fresh':
                         this.fresh();
-                        console.log(this,this.$saasMessage)
                         break;
                 }
             },
@@ -127,6 +132,7 @@
             fresh(){
                 this.navTab=[];
                 this.deleteList=[];
+                this.updatePage=false;
                 this.ajaxMode();
             },
             //添加删除行信息********************************

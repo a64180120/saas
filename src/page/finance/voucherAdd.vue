@@ -2,14 +2,14 @@
 <!--17-->
     <div class="addVoucher">
         <div class="unionState flexPublic">
-            <div class="flexPublic searcherCon">
+            <div class="searcherCon">
                 <div class="searcherValue" style="width:200px"><input @keyup.13="getvoucherList('searcher')" type="text" v-model="superSearchVal.keyword" placeholder="科目/摘要/凭证号"></div>
-                <div @click="getvoucherList('searcher')"  class="searcherBtn">凭证定位</div>
+                <div @click="getvoucherList('searcher')"  class="searcherBtn btn">凭证定位</div>
                 <ul class="fastGps">
-                    <li @click="getvoucher('pre')"></li>
-                    <li @click="getvoucher('next')"></li>
-                    <li  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
-                    <li @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
+                    <li class="btn" @click="getvoucher('pre')"></li>
+                    <li class="btn" @click="getvoucher('next')"></li>
+                    <li class="btn"  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
+                    <li class="btn" @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
             <ul class="handle">
@@ -42,7 +42,7 @@
             </ul>
         </div>
         <!--凭证组件*******************-->
-        <div style="overflow-y:auto"  :class="{voucherMask:voucherMask}" ref="print">
+        <div style="overflow-y:auto;width:100%" :class="{voucherMask:voucherMask}" ref="print">
             <div  class="voucherContainer">
                 <p v-if="voucherMask" class="title">
                     <span v-if="voucherMask=='copy'">复制凭证</span>
@@ -52,9 +52,9 @@
                     <span v-if="voucherMask=='update'">修改凭证</span>
                     <i @click="voucherMaskShow(false)"></i>
                 </p>
-                <div v-if="voucherMask">
-                    <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
-                    <span class="btn" @click.stop="keepChoose(false)">取消</span>
+                <div style="height:40px;" v-if="voucherMask">
+                    <span style="float:right" class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
+                    <span style="float:right" class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
                 <div class="voucherDisabledCon">
                     <div :class="{voucherDisabled:voucherAdd}"></div>
@@ -74,7 +74,7 @@
                         <li v-for="item of nowYear-2000"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
-                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>sideDate.split('-')[0],futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>checkedYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
                             </ul>
                         </li>
                     </ul>
@@ -82,11 +82,12 @@
             </div>
             <!--会计期弹窗*************************************-->
             <div v-show="yearSelCss" class="yearsContainer">
-                <p class="yearsTitle">
+                <div class="yearsTitle">
                     <span @click="checkOutSel('kuaiji')" :class="{active:monthsSelCss=='kuaiji'}">会计期</span>
                     <span @click="checkOutSel('jiezhang')" :class="{active:monthsSelCss=='jiezhang'}">结账</span>
                     <span @click="checkOutSel('fanjiezhang')" :class="{active:monthsSelCss=='fanjiezhang'}">反结账</span>
-                </p>
+                    
+                </div>
                 <div v-show="monthsSelCss=='kuaiji'" class="yearsContent">
                     <div class="flexPublic">
                         <div>{{year}}</div>
@@ -94,6 +95,7 @@
                             <img @click="nextYear(false)" src="../../assets/icon/leftArr.svg" alt="">
                             <img @click="nextYear(true)" src="../../assets/icon/leftArr.svg" alt="">
                         </div>
+                        <div style="clear:both"></div>
                     </div>
                     <ul @click="yearMonthClick"  class="year-month">
                         <li :class="{active:month==index}" v-for="index of 12" :key="index">{{index}}月</li>
@@ -106,6 +108,7 @@
                         <div class="inputContainer"><input v-model="checkVal" type="text"></div>
                         <i @click="nextMonth('next',checkVal,'checkVal')"></i>
                         <span>月</span>
+                        
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
@@ -230,6 +233,7 @@
             checkVal:'',
             unCheckVal:'',
             checkedTime:'',//下一个结账月*******
+            checkedYear:'',//已经结账的年份
             pagesize:10,
             pageindex:0,
             totalRows:'',
@@ -263,6 +267,7 @@
                 this.voucherAdd=true;
                 console.log(this.voucherAdd)
             } 
+            
         },
         mounted(){  
             this.getChecked();
@@ -425,7 +430,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -438,6 +443,7 @@
                    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
+                           loading1.close();
                            if (res.Status == 'success') {
                                this.saasMessage={
                                   visible:true,
@@ -460,12 +466,10 @@
                                 if(oldPhId){
                                     this.getVoucherData(oldPhId);
                                 }  
-                               
-                                
                            } else {
                                this.$message(res.Msg)
                            }
-                           loading1.close();
+                           
                        })
                        .catch(err =>{
                            this.$message(err);loading1.close();
@@ -669,16 +673,18 @@
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{      
                         loading.close();
-                        if(res.Record.length==0){
-                            this.saasMessage={
+                        if(!res.CheckRes){
+                             this.saasMessage={
                                 message:'当前组织未初始化!',
                                 delay:4000,
                                 visible:true
                             }
-                            
+                            this.$router.push({path:'/setting/subjectstart'})
                             return;
-                        }  
+                        }
+                          
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
+                        this.checkedYear=res.Record[0].JYear;
                         this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
                         this.year=this.sideDate.split('-')[0];
                         this.month=this.sideDate.split('-')[1];
@@ -755,6 +761,11 @@
                                vm.$store.commit("tagNav/upexcludeArr", ['voucherList']);
                                  vm.$router.push({path:'/finance/voucherList',query:{voucherList:res.Record}})   
                             }else if(res.Record.length==0){
+                                vm.voucherDataList.data={
+                                         Mst:{},
+                                         Attachements:[]
+                                }
+                                vm.resetVoucher();
                                 vm.$message('暂无新凭证!');                  
                                 return;
                             }     
@@ -769,7 +780,7 @@
                             vm.resetVoucher();                          
                         }
                     })
-                    .catch(err=>{vm.$message({ showClose: true,message: err, type: "error"});loading1.close();})
+                    .catch(err=>{vm.$message({ showClose: true,message: err, type: "error"});})
             },
             
             //选择会计期***************
@@ -779,6 +790,7 @@
                 this.sideDate=year+'-'+i;
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                 this.getvoucherList('reset');
+                this.voucherAdd=true;
             },
             //鼠标按下***************
             dragDown(bool,$event){
@@ -789,7 +801,6 @@
                     this.mouseDown=false;
                     this.mouseStartY='';
                 }
-                console.log($event);
             },
             //鼠标离开*********************
             dragLeave(){
@@ -802,7 +813,6 @@
                     var Y=$event.clientY-this.mouseStartY;  //鼠标移动距离
                     var month= document.getElementById('scrollMonth'); 
                     var H=window.getComputedStyle(month).height;  //元素高度
-                    console.log(month)
                     var top=parseInt(month.style.top);
                     if(top==0&&Y<0){           
                         return;
@@ -886,6 +896,7 @@
                 this.sideDate=this.year+'-'+this.month;
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
                 this.getvoucherList('reset');
+                this.voucherAdd=true;
             },
             //凭证重排月份选择******************
             resetCodeMonth($event){
@@ -1219,8 +1230,6 @@
                
                 .mode{
                     width:60px;
-                    display: flex;
-                    flex-flow: column;
                     height:30px;       
                     overflow: hidden;
                     position:absolute;                   
@@ -1243,11 +1252,17 @@
                     }
                     &:hover{
                         height:90px;
-                        border:1px solid #ccc;
+                        border:1px solid #00b7ee;
                         background: #fff;
                         opacity: 1;
                          z-index: 5;
-                        color:#aaa;    
+                         
+                         >span{
+                             &:first-of-type{
+                                 color:#fff;
+                             }
+                         }
+                        
                     }
                 }
 
@@ -1263,46 +1278,46 @@
                 >ul{
                     width:100%;  
                     >li{
-                    width:100%;     
-                    background: #fff;         
-                    color:#999;
-                    &:hover{
-                        background:#ccc;
-                        color:#fff;
+                        width:100%;     
+                        background: #fff;        
+                        &:hover{
+                            background:#ccc;
+                            color:#fff;
+                        }
+                        &:first-of-type{
+                            background: #00b7ee;
+                            border-radius: 3px;
+                            color:#fff;
+                        }
+                        
                     }
-                    &:first-of-type{
-                        background: #00b7ee;
-                        border-radius: 3px;
-                        color:#fff;
-                    }
-                    
-                }
                 }
                 
-                &:hover{
-                    height:auto;
-                    background: #00b7ee;  
-                }
-                
+            }
+            >a>li.more:hover{
+                 height:auto;
+                background: #00b7ee; 
+                border-top:0; 
             }
         }
 
     }
     .searcherCon{
-        min-width: 432px;
-        justify-content: flex-start;
+        >div{
+            float:left;
+        }
+        min-width: 500px;  
+        .searcherBtn{
+            border-radius: 0;
+        }   
     }
     .fastGps{
-        display: flex;
-        align-items: center;
+
         >li{
-            &:hover{
-                opacity: 0.8;
-            }
+            float:left;
             margin-left: 5px;
             padding:0 5px;
-            background:#00b7ee;
-            color:#fff;
+            border-radius: 0;
             height:30px;
             width:80px;
             line-height: 30px;
@@ -1363,13 +1378,11 @@
         min-width: 70px;
         text-align: center;
         line-height: 30px;
-        background:#00b7ee;
-        color:#fff;
         cursor:pointer;
     }
     .unionState .handle{
         margin-right:20px;
-        min-width: 590px;
+        min-width: 570px;
     }
     .unionState .handle>a{
         float:right;
@@ -1393,7 +1406,9 @@
         line-height: 30px;    
         margin-right: 0;
         &:hover{
-            opacity: 0.8;
+            background: #fff;
+            color:#00b7ee;
+            border:1px solid #00b7ee;
         }
         &.fresh{
             width:30px;
@@ -1407,6 +1422,8 @@
             }
             &:hover{
                 background: none;
+                border:0;
+                opacity:0.8;
             }
         }
         
@@ -1414,13 +1431,10 @@
     .unionState .handle>a:nth-of-type(4)>li{
         min-width: 60px;
     }
-    .unionState .handle>a>li:hover{
-        opacity:0.8;
-        color:#fff;
-    }
     .asideNav{
         width:55px;
         position:absolute;
+        z-index:9;
         right:0px;
         top:0px;
         height: 95%;
@@ -1568,14 +1582,20 @@
             }
             .yearsTitle{
                 border-bottom:1px solid #ccc;
-                display: flex;
-                align-items: center;
                 color:#aaa;
                 padding-bottom: 10px;
+                &:after{
+                    content:"";
+                    display:block;
+                    clear: both;
+                }
                 >span{
+                    float:left;
                     width:33.33%;
+                    text-align: center;
                     border-right:1px solid #aaa;
                     font-weight: bold;
+                    font-size:18px;
                     cursor:pointer;
                     &:hover{
                         color:#00b7ee ;
@@ -1593,9 +1613,10 @@
                 >div:first-of-type{
                     font-size: 18px;
                     font-weight: bold;
-                    padding:10px;
+                    padding:10px 10px 0 10px ;
                     margin-left: 10px;
                     >div:nth-of-type(2){
+                        float:right;
                         width:70px;
                         margin-right: 30px;
                         >img{
@@ -1609,22 +1630,26 @@
                                 transform: rotate(90deg);
                                 top:0px;
                             }
+                            &:nth-of-type(2){
+                                float:right;
+                            }
                         }
                     }
                 }
 
-                >ul{
-                    display: flex;
-                    align-items: center;
-                    flex-flow: row wrap;
-                    justify-content: space-between;
+                >ul{          
                     padding:5px 20px;
                     width:100%;
-                    height:160px;
+                    &:after{
+                        content:"";
+                        display:list-item;
+                        clear:both;
+                    }
                     >li{
-                        width:50px;
-                        height:50px;
-                        line-height: 50px;
+                        float:left;
+                        width:60px;
+                        height:60px;
+                        line-height: 60px;
                         text-align: center;
                         cursor:pointer;
                         &:hover{
@@ -1638,8 +1663,7 @@
                     }
                 }
                 >p{
-                    display: flex;
-                    align-items: center;
+                 
                     font-size: 15px;
                     >span{
                         width:80px;
@@ -1659,23 +1683,28 @@
                 }
             }
             .jiezhang{
-                >div{
+                >div:first-of-type{
                     width:230px;
-                    margin: 50px auto ;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    height:100px;
+                    line-height:40px;
+                    margin: 40px auto ;
+                    padding:30px 0px;
+                    >span{
+                        float:left;
+                    }
                     >div{
                         width:50px;
-
+                        float:left;
                     }
                     >i{
+                        float:left;
                         display: block;
                         width:24px;
                         height:24px;
                         border:1px solid #00b7ee ;
                         border-radius: 50%;
-                        margin: 5px;
+                        margin:0 5px;
+                        margin-top:8px;
                         background: #00b7ee ;
                         position: relative;
                         cursor: pointer;
@@ -1704,6 +1733,11 @@
                             top:4.5px;
                             left:11px;
                         }
+                    }
+                }
+                >p{
+                    >span{
+                        float:left;
                     }
                 }
             }
@@ -1773,8 +1807,7 @@
                     margin:0 15px;
                     >p{
                         >label{
-                            display: flex;
-                            align-items: center;
+                     
                             color:#000;
                             font-weight: 400;
                             font-size: 16px;
@@ -1785,9 +1818,7 @@
                         margin-bottom: 20px;
                     }
                     >div{
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
+                     
                         padding:0 15px;
                         >span{
                             height:40px;
@@ -1796,10 +1827,7 @@
                     }
                 }
                 >ul{
-                    display: flex;
-                    align-items: center;
-                    flex-flow: row wrap;
-                    justify-content: space-between;
+                   
                     padding:5px 20px;
                     width:100%;
                     >li{
@@ -1820,8 +1848,7 @@
                     }
                 }
                 >p{
-                    display: flex;
-                    align-items: center;
+                  
                     font-size: 15px;
                     >span{
                         width:80px;
@@ -1854,7 +1881,7 @@
     }
     .footInfo{
         position:fixed;
-        z-index:10;
+        z-index:9;
         bottom:0;
         left:0;
         width:100%;
@@ -1875,6 +1902,7 @@
     }
     .voucherContainer{
          position:relative;
+         width:100%;
          padding:50px 0;
          overflow: hidden;
          margin-right: 10px;   
@@ -1896,8 +1924,7 @@
           overflow-y: auto;
           padding:10px;
           >div:first-of-type{
-              display: flex;
-              justify-content: flex-end;
+             
               padding:5px 10px;
               position: relative;
               z-index: 1;
@@ -1928,8 +1955,7 @@
     .title{
         border-bottom: 1px solid #ccc;
         padding:8px 3px;
-        display: flex;
-        justify-content: space-between;
+   
         width:100%;
         font-family: Arial;
         font-size: 14.0pt;
@@ -1950,7 +1976,8 @@
 
      .voucherDisabledCon{
          position:relative; 
-        // min-height:516px;  
+        // min-height:516px;
+         width:100%;  
          z-index: 1; 
          background:#fff;
         .voucherDisabled{
@@ -1988,7 +2015,7 @@
                 padding:30px 50px;
                 font-size:16px;
                 >li{
-                    justify-content: flex-start;
+           
                     height:100%;
                     line-height:100%;
                     &:first-of-type{

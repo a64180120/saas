@@ -6,7 +6,7 @@
                 <p slot="logo"><router-link to="/index" class="header-title">工会云财务</router-link></p>
             </header-bar>
             <!-- 左侧菜单 -->
-            <nav-bar :isCollapse="collapsevule"></nav-bar>
+            <!-- <nav-bar :isCollapse="collapsevule"></nav-bar> -->
         </template>
         <div class="content-box" :class="{'content-collapse':collapsevule}">
             <tag-nav></tag-nav>
@@ -18,6 +18,11 @@
                 </transition>
             </div>
         </div>
+        <template>
+            <bottom-bar :isCollapse="collapsevule" v-once>
+                
+            </bottom-bar>
+        </template>
         <!--15天提示弹窗-->
         <!--timerShowType?'block':'none'-->
         <div :style="{'display':timerShowType?'block':'none','position':'fixed','z-index':'9999'}">
@@ -30,12 +35,16 @@
 import HeaderBar from './HeaderBar'
 import NavBar from './NavBar'
 import TagNav from './TagNav'
+import BottomBar from './BottomBar'
 import countdownpop from "../../components/countDownPop";
 import { mapState, mapGetters } from "vuex";
 import Auth from "@/util/auth"
 
 export default {
     computed: {
+        layout(){
+            return this.$store.state.navbarPosition
+        },
         collapse(){
             return this.$store.state.isCollapse
         },
@@ -75,6 +84,7 @@ export default {
         HeaderBar,
         NavBar,
         TagNav,
+        BottomBar,
         countdownpop  //15天提示弹窗
     }
 }

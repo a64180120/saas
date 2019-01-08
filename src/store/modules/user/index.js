@@ -25,6 +25,8 @@ const state = {
     username: '',
     //EmpowerInfo 判断是否是试用用户
     EmpowerInfo:'',
+    //登录的ID
+    loginid:''
 
 };
 
@@ -60,13 +62,15 @@ const mutations = {
         if (data) {
             data.isLogin=true;
             Auth.setUserInfoData(data);
-            console.log(data);
+            //console.log(data);
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
             state.orgcode = data.orgInfo.EnCode;
             state.orgName = data.orgInfo.OrgName;
             state.username=data.userInfo.RealName;
             state.EmpowerInfo=data.orgInfo.EmpowerInfo;
+            state.loginid=data.loginid;
+
         } else {
             Auth.removeUserInfoData();
         }
@@ -126,7 +130,8 @@ const actions = {
             var data={
                 uname_login:userInfo.name,
                 orgid:userInfo.orgid,
-                password:userInfo.password
+                password:userInfo.password,
+                loginid:userInfo.loginid
             };
 
             httpajax.create(base)({
@@ -138,6 +143,7 @@ const actions = {
                 var response=JSON.parse(res.data);
                 if (response.Status === "success") {
                     var user = response.Data;
+                    user.loginid=userInfo.loginid;
                     //用户信息缓存
                     commit("setUserInfo", user);
                 }

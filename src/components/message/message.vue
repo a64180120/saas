@@ -6,7 +6,7 @@
             </p>
             <div>
                 <div class="imgCon"><img src="../../assets/images/message.png"></div>  
-                <span v-if="delay">{{message}}&nbsp;({{delayTime}}s) 后自动关闭</span>
+                <span v-if="delay">{{message}},&nbsp;({{delayTime}}s) 后自动关闭</span>
             </div>
             <div>
                 <span @click="close" class="btn">立即关闭</span>
@@ -31,12 +31,11 @@ export default {
   },
   methods:{
       close(){
-          console.log(111)
           this.$emit('update:visible',false);
       },
       oneTime(vm){
           var vm=this;
-          vm.delayTime--;console.log(vm.delayTime)
+          vm.delayTime--;
           if(vm.delayTime>0){
             setTimeout(vm.oneTime,1000)
           }else{
@@ -74,7 +73,7 @@ export default {
     box-shadow: 0 0 10px 2px #d3e9f9;
     >.saasMsg{
         width: 370px;
-        height: 180px;
+        height: 220px;
         position:absolute;
         top:100px;
         left:40%;
@@ -129,10 +128,10 @@ export default {
     }
 .btn{
     cursor: pointer;
-    background: #3e8cbc;
+    background: #00b7ee;
     color:#fff;
     text-align: center;
-    border:1px solid #3e8cbc;
+    border:1px solid #00b7ee;
     border-radius: 5px;
     height:30px;
     line-height: 30px;
@@ -140,6 +139,6 @@ export default {
 }
 .btn:hover{
     background: #fff;
-    color:#3e8cbc;
+    color:#00b7ee;
 }
 </style>
