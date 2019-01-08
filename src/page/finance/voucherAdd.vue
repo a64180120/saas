@@ -2,14 +2,14 @@
 <!--17-->
     <div class="addVoucher">
         <div class="unionState flexPublic">
-            <div class="flexPublic searcherCon">
+            <div class="searcherCon">
                 <div class="searcherValue" style="width:200px"><input @keyup.13="getvoucherList('searcher')" type="text" v-model="superSearchVal.keyword" placeholder="科目/摘要/凭证号"></div>
-                <div @click="getvoucherList('searcher')"  class="searcherBtn">凭证定位</div>
+                <div @click="getvoucherList('searcher')"  class="searcherBtn btn">凭证定位</div>
                 <ul class="fastGps">
-                    <li @click="getvoucher('pre')"></li>
-                    <li @click="getvoucher('next')"></li>
-                    <li  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
-                    <li @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
+                    <li class="btn" @click="getvoucher('pre')"></li>
+                    <li class="btn" @click="getvoucher('next')"></li>
+                    <li class="btn"  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
+                    <li class="btn" @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
             <ul class="handle">
@@ -429,7 +429,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -673,15 +673,15 @@
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{      
                         loading.close();
-                        if(res.Record.length==0){
-                            this.saasMessage={
+                        if(!res.CheckRes){
+                             this.saasMessage={
                                 message:'当前组织未初始化!',
                                 delay:4000,
                                 visible:true
                             }
-                            
                             return;
-                        }  
+                        }
+                          
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.checkedYear=res.Record[0].JYear;
                         this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
@@ -1253,11 +1253,17 @@
                     }
                     &:hover{
                         height:90px;
-                        border:1px solid #ccc;
+                        border:1px solid #00b7ee;
                         background: #fff;
                         opacity: 1;
                          z-index: 5;
-                        color:#aaa;    
+                         
+                         >span{
+                             &:first-of-type{
+                                 color:#fff;
+                             }
+                         }
+                        
                     }
                 }
 
@@ -1273,45 +1279,46 @@
                 >ul{
                     width:100%;  
                     >li{
-                    width:100%;     
-                    background: #fff;         
-                    color:#999;
-                    &:hover{
-                        background:#ccc;
-                        color:#fff;
+                        width:100%;     
+                        background: #fff;        
+                        &:hover{
+                            background:#ccc;
+                            color:#fff;
+                        }
+                        &:first-of-type{
+                            background: #00b7ee;
+                            border-radius: 3px;
+                            color:#fff;
+                        }
+                        
                     }
-                    &:first-of-type{
-                        background: #00b7ee;
-                        border-radius: 3px;
-                        color:#fff;
-                    }
-                    
-                }
                 }
                 
-                &:hover{
-                    height:auto;
-                    background: #00b7ee;  
-                }
-                
+            }
+            >a>li.more:hover{
+                 height:auto;
+                background: #00b7ee; 
+                border-top:0; 
             }
         }
 
     }
     .searcherCon{
-        min-width: 432px;     
+        >div{
+            float:left;
+        }
+        min-width: 500px;  
+        .searcherBtn{
+            border-radius: 0;
+        }   
     }
     .fastGps{
 
         >li{
             float:left;
-            &:hover{
-                opacity: 0.8;
-            }
             margin-left: 5px;
             padding:0 5px;
-            background:#00b7ee;
-            color:#fff;
+            border-radius: 0;
             height:30px;
             width:80px;
             line-height: 30px;
@@ -1372,13 +1379,11 @@
         min-width: 70px;
         text-align: center;
         line-height: 30px;
-        background:#00b7ee;
-        color:#fff;
         cursor:pointer;
     }
     .unionState .handle{
         margin-right:20px;
-        min-width: 590px;
+        min-width: 570px;
     }
     .unionState .handle>a{
         float:right;
@@ -1402,7 +1407,9 @@
         line-height: 30px;    
         margin-right: 0;
         &:hover{
-            opacity: 0.8;
+            background: #fff;
+            color:#00b7ee;
+            border:1px solid #00b7ee;
         }
         &.fresh{
             width:30px;
@@ -1416,6 +1423,8 @@
             }
             &:hover{
                 background: none;
+                border:0;
+                opacity:0.8;
             }
         }
         
@@ -1423,13 +1432,10 @@
     .unionState .handle>a:nth-of-type(4)>li{
         min-width: 60px;
     }
-    .unionState .handle>a>li:hover{
-        opacity:0.8;
-        color:#fff;
-    }
     .asideNav{
         width:55px;
         position:absolute;
+        z-index:9;
         right:0px;
         top:0px;
         height: 95%;
@@ -1876,7 +1882,7 @@
     }
     .footInfo{
         position:fixed;
-        z-index:10;
+        z-index:9;
         bottom:0;
         left:0;
         width:100%;

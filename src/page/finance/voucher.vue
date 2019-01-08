@@ -71,7 +71,7 @@
                         </div>
                         <li>
                             <div class="inputContainer" >
-                                <textarea :class="{chongHcss:AbstractCss=='冲红'}" v-model="item.Abstract" @focus="showAddIcon(index)" ></textarea>
+                                <textarea :class="{chongHcss:AbstractCss=='冲红'}" v-model="item.Abstract" @focus="showAddIcon(index)" maxlength="100"></textarea>
                             </div>
                         </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
@@ -793,7 +793,6 @@
             moneyInputShow(item,val){//金额输入框展示**********************
                 if(item.SubjectCode){
                     item.moneyInput[val]=true;
-                    debugger;
                     this.moneyInputMask=true;
                 }
                 for(var item of this.kemuSel){   //隐藏科目选择****解决bug

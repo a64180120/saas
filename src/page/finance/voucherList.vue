@@ -263,12 +263,13 @@
                 sum2:'',
                 chooseItem:'',
                 nowTime:new Date,
-                checkedTime:'',
-                sideDate:'',
-                month:'',
-                year:'',
-                searchVal:'',
-                superSearchValPhId:"0",
+                checkedTime:'',   //结账月****
+                checkedYear:'',   //结账年*****
+                sideDate:'',   //侧边会计期年月
+                month:'',    //当前选中年
+                year:'',     //月
+                searchVal:'', //一般搜索值
+                superSearchValPhId:"0",   //高级搜索
                 assistItemList:{id:0,kemu:[]},
                 superSearchVal:{
                     assistItemList:{type:'',list:''},
@@ -282,7 +283,7 @@
                     nodatatext:'',
                     show:true
                 },
-                pickerOptions: {
+                pickerOptions: {   //eldate时间选择参数
                     disabledDate(time) {
                         return time.getTime() > Date.now();
                     },
@@ -815,7 +816,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -898,7 +899,7 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
-                        if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+                        if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
@@ -980,7 +981,7 @@
                    return;
                }
                vm.clearPhId(Vdata.Mst)
-               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: vm.uid,
                        orgid: vm.orgid,
@@ -1078,6 +1079,7 @@
             //获取time组件传参********************
             getSideDate(data){
                 this.checkedTime=data.checkedTime;
+                this.checkedYear=data.checkedYear;
                 this.sideDate=data.sideDate;
                 this.year=this.sideDate.split('-')[0];
                 this.month=this.sideDate.split('-')[1];
@@ -1529,6 +1531,7 @@
                             float:left;
                             width:70px;
                             margin-top:5px;
+                            background:#00b7ee;
                             &:last-of-type{
                                 margin-left:20px;
                             }

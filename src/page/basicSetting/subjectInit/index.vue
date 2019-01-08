@@ -1,32 +1,36 @@
 <template>
-    <div class="container">
-        <div class="manageContent" v-loading="loading">
-            <div class="unionSetting">
-                <ul class="handle">
-                    <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
-                    <a><li style='margin:0 0 0px 20px;'>科目设置</li ></a>
-                    <a><li style='margin:0 0 0px 20px;'>反初始化</li ></a>
-                    <a><li style='margin:0 0 0px 20px;'>开始初始化</li ></a>
-                    <li style='margin:0 0 0px 20px;'>系统默认启用日期：2019年1月</li >
-                    <li>
-                        <div><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></div>
-                        <div @click="selectBtn">搜索</div>
+  <div class="container">
+        <div class="subjectNav">
+            <ul>
+                <li @click="navActive(item)" :class="{active:activeNav==item.name}" v-for="(item,index) of navList" :key="index"><span>{{item.name}}</span></li>
+            </ul>
+        </div> 
+        <div class="subjectContent">
+            <div>
+                <div class="searcherCon"> 
+                    <div class="searcherValue"><input @keyup.13="getSubjectQueryList()" v-model="searchVal" type="text" placeholder="科目编码/名称"></div>
+                    <div  @click="getSubjectQueryList()" class="searcherBtn btn">搜索</div>
+                </div>
+                <ul class="subjectHanle">
+                    <li><span>系统默认启用日期:</span><span>{{(new Date).getFullYear()+'年'+'1月'}}</span></li>
+                    <li v-show="!updatePage" :class="{btnDisabled:CheckRes}" @click.stop="updatePage=true" class="btn">开始初始化</li>
+                    <li v-show="updatePage"  @click.stop="endInit()" class="btn">结束初始化</li>
+                    <li :class="{btnDisabled:!CheckRes}" @click.stop="unInit()" class="btn">反初始化</li>
+                    <li class="subjectSet">
+                        <div>
+                            <ul>
+                                <li>科目设置</li>
+                                <li @click.stop="addPage">新增</li>
+                                <li @click.stop="updateSubject">修改</li>
+                                <li @click.stop="subDelete">删除</li>
+                            </ul>    
+                        </div>    
                     </li>
+                    <li @click.stop="refresh" style="background:#fff;width:30px;min-width:30px;border:0;border-radius:50%;cursor:pointer"><img src="../../../assets/icon/fresh2.svg" alt=""> </li>
                 </ul>
             </div>
-
-            <div class="lineUl">
-                <ul>
-                    <li>资产类<i></i></li>
-                    <li>负债类<i></i></li>
-                    <li>净资产类<i></i></li>
-                    <li>收入类<i></i></li>
-                    <li>支出类<i></i></li>
-                </ul>
-
-            </div>
-            <div class="formData" ref="printFrom">
-                <ul>
+            <section  class="listContainer">
+                <ul class="listTitle">
                     <li>科目编码</li>
                     <li>科目名称</li>
                     <li>余额方向</li>
@@ -34,295 +38,1190 @@
                     <li>停用/启用</li>
                     <li>年初余额</li>
                 </ul>
-                <div>
-                    <template v-for="n in 15">
-                        <ul class="formDataItems">
-                            <li>101</li>
-                            <li>库存现金</li>
-                            <li class="align-center">借</li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
+                <ul @click.stop="chooseOn(item,index)" :class="{clickActive:choosedCss[index]}" class="listTitle listContent" v-for="(item,index) of dataList" :key="index">
+                    <li :title="item.KCode">{{item.KCode}}</li>
+                    <li>{{item.KName}}</li>
+                    <li><span v-if="item.KBalanceType==1">借</span><span v-if="item.KBalanceType==2">贷</span><span v-if="item.KBalanceType==3">借/贷</span></li>
+                    <li>
+                        <div class="assistCss" v-for="(aux,index) of item.AuxiliaryTypes" :key=index>
+                            <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                            <span>{{aux.BaseName}} &nbsp;</span>    
+                        </div>     
+                    </li>
+                    <li>
+                        <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                        <!-- <div v-show="updatePage">
+                            <label>启用 <input type="radio"></label>
+                            <label>停用 <input type="radio"></label>
+                        </div> -->
+                    </li>
+                    <li>
+                        <div v-show="(!updatePage)">{{item.NCAccount==0?'':item.NCAccount}}</div>
+                        <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" v-model="item.NCAccount"></div>
+                    </li>
+                    <li v-if="item.children.length>0" class="child">                       
+                        <ul @click.stop="childChoose($event,item,child,index2)"  v-for="(child,index2) of item.children" :key=index2>
+                             <li style="padding:0 0 0 20px;" :title="child.KCode">{{child.KCode}}</li>
+                            <li style="padding-left:20px;" >{{child.KName}}</li>
+                            <li><span v-if="child.KBalanceType==1">借</span><span v-if="child.KBalanceType==2">贷</span><span v-if="child.KBalanceType==3">借/贷</span></li>
+                            <li>
+                                <div class="assistCss" v-for="(aux,index) of child.AuxiliaryTypes" :key=index>
+                                    <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                                    <span>{{aux.BaseName}} &nbsp;</span>    
+                                </div>     
+                            </li>
+                            <li>
+                                <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                                <!-- <div v-show="updatePage">
+                                    <label>启用 <input type="radio"></label>
+                                    <label>停用 <input type="radio"></label>
+                                </div> -->
+                            </li>
+                            <li>
+                                <div v-show="(!updatePage)">{{child.NCAccount==0?'':child.NCAccount}}</div>
+                                <div class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" v-model="child.NCAccount"></div>
+                            </li>
+                            <li v-if="child.children.length>0" class="child">
+                                <ul @click.stop="childChoose($event,child,child3,index3)"  v-for="(child3,index3) of child.children" :key=index3>
+                                    <li style="padding:0 0 0 30px;" :title="child3.KCode">{{child3.KCode}}</li>
+                                    <li style="padding-left:30px;" >{{child3.KName}}</li>
+                                    <li><span v-if="child3.KBalanceType==1">借</span><span v-if="child3.KBalanceType==2">贷</span><span v-if="child3.KBalanceType==3">借/贷</span></li>
+                                    <li>
+                                        <div class="assistCss" v-for="(aux,index) of child3.AuxiliaryTypes" :key=index>
+                                            <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                                            <span>{{aux.BaseName}} &nbsp;</span>    
+                                        </div>     
+                                    </li>
+                                    <li>
+                                        <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                                        <!-- <div v-show="updatePage">
+                                            <label>启用 <input type="radio"></label>
+                                            <label>停用 <input type="radio"></label>
+                                        </div> -->
+                                    </li>
+                                    <li>
+                                        <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child3.NCAccount}}</div>
+                                        <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" v-model="child3.NCAccount"></div>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
-                    </template>
-
+                    </li>
+                </ul>
+               
+            </section>
+        </div> 
+        <div style="clear:both"></div>
+        <div v-if="addPageShow" class="addPageCon">
+            <div class="addPage">
+                <div class="title"><span v-if="addPageShow=='add'">科目新增</span><span v-if="addPageShow=='update'">科目修改</span><i @click.stop="addPageShow=false"></i><div style="clear:both"></div></div>
+                <ul>
+                    <li>
+                        <div>上级科目</div>
+                        <div class="selectContainer">
+                            <select :disabled="addPageShow=='update'?true:false" v-model="subjectInfo.preSubject">
+                                <option v-show="addData.PSubject.length>1" value="0">必填</option>
+                                <option :value="item" v-for="(item,index) of addData.PSubject" :key=index>{{item.KName}}</option>
+                            </select>
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li style="overflow: hidden;">
+                        <div>科目编码</div>
+                        <div class="subCodeCss">
+                            <span v-show="addPageShow=='add'">{{subjectInfo.preSubject.KCode}}</span>
+                            <div class="inputContainer">
+                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject.children?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'" 
+                                        type="text" v-model="subjectInfo.KCode">
+                            </div>
+                            
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>科目名称</div>
+                        <div class="inputContainer">
+                            <input placeholder="必填" type="text" v-model="subjectInfo.KName">
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>科目类别</div>
+                        <div style="padding-left:10px;border:1px solid #ccc">
+                            {{subjectInfo.preSubject.KType?navList[subjectInfo.preSubject.KType].name:''}}
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>余额方向</div>
+                        <div>
+                            <label>
+                                <input v-model="subjectInfo.KBalanceType" value="1" type="radio" name="balance">
+                                &nbsp;借方&nbsp;&nbsp;&nbsp;
+                            </label>
+                            <label>
+                                <input v-model="subjectInfo.KBalanceType" value="2"  type="radio" name="balance">
+                                &nbsp;贷方&nbsp;&nbsp;&nbsp;
+                            </label>
+                            <label>
+                                <input v-model="subjectInfo.KBalanceType" value="3"  type="radio" name="balance">
+                                &nbsp;借/贷&nbsp;&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>辅助核算</div>
+                        <div style="overflow-y:auto;padding:0 5px;">
+                            <label v-for="(assist,index2) of addData.Type" :key=index2>
+                                <input type="checkbox" v-model="subjectInfo.AuxiliaryTypes[index2]">
+                                &nbsp;{{assist.BaseName}}
+                            </label>
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                </ul>
+                <div class="finishBtn">
+                    <span @click.stop="addPageShow=false" class="btn">取消</span>
+                    <span @click.stop="addFinish()" class="btn">保存</span>
+                    <div style="clear:both"></div>
                 </div>
-
             </div>
+        </div>
+        <message :visible.sync="message.visible" :delay="message.delay" :message='message.message'></message>
 
-      <!--<timerBtn ref="timerbtn" class="btn btn-default" @run="sendCode"></timerBtn>-->
-    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import Auth from "@/util/auth";
-import printTem from "@/page/finance/vprint/printTemPdf"
-import timerBtn from '@/components/timerBtn';
-
+import { SubjectAdd,SubjectUpdate,SubjectDelete } from '@/api/subject/subjectInfo'
 //科目期初
 export default {
   name: "subjectInit",
-  components: { printTem,timerBtn },
   data() {
     return {
-      voucherdata:'',
-      fileVisible:false,
-      sumvalue:999999999999.123
+        searchVal:'',
+        dataList:[],
+        asset:[],  //资产
+        liabilities:[],  //负债
+        netAsset:[],//净资产
+        income:[],//收入
+        pay:[],//支出
+        addInfo:{}, //获取的新增科目的返回结果
+        addData:{},//json转换的addInfo
+        subjectInfo:{  //新增科目的值
+            preSubject:'',
+            KCode:'',
+            KName:'',
+            KType:'',
+            KBalanceType:'',
+            AuxiliaryTypes:[]
+        },
+        choosedData:[],//选中的item
+        choosedCss:[],//选中的item的样式
+        navList:[
+            {code:'asset',name:'资产类'},{code:'liabilities',name:'负债类'},{code:'netAsset',name:'净资产类'},{code:'income',name:'收入类'},{code:'pay',name:'支出类'}
+        ],
+        checkedYear:'', //年份
+        activeNav:'资产类',  //激活的类别
+
+        updatePage:false,  //是否编辑状态
+        CheckRes:'',  //是否初始化
+        addPageShow:false,  //新增修改页面
+        message:{
+            message:'',
+            delay:0,
+            visible:false
+        }
     }
   },
   created() {
-    this.printVoucher()
+        
   },
   //加载数据
   mounted:function(){
-
+      this.getChecked();
   },
   //计算
   computed: {
       ...mapState({
-          userid: state => state.user.userid,
+          uid: state => state.user.userid,
           username: state => state.user.username,
+          orgcode: state => state.user.orgcode,
           orgid: state => state.user.orgid
       })
   },
   methods: {
-     //打印凭证
-     printVoucher() {
-       //日期
+      //导航切换**************
+    navActive(item){
+          var vm=this;
+          this.activeNav=item.name;
+          this.dataList=vm[item.code];
+    },
+    //样式初始化
+    initCss(){
+        for(var da in this.dataList){
+            this.choosedCss[da]=false;
+        }
+    },
+    //判断初始化状态************
+    getChecked(){
+            var data={
+                uid:this.uid,
+                orgid:this.orgid,
+                queryfilter:{"OrgId*num*eq*1":this.orgid}
+            }
+            this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
+                .then(res=>{ 
+                    if(!res.CheckRes){
+                        this.message={
+                            delay:4000,
+                            message:'组织未初始化,请先初始化!',
+                            visible:true
+                        }
+                    }
+                    this.CheckRes=res.CheckRes;
+                    this.startInitCss=!res.CheckRes;
+                    // console.log(res)                  
+                    // this.checkedTime=res.Record[0].JAccountPeriod+1;
+                    if(res.CheckRes){
+                        this.checkedYear=res.Record[0].JYear;
+                    }
+                     
+               
+                     this.getSubjectList();
+                    // this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
+                    // this.year=this.sideDate.split('-')[0];
+                    // this.month=this.sideDate.split('-')[1];
+                    // this.checkVal=this.checkedTime;
+                    // this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
+                    // //this.getvoucherList('reset');
+                    // this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear})
+                    // this.$forceUpdate();
+                })
+                .catch(err=>this.$message({ showClose: true,message: err, type: "error"}))
+        },
+    //获取页面数据*********************
+    getSubjectList(){
+        var data={
+            orgid:this.orgid,
+            Ryear:this.checkedYear
+           
+        }
+        this.asset=[];
+        this.liabilities=[];
+        this.netAsset=[];
+        this.income=[];
+        this.pay=[];
+        this.$axios.get('PSubject/GetPSubjectList',{params:data})
+        .then(res=>{
+            if(res.Status=="success"){
+                for(var sub of res.Data){  //数据分成5类
+                    switch(sub.KType){
+                        case '1' :
+                        this.asset.push(sub);
+                        break;
+                        case '2' :
+                        this.liabilities.push(sub);
+                        break;
+                        case '3' :
+                        this.netAsset.push(sub);
+                        break;
+                        case '4' :
+                        this.income.push(sub);
+                        break;
+                        case '5' :
+                        this.pay.push(sub);
+                        break;
+                    }
+                } 
+                this.dataList=this.asset;
+                console.log(res.Data)
+                this.initCss();
+                var data1={
+                    orgid:this.orgid,
+                    uid:this.uid,
+                    Ryear:this.checkedYear?this.checkedYear:(new Date).getFullYear()
+                }
+                const loading2=this.$loading();
+                this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})
+                .then(res=>{
+                        loading2.close();
+                        if(res.Status=='success'){
+                            this.addInfo=res;
+                        }
+                        console.log(this.addInfo)
+                        this.$forceUpdate();
+                    })
+                    
+                }
+        })
+        .catch(err=>{
+            loading2.close();
+        })
+    },
+    //递归查询*****
+    infi(vm,arr,obj){
+        if(obj.children.length>0){
+            for(var i=0;i<obj.children.length;i++){
+                if(obj.children[i].children.length==0){
+                    arr.push(obj.children[i]);
+                }else if(obj.children[i].children.length>0){
+                    vm.infi(vm,arr,obj.children[i]);
+                }
+            }
+        }else if(obj.children.length==0){
+            arr.push(obj);
+        }
+        return arr;
+    },
+    //初始化按钮***********
+    endInit(){
+        var vm=this;
+        var subjects=[];
+        //加入末级科目到subject***
+        for(var ass of this.asset){
+                subjects=vm.infi(vm,subjects,ass);      
+        }
+        for(var lia of this.liabilities){
+            subjects=vm.infi(vm,subjects,lia);   
+        }
+        for(var ne of this.netAsset){
+            subjects=vm.infi(vm,subjects,ne);   
+        }
+        for(var inc of this.income){
+            subjects=vm.infi(vm,subjects,inc);   
+        }
+        for(var p of this.pay){
+           subjects=vm.infi(vm,subjects,p);   
+        }
+        var Dtls=[];
+        for(var s in subjects){
+            Dtls[s]={
+                SubjectCode:subjects[s].KCode, 
+                SubjectName:subjects[s].KName,
+                PersistentState:1
+            }
+            if(subjects[s].KBalanceType==1){
+                Dtls[s].JSum=subjects[s].NCAccount;
+                Dtls[s].DSum=0;
+                if(subjects[s].AuxiliaryTypes.length>0){
+                    Dtls[s].DtlAccounts={
+                        SubjectCode: Dtls[s].SubjectCode,
+                        SubjectName: Dtls[s].SubjectName,
+                        JSum: Dtls[s].JSum,
+                        DSum:0,
+                        PersistentState:1
+                    }
+                    for(var i of subjects[s].AuxiliaryTypes){
+                        Dtls[s].DtlAccounts[i.GLS]=i.PhId;
+                    }
+                }
+            }else if(subjects[s].KBalanceType==2){
+                Dtls[s].DSum=subjects[s].NCAccount;
+                Dtls[s].JSum=0;
+            }
+           
+        }
+        //试算平衡*****************
+        var J=0;
+        var D=0;
+        for(var dt of Dtls){
+             J=parseFloat(J)+parseFloat(dt.JSum);
+             D=parseFloat(D)+parseFloat(dt.DSum);
+        }
+        console.log(J,D)
+        debugger;
+        if(J!=D){
+            this.message={
+                message:'借贷试算平衡不通过,请检查余额!',
+                delay:4000,
+                visible:true
+            }
+            return;
+        }
+        var data1={
+            uid: this.uid,
+            orgid: this.orgid,
+            orgcode: this.orgcode,
+            infoData: {
+                 Mst:{
+                    PMakePerson:this.username,
+                    PType:'记',
+                    OrgId:this.orgid,
+                    OrgCode:this.orgcode,
+                    PersistentState:1,
+                    PMonth:0,
+                    Uyear:(new Date).getFullYear(),
+                    Dtls:Dtls
+                 }
+            }
+        }
+        console.log(data1)
+        debugger;
+        const loading1=this.$loading();
+        this.$axios.post('/PVoucherMst/PostAdd', data1)
+        .then(res=>{
+            loading1.close();
+            if(res.Status=="success"){
+                //发送初始化请求
+                var data2={
+                    orgid:this.orgid
+                }
+                const loading1=this.$loading();
+                this.$axios.post('PBusinessConfig/PostCompleteInit',data2)
+                .then(res=>{
+                    loading1.close();
+                    if(res.Status=='success'){
+                        this.message={
+                            delay:4000,
+                            message:'恭喜您，借贷试算平衡，初始化完成 。',
+                            visible:true
+                        }
+                        this.updatePage=false;
+                    }
+                    this.getChecked();
+                })
+                .catch(err=>{
+                    loading1.close();
+                    this.message={
+                            delay:4000,
+                            message:err,
+                            visible:true
+                        }
+                })
+            }
+      
+        })
+        .catch(err=>{
+            loading1.close();
+        })
+        
+    },
+    //反初始化
+    unInit(){
+        var data2={
+            orgid:this.orgid
+        }
+        const loading1=this.$loading();
+        this.$axios.post('PBusinessConfig/PostUnCompleteInit',data2)
+        .then(res=>{
+            loading1.close();
+            if(res.Status=='success'){
+                this.message={
+                    delay:4000,
+                    message:res.Msg,
+                    visible:true
+                }
+            }
+            this.getChecked();
+        })
+        .catch(err=>{
+            loading1.close();
+            this.$message({ showClose: true,message: err, type: "error"});
+        })
+    },
+    //搜索功能*************
+    getSubjectQueryList(){
+        var data={
+            orgid:this.orgid,
+            uid:this.uid,
+            infoData:{
+                KType:'',
+                KCode:this.searchVal,
+                KName:this.searchVal
+            }
+            
+        }
+        for(var nav in this.navList){
+            if(this.navList[nav].name==this.activeNav)
+            data.KType=parseInt(nav)+1;
+        }
+        this.$axios.post('PSubject/PostPSubjectQueryList',data)
+        .then(res=>{
+            if(res.Status=='success'){
+                this.message={
+                    message:'共搜索到'+res.Data.length+'条数据',
+                    delay:4000,
+                    visible:true
+                }
+                var str=this.navList[data.KType-1].code;
+                var vm=this;
+                vm[str]=res.Data;
+                this.dataList=res.Data;
+            }
+        })
+        .catch(err=>{
+            this.message={
+                message:err,
+                delay:4000,
+                visible:true
+            }
+        })
+    },
+    //选择行****
+    chooseOn(item,index){
+        for(var ch in this.choosedCss){
+            this.choosedCss[ch]='';
+        }
+        var uls=document.querySelectorAll(".child>ul");
+        for(var ul of uls){
+            ul.className='';
+        }
+        this.choosedData=[];
+        this.choosedData.push({child:item});
+        this.choosedCss[index]=true;
+        this.$forceUpdate();
+    },
+    //子代选择
+    childChoose($event,item,child,index2){
+         for(var ch in this.choosedCss){
+            this.choosedCss[ch]='';
+        }
+        var e=$event.currentTarget;
+        var uls=document.querySelectorAll(".child>ul");
+        for(var ul of uls){
+            ul.className='';
+        }
+        e.className="clickActive";
+        this.choosedData=[];
+        this.choosedData.push({child:child,parent:item});
+        this.$forceUpdate();
+    },
+    //新增*****
+    addPage(){
+        this.addPageShow='add';
+        this.addData=JSON.parse(JSON.stringify(this.addInfo));
+        this.subjectInfo={
+            preSubject:0,
+            KCode:'',
+            KName:'',
+            KType:0,
+            KBalanceType:'',
+            AuxiliaryTypes:[]
+        }
+        for(var t=0;t<this.addData.Type.length;t++){
+            this.subjectInfo.AuxiliaryTypes[t]=false;
+        }
+         console.log(this.addData,this.addInfo,this.dataList)
+    },
+    //修改*****
+    updateSubject(){
+        if(this.choosedData.length<=0){
+            this.message={
+                message:'请选择修改的科目!',
+                visible:true,
+                delay:4000
+            }
+            return;
+        }
+        this.addPageShow='update';
+        this.addData={};
+        this.addData.PSubject=this.choosedData.parent?this.choosedData.parent:[];  
+        this.addData.Type=this.choosedData[0].child.AuxiliaryTypes;
+        this.subjectInfo={
+            PhId:this.choosedData[0].child.PhId,
+            preSubject:this.choosedData[0].parent,
+            KName:this.choosedData[0].child.KName,
+            KCode:this.choosedData[0].child.KCode,
+            KType:this.choosedData[0].child.KType,
+            KBalanceType:this.choosedData[0].child.KBalanceType,
+            AuxiliaryTypes:[]
+        }
+        
+        for(var t=0;t<this.addData.Type.length;t++){
+            this.subjectInfo.AuxiliaryTypes[t]=false;
+        }
+    },
+    //新增修改保存按钮
+    addFinish(){
+        var auxi=[];
+        var vm=this;
+        for(var t in this.addData.Type){  
+            if(this.subjectInfo.AuxiliaryTypes[t])
+                auxi.push(this.addData.Type[t]);
+        }
+        
+        this.subjectInfo.OrgId=this.orgid;
+        this.subjectInfo.Layers=parseInt(this.subjectInfo.preSubject.Layers)+1;
+        this.subjectInfo.KType=this.subjectInfo.preSubject.KType;
+        this.subjectInfo.Uyear=this.checkedYear;
+        this.subjectInfo.OrgCode=this.orgcode;
+        this.subjectInfo.ParentId=this.subjectInfo.preSubject.PhId;
+        
+        if(this.addPageShow=="add"){
+            //新增***************
+            if((!this.subjectInfo.preSubject)||(!this.subjectInfo.KName)){
+                this.message={
+                    message:'请输入科目名和上级科目!',
+                    visible:true,
+                    delay:4000
+                }
+                return;
+            }
+            var info=JSON.parse(JSON.stringify(this.subjectInfo));//防止页面瞬间变化***
+            if(this.subjectInfo.KCode){
+                info.KCode=this.subjectInfo.preSubject.KCode+this.subjectInfo.KCode;
+            }else{
+                info.KCode=this.subjectInfo.preSubject.KCode+(this.subjectInfo.preSubject.children?'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1):'01');
+            }
+            debugger;
+            // if(this.subjectInfo.preSubject.children){
+            //     this.subjectInfo.KCode=parseInt(this.subjectInfo.preSubject.KCode)+'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1);
+            // }else{
+            //     this.subjectInfo.KCode=parseInt(this.subjectInfo.preSubject.KCode)+'01';
+            // }
+            var data1={
+              uid:this.uid,
+              orgid:this.orgid,
+              Subject: info, 
+              AuxiliaryTypeList:auxi
+            }
+            SubjectAdd(vm,data1)
+            .then(res=>{
+                if(res.Status=='success'){
+                    this.message={
+                        message:res.Msg,
+                        visible:true,
+                        delay:4000
+                    }
+                }
+                this.addPageShow=false;
+                this.getSubjectList();
+            })
+            .catch(err=>{
+                this.message={
+                        message:err?err:'出错了!',
+                        visible:true,
+                        delay:4000
+                    }
+            })
+        }else{
+            //修改***************
+            if(this.choosedData[0].child.NgRecordVer){  //版本号***
+                this.subjectInfo.NgRecordVer=this.choosedData[0].child.NgRecordVer
+            }
+            var data2={
+              uid:this.uid,
+              orgid:this.orgid,
+              Subject: this.subjectInfo, 
+              AuxiliaryTypeList:auxi
+            }
+            SubjectUpdate(vm,data2)
+            .then(res=>{
+                if(res.Status=='success'){
+                    this.message={
+                        message:res.Msg,
+                        visible:true,
+                        delay:4000
+                    }
+                    this.addPageShow=false;
+                    this.getSubjectList();
+                }else{
+                    this.message={
+                        message:res.Msg,
+                        visible:true,
+                        delay:4000
+                    }
+                }
+                
+            })
+            .catch(err=>{
+                this.message={
+                        message:err?err:'出错了!',
+                        visible:true,
+                        delay:4000
+                    }
+            })
+        }
+    },
+    //删除*****
+    subDelete(){
+        var vm=this;
+        if(this.choosedData.length<=0){
+            this.message={
+                message:'请选择要删除的科目!',
+                visible:true,
+                delay:4000
+            }
+            return;
+        }
+        var data3={
+            orgid:this.orgid,
+            uid:this.uid,
+            id:this.choosedData[0].child.PhId
+        }
+        SubjectDelete(vm,data3)
+        .then(res=>{
+            if(res.Status=='success'){
+                this.message={
+                    message:res.Msg,
+                    delay:4000,
+                    visible:true
+                }
+            }
+            this.getSubjectList();
+        })
+        .catch(err=>{
+            this.message={
+                    message:err,
+                    delay:4000,
+                    visible:true
+                }
+        })
+    },
+    //刷新
+    refresh(){
+        this.searchVal='';
+        this.choosedData=[];
+        for(var ch in this.choosedCss){
+            this.choosedCss[ch]='';
+        }
+        var uls=document.querySelectorAll(".child>ul");
+        for(var ul of uls){
+            ul.className='';
+        }
+        this.getSubjectList();
+    }
+  },
 
-       //拼凑数据供打印使用,凭证头，尾信息
-        var mst = {
-          voucherTitle: "记账凭证", //记账凭证
-          billNum: 4, //附件数
-          orgName: "测试单位", //核算单位
-          billdate:"2018-12-20", //日期
-          voucherNum: "记-0001", //凭证号：记-0001
-          lotal: '23987.20', //合计
-          chager:'李四',
-          supervisor: "张三", //记账
-          auditor: "张伟", //审核
-          cashier: "王五", //出纳
-          producer: this.username //制单
-        };
-
-        var list=[
-          { abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  deVal: '5071.00',  crVal: ''},
-          { abstract: "代理收入",  subject: "11220002 应收账款_陕西咸阳佳佳",  deVal: '18916.20',  crVal: ''},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '4783.96'},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '17845.47'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-          { abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  deVal: '5071.00',  crVal: ''},
-          { abstract: "代理收入",  subject: "11220002 应收账款_陕西咸阳佳佳",  deVal: '18916.20',  crVal: ''},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '4783.96'},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '17845.47'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-          { abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  deVal: '5071.00',  crVal: ''},
-          { abstract: "代理收入",  subject: "11220002 应收账款_陕西咸阳佳佳",  deVal: '18916.20',  crVal: ''},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '4783.96'},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '17845.47'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-          { abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  deVal: '5071.00',  crVal: ''},
-          { abstract: "代理收入",  subject: "11220002 应收账款_陕西咸阳佳佳",  deVal: '18916.20',  crVal: ''},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '4783.96'},
-          { abstract: "代理收入",  subject: "50010002 主营业务收入_二级收入",  deVal: '',  crVal: '17845.47'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'},
-          { abstract: "代理收入",  subject: "222100010007 应交税费_应交增值税_销项税额",  deVal: '',  crVal: '1357.77'}
-        ];
-
-        this.voucherdata=[{
-          mst:mst,
-          list:list
-        }];
-
-     },
-     printClick(){
-       //this.fileVisible=true; //打印
-       this.$refs.print.printvoucher(); //打印
-     },
-     sendCode(){
-       this.$refs.timerbtn.setDisabled(true); //设置按钮不可用
-     }
-
-  }
 }
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
-<style scoped>
-    .formData>ul>li,.formData>div>ul>li{
-        border-right:1px solid #fff;
-        height:50px;
-        line-height:50px;
-        text-align: center;
-        width:15%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+<style lang='scss' scoped>
+    .container{
+        height:100%;
+        overflow-y: auto;
+        min-width:1000px;
     }
-    .formData>ul>li:nth-of-type(2),.formData>div>ul>li:nth-of-type(2){
+    .subjectNav{
+        width: 25px;
+        height:100%;
+        float:left;
+        >ul{
+            height:100%;
+            >li{
+                text-align: center;
+                height:20%;
+                min-height: 130px;
+                cursor:pointer;
+                &.active{
+                    background: #00b7ee;
+                    color:#fff;
+                }
+                >span{
+                    display: block;
+                    height:50%;
+                    position:relative;
+                    top:25%;
+                    min-height: 130px;
+                }
+                 &:nth-of-type(3)>span{
+                        height:60%;
+                        top:20%;
+                        
+                    }
+            }
+        }
+    }
+    .subjectContent{
+        float:left;
+        margin-left: 1%;
+        width:96%;
+        height:100%;
+        >div:first-of-type{
+            height:30px;
+            width:100%;
+            min-width: 810px;
+            position: relative;
+        }
+    }
+    .listContainer{
+        min-width:810px;
+        max-height:85%;
+        padding:5px;
+        margin-top:10px;
+        padding-bottom: 20px;
+    }
+    .listContainer ul.listTitle{
+        height:auto;
+        background: #d3e9f9 ;
+        color:#333;
+        &:first-of-type{
+            >li{
+                background: #d3e9f9 ;
+            }
+        }
+        >li>div{
+            height:100%;
+            width:100%;
+            position:relative;
+        }
+    }
+    .listContainer ul.listTitle >li{
+        float:left;
+        text-align: center;
+        height:40px;
+        line-height: 40px;
+        overflow:hidden;
+        position:relative;
+    }
+    .listContainer ul.listTitle >li:first-of-type{
         width:20%;
     }
-    .formData>ul>li:nth-of-type(3),.formData>div>ul>li:nth-of-type(3){
+    .listContainer ul.listTitle >li:nth-of-type(2){
+        width:13%;
+    }
+    .listContainer ul.listTitle >li:nth-of-type(3){
+        text-align: center;
         width:10%;
     }
-    .formData>ul>li:nth-of-type(4),.formData>div>ul>li:nth-of-type(4){
-        width:30%;
+    .listContainer ul.listTitle >li:nth-of-type(4){
+        width:32%;
     }
-    .formData>ul>li:nth-of-type(5),.formData>div>ul>li:nth-of-type(5){
-        width:10%;
-    }
-    .formData>ul>li:nth-of-type(6),.formData>div>ul>li:nth-of-type(6){
+    .listContainer ul.listTitle >li:nth-of-type(5){
         width:15%;
     }
-    .formData>ul:first-child>li:last-of-type{
-        border-right:1px solid #d3e9f9;
+    .listContainer ul.listTitle >li:nth-of-type(6){
+        width:10%;
     }
+    .listContainer ul.listContent{
+        background: #fff;
+        &.clickActive>li{
+            background:#aaa;
+            &.child{
+                background: #fff;
+            }
+        }
+        
+        >li{
+            border:1px solid #ddd;
+            border-width:0 1px 1px 0;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0 0 0 5px;
 
-    .formData>ul>li:first-child{
-        padding:0 2px;
+            &:first-of-type{
+                border-left:1px solid #ddd;
+            }
+            .inputContainer>input{
+                border:0;
+            }
+            .assistCss{
+                display: inline-block;
+                width:auto;
+                margin-right:5px;
+           
+                >img{
+                    height:70%;
+                    vertical-align: middle;
+                    position:relative;
+                    top:-2px;
+                }
+            }
+        }
+        >li.child{
+            clear:both;
+            height:auto;
+            width:100%;
+            padding:0;
+            border:0;
+            >ul{
+                &.clickActive>li{
+                    background:#aaa;
+                }
+                
+                >li{
+                    float:left;
+                    height:40px;
+                    position:relative;
+                    border:1px solid #ddd;
+                    border-width:0 1px 1px 0;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    &:first-of-type{
+                       width:20%;
+                       border-width:0 1px 1px 1px;
+                    }
+                    &:nth-of-type(2){
+                        width:13%;
+                    }
+                    &:nth-of-type(3){
+                        text-align: center;
+                        width:10%;
+                    }
+                    &:nth-of-type(4){
+                        width:32%;
+                    }
+                    &:nth-of-type(5){
+                        width:15%;
+                    }
+                    &:nth-of-type(6){
+                        width:10%;
+                    }
+                    >div{
+                        height:100%;
+                    }
+                }
+            }
+        }
     }
-
-
-    .formDataItems{
-        background-color: white;
-    }
-    .formData>div{
-        overflow-y: auto;
-        position: relative;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-    }
-    .formData>div>ul.formDataItems>li{
-        border-right:1px solid #ddd;
-        border-left:0;
-        border-bottom:1px solid #ddd;
-        text-align: left;
-        line-height: 40px;
-        height:40px;
-        font-size: 13px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-left: 15px;
-        float: left;
-    }
-    .formData>div>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
-    }
-    .formData>div>ul.formDataItems>li.bolder{
-        font-weight: bold;
-    }
-    .formData>div>ul.formDataItems>li.align-center{
-        text-align: center;
+    li.child{
+        clear:both;
+        height:auto !important;
+        width:100%;
         padding:0;
+        border:0 !important;
+        .child{
+            background: #fff !important;
+        }
+        >ul{
+            &.clickActive>li{
+                background:#aaa;
+            }
+            
+            >li{
+                float:left;
+                height:40px;
+                position:relative;
+                border:1px solid #ddd;
+                border-width:0 1px 1px 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                &:first-of-type{
+                    width:20%;
+                    border-width:0 1px 1px 1px;
+                }
+                &:nth-of-type(2){
+                    width:13%;
+                }
+                &:nth-of-type(3){
+                    text-align: center;
+                    width:10%;
+                }
+                &:nth-of-type(4){
+                    width:32%;
+                }
+                &:nth-of-type(5){
+                    width:15%;
+                }
+                &:nth-of-type(6){
+                    width:10%;
+                }
+                >div{
+                    height:100%;
+                }
+            }
+        }
     }
-    .formData>div>ul.formDataItems>li.align-right{
-        text-align: right;
-        padding-right: 15px;
+    .searcherCon{
+        >div{
+            float:left;
+        }
+
     }
-    .unionSetting{
-        display: table;
-        width: 100%;
+    .subjectHanle{
+        right:0;
+        position:absolute;
+        z-index:9;
+        >li{
+            float:left;
+            height:30px;
+            line-height: 30px;
+            overflow: hidden;          
+            margin-left:10px;
+            width:90px;
+            text-align: center;
+            border-radius:3px;
+            >img{
+                width:100%;
+                height:100%;
+            }
+            &:first-of-type{
+                background: none;
+                color:#aaa;
+                width:220px;
+            }
+            &.subjectSet{
+                transition:all 0.2s linear;
+                position:relative;
+                border:1px solid #00b7ee;
+                cursor:pointer;
+                &:hover{
+                    height:120px;
+                    border:1px solid #00b7ee;
+                }
+                >div{
+                    float:left;
+                    width:100%;
+                    height:100%;
+                    z-index:9;
+                    >ul{
+                        li{
+                            width:100%;
+                            background: #fff;
+                            color:#aaa;
+                            &:hover{
+                                background:#ccc;
+                                color:#fff;
+                            }
+                        }
+                        >li:first-of-type{
+                            position: relative;    
+                            text-align: left;
+                            padding-left:10px;
+                            background: #00b7ee;
+                            color:#fff;
+                            &:after{
+                                content:"";
+                                position: absolute;
+                                right:6px;
+                                top:12px;
+                                border:5px solid transparent;
+                                border-top:5px solid #fff;
+                            }   
+                        }
+                    }
+                }
+                
+            }
+            &:last-of-type{
+                margin-right:5px;
+            }
+            >ul>li{
+                height:30px;
+            }
+        }
     }
-    .unionSetting .handle{
-        margin-right:20px;
-        min-width: 590px;
+    i.newAddStateTrue:after{
+        top:5px;
     }
-    .unionSetting .handle>a{
-        float:right;
-        width: auto;
-        margin-right: 10px;
+    .newAddStateFalse:before,
+    .newAddStateFalse:after{
+        top:20px;
     }
-    .unionSetting .handle>li{
-        float: right;
-    }
-    .unionSetting .handle>li:last-child{
-        float: left;
-    }
-    .unionSetting .handle>li>div{
-        display: inline-block;
-    }
-    .unionSetting .handle>li>div:first-child{
-         border: 1px solid #ddd;
-         border-radius: 10px 0 0 10px;
-         padding-left: 10px;
-        margin-top: 1px;
-        height: 34px;
-     }
-    .unionSetting .handle>li>div>input{
-        border: none;
-        height: 28px;
-    }
-    .unionSetting .handle>li>div:last-child{
-        height: 34px;
-        width: 60px;
+    .searcherBtn{
+        height:32px;
+        width:60px;
         text-align: center;
         line-height: 30px;
-        background: #00B8EE;
-        color: #fff;
-        cursor: pointer;
-        margin-left: -5px;
+        border-radius: 0 ;
+    }   
+    .addPageCon{
+        width:100%;
+        height:100%;
+        position:fixed;
+        left:0;
+        top:0;
+        z-index:99;
+        font-size:16px;
+        color:#666;
+        background:rgba(0,0,0,0.5);
+        >.addPage{
+            
+            width:556px;
+            height:346px;
+            position:absolute;
+            left:35%;
+            top:120px;
+            background:#fff;
+            padding:5px 10px;
+            >ul{
+                padding:20px 50px 0px;
+                >li{
+                    
+                    height:30px;
+                    margin-bottom:10px;
+                    overflow-y: auto;
+                    .subCodeCss{
+                        overflow: hidden;
+                        >span{
+                            float:left;
+                            height:100%;
+                            line-height: 30px;
+                            width:20%;
+                            background: #ccc;
+                            color:#fff;
+                            text-align: right;
+                            padding-right:5px;
+                        }
+                        >div{
+                            float:left;
+                            width:80%;
+                            >input{
+                                border:0;
+                            }
+                        }
+                    }
+                    >div{
+                        height:100%;
+                    }
+                    >div:last-of-type{
+                        width:0;
+                        height:0;
+                    }
+                    >div:first-of-type{
+                        float:left;
+                        width:75px;
+                        text-align: right;
+                        padding-right:10px;
+                    }
+                    >div:nth-of-type(2){
+                        float:left;        
+                        width:360px;
+                        border:1px solid #ccc;
+                        
+                    }
+                    &:nth-of-type(4) >div:nth-of-type(2){
+                         border:0;
+                    }
+                    &:nth-of-type(5) >div:nth-of-type(2){
+                         border:0;
+                    }
+                    
+                }
+                &>li:last-of-type{
+                    margin-top:-10px;
+                    height:40px;
+                }
+                
+            }
+        }
     }
-    .unionSetting .handle>a>li:hover{
-        background-color: #fff;
-        color: #00b7ee;
-        border: 1px solid #00b7ee;
+    .title{
+        border-bottom: 1px solid #ccc;
+        padding:8px 3px;
+        width:100%;
+        font-family: Arial;
+        font-size: 14.0pt;
+        font-style: normal;
+        font-weight: 700;
+        >span{
+            float:left;
+        }
+        i{
+            float:right;
+            background: url("../../../assets/icon/close.svg");
+            background-size:cover ;
+            width:20px;
+            height:20px;
+            cursor:pointer;
+            &:hover{
+                opacity:0.7;
+            }
+        }
     }
-    .unionSetting .handle>a>li {
-        border: 1px solid #00b7ee;
-        border: 0;
-        padding: 0 10px;
-        color: #fff;
-        cursor: pointer;
-        border-radius: 3px;
-        text-align: center;
-        background: #00b7ee;
-        width: auto;
-        min-width:50px;
-        font-size: 14px;
-        height: 30px;
-        line-height: 30px;
+    .finishBtn{
+        width:230px;
+        margin:auto;
+        >:nth-of-type(2){
+            float:right;
+        }
     }
-    .lineUl{
-        width: 100%;
-        height: 80px;
-        line-height: 40px;
-        border-top: 2px solid #ccc;
-        margin-top: 15px;
-    }
-    .lineUl li{
-        display: inline-block;
-        width: 20%;
-        float: left;
-        font-size: 20px;
-        padding: 0 20px;
-        text-align: center;
-        margin-top: 20px;
-        cursor: pointer;
-    }
-    .lineUl li:hover{
-        color: #00b7ee;
-    }
-    .lineUl li .select{
-        color: #00b7ee;
-    }
-    .lineUl ul li i{
-        display: block;
-        width: 80%;
-        border-bottom:3px solid #cccccc;
-        margin-left: 10%;
-    }
-    .lineUl li .select i{
-        border-color: #e6a23c;
-    }
-    .lineUl li:hover >i{
-        border-color: #e6a23c;
-    }
-    .lineUl:after{
-        float: none;
-    }
+    
 </style>

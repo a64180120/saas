@@ -105,10 +105,10 @@ export default {
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{ 
-                        if(res.Record.length==0){
-                            this.$message({ showClose: true,message: '当前组织未初始化!', type: "error"})
+                        if(!res.CheckRes){
+                            this.$message({ showClose: true,message: '当前组织未初始化,请开始初始化!', type: "error"});
                             return;
-                        }                      
+                        }                        
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.checkedYear=res.Record[0].JYear;
                         this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
@@ -117,7 +117,7 @@ export default {
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                         //this.getvoucherList('reset');
-                        this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime})
+                        this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear})
                         this.$forceUpdate();
                     })
                     .catch(err=>this.$message({ showClose: true,message: err, type: "error"}))
