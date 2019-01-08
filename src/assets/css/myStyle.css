@@ -337,7 +337,6 @@ ul{
 .el-icon-menu:before{
     content:"";
     position:relative;
-    top:10px;
     width:65px;
     height:35px;
     display: block;

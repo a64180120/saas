@@ -6,7 +6,7 @@ export default {
     // 导航条位置   left / top
     navbarPosition: 'left',
     //折叠收起菜单
-    isCollapse:false,
+    isCollapse:true,
     // 当前系统主题  base
     theme: '',
     // 通知框等需要自动消失的时间

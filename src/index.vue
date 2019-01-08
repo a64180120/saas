@@ -77,26 +77,35 @@ export default {
 
         })
 
-        this.getloginState(this.loginid,this.userid);
+        //this.getloginState(this.loginid,this.userid);
     },
     methods: {
         getloginState(sessionid,userid){
             var me=this;
+            var dialog=false;
+            
             window.setInterval(() => {
                 setTimeout(() => {
                     var userinfo=Auth.getUserInfoData();
+                    console.log(sessionid);
                     if(sessionid!='' && userinfo){
-                        console.log(sessionid);
+                       
                         me.$axios.get('/SysUser/GetLoginState',{params:{
                             sessionid:sessionid,
                             userid:userid
                         }})
                         .then(res=>{
-                            if(res.Status==='error'){
+                            if(res.Status==='success'){
+                                if(!res.data){
+                                    dialog=true
+                                }
+                            }
+                            if(dialog){
                                 me.$alert('当前用户在别处登录', '提示', {
                                     confirmButtonText: '退出',
                                     callback: action => {
-                                        me.$store.dispatch('user/logout')
+                                        me.$store.dispatch('user/logout');
+                                        me.$router.push("/login");
                                     }
                                 });
                             }
