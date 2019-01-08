@@ -456,7 +456,8 @@ export default {
                     this.login({
                         name: this.loginForm.name,
                         password: this.loginForm.password,
-                        orgid: this.loginForm.orgid
+                        orgid: this.loginForm.orgid,
+                        loginid:this.loginid
                     }).then(res => {
                         loading.close();
                         if(res.Status==="success"){

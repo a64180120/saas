@@ -11,6 +11,16 @@ import Auth from "@/util/auth"
 
 
 export default {
+    data() {
+        return {
+            
+        }
+    },
+    computed: {
+        loginid:function(){
+            return this.$store.state.user.loginid
+        }
+    },
     created() {
         
     },
@@ -63,6 +73,23 @@ export default {
             }
 
         })
+
+        this.getloginState();
+    },
+    methods: {
+        getloginState(){
+            if(loginid!=''){
+                this.$axios.get('/SysUser/GetSysNews',{params:{
+                    loginid:loginid
+                }})
+                .then(res=>{
+                    this.form=res;
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+            }
+        }
     }
 }
 </script>
