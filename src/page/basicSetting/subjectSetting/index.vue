@@ -5,7 +5,7 @@
             <el-row>
                 <el-col :span="14">
                     <div style="float: left;margin-right: 10px">
-                        <el-select v-model="s_type" placeholder="请选择科目类别" class="handle-select mr10" style="margin-top: 0px">
+                        <el-select v-model="s_type" placeholder="请选择科目类别" @change="search" class="handle-select mr10" style="margin-top: 0px">
                             <el-option label="全部" value=""></el-option>
                             <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
                         </el-select>
@@ -22,6 +22,7 @@
                 </el-col>
             </el-row>
         </div>
+
         <tree-table
         :data="data"
         :expand-all="expandAll"
@@ -52,16 +53,29 @@
             </el-table-column>
             <el-table-column label="辅助核算">
                 <template slot-scope="scope">
-                    <span v-for="(v,index) in scope.row.AuxiliaryTypes" :key="v.PhId">
-                        <span v-if="index<( scope.row.AuxiliaryTypes.length-1)">{{v.BaseName}},</span>
-                        <span v-else>{{v.BaseName}}</span>
-                    </span>
+                    <template v-if="scope.row.AuxiliaryTypes.length>0">
+                        <span v-for="(v,index) in scope.row.AuxiliaryTypes" :key="v.PhId">
+                            <span v-if="index<( scope.row.AuxiliaryTypes.length)">{{v.BaseName}},</span>
+                            <span v-else>{{v.BaseName}}</span>
+                        </span>
+                    </template>
+                    <template v-else>
+                        <span></span>
+                    </template>
                 </template>
+
             </el-table-column>
-            <el-table-column label="停用/启用" align="center">
+            <el-table-column label="停用/启用" align="center" >
                 <template slot-scope="scope">
-                    <el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini" circle></el-button>
-                    <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>
+                    <template  v-if="scope.row.EnabledMark===0">
+                        <div class="rightIcon" :data-value="scope.row.PhId+'-'+scope.row.EnabledMark" @click="abdis"></div>
+
+                    </template>
+                    <template v-else>
+                        <div class="falseIcon el-icon-close" :data-value="scope.row.PhId+'-'+scope.row.EnabledMark" @click="abdis"></div>
+                    </template>
+                    <!--<el-button type="success" icon="el-icon-check" size="mini" circle @click="abdis"></el-button>
+                    <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>-->
                 </template>
             </el-table-column>
         </tree-table>
@@ -190,24 +204,32 @@ export default {
   },
   methods: {
     async getData(query){
+        console.log(1111111);
       var vm=this;
       this.loading = true;
 
       //科目列表
       SubjectList(vm,{
-          Ryear:'2018',
+          /*Ryear:'2018',*/
           uid: this.userid,
           orgid: this.orgid,
           infoData:query
       }).then(res => {
           this.loading = false;
-          //console.log(res);
-
-          if(res.Status==='error'){
-            this.$message.error(res.Msg);
-            return
+          console.log(res);
+          if(res!=undefined){
+              if(res.Status==='error'){
+                  this.$message.error(res.Msg);
+                  return
+              }
+              else{
+                  this.data=res;
+              }
+          }else{
+              this.data=[];
           }
-          this.data=res;
+
+
 
       }).catch(error =>{
         console.log(error);
@@ -324,6 +346,37 @@ export default {
             });
         }
     },
+      //停用启用EnabledMark
+      abdis(val) {
+        console.log(val);
+          let value=val.target.dataset.value;
+          console.log(value);
+          let phid=value.split('-')[0],enableMark=value.split('-')[1]==0?1:0;
+          this.$confirm("此操作将修改该数据启用状态, 是否继续?", "修改提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
+          }).then(() => {
+              this.loading = true;
+              var data={
+                  uid:this.userid,
+                  orgid:this.orgid,
+                  infoData:{PhId:phid,
+                  EnabledMark:enableMark}
+              }
+              this.$axios.post('PSubject/PostEnablePSubject',data).then(res=>{
+                  this.loading = false;
+                  console.log(res);
+                  this.getData;
+              }).catch(err=>{
+                  this.loading = false;
+                  console.log(err);
+              })
+          }).catch(er=>{
+              this.loading = false;
+              this.$message.error('删除错误');
+          })
+      },
     //删除按钮
     Delete() {
       let object = this.singleSelection;
@@ -615,5 +668,27 @@ export default {
 }
 .red {
   color: #ff0000;
+}
+.rightIcon{
+    height: 10px;
+    width: 23px;
+    border-width: 0px 0px 2px 2px;
+    border-style: solid;
+    border-color: #00d1b2;
+    transform: rotate(-40deg);
+    position: absolute;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    cursor: pointer;
+}
+.falseIcon{
+    color: red;
+    font-size: 25px;
+    position: absolute;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    cursor: pointer;
 }
 </style>
