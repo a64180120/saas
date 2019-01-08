@@ -21,7 +21,7 @@ export default {
     data() {
         return {
             collapsevule:this.isCollapse,
-            barshow:true
+            barshow:false
         }
     },
     props: ["isCollapse"],
