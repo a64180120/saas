@@ -1,5 +1,5 @@
 <template>
-        <div class="manageContent" v-loading="loading" id="ts">
+        <div class="manageContent" id="ts">
             <div class="reportBox">
                 <div class="unionState flexPublic">
                     <ul class="flexPublic">
@@ -26,7 +26,7 @@
                         <div class="flexPublic handle">
                             <div class="searcherValue"><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></div>
                             <div  class="searcherBtn" @click="selectBtn">搜索</div>
-                            <div   class="searcherBtn" @click="showType='block'" style="margin-left: 20px">高级</div>
+                            <div   class="searcherBtn" @click="showType='block'" style="margin-left: 10px">高级</div>
                             <div class="searchPanel" :style="{'display':showType}">
                                 <div class="flexPublic searchPanel_title">
                                     <div>高级查询</div>
@@ -68,9 +68,9 @@
 
                             </div>
                         </div>
-                        <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li></a>
-                        <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li></a>
-                        <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
+                        <a><li style='margin:0 0 0px 10px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li></a>
+                        <a><li style='margin:0 0 0px 10px;' @click="printContent">打印</li></a>
+                        <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
                     </ul>
                 </div>
                 <div class="flexPublic  p0">
@@ -99,7 +99,7 @@
                             </el-tree>
                         </div>
                     </div>
-                    <div class="formData" ref="printFrom" @mousedown="loadMore" > <!--v-loading.fullscreen.lock="loading"-->
+                    <div class="formData" ref="printFrom" @mousedown="loadMore" >
                         <ul>
                             <li>凭证日期</li>
                             <li>凭证字号</li>
@@ -112,7 +112,7 @@
                        <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
                             <li>{{dataInfoMonth.Pdate.slice(0,10).split(' ')[0]}}</li>
                             <li></li>
-                            <li :class="{bolder:true,'align-center':true}">{{date1.choosedMonth==1?'本年期初':dataInfoMonth.Abstract}}</li>
+                            <li :class="{bolder:true,'align-center':true}">{{date1.choosedMonth==1?'年初余额':dataInfoMonth.Abstract}}</li>
                             <li class="align-right">{{dataInfoMonth.JSum| NumFormat}}</li>
                             <li class="align-right" :title="dataInfoMonth.DSum">{{dataInfoMonth.DSum| NumFormat}}</li>
                             <li>{{JD[dataInfoMonth.DType]}}</li>
@@ -122,19 +122,34 @@
                         </ul>
 
                         <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
-                            <li>{{item.Pdate.slice(0,10).split(' ')[0]}}</li>
-                            <li class="align-center" style=""><a @click="showvoucher" :title="item.PhIdMst">{{item.Pno!='本月累计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
-                            <li :class="{bolder:item.Abstract=='本月累计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
-                            <template></template>
-                            <li class="align-right">{{item.JSum |NumFormat}}</li>
-                            <li class="align-right">{{item.DSum |NumFormat}}</li>
-                            <li>{{JD[item.DType]}}</li>
-                            <template v-if="item.Pno!='本月累计'&&item.Pno!='本年累计'">
+                            <template v-if="item.Abstract=='科目初始化'">
+                                <li>{{item.Pdate.slice(0,10).split(' ')[0]}}</li>
                                 <li></li>
+                                <li class="bolder align-center">年初余额</li>
+                                <li class="align-right">{{item.JSum |NumFormat}}</li>
+                                <li class="align-right">{{item.DSum |NumFormat}}</li>
+                                <li>{{JD[item.DType]}}</li>
+                                <li class="align-right">
+                                    {{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}
+                                </li>
                             </template>
                             <template v-else>
-                                <li class="align-right">{{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}</li>
+                                <li>{{item.Abstract=='本月合计'||item.Abstract=='本年累计'?item.Pdate.split('/')[0]+'/'+item.Pdate.split('/')[1]:item.Pdate.slice(0,10).split(' ')[0]}}</li>
+                                <li class="align-center" style=""><a @click="showvoucher" :data-title="item.PhIdMst">{{item.Pno!='本月合计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
+                                <li :class="{bolder:item.Abstract=='本月合计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
+                                <template></template>
+                                <li class="align-right">{{item.JSum |NumFormat}}</li>
+                                <li class="align-right">{{item.DSum |NumFormat}}</li>
+                                <li>{{JD[item.DType]}}</li>
+                                <template v-if="item.Pno!='本月合计'&&item.Pno!='本年累计'">
+                                    <li></li>
+                                </template>
+                                <template v-else>
+                                    <li class="align-right">{{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}</li>
+                                </template>
                             </template>
+
+
 
                         </ul>
                         <div :style="{'display':!busy?'block':'none'}">
@@ -153,11 +168,12 @@
                     </div>
                 </div>
                 <!--凭证组件弹窗-->
-                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none'}" >
-                    <div class="el-icon-close" @click="voucherDataList.bool=false"></div>
+                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none','z-index':'999'}" >
                     <div class="voucherContent">
+                        <div class="title">凭证查看 <i class="el-icon-close" @click="voucherDataList.bool=false"></i></div>
                         <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                     </div>
+                    <div class="voucherCoverInner"> </div>
                 </div>
 
             </div>
@@ -188,7 +204,6 @@
                 voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
                 JD:['平','借','贷'],
                 downloadLoading: false,
-                loading: false,
                 filterText:'',
                 subjectLists: [],
                 selectItem:'',
@@ -209,7 +224,6 @@
                 date1:{choosedYear:'',
                        choosedMonth:'',
                        choosedMonthEnd:''},
-                loading:true,
                 inputCode:'',//搜索框输入项目编码
                 focus:false,
                 proofType:'0,1',
@@ -279,10 +293,8 @@
             },
             //显示凭证
             showvoucher:function(val){
-
-                this.getVoucherData(val.target.title);
-
-                },
+                this.getVoucherData(val.target.dataset.title);
+            },
             //清除高级查询数据
             clearPorp:function(){
                 this.zwTime='';
@@ -407,10 +419,10 @@
                     StartPNo:this.startCode,EndPno:this.endCode,
                     StartAmount:this.startMoney,EndAmount:this.endMoney
                 };
-                this.loading = true;
+                const loading1=this.$loading();
                 this.$axios.get("/PVoucherMst/GetDetailAccount",{params:data})
                     .then(res=>{
-                        this.loading = false;
+                        loading1.close();
                         //res.Record=this.changeData(res.Record);
 
                         if(res.Status==='error'){
@@ -420,8 +432,6 @@
                         }
                         //this.dataInfo=res.Record;
                         this.totalCount=res.totalRows;
-                        console.log(res);
-
                         this.pageIndex++;  //滚动之后加载第二页
                         if(flag){//如果flag为true则表示分页
                             if(res.Record.length<this.pageSize){
@@ -450,7 +460,7 @@
                     })
                     .catch(err=>{
                         console.log(err)
-                        this.loading = false;
+                        loading1.close();
                         this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
                     })
             },
@@ -468,14 +478,18 @@
                     this.date1.choosedMonthEnd=currentMonth;
                     year=currentyear;
                     Pmonth=currentMonth+','+currentMonth;
+                    if(currentMonth==1){
+                        return
+                    }
                 }else{
                     if(this.date1.choosedMonth!=this.date1.choosedMonthEnd){
-                        if(this.date1.choosedMonth==1){
+                        /*if(this.date1.choosedMonth==1){
                             year=this.date1.choosedYear;
                             Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonth;
                         }else{
                             return
-                        }
+                        }*/
+                        return
                    }
                     else{
                         year=this.date1.choosedYear;
@@ -499,12 +513,11 @@
                     StartPNo:this.startCode,EndPno:this.endCode,
                     StartAmount:this.startMoney,EndAmount:this.endMoney
                 };
-                this.loading = true;
+                const loading1=this.$loading();
                 let that=this;
                 this.$axios.get("/PVoucherMst/GetDetailAccount_MonthStart",{params:data})
                     .then(res=>{
-                        that.loading = false;
-
+                        loading1.close();
                         if(res.Status==='error'){
                             this.$message.error(res);
                             return
@@ -513,13 +526,13 @@
                     })
                     .catch(err=>{
                         console.log(err)
-                        this.loading = false;
+                        loading1.close();
                         this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
                     })
             },
             async getSubjectData(queryfil){
+                const loading1=this.$loading();
                     let vm=this;
-                    this.loading = true;
                     let queryfilter={
                         KCode:'',
                         KName:''
@@ -536,12 +549,8 @@
                         orgid: this.orgid,
                         infoData:queryfilter
                     }).then(res => {
+                        loading1.close();
 
-                    this.loading = false;
-                    if(res.Status==='error'){
-                        this.$message.error(res.Msg);
-                        return
-                    }
                     this.pingjie(res);
                     this.subjectLists=res;
 
@@ -553,9 +562,8 @@
                         this.getData(false);
                         this.KBalanceType=res[0].KBalanceType
                     }
-
                 }).catch(error =>{
-                    this.loading = false;
+                        loading1.close();
                     this.$message({
                         showClose: true,
                         message: '科目列表获取错误',
@@ -740,30 +748,49 @@
 </script>
 
 <style scoped>
+    .timeSelectBox{
+        z-index: 99;
+    }
     .voucherCover{
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 999;
+        z-index: 100;
         background-color: rgba(0, 0, 0, 0.7);
         padding: 0 30px;
     }
     .voucherCover .el-icon-close{
-        position: relative;
-        top: 80px;
         float: right;
-        background-color: #45c0f7;
-        color: white;
-        font-size: 20px;
-        font-weight: 900;
-        padding: 7px;
-        border-radius: 20px;
+        color: #ccc;
+        font-size: 24px;
+        padding:0px 7px;
+        cursor: pointer;
+    }
+    .voucherCover .title{
+        font-size: 17px;
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+        padding: 10px 0;
+        height: 45px;
     }
     .voucherContent{
-        margin-top: 10%;
+        margin-top: 8%;
         background-color: white;
+        width: 80%;
+        margin-left: 10%;
+        padding: 5px 15px;
+        border-radius: 5px;
+    }
+    .voucherCoverInner{
+        position: absolute;
+        top:45px;
+        margin-top: 8%;
+        width: 100%;
+        background-color: #cccccc00;
+        height: 100%;
+        z-index: 999;
     }
     .selectContainer>select {
         background-color: transparent;
@@ -827,7 +854,6 @@
 
 
     .formDataItems{
-
         border-bottom:1px solid #ddd;
     }
     .formData>ul.formDataItems>li{
@@ -843,6 +869,11 @@
     }
     .formData>ul.formDataItems>li:first-child{
         border-left:1px solid #ddd;
+    }
+    .formData>ul.formDataItems>li a,.formData>ul.formDataItems>li a:link,.formData>ul.formDataItems>li a:active,.formData>ul.formDataItems>li a:visited,.formData>ul.formDataItems>li a:hover {
+        color: #000;
+        text-decoration: underline;
+        cursor: pointer;
     }
     .unionLists{
         width:20%;

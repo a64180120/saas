@@ -62,6 +62,7 @@
             unionTab(name) {
                 this.asideActive = name;
                 sessionStorage.setItem("asideActive", name);//**防止刷新数据清空************* */
+                this.ajaxMode();
             },
             ajaxMode() {
                 let data = {

@@ -307,7 +307,9 @@
             },
             routerTo(url) {
                 if(url == '/admin/orgin/add'){
+                    this.$store.commit("tagNav/upexcludeArr", ['manage-add']);
                     this.$router.push({path: url, query: {showFlam:true}});
+                    this.ajaxMode();
                 }else{
                     if(this.PhIdList.length == 0){
                         alert('请点击你要修改的组织');
