@@ -4,18 +4,19 @@
         <div class="handle-box">
             <el-row>
                 <el-col :span="14">
-                    <el-select v-model="s_type" placeholder="请选择科目类别" class="handle-select mr10">
-                        <el-option label="全部" value=""></el-option>
-                        <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
-                    </el-select>
-                    <el-input size="small" v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10" style="height: 32px"></el-input>
-                    <el-button type="primary" icon="el-icon-search" size="small" class="handle-del mr10" @click="search">搜索</el-button>
-                </el-col>
-                <el-col :span="10" :style="{'text-align':'right'}">
-                    <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add">新增</el-button>
-                    <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="Edit">修改</el-button>
-                    <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="Delete">删除</el-button>
-                    <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad">导入</el-button>
+                    <div style="float: left;margin-right: 10px">
+                        <el-select v-model="s_type" placeholder="请选择科目类别" class="handle-select mr10" style="margin-top: 0px">
+                            <el-option label="全部" value=""></el-option>
+                            <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                        </el-select>
+                    </div>
+                    <el-input v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10" size="small"></el-input>
+                    <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
+                    <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad" style="float: right">导入</el-button>
+                    <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="Delete" style="float: right">删除</el-button>
+                    <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="Edit" style="float: right">修改</el-button>
+
+                    <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add" style="float: right">新增</el-button>
                 </el-col>
             </el-row>
         </div>

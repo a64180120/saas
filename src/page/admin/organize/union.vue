@@ -1,7 +1,7 @@
 <template>
     <div class="manageContent">
-        <div class="unionState flexPublic">
-            <ul class="flexPublic">
+        <div class="unionState" style="height: 50px;">
+            <ul class="flexPublic" style="float: left">
                 <li class="flexPublic">
                     <div>地区:</div>
                     <div>
@@ -42,12 +42,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="flexPublic" style="margin-right: -330px">
-                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"
-                                                  placeholder="组织编码/名称"></div>
-                <div @click="unionSearch" class="searcherBtn">搜索</div>
-            </div>
-            <ul class="flexPublic handle">
+            <ul class="flexPublic handle" style="float:right">
                 <a @click.prevent="routerTo('/admin/orgin/add')">
                     <li>新增</li>
                 </a>
@@ -64,6 +59,11 @@
                     <li>导入</li>
                 </a>
             </ul>
+            <div class="flexPublic" style="float: right">
+                <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"
+                                                  placeholder="组织编码/名称"></div>
+                <div @click="unionSearch" class="searcherBtn">搜索</div>
+            </div>
         </div>
         <div class="formData">
             <ul>
