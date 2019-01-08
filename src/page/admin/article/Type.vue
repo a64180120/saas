@@ -16,7 +16,7 @@
                 <li>
                     <div>是否启用</div>
                     <div class="itemRadio">
-                        <label ><input type="radio" name="line" v-model="formData.EnabledMark" value="0" >启用</label>
+                        <label><input type="radio" name="line" v-model="formData.EnabledMark" value="0">启用</label>
                         <label><input type="radio" name="line" v-model="formData.EnabledMark" value="1">停用</label>
                     </div>
                 </li>
@@ -37,10 +37,13 @@
                     <li>{{item.Code}}</li>
                     <li>{{item.Name}}</li>
                     <li>
-                        <i v-show="!updateCss[index].checked" :class="{newAddStateTrue:item.EnabledMark==0,newAddStateFalse:item.EnabledMark==1}"></i>
+                        <i v-show="!updateCss[index].checked"
+                           :class="{newAddStateTrue:item.EnabledMark==0,newAddStateFalse:item.EnabledMark==1}"></i>
                         <div v-show="updateCss[index].checked">
-                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark" @change="radioChange(item,index)" value=0>启用</label>
-                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark" @change="radioChange(item,index)" value=1>停用</label>
+                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark"
+                                          @change="radioChange(item,index)" value=0>启用</label>
+                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark"
+                                          @change="radioChange(item,index)" value=1>停用</label>
                         </div>
                     </li>
                     <li><i @click.stop="deleteData(item,index)" v-show="deleteCss[index].checked"></i></li>
@@ -57,380 +60,389 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
-  import Auth from "@/util/auth";
-  import { dealAddString } from "@/util/validate";
+    import {mapState, mapActions} from 'vuex'
+    import Auth from "@/util/auth";
+    import {dealAddString} from "@/util/validate";
 
-  export default {
-    name: "articleType",
-      props:{
-        datalists:''
-      },
-      created(){ },
-      mounted(){
-        this.getData();
-      },
-      data(){
-        return {
-            formData:{ Code:'',Name:'',EnabledMark:0 },
-            dataList:[],
-            deleteList:[],
-            updateList:[],
-            updateCss:[],
-            deleteCss:[]
-        }
-      },
-      computed:{
-        ...mapState({
-            orgid:state=>state.user.orgid,
-            orgcode:state=>state.user.orgcode,
-            uid:state=>state.user.userid,
-            username:state=>state.user.username
-        })
-      },
-      methods:{
-            getData(){
+    export default {
+        name: "articleType",
+        props: {
+            datalists: ''
+        },
+        created() {
+        },
+        mounted() {
+            this.getData();
+        },
+        data() {
+            return {
+                formData: {Code: '', Name: '', EnabledMark: 0},
+                dataList: [],
+                deleteList: [],
+                updateList: [],
+                updateCss: [],
+                deleteCss: []
+            }
+        },
+        computed: {
+            ...mapState({
+                orgid: state => state.user.orgid,
+                orgcode: state => state.user.orgcode,
+                uid: state => state.user.userid,
+                username: state => state.user.username
+            })
+        },
+        methods: {
+            getData() {
                 let data = {
                     uid: this.uid,
                     orgid: this.orgid
                 };
 
-                this.$axios.get('/SysNews/GetSysNewsTypeList',{params:data})
-                    .then(res=>{
+                this.$axios.get('/SysNews/GetSysNewsTypeList', {params: data})
+                    .then(res => {
 
-                        if(res.Status==='error'){
+                        if (res.Status === 'error') {
                             this.$message.error(res.Msg);
                             return
                         }
 
-                        this.dataList=res;
+                        this.dataList = res;
                         this.initCss();
 
                     })
-                    .catch(err=>{
+                    .catch(err => {
                         console.log(err)
-                        this.$message({ showClose: true,message: "辅助项获取错误", type: "error"});
+                        this.$message({showClose: true, message: "辅助项获取错误", type: "error"});
                     })
             },
             //新增保存
-            newAdd(){
+            newAdd() {
 
-                for(var del of this.deleteList){
-                    let index=this.updateList.findIndex(v =>v.PhId===del.PhId);
-                    if(index!=-1){
-                        this.updateList.splice(index,1,del);
-                    }else{
+                for (var del of this.deleteList) {
+                    let index = this.updateList.findIndex(v => v.PhId === del.PhId);
+                    if (index != -1) {
+                        this.updateList.splice(index, 1, del);
+                    } else {
                         this.updateList.push(del);
                     }
                 }
 
-                let data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    infoData:this.updateList
+                let data = {
+                    uid: this.uid,
+                    orgid: this.orgid,
+                    infoData: this.updateList
                 };
 
-                var vm=this;
-                this.$axios.post('/SysNews/PostAddType',data)
-                    .then(res=>{
-                        if(res.Status==='error'){
+                var vm = this;
+                this.$axios.post('/SysNews/PostAddType', data)
+                    .then(res => {
+                        if (res.Status === 'error') {
                             this.$message.error(res.Msg);
                             return
                         }
 
-                        vm.$emit('type-click',true);
+                        vm.$emit('type-click', true);
                         this.$message.success("类型保存成功!");
-                        
+
                     })
-                    .catch(err=>{
+                    .catch(err => {
                         console.log(err)
                     })
             },
             //取消
-            cancle(){
-                this.$emit('type-click',false);
-                return;                
+            cancle() {
+                this.$emit('type-click', false);
+                return;
             },
             //立即创建
-            fastCreate(){
+            fastCreate() {
 
                 //名称不能为空
-                if(this.formData.BaseName===''){
+                if (this.formData.BaseName === '') {
                     this.$message.warning("请填写类别名称！");
                     return;
                 }
-            
-                var addData={
-                    PersistentState:1,
-                    PhId:0,
-                    ParentId:0,
-                    Category:'',
-                    Code:this.formData.Code,
-                    Name:this.formData.Name,
-                    SortCode:this.dataList.length,
-                    Description:'',
-                    EnabledMark:this.formData.EnabledMark
+
+                var addData = {
+                    PersistentState: 1,
+                    PhId: 0,
+                    ParentId: 0,
+                    Category: '',
+                    Code: this.formData.Code,
+                    Name: this.formData.Name,
+                    SortCode: this.dataList.length,
+                    Description: '',
+                    EnabledMark: this.formData.EnabledMark
                 };
 
 
                 this.updateList.push(addData);
 
                 this.$nextTick(() => {
-                    this.formData.Code='';
-                    this.formData.Name='';
-                    this.formData.EnabledMark=0;
+                    this.formData.Code = '';
+                    this.formData.Name = '';
+                    this.formData.EnabledMark = 0;
                 })
                 this.initCss();
                 this.$forceUpdate();
-                
+
             },
-            deleteData(item,index){
+            deleteData(item, index) {
                 //添加删除信息 和移除list的删除
                 //数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
 
-                item.PersistentState=3
+                item.PersistentState = 3
                 this.deleteList.push(item);
-                this.dataList.splice(index,1);
+                this.dataList.splice(index, 1);
 
                 this.initCss();
                 this.btnShow('delete');
             },
-            radioChange(item,index){
+            radioChange(item, index) {
                 //数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
-                item.PersistentState=2
+                item.PersistentState = 2
                 if (this.updateList.some(v => v.PhId === item.PhId)) return
 
                 this.updateList.push(item);
 
                 console.log(this.updateList);
             },
-            initCss(){
-                for(var i in this.dataList){
-                    this.updateCss[i]={checked:false}
-                    this.deleteCss[i]={checked:false}
+            initCss() {
+                for (var i in this.dataList) {
+                    this.updateCss[i] = {checked: false}
+                    this.deleteCss[i] = {checked: false}
                 }
             },
             //按钮事件
-            btnShow(val){
-                if(val=='delete'){
-                    for(var del of this.deleteCss){
-                        del.checked=!del.checked;
+            btnShow(val) {
+                if (val == 'delete') {
+                    for (var del of this.deleteCss) {
+                        del.checked = !del.checked;
                     }
-                }else if(val=='update'){
-                    for(var up of this.updateCss){
-                        up.checked=!up.checked;
+                } else if (val == 'update') {
+                    for (var up of this.updateCss) {
+                        up.checked = !up.checked;
                     }
                 }
                 this.$forceUpdate();
             },
-      }
-  }
+        }
+    }
 </script>
 
 <style lang="scss" scoped>
-    .newAdd{
-        width:100%;
-        height:100%;
-        position:absolute;
-        z-index:10;
-        top:0;
-        background: rgba(0,0,0,0.4);
+    .newAdd {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        background: rgba(0, 0, 0, 0.4);
     }
-    .newAddContent{
+
+    .newAddContent {
         background: #fff;
         overflow: hidden;
-        position:absolute;
-        left:25%;
-        top:20%;
-        width:600px;
-        .newAddTitle{
+        position: absolute;
+        left: 25%;
+        top: 20%;
+        width: 600px;
+        .newAddTitle {
             background: #3e8cbc;
             border-radius: 8px;
-            height:40px;
+            height: 40px;
             line-height: 40px;
-            width:100%;
-            color:#fff;
-            padding:0 10px;
+            width: 100%;
+            color: #fff;
+            padding: 0 10px;
             font-size: 16px;
-            span:last-of-type{
-                width:25px;
-                height:25px;
+            span:last-of-type {
+                width: 25px;
+                height: 25px;
                 border-radius: 50%;
                 background: #fff;
                 position: relative;
-                &::after,&::before{
-                    content:"";
+                &::after, &::before {
+                    content: "";
                     position: absolute;
-                    width:15px;
-                    height:1px;
+                    width: 15px;
+                    height: 1px;
                     background: #3e8cbc;
-                    top:12px;
-                    left:5px;
+                    top: 12px;
+                    left: 5px;
                 }
-                &::after{
+                &::after {
                     transform: rotate(45deg);
                 }
-                &::before{
+                &::before {
                     transform: rotate(-45deg);
                 }
             }
         }
-        .contentItem{
-            padding:10px 10px 0 10px;
+        .contentItem {
+            padding: 10px 10px 0 10px;
             font-size: 15px;
-            li{
+            li {
                 display: flex;
                 flex-flow: row nowrap;
                 justify-content: flex-start;
                 align-items: center;
-                height:30px;
+                height: 30px;
                 line-height: 30px;
                 margin-bottom: 10px;
-                div{
-                    height:100%;
-                    margin-right:5px;
-                    &:first-of-type{
-                        min-width:70px;
+                div {
+                    height: 100%;
+                    margin-right: 5px;
+                    &:first-of-type {
+                        min-width: 70px;
                     }
-                    &:nth-of-type(2){
-                        width:80%;
+                    &:nth-of-type(2) {
+                        width: 80%;
                     }
-                    &:nth-of-type(3){
-                        min-width:70px;
+                    &:nth-of-type(3) {
+                        min-width: 70px;
                         background: #4faed2;
                         border-radius: 3px;
-                        color:#fff;
+                        color: #fff;
                         text-align: center;
-                        cursor:pointer;
+                        cursor: pointer;
                     }
                 }
-                &:nth-of-type(3){
+                &:nth-of-type(3) {
                     justify-content: flex-end;
                 }
-                &:nth-of-type(3)>div{
-                    width:70px;
+                &:nth-of-type(3) > div {
+                    width: 70px;
                     margin-left: 5px;
-                    border:1px solid #ff9900;
+                    border: 1px solid #ff9900;
                     text-align: center;
-                    cursor:pointer;
+                    cursor: pointer;
                     border-radius: 3px;
                 }
-                &:nth-of-type(3)>div:hover{
-                    color:#fff;
+                &:nth-of-type(3) > div:hover {
+                    color: #fff;
                     background: #ff9900;
                 }
-                &:nth-of-type(3)>div:after{
-                    content:"";
+                &:nth-of-type(3) > div:after {
+                    content: "";
                     display: block;
                     clear: both;
                 }
             }
         }
     }
-    .itemRadio{
+
+    .itemRadio {
         letter-spacing: 3px;
-        label{
-            input{
-                margin-right:3px;
+        label {
+            input {
+                margin-right: 3px;
             }
         }
     }
-    .itemBtnCon{
+
+    .itemBtnCon {
         border-top: 1px solid #ccc;
-        padding:0 20px;
-        height:40px;
+        padding: 0 20px;
+        height: 40px;
         display: flex;
         flex-flow: row nowrap;
         justify-content: flex-end;
         align-items: center;
-        div{
-            width:70px;
+        div {
+            width: 70px;
             background: #3e8cbc;
             text-align: center;
             border-radius: 3px;
-            border:2px solid #3e8cbc;
-            height:30px;
+            border: 2px solid #3e8cbc;
+            height: 30px;
             line-height: 26px;
             font-size: 14px;
-            color:#fff;
+            color: #fff;
             margin-left: 10px;
             cursor: pointer;
-            &:hover{
-                background:#fff;
-                color:#3e8cbc;
+            &:hover {
+                background: #fff;
+                color: #3e8cbc;
             }
         }
     }
-    .formContainer{
-        padding:0 20px 0 10px;
+
+    .formContainer {
+        padding: 0 20px 0 10px;
         overflow-y: auto;
-        height:200px;
-        ul{
+        height: 200px;
+        ul {
             display: flex;
             flex-flow: row nowrap;
             justify-content: flex-start;
             align-items: center;
-            &.formData{
-                margin:0;
+            &.formData {
+                margin: 0;
             }
-            &:first-of-type{
+            &:first-of-type {
                 background: #ccc;
-                li{
-                    border-right-color:#fff;
-                    &:last-of-type{
-                        border-right-color:#ccc;
+                li {
+                    border-right-color: #fff;
+                    &:last-of-type {
+                        border-right-color: #ccc;
                     }
                 }
             }
-            &:last-of-type{
+            &:last-of-type {
                 border-bottom: 1px solid #ccc;
             }
-            li{
-                border-top:1px solid #ccc;
-                border-right:1px solid #ccc;
-                width:25%;
-                height:25px;
+            li {
+                border-top: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                width: 25%;
+                height: 25px;
                 display: flex;
                 flex-flow: row nowrap;
                 justify-content: center;
                 align-items: center;
-                position:relative;
-                &:first-of-type{
+                position: relative;
+                &:first-of-type {
                     border-left: 1px solid #ccc;
                 }
-                &:first-of-type{
-                    width:10%;
+                &:first-of-type {
+                    width: 10%;
                 }
-                &:nth-of-type(2){
-                    width:30%;
+                &:nth-of-type(2) {
+                    width: 30%;
                 }
-                &:nth-of-type(3){
-                    width:40%;
+                &:nth-of-type(3) {
+                    width: 40%;
                 }
-                &:nth-of-type(4){
-                    width:20%;
+                &:nth-of-type(4) {
+                    width: 20%;
                 }
-                &:nth-of-type(5){
-                    width:0;
-                    border:0;
-                    i{
+                &:nth-of-type(5) {
+                    width: 0;
+                    border: 0;
+                    i {
                         position: absolute;
-                        right:-23px;
-                        width:25px;
-                        height:25px;
+                        right: -23px;
+                        width: 25px;
+                        height: 25px;
                         background: url("../../../assets/icon/delete.svg");
-                        background-size:cover ;
-                        &:hover{
+                        background-size: cover;
+                        &:hover {
                             background: url("../../../assets/icon/delete_fill.svg");
-                            background-size:cover ;
+                            background-size: cover;
                         }
                     }
                 }
             }
         }
     }
-    li i.newAddStateTrue:after{
-        top:0px;
+
+    li i.newAddStateTrue:after {
+        top: 0px;
     }
-    label{margin-left:10px;}
+
+    label {
+        margin-left: 10px;
+    }
 </style>

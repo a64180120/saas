@@ -19,6 +19,8 @@ ul{
     list-style: none;
 }
 .flexPublic>i,
+.flexPublic>li,
+.flexPublic>ul,
 .flexPublic>img,
 .flexPublic>span,
 .flexPublic>div{
@@ -109,9 +111,6 @@ ul{
     width:60px;
     text-align: center;
     line-height: 30px;
-    background:#00B8EE;
-    color:#fff;
-    cursor:pointer;
 }
 .unionState .handle>a>li{
     border:1px solid #00B8EE;
@@ -153,7 +152,7 @@ ul{
 }
 .datepick .el-date-editor.el-input{
     width:120px;
-    height:100%;
+    
     font-size: 12px;
     padding-right:10px !important;
     margin:0;
@@ -255,11 +254,12 @@ ul{
     transform: rotate(-45deg);
 }
 .btn{
+    display: inline-block;
     cursor: pointer;
-    background: #3e8cbc;
+    background: #00b7ee;
     color:#fff;
     text-align: center;
-    border:1px solid #3e8cbc;
+    border:1px solid #00b7ee;
     border-radius: 5px;
     height:30px;
     line-height: 30px;
@@ -267,7 +267,18 @@ ul{
 }
 .btn:hover{
     background: #fff;
-    color:#3e8cbc;
+    color:#00b7ee;
+}
+.btnDisabled{
+    background: #fff;
+    color:#aaa;
+    border:1px solid #cccccc;
+    cursor: default;
+}
+.btnDisabled:hover{
+    background: #fff;
+    color:#aaa;
+    border:1px solid #cccccc;  
 }
 .content{
     height:100%;
@@ -337,7 +348,6 @@ ul{
 .el-icon-menu:before{
     content:"";
     position:relative;
-    top:10px;
     width:65px;
     height:35px;
     display: block;

@@ -90,6 +90,7 @@
                         show-checkbox
                         node-key="ItemId"
                         default-expand-all
+                        :check-strictly="checkStrictly"
                         :default-checked-keys="CheckedList"
                         :current-node-key="CheckedList2"
                         :render-content="renderContent">
@@ -117,6 +118,7 @@
                 showForm2: false,
                 form2: {},
                 rules2: {},
+                checkStrictly:true,
                 loading: false,
                 loading2: false,
                 loading3: false,

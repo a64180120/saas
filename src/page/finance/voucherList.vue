@@ -30,23 +30,27 @@
         </div>
         <div class="voucherSelect">
             <div>
-                <label >合计金额(元):&nbsp; <div class="inputContainer"><input v-model="sum1" type="text"></div> </label>
-                <label >至:&nbsp;<div class="inputContainer"><input v-model="sum2" type="text"></div></label>
+                <span>合计金额(元):&nbsp;</span> 
+                <div class="inputContainer"><input v-model="sum1" type="text"></div> 
+                <span>至:&nbsp;</span>
+                <div class="inputContainer"><input v-model="sum2" type="text"></div>
             </div>
-            <div class="flexPublic searcherCon">
-                <div class="searcherValue"><input @keyup.13="getvoucherList('search')" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
-                <div  @click="getvoucherList('search')" class="searcherBtn">搜索</div>
+            <div class="searcherCon">
                 <div @click.stop="highGradeToggle(true)">高级</div>
+                <div  @click="getvoucherList('search')" class="searcherBtn">搜索</div>
+                <div class="searcherValue"><input @keyup.13="getvoucherList('search')" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
+                
+                
                 <div v-if="highGradeCss" class="highGradeCss">
                     <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
                     <ul>
                         <li>
-                            <div>科目名称</div>
+                            <div>科目预算</div>
                             <div class="inputContainer"><input type="text" placeholder="科目/凭证号/摘要" v-model="superSearchVal.keyword"></div>
                         </li>
                         <li>
-                            <div>辅助核算</div>
-                            <div class="flexPublic">
+                            <div>辅助预算</div>
+                            <div >
                                 <div class="selectContainer">
                                     <select v-model="superSearchValPhId">
                                         <option value="0"></option>
@@ -70,7 +74,7 @@
                         </li>
                         <li>
                             <div>账期</div>
-                            <div class="flexPublic">
+                            <div >
                                 <div class="block">
                                     <el-date-picker type="date" v-model="superSearchVal.date1" placeholder="日期">
                                     </el-date-picker>
@@ -84,8 +88,10 @@
                         </li>
                     </ul>
                     <div>
-                        <div @click.stop="highGradeToggle('reset')">重置</div>
-                        <div @click="getvoucherList">搜索</div>
+                        <div>
+                            <div class="btn" @click.stop="highGradeToggle('reset')">重置</div>
+                            <div class="btn" @click="getvoucherList">搜索</div>
+                        </div>    
                     </div>
                 </div>
             </div>
@@ -101,7 +107,7 @@
             </ul>
             <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
                 <li @dblclick="voucherDel(item)">
-                    <ul class="listIndex"><li>{{index+1}}</li></ul>
+                    <ul class="listIndex"><li><span>{{index+1}}</span></li></ul>
                     <ul>
                         <li>
                             <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
@@ -257,12 +263,13 @@
                 sum2:'',
                 chooseItem:'',
                 nowTime:new Date,
-                checkedTime:'',
-                sideDate:'',
-                month:'',
-                year:'',
-                searchVal:'',
-                superSearchValPhId:"0",
+                checkedTime:'',   //结账月****
+                checkedYear:'',   //结账年*****
+                sideDate:'',   //侧边会计期年月
+                month:'',    //当前选中年
+                year:'',     //月
+                searchVal:'', //一般搜索值
+                superSearchValPhId:"0",   //高级搜索
                 assistItemList:{id:0,kemu:[]},
                 superSearchVal:{
                     assistItemList:{type:'',list:''},
@@ -276,7 +283,7 @@
                     nodatatext:'',
                     show:true
                 },
-                pickerOptions: {
+                pickerOptions: {   //eldate时间选择参数
                     disabledDate(time) {
                         return time.getTime() > Date.now();
                     },
@@ -683,8 +690,10 @@
                     supervisor: data.PKeepingPerson, //记账
                     auditor: data.PAuditorName, //审核
                     cashier: data.PCashier, //出纳
-                    producer: this.username //制单
+                    producer: data.PMakePerson //制单
                 };
+                 console.log(mst)
+                 debugger
                 var list=[
                     //{ abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  JSum: '5071.00', DSum: ''},
                    ];
@@ -699,7 +708,7 @@
                 }
                 mst.lotal=mst.lotal.toFixed(2);
                 
-
+                console.log(mst,list)
                 return {
                     mst:mst,
                     list:list
@@ -809,7 +818,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -892,7 +901,7 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
-                        if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+                        if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
@@ -974,7 +983,7 @@
                    return;
                }
                vm.clearPhId(Vdata.Mst)
-               if(Vdata.Mst.Uyear==this.sideDate.split('-')[0]&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: vm.uid,
                        orgid: vm.orgid,
@@ -1059,6 +1068,7 @@
                             return;
                         } 
                         if(res.Record.length<=0){
+                            this.voucherList=[];
                             this.$message('无法找到该凭证!')
                         } else{
                             this.voucherList= res.Record;
@@ -1068,27 +1078,10 @@
                     })
                     .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});})
             },
-            // getChecked(){
-            //     var data={
-            //         uid:this.uid,
-            //         orgid:this.orgid,
-            //         queryfilter:{"JYear*str*eq*1":this.nowTime.getFullYear().toString(),"OrgId*num*eq*1":this.orgid}
-            //     }
-            //     this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-            //         .then(res=>{                     
-            //             this.checkedTime=res.Record[0].JAccountPeriod+1;
-            //             this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
-            //             this.year=this.sideDate.split('-')[0];
-            //             this.month=this.sideDate.split('-')[1];
-            //             this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-            //             this.getvoucherList();
-            //             this.$forceUpdate();
-            //         })
-            //         .catch(err=>{this.$message({ showClose: true,message: err, type: "error"})})
-            // },
             //获取time组件传参********************
             getSideDate(data){
                 this.checkedTime=data.checkedTime;
+                this.checkedYear=data.checkedYear;
                 this.sideDate=data.sideDate;
                 this.year=this.sideDate.split('-')[0];
                 this.month=this.sideDate.split('-')[1];
@@ -1199,9 +1192,7 @@
                // this.$message('功能开发中!!')
                 this.fileVisible=true;
             },
-            uploadUrl(){//文件上传地址函数
-                return 666
-            },
+            
             removefile(item,deleValue) {//移除文件的函数
                this.filelist=item;
                 if(item.length<1){
@@ -1519,42 +1510,41 @@
             top:40px;
             right:20px;                                                                                                                                                                                                                                                                                                                                                                                              
             border:1px solid #ccc;
+            border-radius: 7px 7px 0 0;     
             >div{
                 width:100%;
                 &:first-of-type{
                     height:33px;
-                    background:#3e8ebc;
-                    border-radius: 7px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
+                    background:#00b7ee;
+                    border-radius: 7px 7px 0 0;         
                     color:#fff;
                     padding:0 10px;
                 }
                 &:last-of-type{
-                    border-top:1px solid #ccc;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    border-top:1px solid #ccc;         
                     height:40px;
                     width:100%;
                     padding:0 10px;
                     >div{
-                        cursor:pointer;
-                        width:40%;
-                        height:30px;
-                        line-height: 30px;
-                        background: #509edc;
-                        text-align: center;
-                        margin-left: 10px;
-                        color:#fff;
-                        font-size: 15px;
-                        &:first-of-type{
-                            background: #667a80;
+                        width:160px;
+                        height:100%;
+                        margin:0 auto;
+                        >div{
+                            float:left;
+                            width:70px;
+                            margin-top:5px;
+                            background:#00b7ee;
+                            &:last-of-type{
+                                margin-left:20px;
+                            }
+                            
                         }
                     }
+                    
                 }
                 i.cancle{
+                    float:right;
+                    margin-top: 4px;
                     width:25px;
                     height:25px;
                     border-radius: 50%;
@@ -1586,30 +1576,56 @@
                 padding: 5px 10px ;
                 li{
                     height:30px;
-                    display: flex;
-                    align-items: center;
+                   
                     margin-bottom: 5px;
+                    >div{
+                        float:left;
+                        padding:0 5px;
+                    }
                     >div:first-of-type{
-                        width:25%;
+                        
+                        text-align: right;
+                        width:20%;
                     }
                     >div:last-of-type{
-                        width:80%;
+                        >div{
+                            float:left;
+                        }
+                        width:78%;
                         .el-date-editor.el-input{
                             width:90px;
                         }
                     }
                     &:nth-of-type(2){
                         .selectContainer {
-                            width:150px;
+                            float:left;
+                            width:120px;
+                            height:100%;
+                            margin-right:5px;
                         }
+                        
 
+                    }
+                    &:nth-of-type(4)>div:last-of-type,
+                    &:nth-of-type(3)>div:last-of-type{
+                        >div{
+                            width:45%;
+                            >div{
+                                width:100%;
+                            }
+                        }
+                        >span{
+                            float:left;
+                            width:10%;
+                            text-align: center;
+                        }
                     }
                 }
             }
         }
     }
     .searcherCon .highGradeCss > ul li > div:last-of-type .el-date-editor.el-input{
-        width:105px;
+        width:100%;
     }
     .searcherValue{
         border:1px solid #ddd;
@@ -1638,7 +1654,7 @@
         cursor:pointer;
     }
     .voucherList{
-        padding:8px 70px 0 18px;
+        padding:8px 60px 0 18px;
         margin-right:10px;
         font-size:14px;
         position:relative;
@@ -1684,57 +1700,35 @@
             
         }
         .voucherSelect{
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-            align-items: center;
+            height:30px;
             position: relative;
             >div{
-                display: flex;
-                justify-content: flex-start;
+                float:left;
                 width:25%;
-                min-width: 280px;
-                >label{
-                    display: flex;
-                    align-items: center;
-                    &:nth-of-type(2){
-                        margin-left:5px ;
-                        >div:first-of-type{
-                            width:60px;
-                        }
-                        >div.inputContainer{
-                            width:70px;
-                        }
-                    }
-                    div{
-                        text-align: center;
-                    }
+                min-width: 280px; 
+                line-height: 30px;           
+                >span,>div{
+                    float:left;
+                    margin-left:5px;
                 }
-                >label>div:first-of-type{
-                    width:70px;
-                }
-                >label>div:nth-of-type(2)>div{
-                    width:100px;
+                >div{
+                    width: 70px;
                 }
             }
             >div:nth-of-type(2){
+                float:right;
                 margin-left:100px;
                 width:25%;
             }
             >div.searcherCon{
                 width:50%;
-                display: flex;
-                justify-content: flex-end;
+              
                 >div{
+                    float:right;
                     width:auto;
                     margin:0;
                     &:first-of-type{
-                        min-width: 300px;
-                    }
-                    &:nth-of-type(2){
-                        width:40px;
-                    }
-                    &:nth-of-type(3){
+                        
                         margin-left: 10px;
                         cursor:pointer;
                         background: #6aca25;
@@ -1743,6 +1737,12 @@
                         width:60px;
                         color:#fff;
                         text-align: center;
+                    }
+                    &:nth-of-type(2){
+                        width:40px;
+                    }
+                    &:nth-of-type(3){
+                        min-width: 300px;
                     }
                 }
             }
@@ -1812,8 +1812,7 @@
                     margin:0 15px;
                     >p{
                         >label{
-                            display: flex;
-                            align-items: center;
+                           
                             color:#000;
                             font-weight: 400;
                             font-size: 16px;
@@ -1824,9 +1823,7 @@
                         margin-bottom: 20px;
                     }
                     >div{
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
+                       
                         padding:0 15px;
                         >span{
                             height:40px;
@@ -1835,10 +1832,7 @@
                     }
                 }
                 >ul{
-                    display: flex;
-                    align-items: center;
-                    flex-flow: row wrap;
-                    justify-content: space-between;
+                   
                     padding:5px 20px;
                     width:100%;
                     >li{
@@ -1859,8 +1853,7 @@
                     }
                 }
                 >p{
-                    display: flex;
-                    align-items: center;
+                   
                     font-size: 15px;
                     >span{
                         width:80px;
@@ -1902,8 +1895,7 @@
           left:10%;
           padding:10px;
           >div:first-of-type{
-              display: flex;
-              justify-content: flex-end;
+             
               padding:5px 10px;
               >span{
                   margin-left: 20px;
@@ -1940,17 +1932,23 @@
     .listContainer{
         max-height:85%;
         overflow-y: auto;
-        padding:5px;
+        
         margin-top:10px;
+        position:relative;
+        padding-top:40px;
         padding-bottom: 20px;
     }
     .listContainer ul.listTitle{
-        display: flex;
+        height:40px;
+        width:100%;
         background: #d3e9f9 ;
         color:#333;
-        
+        position:absolute;
+        top:0;
+        margin-right:5px;
     }
     .listContainer ul.listTitle li{
+        float:left;
         text-align: center;
         height:40px;
         line-height: 40px;
@@ -1973,6 +1971,7 @@
     ul.listContent{
         border-top:1px solid #ccc;
         margin-bottom: 20px;
+        width:100%;
         background: #fff;
     }    
     ul.listContent.choosed>li>ul.listIndex{
@@ -1984,9 +1983,9 @@
     ul.listContent>li {
         width:100%;
         height:100%;
-        display: flex;
+        
         overflow: hidden;
-        align-items: center;
+ 
         position: relative;
     }
         ul.listContent>li> ul.listIndex{
@@ -1996,9 +1995,7 @@
         height:100%;
         width:5%;
         font-size: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+       
         position:absolute;
             
     }
@@ -2006,9 +2003,12 @@
             border:0;
             width:100%;
             height:100%;
-            display: flex;
-            align-items: center;
-            justify-content:center;
+            position:relative;
+            >span{
+                position:absolute;
+                left:43%;
+                top:40%;
+            }
         }
     ul.listContent>li> ul {
         height:100%;
@@ -2017,8 +2017,7 @@
         
     }
     ul.listContent>li> ul>li{
-        display: flex;
-        justify-content: flex-start;
+       
         height:30px;
         line-height: 30px;
     }
@@ -2032,6 +2031,8 @@
             margin-right: 50px;
         }
     ul.listContent>li> ul>li>div{
+        float:left;
+        height:100%;
         text-align: left;
         padding:0 10px;
         border:1px solid #ccc;
@@ -2071,7 +2072,8 @@
          }
     .searchSelectCon{
         position: relative;
-        width:100%;
+        float:left;
+        width:56%;
         height:30px;
         line-height: 25px;
         background: #fff;

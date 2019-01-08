@@ -9,6 +9,9 @@
                             </li>
                         </ul>
                         <ul class="flexPublic handle" style="float: right">
+                            <!--<a>-->
+                                <!--<li @click="changeRecord">测试</li>-->
+                            <!--</a>-->
                             <a>
                                 <li v-show="!isedit" @click="edit">修改</li>
                             </a>
@@ -249,7 +252,11 @@
                         </ul>
                     </div>
                     <div v-if='!isedit' class="inf-change-rec">
+                        <div class="inf-change-record">
+                            <span class="inf-change-recordz" @click="changeRecord">信息变更记录</span>
+                        </div>
                     </div>
+
                 </el-main>
 
             </el-container>
@@ -260,6 +267,25 @@
             </el-dialog>
         </div>
 
+        <el-dialog :title="'变更记录'" :visible.sync="record" width="40%" style="height: 800px">
+            <el-table
+                :data="tableData"
+                border
+                :extraheight='extraheight'
+                class="table"
+                ref="roleListTable"
+                highlight-current-row
+                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}">
+                <el-table-column label="序号" type="index" width="50"></el-table-column>
+                <el-table-column prop="changeContents" label="变更事项"  width="120"></el-table-column>
+                <el-table-column prop="beforeContents" label="变更前内容" align="center"></el-table-column>
+                <el-table-column prop="afterContents" label="变更后内容" align="center"></el-table-column>
+                <el-table-column prop="changeTime" label="变更日期" align="center"></el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="record = false">关 闭</el-button>
+            </span>
+        </el-dialog>
         <!--<div class="footInfo " >-->
             <!--<router-link to="">服务协议</router-link>-->
             <!--<router-link to="">运营规范</router-link>-->
@@ -280,10 +306,12 @@
         name: 'demo',
         data() {
             return {
+                record: false,
+                changePhid:'',
                 beforeChange:{},
+                extraheight:300,
                 afterChange:{},
                 isedit: false,
-                loading: false,
                 fileVisible: false,
                 editVisible: false,
                 imglist: [
@@ -299,6 +327,7 @@
                         RelPhid: ''
                     }
                 ],
+                tableData:[],
                 Provinces:[],
                 Citys:[],
                 Countys:[],
@@ -386,6 +415,22 @@
             ...mapActions({
                 uploadFile: 'uploadFile/Orgupload'
             }),
+            //显示组织信息更改记录
+            changeRecord(){
+                this.record = true;
+                console.log(this.record);
+                var data = {
+                    id: this.changePhid,
+                }
+                this.$axios.get('/SysOrganize/GetOrgChangeRecord', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        this.tableData = res;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
             //修改编辑页显示
             edit() {
                 this.editVisible = true;
@@ -525,7 +570,7 @@
                     this.orgForm.Integrity = parseInt(this.orgForm.Integrity) + 5;
                 }
                 console.log(this.orgForm.Integrity);
-                this.afterChange = this.orgForm;
+                this.afterChange = JSON.stringify(this.orgForm);
                 //提交asiox
                 SysOrgUpdate(vm, {
                     otype: 'edit',
@@ -552,6 +597,23 @@
                     this.$message.error('保存组织错误');
                 })
                 console.log(this.afterChange);
+                console.log(this.beforeChange);
+                // var data = {
+                //     beforeOrg: JSON.parse(this.beforeChange),
+                //     afterOrg: JSON.parse(this.afterChange),
+                // };
+                var data = {
+                    infoData: {BeforeOrg: JSON.parse(this.beforeChange), AfterOrg: JSON.parse(this.afterChange)},
+                };
+                this.$axios
+                    .post("/SysOrganize/PostOrgChangeRecord", data)
+                    .then(res => {
+                        if(res.Status=='success'){
+                            this.$message.success("保存成功");
+                        }else{
+                            this.$message.error('保存失败,请重试!');
+                        }
+                    });
             },
             //获取组织信息
             getData() {
@@ -569,7 +631,9 @@
                             return;
                         }
                         this.orgForm = res;
-                        this.beforeChange = res;
+                        this.changePhid = res.PhId;
+                        this.beforeChange = JSON.stringify(res);
+                        console.log(this.beforeChange);
                     }).catch(error => {
                         console.log(error);
                         this.loading = false;
@@ -592,7 +656,7 @@
                             return;
                         }
                         this.orgForm = res;
-
+                        this.changePhid = res.PhId;
                     }).catch(error => {
                         console.log(error);
                         this.loading = false;
@@ -710,9 +774,35 @@
 </script>
 <style lang="scss" scoped>
 
+    .inf-change-recordz{
+        /* width: 100%; */
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        display: block;
+        /* margin-top: -210px; */
+        line-height: 37px;
+        text-align: center;
+        font-size: 30px;
+        color: #FFF;
+        font-weight: bold;
+        /* box-shadow: 0 0; */
+        text-shadow: 0 1px 1px #012631;
+    }
+    .inf-change-record{
+        width: 46px;
+        height: 100%;
+        /* position: absolute; */
+        /* left: -240px; */
+        /* background: #000; */
+        /* margin: auto auto 0; */
+        /* display: block; */
+        margin-left: 9px;
+        /* background: #6F6F6F; */
+    }
     .inf-change-rec{
         position: absolute;
-        bottom: 200px;
+        /* bottom: 200px; */
         border-top: 40px solid transparent;
         border-bottom: 40px solid transparent;
         border-right: 60px solid #00B8EE;
@@ -720,6 +810,9 @@
         width: 50px;
         line-height: 500px;
         right: 0;
+        top: 50%;
+        margin-top: -150px;
+        /* box-shadow: 0 1px 1px #012631; */
     }
     .choose {
         background: #fff;
