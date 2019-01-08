@@ -12,10 +12,12 @@
                     </div>
                     <el-input v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10" size="small"></el-input>
                     <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
-                    <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad" style="float: right">导入</el-button>
+
+                </el-col>
+                <el-col :span="10">
+                    <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad" style="float: right;margin-left: 10px">导入</el-button>
                     <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="Delete" style="float: right">删除</el-button>
                     <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="Edit" style="float: right">修改</el-button>
-
                     <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add" style="float: right">新增</el-button>
                 </el-col>
             </el-row>
