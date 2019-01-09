@@ -7,10 +7,16 @@
     <!-- 多核浏览器使用webkit内核 -->
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工会基础财务云</title>
+    <title>工会云财务</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" rel="external nofollow" />
     <!-- 这里引入阿里图标样式 -->
     <!-- <link rel="stylesheet" href="http://at.alicdn.com/t/font_830376_qzecyukz0s.css"> -->
+    <!-- <script type="text/javascript" src="./static/serverconfig.js"></script> -->
+    <script type="text/javascript">
+        window.global={
+            baseUrl:'http://127.0.0.1:8028'
+        }
+    </script>
     <style>  
         #loader-wrapper {
             position: fixed;
@@ -228,7 +234,7 @@
             color: #FFF;
             opacity: 0.5;
         }
-        </style>
+    </style>
 </head>
 <body>
     <div id="app">

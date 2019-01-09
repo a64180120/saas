@@ -818,7 +818,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -828,11 +828,11 @@
                    if(Vdata.Mst.PhId) {
                        url = 'Update';
                    }
-                   const loading=this.$loading();
+                   //const loading=this.$loading();
         
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
-                           loading.close();      
+                           //loading.close();      
                            if (res.Status == 'success') {
                                 this.saasMessage={
                                   visible:true,
@@ -851,7 +851,8 @@
                                };
                            }   
                        })
-                       .catch(err =>{this.$message({ showClose: true,message: err, type: "error"});loading.close()} )
+                       .catch(err =>{this.$message({ showClose: true,message: err, type: "error"})})
+                       //loading.close()} )
                }else{
                    this.$message('当前月份已结账,无法修改凭证!')
                }
@@ -901,7 +902,7 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
-                        if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+                        if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
@@ -983,7 +984,7 @@
                    return;
                }
                vm.clearPhId(Vdata.Mst)
-               if(Vdata.Mst.Uyear>=checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                    var data = {
                        uid: vm.uid,
                        orgid: vm.orgid,
@@ -1895,7 +1896,7 @@
           left:10%;
           padding:10px;
           >div:first-of-type{
-             
+              
               padding:5px 10px;
               >span{
                   margin-left: 20px;
@@ -1906,14 +1907,13 @@
     .title{
         border-bottom: 1px solid #ccc;
         padding:8px 3px;
-        display: flex;
-        justify-content: space-between;
         width:100%;
         font-family: Arial;
         font-size: 14.0pt;
         font-style: normal;
         font-weight: 700;
         i{
+            float:right;
             background: url("../../assets/icon/close.svg");
             background-size:cover ;
             width:20px;
