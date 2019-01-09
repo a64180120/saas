@@ -99,6 +99,7 @@
                                                 <option :value="val" v-for="(val,index) of assist.Children" :key="index">{{val.BaseName}}</option>
                                             </select>
                                         </div>
+                                        <div style="clear:both"></div>
                                     </li>
                                 </ul>
                                 <p><span @click.stop="assistOk(true,item,index)">确认</span><span @click.stop="assistOk(false,item,index)">取消</span></p>
@@ -1322,6 +1323,19 @@
     }
     .kemu>.assistContainer>ul>li{
         margin-bottom:5px;
+        float:none;
+        width:100%;
+        height:30px;
+        line-height: 30px;
+        text-align: center;
+        padding-left:15%;
+        >div{
+            float:left;
+            &.selectContainer{
+                position:relative;
+
+            }
+        }
     }
     .kemu>.assistContainer>ul>li>div:first-of-type{
         margin-right: 15px;

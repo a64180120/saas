@@ -5,7 +5,7 @@
             <p class="title"><span>凭证模板</span><i @click.stop="finish(false)"></i></p>
             <div class="flexPublic searcherCon">
                 <div class="searcherValue"><input v-model="searchVal" @keyup.13="getvoucherList" type="text" placeholder="模板名称"></div>
-                <div @click.stop="getvoucherList"  class="searcherBtn">搜索</div>
+                <div @click.stop="getvoucherList"  class="searcherBtn btn">搜索</div>
             </div>
             <div class="voucherList">
                 <ul>
