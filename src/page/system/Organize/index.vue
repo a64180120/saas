@@ -271,6 +271,7 @@
             <el-table
                 :data="tableData"
                 border
+                height="400"
                 :extraheight='extraheight'
                 class="table"
                 ref="roleListTable"
