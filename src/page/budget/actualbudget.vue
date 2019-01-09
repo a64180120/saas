@@ -9,12 +9,13 @@
                 <ul class="flexPublic handle">
                     <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
                     <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">核定年末决算</li></a>
-                    <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
+
                     <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                    <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
                     <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
                 </ul>
             </div>
-            <div class="formData" id="form1" ref="printFrom">
+            <div class="formData" id="form1">
                 <ul>
                     <li>科目编码</li>
                     <li>科目名称</li>
@@ -23,6 +24,7 @@
                     <li>完成预算(%)</li>
                     <li>说明</li>
                 </ul>
+                <div class="formData formData_content"  ref="printFrom">
                 <template v-for="(item,index) in budgetList">
                     <template v-if="item.SubjectCode=='BNSRHJ'">
                         <ul class="formDataItems flexPublic">
@@ -168,6 +170,7 @@
                         </ul>
                     </template>
                 </template>
+                </div>
                 <!--<ul class="formDataItems flexPublic bottomForm">
                     <li>工会主席：</li>
                     <li></li>
@@ -192,14 +195,14 @@
             <div class="coverContent">
                 <div class="flexPublic">
                     <p>提示</p>
-                    <i class="el-icon-close" @click="showCountMsg=false"></i>
+                    <i class="el-icon-close" style="cursor: pointer" @click="showCountMsg=false"></i>
                 </div>
                 <div>
                     <p>年初预算核定后不允许更改，确定核定？</p>
                 </div>
                 <ul class="flexPublic handle">
-                    <li style='margin:0 0 0px 20px;' @click="showCountMsg=false">取消</li>
-                    <li style='margin:0 0 0px 20px;' @click="hedin">确定</li>
+                    <li style='margin:0 0 0px 20px;cursor: pointer' @click="showCountMsg=false">取消</li>
+                    <li style='margin:0 0 0px 20px;cursor: pointer' @click="hedin">确定</li>
                 </ul>
             </div>
         </div>
@@ -539,7 +542,13 @@
                 // document.body.innerHTML = oldContent;
                 // return false;
 
-                this.$print(this.$refs.printFrom) // 使用
+                // this.$print(this.$refs.printFrom) // 使用
+                let dm = this.$refs.printFrom.parentNode.firstChild.cloneNode(true);
+                dm.classList.add('first_child');
+                let cop = this.$refs.printFrom.cloneNode(true);
+                cop.insertBefore(dm,cop.firstChild);
+                cop.classList.remove('formData_content');
+                this.$print(cop) // 使用
             },
             //刷新
             refresh:function(){
@@ -555,16 +564,6 @@
         background-color: transparent;
         line-height: 30px;
     }
-  /*  .reportBox{
-        margin-right: 0px;
-    }
-    .timeSelectBox{
-        position: fixed;
-        right: 0;
-        top: 110px;
-        bottom:0;
-        width: 60px;
-    }*/
     .pinzheng{
         margin-left: 120px;
     }
@@ -573,6 +572,19 @@
     }
     .formData{
         margin-bottom: 50px;
+    }
+    .formData_content{
+        margin-top: -10px;
+        position: absolute;
+        overflow-y: scroll;
+        bottom: -50px;
+        top: 105px;
+        left: 0;
+        right: -17px;
+    }
+    .formData_content>ul:first-child{
+        background: white;
+        margin-top: 0;
     }
     .formData>ul>li{
         border-right:1px solid #ebeef5;;

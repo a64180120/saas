@@ -230,7 +230,7 @@ export default {
                         this.loginFormPhone.orgid=JSON.parse(res.data).orgs[0].PhId;
                         this.phonePwd=JSON.parse(res.data).user.Password;
                         this.phoneoptions=JSON.parse(res.data).orgs;
-                       /* if(this.phoneoptions.length==1){
+                       /*if(this.phoneoptions.length==1){
                             this.submitForm('loginFormPhone');
                         }*/
                         callback();
@@ -340,7 +340,7 @@ export default {
                 ],
                 phoneCode:[
                     {required:true, message: '请输入验证码', trigger: 'blur'},
-                    {required: true,validator:validPasswordCaptcha,trigger:'blur'}
+                    {required:true, validator:validPasswordCaptcha, trigger: 'blur'}
                 ],
                 newPassword:[
                     {required: true, message: '请输入密码', trigger: 'blur'},
@@ -548,14 +548,15 @@ export default {
             },1000)
         },
         submitForm(formName){
+
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    const loading = this.$loading({
-                        lock: true,
-                        text: '正在登录.....',
-                        spinner: 'el-icon-loading'
-                    });
                     if(formName=='loginFormPhone'){
+                        const loading = this.$loading({
+                            lock: true,
+                            text: '正在登录.....',
+                            spinner: 'el-icon-loading'
+                        });
                         this.login({
                             name: this.loginFormPhone.phoneNum,
                             password: this.phonePwd,
@@ -582,6 +583,11 @@ export default {
                         })
                     }
                     else if(formName=='loginForm'){
+                        const loading = this.$loading({
+                            lock: true,
+                            text: '正在登录.....',
+                            spinner: 'el-icon-loading'
+                        });
                         this.login({
                             name: this.loginForm.name,
                             password: this.loginForm.password,
@@ -607,9 +613,46 @@ export default {
                             console.log(error);
                         })
                     }
+                    else {
 
-                } else {
-                    return false
+                       const loading = this.$loading({
+                            lock: true,
+                            text: '正在修改.....',
+                            spinner: 'el-icon-loading'
+                        });
+                        let that=this;
+                        let data={
+                            uid:0,
+                            Phone:that.fixPwdForm.phoneNum,
+                            NewPwd:that.fixPwdForm.newPassword
+                        };
+                        console.log(qs.stringify(data));
+                        let base = httpConfig.getAxiosBaseConfig();
+                        let headconfig = httpConfig.getTestHeaderConfig();
+                        httpajax.create(base)({
+                            method: 'post',
+                            url: '/SysUser/PostUpdatePwdByPhoneNumber',
+                            data:qs.stringify(data),
+                            headers: headconfig
+                        }).then(res => {
+                            loading.close();
+                            if(JSON.parse(res.data).Status=='success'){
+                                that.$message(JSON.parse(res.data).Msg);
+                                that.selectArea='ordinaryLogin';
+                                that.fixPwdForm.newPassword='';
+                                that.fixPwdForm.phoneNum='';
+                                that.fixPwdForm.confirmPassword='';
+                                that.fixPwdForm.phoneCode='';
+                            }else{
+                                that.$message(JSON.parse(res.data).Msg);
+                            }
+                        }).catch(err=>{
+                            loading.close();
+                            console.log(err);
+                        })
+                    }
+                }else{
+                    return false;
                 }
             });
         },

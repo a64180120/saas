@@ -76,11 +76,12 @@ ul{
     width:100%;
     height:100%;
     text-align: left;
-    padding:8px 10px;
-    padding-bottom:50px;
     font-size:14px;
     position:relative;
-    overflow-y: auto;
+    padding: 20px 0;
+}
+.timeSelect .manageContent{
+    padding: 0;
 }
 .unionState>ul>li{
     margin-right:15px;
@@ -111,6 +112,10 @@ ul{
     width:60px;
     text-align: center;
     line-height: 30px;
+    cursor: pointer;
+    border:1px solid #00B8EE;
+    background-color: #00B8EE;
+    color: #fff;
 }
 .unionState .handle>a>li{
     border:1px solid #00B8EE;
@@ -152,7 +157,7 @@ ul{
 }
 .datepick .el-date-editor.el-input{
     width:120px;
-    
+
     font-size: 12px;
     padding-right:10px !important;
     margin:0;
@@ -278,7 +283,7 @@ ul{
 .btnDisabled:hover{
     background: #fff;
     color:#aaa;
-    border:1px solid #cccccc;  
+    border:1px solid #cccccc;
 }
 .content{
     height:100%;

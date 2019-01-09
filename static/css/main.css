@@ -43,18 +43,25 @@ a {
     margin-right: 10px;
 }
 .timeSelect .container{
-    margin-right: 30px;
+    right: 75px;
 }
 .content-collapse {
     left: 65px;
 }
 
 .container {
-    padding: 10px;
+    padding: 0px 20px 20px 20px;
+    margin-bottom: 50px;
     background: #fff;
     border: 1px solid #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px 2px #d3e9f9;
+    position: absolute;
+    top: 60px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    overflow: hidden;
 }
 /*左侧报表样式*/
 .reportBox{

@@ -16,8 +16,9 @@
                 </li>
             </ul>
             <ul class="flexPublic handle">
-                <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printLodop" size="small" plain>打印</li ></a>
                 <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
+                <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
+
                 <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
             </ul>
         </div>
@@ -31,6 +32,7 @@
                 :header-cell-style="{background:'#d3e9f9',color:'#000','text-align':'center'}"
                 v-loading="loading"
                 highlight-current-row
+                :extraheight='extraheight'
                 border>
             </tree-table>
             <!--<ul>
@@ -55,7 +57,7 @@
      */
     import { IncomList,IncomListToExcel } from '@/api/voucher/reportInfo'
     import { mapState, mapActions } from 'vuex'
-    import treeTable from "@/components/tree-table";
+    import treeTable from "@/components/tree-table/indexHeight";
     import treeSum from './totalAmount'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
@@ -63,6 +65,7 @@
         name: "expensesRe",
         data(){
             return{
+                extraheight:300,
                 downloadLoading:false,
                 loading: false,
                 expandAll: true,
