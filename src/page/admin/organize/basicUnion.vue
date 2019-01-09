@@ -312,7 +312,7 @@
                     this.ajaxMode();
                 }else{
                     if(this.PhIdList.length == 0){
-                        alert('请点击你要修改的组织');
+                        this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
                         return;
                     }else{
                         this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:true}});
