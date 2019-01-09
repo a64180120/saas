@@ -50,7 +50,7 @@
                                 </el-form-item>
                                 <el-form-item prop="phonecode" >
                                     <img src="@/assets/images/register/4.png">
-                                    <el-input v-model="registerForm1.phonecode" type="password"  placeholder="请输入手机验证码（必填）"></el-input>
+                                    <el-input v-model="registerForm1.phonecode" type="text"  placeholder="请输入手机验证码（必填）"></el-input>
                                     <div :disabled="disabled" class="selfBtn verifyCode"
                                          :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode">{{timertitle}}</div>
                                 </el-form-item>
@@ -185,6 +185,30 @@
                     }
                 }
             };
+            let validCode=(rule,value,callback)=>{
+              if(value==''||value==undefined){
+                  callback();
+              }else{
+                  let that=this;
+                  let base = httpConfig.getAxiosBaseConfig();
+                  let headconfig = httpConfig.getTestHeaderConfig();
+                  httpajax.create(base)({
+                      method: 'get',
+                      url: '/SysUser/GetCheckMsgCode?phone='+that.registerForm1.phone+'&type=register&code='+value,
+                      headers: headconfig
+                  }).then(res => {
+                      console.log(JSON.parse(res.data).Status);
+                      if(JSON.parse(res.data).Status=='error'){
+                          callback(new Error(JSON.parse(res.data).Msg))
+                      }else{
+                          callback();
+                      }
+                  }).catch(err=>{
+                      console.log(err);
+                      callback(new Error('验证码错误'))
+                  })
+              }
+            };
             let validPwd=(rule,value,callback)=>{
                 console.log(rule);
                 if(value==''||value==undefined){
@@ -239,10 +263,11 @@
                     ],
                     phone:[
                         {required:true,message:'请输入手机号',trigger:'blur'},
-                        {validator:validMobile,trigger:'blur'}
+                        {required:true,validator:validMobile,trigger:'blur'}
                     ],
                     phonecode:[
-                        {required:true,message:'请输入验证码',trigger:'blur'}
+                        {required:true,message:'请输入验证码',trigger:'blur'},
+                        {required:true,validator:validCode,trigger:'blur'}
                     ],
                 },
                 registerForm2:{
@@ -385,13 +410,36 @@
                 this.checkType=val;
             },
             sendCode:function(){
-
-                if(!this.disabled){
-                    this.disabled=true;
-                    this.timer(59);
-                    this.timertitle='59S后重新发送';
-                }
-
+                this.$refs.validFormF.validateField('phone',(validMessage)=> {
+                    if (validMessage) {
+                        this.$message(validMessage);
+                    } else {
+                        if (!this.disabled) {
+                            this.disabled = true;
+                            this.getPhoneCode('register', this.registerForm1.phone);
+                            this.timer(59);
+                            this.timertitle = '59S后重新发送';
+                        }
+                    }
+                })
+            },
+            /*
+       * 手机验证码获取接口
+       * type:类型
+       * phone:手机号
+       * */
+            getPhoneCode:function(type,phone) {
+                let base = httpConfig.getAxiosBaseConfig();
+                let headconfig = httpConfig.getTestHeaderConfig();
+                httpajax.create(base)({
+                    method: 'get',
+                    url: '/SysUser/GetMsgCode?phone='+phone+'&type='+type,
+                    headers: headconfig
+                }).then(res => {
+                    console.log(res);
+                }).catch(err=>{
+                    console.log(err);
+                })
             },
             timer:function(t){
                     let that=this;
