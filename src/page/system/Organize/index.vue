@@ -609,11 +609,6 @@
                 this.$axios
                     .post("/SysOrganize/PostOrgChangeRecord", data)
                     .then(res => {
-                        if(res.Status=='success'){
-                            this.$message.success("保存成功");
-                        }else{
-                            this.$message.error('保存失败,请重试!');
-                        }
                     });
             },
             //获取组织信息
@@ -865,7 +860,7 @@
         padding-bottom: 10px;
     }
     .el-input--suffix .el-input__inner {
-        height: 100%;
+        height: auto;
         margin: 0;
         padding-right: 0;
     }
@@ -913,7 +908,7 @@
         top: -20px;
     }
     .el-input--suffix .el-input__inner {
-        height: 100%;
+        height: auto;
         margin: 0;
         padding-right: 0;
         width: 100%;
