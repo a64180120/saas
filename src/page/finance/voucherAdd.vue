@@ -56,6 +56,7 @@
                     <span style="float:right" class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
                     <span style="float:right" class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
+                
                 <div class="voucherDisabledCon">
                     <div :class="{voucherDisabled:voucherAdd}"></div>
                     <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
@@ -440,10 +441,11 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                   const loading1=this.$loading();
+                   debugger;
+                //    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
-                           loading1.close();
+                        //    loading1.close();
                            if (res.Status == 'success') {
                                this.saasMessage={
                                   visible:true,
@@ -472,7 +474,8 @@
                            
                        })
                        .catch(err =>{
-                           this.$message(err);loading1.close();
+                           this.$message(err);
+                        //    loading1.close();
                        } )
                }else if(url=='update'){
                    this.$message('当前月份已结账,无法修改凭证!')
@@ -1178,9 +1181,8 @@
                            } else {
                                vm.$message('保存失败,请重试!')
                            }
-                       })
-                       
-                       .catch(err =>{console.log(err);loading.close()} )
+                       }) 
+                       .catch(err =>{loading.close();console.log(err);} )
                }else{
                    vm.$message('当前月份已结账,无法修改凭证!')
                }
@@ -1924,7 +1926,7 @@
           overflow-y: auto;
           padding:10px;
           >div:first-of-type{
-             
+              float:right;
               padding:5px 10px;
               position: relative;
               z-index: 1;
@@ -1955,13 +1957,13 @@
     .title{
         border-bottom: 1px solid #ccc;
         padding:8px 3px;
-   
         width:100%;
         font-family: Arial;
         font-size: 14.0pt;
         font-style: normal;
         font-weight: 700;
         i{
+            float:right;
             background: url("../../assets/icon/close.svg");
             background-size:cover ;
             width:20px;

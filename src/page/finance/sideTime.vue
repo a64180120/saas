@@ -280,6 +280,7 @@ export default {
    .asideNav{
         width:55px;
         position: fixed;
+        z-index:99;
         right:10px;
         top:110px;
         height: 83%;

@@ -147,8 +147,11 @@
                     </li>
                     <li>
                         <div>科目类别</div>
-                        <div style="padding-left:10px;border:1px solid #ccc">
-                            {{subjectInfo.preSubject.KType?navList[subjectInfo.preSubject.KType].name:''}}
+                        <div v-if="addPageShow=='add'" style="padding-left:10px;border:1px solid #ccc">
+                            {{subjectInfo.preSubject.KType?navList[subjectInfo.preSubject.KType-1].name:''}}
+                        </div>
+                        <div v-if="addPageShow=='update'" style="padding-left:10px;border:1px solid #ccc">
+                            {{navList[subjectInfo.KType-1].name}}
                         </div>
                         <div style="clear:both"></div>
                     </li>
@@ -540,11 +543,6 @@ export default {
         this.$axios.post('PSubject/PostPSubjectQueryList',data)
         .then(res=>{
             if(res.Status=='success'){
-                this.message={
-                    message:'共搜索到'+res.Data.length+'条数据',
-                    delay:4000,
-                    visible:true
-                }
                 var str=this.navList[data.KType-1].code;
                 var vm=this;
                 vm[str]=res.Data;
@@ -628,7 +626,6 @@ export default {
             KBalanceType:this.choosedData[0].child.KBalanceType,
             AuxiliaryTypes:[]
         }
-        
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
@@ -893,7 +890,9 @@ export default {
                 background: #fff;
             }
         }
-        
+        li{
+            padding: 0 0 0 5px;
+        }
         >li{
             border:1px solid #ddd;
             border-width:0 1px 1px 0;
