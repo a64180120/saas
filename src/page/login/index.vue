@@ -206,7 +206,7 @@ export default {
                     this.getCodePic();
                     console.log(err);
                 })
-                
+
             }
         };
         let validPhoneCaptcha=(rule,value,callback)=>{
@@ -228,9 +228,11 @@ export default {
                         //"{\"orgs\":[{\"PhId\":436190108000001,\"ParentId\":0,\"ParentEnCode\":null,\"ParentName\":null,\"Layers\":0,\"EnCode\":null,\"OrgName\":\"新中大\",\"Category\":null,\"EnterpriseCode\":null,\"EnterpriseAttachment\":null,\"MobilePhone\":\"13456219399\",\"Email\":null,\"Fax\":null,\"LinkMan\":null,\"TelePhone\":null,\"Province\":\"330000\",\"City\":\"杭州市\",\"County\":\"330105\",\"Street\":\"330105009\",\"Address\":\"88号\",\"Chairman\":\"hyz\",\"ChairmanAttachment\":null,\"Director\":null,\"ServiceStartTime\":null,\"ServiceEndTime\":null,\"EnableTime\":\"2019-01-08T20:07:41\",\"AccountSystem\":null,\"DeleteMark\":0,\"EnabledMark\":0,\"Verify\":0,\"VerifyOpinion\":null,\"VerifyDt\":null,\"SortCode\":0,\"Description\":null,\"Integrity\":null,\"UserCount\":0,\"EmpowerInfo\":null,\"FinanceAccount\":null,\"BankName\":null,\"BankAccount\":null,\"OrgType\":0,\"PersistentState\":0,\"NgRecordVer\":1,\"NgInsertDt\":\"2019-01-08T20:07:41\",\"NgUpdateDt\":\"2019-01-08T20:07:41\",\"Creator\":521180820000001,\"Editor\":521180820000001,\"CurOrgId\":521180820000002}],\"Status\":\"success\"}"
                         console.log(JSON.parse(res.data));
                         this.loginFormPhone.orgid=JSON.parse(res.data).orgs[0].PhId;
-                        this.phonePwd=JSON.parse(res.data).orgs[0].password;
+                        this.phonePwd=JSON.parse(res.data).user.Password;
                         this.phoneoptions=JSON.parse(res.data).orgs;
-                        this.submitForm('loginFormPhone');
+                       /* if(this.phoneoptions.length==1){
+                            this.submitForm('loginFormPhone');
+                        }*/
                         callback();
                     }
                 }).catch(err=>{
