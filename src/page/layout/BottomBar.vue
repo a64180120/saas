@@ -43,7 +43,7 @@ export default {
     }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .sys-footer{
     display: flex;
     position: absolute;
@@ -55,7 +55,18 @@ export default {
     border-bottom: 1px solid #00B8EE;
     z-index: 20;
     bottom: 0;
+
+    .move-enter-active{
+        opacity: 1;
+        transform: translate3d(0, 0, 0)
+    }
+    .move-enter, .move-leave{
+        opacity: 0;
+        transform: translate3d(24px, 0, 0)
+    }
+
 }
+
 .navtitle{
     display: flex;
     position: absolute;

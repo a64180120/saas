@@ -10,7 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-//const GeneraterAssetPlugin = require('generate-asset-webpack-plugin')
+//const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 
 function recursiveIssuer(m) {
     if (m.issuer) {
@@ -103,7 +103,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         // see https://github.com/ampedandwired/html-webpack-plugin
         new HtmlWebpackPlugin({
             filename: config.build.index,
-            template: './src/index.html',
+            template: 'index.html',
             filename: 'index.html',
             favicon: './favicon.ico',
             inject: true,
@@ -131,8 +131,8 @@ const webpackConfig = merge(baseWebpackConfig, {
             ignore: ['.*']
           }
         ])
-        // new GeneraterAssetPlugin({
-        //     filename: utils.assetsPath('serverconfig.json'),
+        // new GenerateAssetPlugin({
+        //     filename: './static/sconfig.js',
         //     fn: (compilation, cb) => {
         //         cb(null, createServerConfig(compilation));
         //     },
@@ -141,12 +141,10 @@ const webpackConfig = merge(baseWebpackConfig, {
     ]
 })
 
-// const createServerConfig = function(compilation) {
-//     let serverConfig = {
-//         baseUrl: config.build.env.API_ROOT
-//     }
-//     return JSON.stringify(serverConfig);
-// };
+// const createServerConfig = function (compilation) {
+//     let cfgJson = {  baseUrl: 'http://218.108.53.111/g6capi' };
+//     return JSON.stringify(cfgJson);
+// }
 
 if (config.build.productionGzip) {
     var CompressionWebpackPlugin = require('compression-webpack-plugin')

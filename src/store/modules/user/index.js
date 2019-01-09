@@ -82,7 +82,8 @@ const actions = {
     // 获取Token
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
-            let base=httpConfig.getAxiosBaseConfig();
+            console.log('window.global:'+window.global.baseUrl)
+            let base=httpConfig.getAxiosBaseConfig(window.global.baseUrl);
             let url=httpConfig.baseurl;
 
             httpajax.create({
