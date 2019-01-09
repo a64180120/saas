@@ -596,13 +596,7 @@
 </script>
 
 <style scoped>
-    .verifyPanel{
-        height: 80px;
-        width: 150px;
-        border: 2px solid orangered;
-        position: absolute;
-        top: 100px;
-    }
+
     .selectContainer>select {
         background-color: transparent;
         line-height: 30px;

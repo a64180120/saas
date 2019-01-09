@@ -428,3 +428,19 @@ ul{
         background-color: #00B8EE;
         border-color: #00B8EE;
     }
+    /*核定后显示的核定面板*/
+.verifyPanel{
+    display: none;
+    height: 60px;
+    width: 150px;
+    border: 2px solid #ff9f7b;
+    position: fixed;
+    right: 130px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 18px;
+    color: red;
+    border-radius: 5px;
+    transform: rotate(30deg);
+    background-color: white;
+}
