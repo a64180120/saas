@@ -178,14 +178,16 @@
     .choose > ul > li {
         margin-left: 15px;
         padding: 2px 8px;
-        border: 1px solid #ff9900;
+        border: 1px solid #00B8EE;
         border-radius: 3px;
         cursor: pointer;
+        background: #00B8EE;
+        color: #FFFFFF;
     }
 
     .choose > ul > li:hover {
-        background: #ff9900;
-        color: #fff;
+        background: #FFFFFF;
+        color: #00B8EE;
     }
 </style>
 <style>
