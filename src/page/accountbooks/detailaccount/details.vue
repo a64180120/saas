@@ -1,5 +1,5 @@
 <template>
-        <div class="manageContent" id="ts">
+        <div class="manageContent">
             <div class="reportBox">
                 <div class="unionState flexPublic">
                     <ul class="flexPublic">
@@ -73,9 +73,8 @@
                         <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
                     </ul>
                 </div>
-                <div class="flexPublic  p0">
+                <div class="flexPublic  tableContent">
                     <div class="unionLists" >
-
                         <div class="unionListsTitle">
 
                         <div class="el-input el-input--prefix" style="text-align: center; padding: 3px 10px;height: 35px;overflow: hidden">
@@ -99,7 +98,7 @@
                             </el-tree>
                         </div>
                     </div>
-                    <div class="formData" ref="printFrom" @mousedown="loadMore" >
+                    <div class="formData" @mousedown="loadMore" >
                         <ul>
                             <li>凭证日期</li>
                             <li>凭证字号</li>
@@ -109,51 +108,49 @@
                             <li>方向</li>
                             <li>余额(元)</li>
                         </ul>
-                       <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
-                            <li>{{dataInfoMonth.Pdate.slice(0,10).split(' ')[0]}}</li>
-                            <li></li>
-                            <li :class="{bolder:true,'align-center':true}">{{date1.choosedMonth==1?'年初余额':dataInfoMonth.Abstract}}</li>
-                            <li class="align-right">{{dataInfoMonth.JSum| NumFormat}}</li>
-                            <li class="align-right" :title="dataInfoMonth.DSum">{{dataInfoMonth.DSum| NumFormat}}</li>
-                            <li>{{JD[dataInfoMonth.DType]}}</li>
-                            <li class="align-right">
-                                {{ KBalanceType=='1' ? (Number(dataInfoMonth.JSum)-Number(dataInfoMonth.DSum)) : (Number(dataInfoMonth.DSum)-Number(dataInfoMonth.JSum))  | NumFormat}}
-                            </li>
-                        </ul>
-
-                        <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
-                            <template v-if="item.Abstract=='科目初始化'">
-                                <li>{{item.Pdate.slice(0,10).split(' ')[0]}}</li>
+                        <div class="formData formData_content" id="ts"  ref="printFrom">
+                           <ul class="formDataItems flexPublic" v-if="dataInfoMonth.Pdate!=undefined">
+                                <li>{{dataInfoMonth.Pdate.slice(0,10).split(' ')[0]}}</li>
                                 <li></li>
-                                <li class="bolder align-center">年初余额</li>
-                                <li class="align-right">{{item.JSum |NumFormat}}</li>
-                                <li class="align-right">{{item.DSum |NumFormat}}</li>
-                                <li>{{JD[item.DType]}}</li>
+                                <li :class="{bolder:true,'align-center':true}">{{date1.choosedMonth==1?'年初余额':dataInfoMonth.Abstract}}</li>
+                                <li class="align-right">{{dataInfoMonth.JSum| NumFormat}}</li>
+                                <li class="align-right" :title="dataInfoMonth.DSum">{{dataInfoMonth.DSum| NumFormat}}</li>
+                                <li>{{JD[dataInfoMonth.DType]}}</li>
                                 <li class="align-right">
-                                    {{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}
+                                    {{ KBalanceType=='1' ? (Number(dataInfoMonth.JSum)-Number(dataInfoMonth.DSum)) : (Number(dataInfoMonth.DSum)-Number(dataInfoMonth.JSum))  | NumFormat}}
                                 </li>
-                            </template>
-                            <template v-else>
-                                <li>{{item.Abstract=='本月合计'||item.Abstract=='本年累计'?item.Pdate.split('-')[0]+'-'+item.Pdate.split('-')[1]:item.Pdate.slice(0,10).split(' ')[0]}}</li>
-                                <li class="align-center" style=""><a @click="showvoucher" :data-title="item.PhIdMst">{{item.Pno!='本月合计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
-                                <li :class="{bolder:item.Abstract=='本月合计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
-                                <template></template>
-                                <li class="align-right">{{item.JSum |NumFormat}}</li>
-                                <li class="align-right">{{item.DSum |NumFormat}}</li>
-                                <li>{{JD[item.DType]}}</li>
-                                <template v-if="item.Pno!='本月合计'&&item.Pno!='本年累计'">
+                            </ul>
+                            <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">
+                                <template v-if="item.Abstract=='科目初始化'">
+                                    <li>{{item.Pdate.slice(0,10).split(' ')[0]}}</li>
                                     <li></li>
+                                    <li class="bolder align-center">年初余额</li>
+                                    <li class="align-right">{{item.JSum |NumFormat}}</li>
+                                    <li class="align-right">{{item.DSum |NumFormat}}</li>
+                                    <li>{{JD[item.DType]}}</li>
+                                    <li class="align-right">
+                                        {{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}
+                                    </li>
                                 </template>
                                 <template v-else>
-                                    <li class="align-right">{{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}</li>
+                                    <li>{{item.Abstract=='本月合计'||item.Abstract=='本年累计'?item.Pdate.split('-')[0]+'-'+item.Pdate.split('-')[1]:item.Pdate.slice(0,10).split(' ')[0]}}</li>
+                                    <li class="align-center" style=""><a @click="showvoucher" :data-title="item.PhIdMst">{{item.Pno!='本月合计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></li>
+                                    <li :class="{bolder:item.Abstract=='本月合计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</li>
+                                    <template></template>
+                                    <li class="align-right">{{item.JSum |NumFormat}}</li>
+                                    <li class="align-right">{{item.DSum |NumFormat}}</li>
+                                    <li>{{JD[item.DType]}}</li>
+                                    <template v-if="item.Pno!='本月合计'&&item.Pno!='本年累计'">
+                                        <li></li>
+                                    </template>
+                                    <template v-else>
+                                        <li class="align-right">{{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}</li>
+                                    </template>
                                 </template>
-                            </template>
-
-
-
-                        </ul>
-                        <div :style="{'display':!busy?'block':'none'}">
-                            ...加载中
+                            </ul>
+                            <div :style="{'display':!busy?'block':'none'}">
+                                ...加载中
+                            </div>
                         </div>
                         <!--
                             v-infinite-scroll:
@@ -213,7 +210,7 @@
                 },
                 zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
                 auxiliary:0,  //显示辅助项
-                pageSize: 15, //pageSize
+                pageSize: 25, //pageSize
                 pageIndex: 0, //pageIndex
                 testIndex:0,
                 totalCount: 0, //总页数
@@ -279,7 +276,7 @@
                     window.removeEventListener('scroll', this.handleScroll, false);  // 监听（绑定）滚轮滚动事件
 
                 }else{
-                    let scrollTop = scrollObj.parentElement.parentElement.parentElement.scrollTop; // div 到头部的距离
+                    let scrollTop = scrollObj.scrollTop; // div 到头部的距离
                     let scrollHeight = scrollObj.scrollHeight; // 滚动条的总高度
                     //滚动条到底部的条件
                     if(scrollTop>=100){
@@ -737,7 +734,12 @@
                 // document.body.innerHTML = oldContent;
                 // return false;
 
-                this.$print(this.$refs.printFrom) // 使用
+                let dm = this.$refs.printFrom.parentNode.firstChild.cloneNode(true);
+                dm.classList.add('first_child');
+                let cop = this.$refs.printFrom.cloneNode(true);
+                cop.insertBefore(dm,cop.firstChild);
+                cop.classList.remove('formData_content');
+                this.$print(cop) // 使用
             },
         //刷新
             refresh:function(){
@@ -748,6 +750,12 @@
 </script>
 
 <style scoped>
+    .tableContent{
+        position: absolute;
+        top: 60px;
+        bottom: 0px;
+        width: 100%;
+    }
     .timeSelectBox{
         z-index: 99;
     }
@@ -814,6 +822,22 @@
     .unionState>ul>li{
         width:100%;
     }
+    .formData{
+        margin-top: 0;
+    }
+    .formData_content{
+        margin-top: -45px;
+        position: absolute;
+        overflow-y: scroll;
+        bottom: 0;
+        top: 95px;
+        left: 270px;
+        right: -17px;
+    }
+    .formData_content>ul:first-child{
+        background: white;
+        margin-top: 0;
+    }
     .formData>ul>li{
         border-right:1px solid #fff;
         height:50px;
@@ -851,8 +875,6 @@
         min-width: 70px;
         padding:0 2px;
     }
-
-
     .formDataItems{
         border-bottom:1px solid #ddd;
     }
@@ -876,19 +898,22 @@
         cursor: pointer;
     }
     .unionLists{
-        width:20%;
-        min-width: 180px;
-        align-self: flex-start;
+        width: 260px;
+        min-width: 260px;
         margin-right: 10px;
-        margin-top: 10px;
         border: 1px solid #45c0f7;
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        padding-top: 45px;
     }
     .manageContent:before{
         content:"";
         display: inline-block;
     }
     .unionLists~.formData{
-        width:80%;
+        width:100%;
         align-self: flex-start;
     }
     .unionLists>div.unionListsTitle{
@@ -901,6 +926,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        position: fixed;
+        top: 192px;
+        width: 260px;
+        z-index: 9;
     }
     .unionLists>p{
         text-align: center;

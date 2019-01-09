@@ -5,7 +5,18 @@
         <img src="../assets/images/logo2.png" alt="">
         <div class="login">
           <div><img src="@/assets/img/d1.png" alt=""><span> &nbsp;0571-88270588</span></div>
-          <div><img src="@/assets/img/ren.png" alt=""><router-link to="/login">登录</router-link><router-link to="/register">注册</router-link></div>
+          <div >
+            <img src="@/assets/img/ren.png" alt=""> 
+            <div class="userInfo" v-if="uid">
+              <div>{{username}}<div></div></div>
+              <ul>
+                <li>{{uid}}</li>
+                <li>修改密码</li>
+                <li>退出登录</li>
+              </ul>
+            </div>
+            <router-link v-if="!uid" to="/login">登录</router-link><router-link v-if="!uid" to="/register">注册</router-link>
+          </div>
           <div><img src="@/assets/img/fdj.png" alt=""></div>
         </div>
       </div>
@@ -215,7 +226,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import config from '@/util/ajaxConfig'
   export default {
     name: "home",
@@ -248,7 +259,15 @@
     computed:{
         picUrl:function(){
             return config.baseurl;
-        }
+        },
+       
+      ...mapState({
+          uid: state => state.user.userid,
+          username: state => state.user.username,
+          orgcode: state => state.user.orgcode,
+          orgid: state => state.user.orgid
+      })
+
     },
     mounted(){
       this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t1.jpg')
@@ -935,6 +954,32 @@
         }
       }
 
+    }
+  }
+  .userInfo{
+    display: inline-block;
+    position:relative;
+    >div{
+      padding:0 20px 10px;
+      position:relative;
+      >div{
+        position:absolute;
+        border:10px solid transparent;
+        border-top-color:#333;
+      }
+    }
+    >ul{
+      position: absolute;
+      bottom:-100px;
+      left:-20px;
+      z-index: 99;
+      background: #fff;
+      padding:0 5px;
+      >li{
+        height:40px;
+        line-height:40px;
+        text-align:center;
+      }
     }
   }
 </style>

@@ -35,12 +35,12 @@ export default {
       },
       oneTime(vm){
           var vm=this;
-          vm.delayTime--;
           if(vm.delayTime>0){
             setTimeout(vm.oneTime,1000)
           }else{
               vm.close();
           }
+        vm.delayTime--;
       }
   },
   props:{
@@ -52,10 +52,19 @@ export default {
       
   },
   watch:{
-      visible(val){
+      visible(val){ 
           var vm=this;
-          vm.delayTime=parseInt(vm.delay/1000);
-          vm.oneTime(vm);
+          console.log(val)
+          if(val){
+           
+            console.log(vm)
+            vm.delayTime=parseInt(vm.delay/1000);
+            vm.oneTime(vm);
+          }else{
+              console.log(vm)
+             vm.delayTime=0; 
+          }
+         
       }
   }
 }
