@@ -72,7 +72,7 @@
                                 <el-form-item prop="orgid">
                                     <img src="@/assets/images/register/3.png">
                                     <el-select v-model="loginFormPhone.orgid" filterable placeholder="请选择组织">
-                                        <el-option v-for="item in options"
+                                        <el-option v-for="item in phoneoptions"
                                                    :key="item.PhId"
                                                    :label="item.OrgName"
                                                    :value="item.PhId">
@@ -92,8 +92,8 @@
                                 <el-form-item prop="phoneNum">
                                     <img src="@/assets/images/register/sj.png">
                                     <el-input v-model="fixPwdForm.phoneNum" type="text" placeholder="请输入手机号"></el-input>
-                                    <div :disabled="disabled" class="selfBtn verifyCode"
-                                         :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode(2)">{{timertitle}}</div>
+                                    <div :disabled="disabledPwd" class="selfBtn verifyCode"
+                                         :style="{'background-color':disabledPwd?'#CCCCCC':'#2473EB','color':disabledPwd?'grey':'white'}" @click="sendCode(2)">{{timertitlePwd}}</div>
                                 </el-form-item>
                                 <el-form-item prop="phoneCode">
                                     <img src="@/assets/images/register/4.png">
@@ -137,7 +137,9 @@
 import { mapState, mapActions } from 'vuex'
 import lodash from 'lodash';
 import countdownpop from "../../components/countDownPop/index";
-import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
+import httpConfig from '@/util/ajaxConfig';  //自定义ajax头部配置*****
+import httpajax from "axios";
+import qs from 'qs'
 
 export default {
     data() {
@@ -204,35 +206,75 @@ export default {
                     this.getCodePic();
                     console.log(err);
                 })
-                
+
             }
         };
         let validPhoneCaptcha=(rule,value,callback)=>{
-            console.log(value);
-            console.log(this.phoneCaptcha);
             if(value==''||value==undefined){
                 callback()
             }else{
-                if (value!=this.phoneCaptcha){
+                let that=this;
+                let base = httpConfig.getAxiosBaseConfig();
+                let headconfig = httpConfig.getTestHeaderConfig();
+                httpajax.create(base)({
+                    method: 'get',
+                    url: '/SysUser/GetCheckMsgCode?phone='+that.loginFormPhone.phoneNum+'&type=login&code='+value,
+                    headers: headconfig
+                }).then(res => {
+                    console.log(JSON.parse(res.data).Status);
+                    if(JSON.parse(res.data).Status=='error'){
+                        callback(new Error(JSON.parse(res.data).Msg))
+                    }else{
+                        //"{\"orgs\":[{\"PhId\":436190108000001,\"ParentId\":0,\"ParentEnCode\":null,\"ParentName\":null,\"Layers\":0,\"EnCode\":null,\"OrgName\":\"新中大\",\"Category\":null,\"EnterpriseCode\":null,\"EnterpriseAttachment\":null,\"MobilePhone\":\"13456219399\",\"Email\":null,\"Fax\":null,\"LinkMan\":null,\"TelePhone\":null,\"Province\":\"330000\",\"City\":\"杭州市\",\"County\":\"330105\",\"Street\":\"330105009\",\"Address\":\"88号\",\"Chairman\":\"hyz\",\"ChairmanAttachment\":null,\"Director\":null,\"ServiceStartTime\":null,\"ServiceEndTime\":null,\"EnableTime\":\"2019-01-08T20:07:41\",\"AccountSystem\":null,\"DeleteMark\":0,\"EnabledMark\":0,\"Verify\":0,\"VerifyOpinion\":null,\"VerifyDt\":null,\"SortCode\":0,\"Description\":null,\"Integrity\":null,\"UserCount\":0,\"EmpowerInfo\":null,\"FinanceAccount\":null,\"BankName\":null,\"BankAccount\":null,\"OrgType\":0,\"PersistentState\":0,\"NgRecordVer\":1,\"NgInsertDt\":\"2019-01-08T20:07:41\",\"NgUpdateDt\":\"2019-01-08T20:07:41\",\"Creator\":521180820000001,\"Editor\":521180820000001,\"CurOrgId\":521180820000002}],\"Status\":\"success\"}"
+                        console.log(JSON.parse(res.data));
+                        this.loginFormPhone.orgid=JSON.parse(res.data).orgs[0].PhId;
+                        this.phonePwd=JSON.parse(res.data).user.Password;
+                        this.phoneoptions=JSON.parse(res.data).orgs;
+                       /* if(this.phoneoptions.length==1){
+                            this.submitForm('loginFormPhone');
+                        }*/
+                        callback();
+                    }
+                }).catch(err=>{
+                    console.log(err);
+                    callback(new Error('验证码错误'))
+                })
+
+               /* if (value!=this.phoneCaptcha){
                     callback(new Error('验证码错误'))
                 }else{
                     callback()
-                }
+                }*/
             }
         };
         let validPasswordCaptcha=(rule,value,callback)=>{
             if(value==''||value==undefined){
                 callback()
             }else{
-                if (value!=this.passwordCaptcha){
+                let that=this;
+                let base = httpConfig.getAxiosBaseConfig();
+                let headconfig = httpConfig.getTestHeaderConfig();
+                httpajax.create(base)({
+                    method: 'get',
+                    url: '/SysUser/GetCheckMsgCode?phone='+that.fixPwdForm.phoneNum+'&type=fixPwd&code='+value,
+                    headers: headconfig
+                }).then(res => {
+                    console.log(JSON.parse(res.data).Status);
+                    if(JSON.parse(res.data).Status=='error'){
+                        callback(new Error(JSON.parse(res.data).Msg))
+                    }else{
+                        callback();
+                    }
+                }).catch(err=>{
+                    console.log(err);
                     callback(new Error('验证码错误'))
-                }else{
-                    callback()
-                }
+                })
             }
         };
         return {
+            phonePwd:'',//
             disabled:false,//用于禁用button
+            disabledPwd:false,//用于禁用密码修改button
             selectArea:'ordinaryLogin',//显示界面 ordinaryLogin--普通账号密码登录  phoneLogin--手机验证码登录  fixPassword--修改密码
             loginForm: {
                 name: '',
@@ -240,7 +282,8 @@ export default {
                 orgid: '',
                 verifyCode: ''
             },
-            options: [],
+            options: [],//保存密码登录的组织
+            phoneoptions:[],//保存手机短信登录的组织
             getDatas:'',
             loginRules: {
                 name: [
@@ -312,6 +355,7 @@ export default {
             phoneCaptcha:'',// --手机号登录验证码
             passwordCaptcha:'',//--更改密码的验证码
             timertitle:'发送短信',
+            timertitlePwd:'发送短信',
             sysMsg: '',
             loading: false,
             isOrganize:false,
@@ -402,14 +446,12 @@ export default {
         /*
         * 发送短信，用于短信验证或者登录
         * type  用于判断发送的验证码是哪种
-        *   0--获取普通账号登录验证码
+        *   0--获取普通账号登录验证码//图片验证，失效
         *   1--获取手机验证码登录
         *   2--获取修改密码的手机验证码
         * */
         sendCode:function(type){
-            if(type==0){
-               this.changeCaptcha=this.code();
-            }else if(type==1){
+            if(type==1){//手机登录
                 //发送验证码前，先进行手机验证，确保手机号正确
                 this.$refs.loginFormPhone.validateField('phoneNum',(validMessage)=>{
                     if(validMessage){
@@ -417,28 +459,68 @@ export default {
                     }else{
                         if(!this.disabled){
                             this.disabled=true;
-                            this.phoneCaptcha=this.code();
+                            /*this.phoneCaptcha=*/this.getPhoneCode('login',this.loginFormPhone.phoneNum);
                             this.timer(59,'phoneCaptcha');
                             this.timertitle='59S后重新发送';
                         }
                     }
 
                 })
-            }else{
+            }else{//修改密码
                 //发送验证码前，先进行手机验证，确保手机号正确
                 this.$refs.fixPwdForm.validateField('phoneNum',(validMessage)=>{
                     if(validMessage){
                         this.$message(validMessage);
                     }else {
-                        if (!this.disabled) {
+                        if (!this.disabledPwd) {
                             this.passwordCaptcha = this.code;
-                            this.disabled = true;
+                            this.getPhoneCode('fixPwd',this.fixPwdForm.phoneNum);
+                            this.disabledPwd = true;
                             this.timer(59,'passwordCaptcha');
-                            this.timertitle = '59S后重新发送';
+                            this.timertitlePwd = '59S后重新发送';
                         }
                     }
                 })
             }
+        },
+        /*
+        * 手机验证码获取接口
+        * type:类型
+        * phone:手机号
+        * */
+        getPhoneCode:function(type,phone) {
+            let base = httpConfig.getAxiosBaseConfig();
+            let headconfig = httpConfig.getTestHeaderConfig();
+            httpajax.create(base)({
+                method: 'get',
+                url: '/SysUser/GetMsgCode?phone='+phone+'&type='+type,
+                headers: headconfig
+            }).then(res => {
+                console.log(res);
+            }).catch(err=>{
+                console.log(err);
+            })
+        },
+        /*
+        * 手机验证码验证接口
+        * type:类型
+        *phone:手机号
+        * code:验证码
+        * */
+        verifyCodePhone:function(type,phone,code,callback){
+            let base = httpConfig.getAxiosBaseConfig();
+            let headconfig = httpConfig.getTestHeaderConfig();
+            httpajax.create(base)({
+                method: 'get',
+                url: '/SysUser/GetCheckMsgCode?phone='+phone+'&type='+type+'&code='+code,
+                headers: headconfig
+            }).then(res => {
+                //console.log(res);
+                callback(res);
+            }).catch(err=>{
+                console.log(err);
+                return err;
+            })
         },
         /*
         * 验证码发送按钮倒计时
@@ -448,15 +530,19 @@ export default {
             t--;
             setTimeout(function(){
                 if(t>0){
-                    that.timertitle=t+'S后重新发送';
+                    if(type=='phoneCaptcha'){
+                        that.timertitle=t+'S后重新发送';
+                    }else{
+                        that.timertitlePwd=t+'S后重新发送';
+                    }
                     that.timer(t,type);
                 }else{
-                    that.disabled=false;
-                    that.timertitle='重新发送验证码';
                     if(type=='phoneCaptcha'){
-                        this.phoneCaptcha='';
-                    }else{
-                        this.passwordCaptcha=''
+                        that.disabled = false;
+                        that.timertitle = '重新发送验证码';
+                    }else {
+                        that.disabledPwd = false;
+                        that.timertitlePwd = '重新发送验证码';
                     }
                 }
             },1000)
@@ -469,34 +555,59 @@ export default {
                         text: '正在登录.....',
                         spinner: 'el-icon-loading'
                     });
-                    console.log(this.loginid);
-                    this.login({
-                        name: this.loginForm.name,
-                        password: this.loginForm.password,
-                        orgid: this.loginForm.orgid,
-                        loginid:this.loginid
-                    }).then(res => {
-                        loading.close();
-                        if(res.Status==="success"){
-                            this.$router.push('home') //跳转主页
+                    if(formName=='loginFormPhone'){
+                        this.login({
+                            name: this.loginFormPhone.phoneNum,
+                            password: this.phonePwd,
+                            orgid: this.loginFormPhone.orgid
+                        }).then(res => {
+                            loading.close();
+                            if(res.Status==="success"){
+                                this.$router.push('home') //跳转主页
+                                var para={
+                                    userid:'',
+                                    orgid:this.loginForm.orgid,
+                                    year:''
+                                }
+                                this.$store.dispatch('Pconfig/getBusinessConfig',para).then((res)=>{
+                                    console.log(res);
+                                })
 
-
-                            var para={
-                                userid:'',
-                                orgid:this.loginForm.orgid,
-                                year:''
+                            } else {
+                                this.$message({ showClose: true, message: res.Msg, type: 'error' })
                             }
-                            this.$store.dispatch('Pconfig/getBusinessConfig',para).then((res)=>{
-                                console.log(res);
-                            })
+                        }).catch(error => {
+                            loading.close();
+                            console.log(error);
+                        })
+                    }
+                    else if(formName=='loginForm'){
+                        this.login({
+                            name: this.loginForm.name,
+                            password: this.loginForm.password,
+                            orgid: this.loginForm.orgid
+                        }).then(res => {
+                            loading.close();
+                            if(res.Status==="success"){
+                                this.$router.push('home') //跳转主页
+                                var para={
+                                    userid:'',
+                                    orgid:this.loginForm.orgid,
+                                    year:''
+                                }
+                                this.$store.dispatch('Pconfig/getBusinessConfig',para).then((res)=>{
+                                    console.log(res);
+                                })
 
-                        } else {
-                            this.$message({ showClose: true, message: res.Msg, type: 'error' })
-                        }
-                    }).catch(error => {
-                        loading.close();
-                        console.log(error);
-                    })
+                            } else {
+                                this.$message({ showClose: true, message: res.Msg, type: 'error' })
+                            }
+                        }).catch(error => {
+                            loading.close();
+                            console.log(error);
+                        })
+                    }
+
                 } else {
                     return false
                 }
