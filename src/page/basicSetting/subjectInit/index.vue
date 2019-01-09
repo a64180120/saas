@@ -13,7 +13,7 @@
                 </div>
                 <ul class="subjectHanle">
                     <li><span>系统默认启用日期:</span><span>{{(new Date).getFullYear()+'年'+'1月'}}</span></li>
-                    <li v-show="!updatePage" :class="{btnDisabled:CheckRes}" @click.stop="updatePage=true" class="btn">开始初始化</li>
+                    <li v-show="!updatePage" :class="{btnDisabled:CheckRes}" @click.stop="CheckRes?0:updatePage=true" class="btn">开始初始化</li>
                     <li v-show="updatePage"  @click.stop="endInit()" class="btn">结束初始化</li>
                     <li :class="{btnDisabled:!CheckRes}" @click.stop="unInit()" class="btn">反初始化</li>
                     <li class="subjectSet">
@@ -129,9 +129,9 @@
                     <li style="overflow: hidden;">
                         <div>科目编码</div>
                         <div class="subCodeCss">
-                            <span v-show="addPageShow=='add'">{{subjectInfo.preSubject.KCode}}</span>
+                            <span v-show="addPageShow=='add'">{{subjectInfo.preSubject?subjectInfo.preSubject.KCode:''}}</span>
                             <div class="inputContainer">
-                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject.children?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'" 
+                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject?(subjectInfo.preSubject.children?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'):''" 
                                         type="text" v-model="subjectInfo.KCode">
                             </div>
                             
@@ -147,8 +147,11 @@
                     </li>
                     <li>
                         <div>科目类别</div>
-                        <div style="padding-left:10px;border:1px solid #ccc">
-                            {{subjectInfo.preSubject.KType?navList[subjectInfo.preSubject.KType].name:''}}
+                        <div v-if="addPageShow=='add'" style="padding-left:10px;border:1px solid #ccc">
+                            {{subjectInfo.preSubject.KType?navList[subjectInfo.preSubject.KType-1].name:''}}
+                        </div>
+                        <div v-if="addPageShow=='update'" style="padding-left:10px;border:1px solid #ccc">
+                            {{navList[subjectInfo.KType-1].name}}
                         </div>
                         <div style="clear:both"></div>
                     </li>
@@ -337,7 +340,6 @@ export default {
                     }
                 } 
                 this.dataList=this.asset;
-                console.log(res.Data)
                 this.initCss();
                 var data1={
                     orgid:this.orgid,
@@ -351,7 +353,6 @@ export default {
                         if(res.Status=='success'){
                             this.addInfo=res;
                         }
-                        console.log(this.addInfo)
                         this.$forceUpdate();
                     })
                     
@@ -431,11 +432,10 @@ export default {
              J=parseFloat(J)+parseFloat(dt.JSum);
              D=parseFloat(D)+parseFloat(dt.DSum);
         }
-        console.log(J,D)
-        debugger;
         if(J!=D){
+            var c=J-D;  //差额**
             this.message={
-                message:'借贷试算平衡不通过,请检查余额!',
+                message:'借贷试算平衡不通过,借贷差额为'+c+'请检查余额!',
                 delay:4000,
                 visible:true
             }
@@ -453,13 +453,12 @@ export default {
                     OrgCode:this.orgcode,
                     PersistentState:1,
                     PMonth:0,
-                    Uyear:(new Date).getFullYear(),
+                    Uyear:2018,
                     Dtls:Dtls
                  }
             }
         }
-        console.log(data1)
-        debugger;
+        console.log(data1);
         const loading1=this.$loading();
         this.$axios.post('/PVoucherMst/PostAdd', data1)
         .then(res=>{
@@ -501,6 +500,9 @@ export default {
     },
     //反初始化
     unInit(){
+        if(!this.CheckRes){
+            return;
+        }
         var data2={
             orgid:this.orgid
         }
@@ -541,11 +543,6 @@ export default {
         this.$axios.post('PSubject/PostPSubjectQueryList',data)
         .then(res=>{
             if(res.Status=='success'){
-                this.message={
-                    message:'共搜索到'+res.Data.length+'条数据',
-                    delay:4000,
-                    visible:true
-                }
                 var str=this.navList[data.KType-1].code;
                 var vm=this;
                 vm[str]=res.Data;
@@ -629,7 +626,6 @@ export default {
             KBalanceType:this.choosedData[0].child.KBalanceType,
             AuxiliaryTypes:[]
         }
-        
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
@@ -894,7 +890,9 @@ export default {
                 background: #fff;
             }
         }
-        
+        li{
+            padding: 0 0 0 5px;
+        }
         >li{
             border:1px solid #ddd;
             border-width:0 1px 1px 0;

@@ -41,7 +41,7 @@
                     <div class="block" style="margin-bottom:10px;background-color: #00B8EE;height: 50px;">
                         <!--<span class="demonstration">请选择要查看的组织所在区域</span>-->
                         <el-cascader
-                            placeholder="请选择要查看的组织所在区域"
+                            placeholder="选择组织所在区域"
                             :options="options"
                             class="wggcascader"
                             @active-item-change="handleItemChange"
@@ -49,7 +49,8 @@
                             @dblclick="changeAreaForOrg"
                             @change ="changeArea"
                             change-on-select
-                            style="width: 83%;text-align: center;margin-top: 10px;margin-left: 22px"
+                            style="position: relative;top: 9px;width: 90%;left:5%"
+                            size="small"
                         ></el-cascader>
                     </div>
                     <div align="center">
