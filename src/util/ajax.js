@@ -75,19 +75,18 @@ function stopRepeatRequest(url, cancelfunction) {
 const service = axios.create({
     baseURL: httpConfig.getAxiosBaseConfig().baseURL,
     // 请求超时时间
-    timeout: 10000,
-    transformRequest:[function transformRequest(data, headers) {
-        
-        /* 把类似content-type这种改成Content-Type */
-        let keys = Object.keys(headers);
-        let normalizedName = 'Content-Type';
-        keys.forEach(name => {
-            if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
-                headers[normalizedName] = headers[name];
-                delete headers[name];
-            }
-        });
-    }]
+    timeout: 10000
+    // transformRequest:[function transformRequest(data, headers) {      
+    //     /* 把类似content-type这种改成Content-Type */
+    //     let keys = Object.keys(headers);
+    //     let normalizedName = 'Content-Type';
+    //     keys.forEach(name => {
+    //         if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+    //             headers[normalizedName] = headers[name];
+    //             delete headers[name];
+    //         }
+    //     });
+    // }]
 });
 
 
