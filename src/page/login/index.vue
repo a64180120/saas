@@ -552,7 +552,7 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     if(formName=='loginFormPhone'){
-                        const loading = this.$loading({
+                        const logloading = this.$loading({
                             lock: true,
                             text: '正在登录.....',
                             spinner: 'el-icon-loading'
@@ -562,7 +562,7 @@ export default {
                             password: this.phonePwd,
                             orgid: this.loginFormPhone.orgid
                         }).then(res => {
-                            loading.close();
+                            logloading.close();
                             if(res.Status==="success"){
                                 this.$router.push('home') //跳转主页
                                 var para={
@@ -578,7 +578,7 @@ export default {
                                 this.$message({ showClose: true, message: res.Msg, type: 'error' })
                             }
                         }).catch(error => {
-                            loading.close();
+                            logloading.close();
                             console.log(error);
                         })
                     }

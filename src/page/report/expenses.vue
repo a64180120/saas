@@ -58,9 +58,12 @@
     import { IncomList,IncomListToExcel } from '@/api/voucher/reportInfo'
     import { mapState, mapActions } from 'vuex'
     import treeTable from "@/components/tree-table/indexHeight";
+    //import treeTable from "@/components/tree-table";
     import treeSum from './totalAmount'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
+    import printJS from 'print-js'
+    
     export default {
         name: "expensesRe",
         data(){
