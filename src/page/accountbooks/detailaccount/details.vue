@@ -908,10 +908,6 @@
         height: 100%;
         padding-top: 45px;
     }
-    .manageContent:before{
-        content:"";
-        display: inline-block;
-    }
     .unionLists~.formData{
         width:100%;
         align-self: flex-start;

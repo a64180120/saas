@@ -689,7 +689,7 @@
         position: absolute;
         overflow-y: scroll;
         bottom: 0px;
-        top: 105px;
+        top: 90px;
         left: 0;
         right: -17px;
     }
@@ -761,11 +761,6 @@
         text-align: right;
         padding-right: 15px;
     }
-    .manageContent:before{
-        content:"";
-        display: inline-block;
-    }
-
     .unionLists>p{
         text-align: center;
         background: #83c350;

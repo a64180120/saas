@@ -616,7 +616,7 @@
         position: absolute;
         overflow-y: scroll;
         bottom: -50px;
-        top: 105px;
+        top: 90px;
         left: 0;
         right: -17px;
     }
@@ -674,10 +674,6 @@
         align-self: flex-start;
         margin-right: 10px;
         margin-top: 10px;
-    }
-    .manageContent:before{
-        content:"";
-        display: inline-block;
     }
     .unionLists~.formData{
         width:80%;

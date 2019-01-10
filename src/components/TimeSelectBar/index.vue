@@ -33,7 +33,7 @@
                         <ul>
                             <template v-for="n in (currentyear-startyear+2)">
                                 <template v-if="n+startyear<=currentyear+2">
-                                    <li :date="(startyear+n)+'-'+12"
+                                    <li :date="(startyear+n)+'-'+1"
                                         :class="{'selectMonth':(startyear+n==choosedYear)}"
                                         @click="chosedata"
                                         >{{startyear+n}}</li>
@@ -236,8 +236,8 @@
             },
             /*侧边月份点击事件*/
             chosedata:function(res){
-
                 let time=res.target.attributes.date.value;
+                console.log(time);
                 let timeLis=time.split('-');
                 if(timeLis[0]==this.currentyear&&timeLis[1]>this.currentmonth){
                     return
