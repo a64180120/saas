@@ -4,25 +4,19 @@
             <div class="manageContent" v-loading="loading">
                 <div class="reportBox">
                     <div class="unionState flexPublic">
-                        <ul class="flexPublic">
-                            <li class="flexPublic">
-                                <!--<div>账期:</div>-->
-                                <!--<div class="block selectContainer">-->
-                                    <!--<el-date-picker-->
-                                        <!--v-model="date1"-->
-                                        <!--type="date"-->
-                                        <!--placeholder="选择日期">-->
-                                    <!--</el-date-picker>-->
-                                <!--</div>-->
-                            </li>
-                        </ul>
-                        <ul class="flexPublic handle">
-                            <a ><li style='margin:0 0 0px 20px;' :disabled="verify" @click="changeBtnC">{{changeBtn.title}}</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">核定年初预算</li></a>
+                        <ul class="flexUl handle">
+                            <a ><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="changeBtnC">{{changeBtn.title}}</li ></a>
+                            <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="showCountMsg=verify?true:false">核定年初预算</li></a>
 
                             <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                             <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
+                            <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
+                        </ul>
+                        <ul class="flexPublic handle" >
+                            <a ><li style='margin:0 0 0px 20px;' :disabled="verify" @click="changeBtnC">取消</li ></a>
+                            <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">保存</li></a>
+
+                            <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">保存并核定</li ></a>
                         </ul>
                     </div>
 
@@ -232,7 +226,7 @@
                 date1:[],
                 proofType:'0',
                 loading: false,
-                verify:true//判断页面是否可以修改，true默认可修改，若为false不可修改
+                verify:true//判断页面是否可以修改，true默认可修改--未核定，若为false不可修改--已核定
             }
         },
         components: {TimeSelectBar},
@@ -282,7 +276,7 @@
                         }
                     }
                 }else{
-                    this.$message({ showClose: true, message:'已经进行过预算核定，不可进行修改',type: 'error' })
+                   /* this.$message({ showClose: true, message:'已经进行过预算核定，不可进行修改',type: 'error' })*/
                 }
 
             },
@@ -596,7 +590,18 @@
 </script>
 
 <style scoped>
+    .disableBtn{
+        color: #cccccc !important;
+        background: #fff !important;
+        border-color: #ccc !important;
+        cursor: not-allowed !important;
+    }
 
+    .flexUl>a>li{
+        display: inline-block;
+        float: left;
+        vertical-align: top;
+    }
     .selectContainer>select {
         background-color: transparent;
         line-height: 30px;
@@ -800,5 +805,6 @@
         background: #3e8cbc;
         padding: 5px 15px;
     }
+
 </style>
 

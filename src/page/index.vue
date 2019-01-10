@@ -677,14 +677,14 @@
           margin-left:10px;
           >li{
             height:40px;
-            line-height: 40px;
-            padding:0 3px;
+            
+            padding:0 5px;
             position:relative;
               cursor:pointer;
             &:after{
               position: absolute;
               content:"";
-              left:-3px;
+              left:0;
               top:17px;
               width:6px;
               height:6px;
@@ -692,7 +692,8 @@
               border-radius: 50%;
             }
             span:first-of-type{
-              width:460px;
+              width:450px;
+              line-height: 40px;
               overflow: hidden;
               white-space: nowrap;
               text-overflow: ellipsis;
@@ -701,6 +702,7 @@
             }
             span:nth-of-type(2){
               width:72px;
+               line-height: 40px;
               float:right;
             }
               &:hover>span:first-of-type{
@@ -811,7 +813,7 @@
           >li{
             height:40px;
             width:98%;
-            line-height: 40px;
+           
             padding:0 8px 0 3px;
             position:relative;
               cursor:pointer;
@@ -828,6 +830,7 @@
             }
             span:first-of-type{
               width:450px;
+               line-height: 40px;
               overflow: hidden;
               white-space: nowrap;
               text-overflow: ellipsis;
@@ -841,6 +844,7 @@
 
             }
             span:nth-of-type(2){
+               line-height: 40px;
               width:73px;
               float:right;
             }

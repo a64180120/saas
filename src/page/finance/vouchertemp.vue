@@ -89,6 +89,9 @@
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>console.log(err))
             },
@@ -151,6 +154,9 @@
                             this.$message('保存失败,请重试!')
                         }
                         loading1.close();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
@@ -166,6 +172,9 @@
                     .then(res=>{
                         console.log(res)
                         this.showList();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>console.log(err))
             },
@@ -208,6 +217,9 @@
                         if(this.voucherList.length<=0){
                             this.$message('无法找到该凭证!')
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },

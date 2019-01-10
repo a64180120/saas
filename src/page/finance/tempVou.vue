@@ -446,6 +446,9 @@
                                 kemu:this.subjectlist  //总的科目列表
                             }
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
@@ -471,6 +474,9 @@
                         }
                         loading1.close();
                         this.moneyInputMask=false;
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{console.log(err);loading1.close();this.moneyInputMask=false;})
 
