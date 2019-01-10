@@ -21,11 +21,11 @@
                         </ul>
                     </li>
                 </a>            
-                 <a @click.prevent="handle('unaudit')"><li >反审核</li></a>    
-                <a @click.prevent="handle('audit')"><li >审核</li></a>    
-                <a @click.prevent="handle('delete')"><li >删除</li></a>
-                <a @click.prevent="handle('update')"><li >修改</li></a>
-                <router-link to="/home"><li >新增</li></router-link>          
+                 <a class="btn" @click.prevent="handle('unaudit')"><li >反审核</li></a>    
+                <a class="btn" @click.prevent="handle('audit')"><li >审核</li></a>    
+                <a class="btn" @click.prevent="handle('delete')"><li >删除</li></a>
+                <a class="btn" @click.prevent="handle('update')"><li >修改</li></a>
+                <router-link class="btn" to="/home"><li >新增</li></router-link>          
             </ul>
         </div>
         <div class="voucherSelect">
@@ -105,41 +105,43 @@
                 <li>借方金额(元)</li>
                 <li>贷方金额(元)</li>
             </ul>
-            <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
-                <li @dblclick="voucherDel(item)">
-                    <ul class="listIndex"><li><span>{{index+1}}</span></li></ul>
-                    <ul>
-                        <li>
-                            <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
-                            <span>凭证字号 : 记-{{item.PNo}}</span>
-                            <span>附件数 : {{item.PAttachment}}</span>
-                            <span>制单人 : {{item.PMakePerson}}</span>
-                            <span>审核人 : {{item.PAuditorName}}</span>
-                        </li>
-                        <li v-for="(dtl,ind) of item.Dtls" :key="ind">
-                            <div class="wrapKemu">
-                                <div>{{dtl.Abstract}}</div>
-                            </div>
-                            <div class="wrapKemu"> 
-                                <div> 
-                                    {{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}
-                                    <span 
-                                        v-for="(item,index) of dtl.DtlAccounts?dtl.DtlAccounts[0].NameValueDtls:0" :key="index">
-                                        .{{item.AuxiliaryName}}
-                                    </span> 
+            <div class="listOver">
+                <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
+                    <li @dblclick="voucherDel(item)">
+                        <ul class="listIndex"><li><span>{{index+1}}</span></li></ul>
+                        <ul>
+                            <li>
+                                <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
+                                <span>凭证字号 : 记-{{item.PNo}}</span>
+                                <span>附件数 : {{item.PAttachment}}</span>
+                                <span>制单人 : {{item.PMakePerson}}</span>
+                                <span>审核人 : {{item.PAuditorName}}</span>
+                            </li>
+                            <li v-for="(dtl,ind) of item.Dtls" :key="ind">
+                                <div class="wrapKemu">
+                                    <div>{{dtl.Abstract}}</div>
                                 </div>
-                            </div>
-                            <div>{{(dtl.JSum==0?'':dtl.JSum) | NUmTurn}}</div>
-                            <div>{{(dtl.DSum==0?'':dtl.DSum) | NUmTurn}}</div>
-                        </li>
-                        <li>
-                            <div>合计:{{'sum' | sum(item.Dtls)}}</div>
-                            <div>{{'jie'|sum(item.Dtls)}}</div>
-                            <div>{{'dai'|sum(item.Dtls)}}</div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+                                <div class="wrapKemu"> 
+                                    <div> 
+                                        {{dtl.SubjectCode}}&nbsp;{{dtl.SubjectName}}
+                                        <span 
+                                            v-for="(item,index) of dtl.DtlAccounts?dtl.DtlAccounts[0].NameValueDtls:0" :key="index">
+                                            .{{item.AuxiliaryName}}
+                                        </span> 
+                                    </div>
+                                </div>
+                                <div>{{(dtl.JSum==0?'':dtl.JSum) | NUmTurn}}</div>
+                                <div>{{(dtl.DSum==0?'':dtl.DSum) | NUmTurn}}</div>
+                            </li>
+                            <li>
+                                <div>合计:{{'sum' | sum(item.Dtls)}}</div>
+                                <div>{{'jie'|sum(item.Dtls)}}</div>
+                                <div>{{'dai'|sum(item.Dtls)}}</div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>    
+            </div>
         </section>
         <!-- <div class="footInfo">
             <router-link to="">服务协议</router-link>
@@ -187,7 +189,7 @@
                         <span v-if="voucherMask=='gengz'">更正凭证</span><span v-if="voucherMask=='update'">修改凭证</span>
                         <i @click="keepChoose(false)"></i>
                 </p>
-                <div v-if="voucherMask">
+                <div style="height:40px" v-if="voucherMask">
                     <span class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
                     <span class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
@@ -818,21 +820,26 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
+             
                if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+                 
                    var data = {
                        uid: this.uid,
+                       Ryear:'',
+                       Uname:'',
                        orgid: this.orgid,
                        orgcode: this.orgcode,
                        infoData: Vdata
                    }
                    if(Vdata.Mst.PhId) {
                        url = 'Update';
+                       
                    }
-                   //const loading=this.$loading();
+                   const loading=this.$loading();
         
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
-                           //loading.close();      
+                           loading.close();      
                            if (res.Status == 'success') {
                                 this.saasMessage={
                                   visible:true,
@@ -848,11 +855,17 @@
                                   visible:true,
                                   delay:3000,
                                   message:res.Msg
-                               };
+                               }
                            }   
                        })
-                       .catch(err =>{this.$message({ showClose: true,message: err, type: "error"})})
-                       //loading.close()} )
+                       .catch(err =>{
+                           this.saasMessage={
+                                  visible:true,
+                                  delay:3000,
+                                  message:'出错了!'
+                               }
+                           loading.close()
+                        } )
                }else{
                    this.$message('当前月份已结账,无法修改凭证!')
                }
@@ -1077,7 +1090,7 @@
                         }
 
                     })
-                    .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
             },
             //获取time组件传参********************
             getSideDate(data){
@@ -1675,8 +1688,13 @@
                 }
             >a{
                 float:right;
-                border:0;
-                color:#fff;
+               
+                &.btn{
+                    color:#fff;
+                    &:hover{
+                        color:#00b7ee;
+                    }
+                }
                 border-radius: 3px;
                 height:30px;
                 line-height: 30px;
@@ -1685,7 +1703,7 @@
                 width:60px;
 
                 text-align: center;
-                background: #00b7ee;
+                
                 &:hover{
                     opacity: 0.8;
                    
@@ -1899,6 +1917,7 @@
               
               padding:5px 10px;
               >span{
+                  float:right;
                   margin-left: 20px;
               }
           }  
@@ -1930,13 +1949,15 @@
         z-index: -1;
     }
     .listContainer{
-        max-height:85%;
-        overflow-y: auto;
-        
+        height:85%;    
         margin-top:10px;
         position:relative;
         padding-top:40px;
         padding-bottom: 20px;
+        .listOver{
+            height:100%;
+            overflow-y: auto;
+        }
     }
     .listContainer ul.listTitle{
         height:40px;

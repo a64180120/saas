@@ -1065,6 +1065,7 @@
         height:100%;
         position:absolute;
         left:-25px;
+        top:0;
     }
     .voucherContentItem .inputContainer{
         height:100%;

@@ -6,7 +6,7 @@
             </p>
             <div>
                 <div class="imgCon"><img src="../../assets/images/message.png"></div>  
-                <span v-if="delay">{{message}},&nbsp;({{delayTime}}s) 后自动关闭</span>
+                <span v-if="delay">{{message}} &nbsp;({{delayTime}}s) 后自动关闭</span>
             </div>
             <div>
                 <span @click="close" class="btn">立即关闭</span>

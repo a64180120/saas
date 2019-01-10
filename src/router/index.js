@@ -12,12 +12,17 @@ import Cookies from "js-cookie";
 //后台数据库获取的路由信息
 var permissionList = [];
 
-function initRoute(router,menu) {
+function initRoute(router,menu,user) {
     return new Promise(resolve => {
         if (permissionList.length == 0) {
             if(menu.length==0){
                 console.log("没有权限数据，正在获取");
-                store.dispatch("user/getNavList").then((navList) => {
+                var param={
+                    userid:user.userInfo.PhId,
+                    orgid:user.orgInfo.PhId
+                };
+
+                store.dispatch("user/getNavList",param).then((navList) => {
                     var data= navList||[];
                     store.dispatch("user/getPermissionList",data).then(res => {
                         console.log("权限列表生成完毕");
@@ -90,7 +95,7 @@ router.beforeEach((to, from, next) => {
             // 防止因重定向到error页面造成beforeEach死循环
             next();
         } else {
-            initRoute(router,menuInfo).then(() => {
+            initRoute(router,menuInfo,userinfo).then(() => {
                 let isPermission = true;
                 if (to.meta.requireAuth) {
                     if (to.meta.type == "page") {
