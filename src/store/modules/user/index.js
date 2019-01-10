@@ -83,7 +83,7 @@ const actions = {
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
             console.log('window.global:'+window.global.baseUrl)
-            let base=httpConfig.getAxiosBaseConfig(window.global.baseUrl);
+            let base=httpConfig.getAxiosBaseConfig();
             let url=httpConfig.baseurl;
 
             httpajax.create({
@@ -281,7 +281,7 @@ const actions = {
     },
 
     // 获取该用户的菜单列表
-    getNavList({ commit, state }) {
+    getNavList({ commit, state },data) {
         return new Promise((resolve, reject) => {
             //let base=httpConfig.getAxiosBaseConfig();
             //测试的Header
@@ -291,8 +291,8 @@ const actions = {
                 url: "/SysMenu/GetMenuList",
                 methods: "get",
                 params: {
-                    uid:state.userid,
-                    orgid:state.orgid
+                    uid:data.userid ||state.userid,
+                    orgid:data.orgid ||state.orgid
                 }
             }).then(res => {
                 //var response=JSON.parse(res.data);
@@ -312,7 +312,7 @@ const actions = {
         return new Promise(resolve => {
             let permissionList = [];
             // 将菜单数据扁平化为一级
-            function flatNavList(arr) {
+            function flatNavList(arr) {              
                 for (let v of arr) {
                     if (v.child && v.child.length) {
                         flatNavList(v.child);
@@ -323,6 +323,7 @@ const actions = {
                     }
                 }
             }
+
             flatNavList(data);
             resolve(permissionList);
         });

@@ -13,7 +13,7 @@ import Auth from "@/util/auth"
 export default {
     data() {
         return {
-
+            islogout:false
         }
     },
     computed: {
@@ -22,6 +22,22 @@ export default {
         },
         userid:function(){
             return this.$store.state.user.userid
+        }
+    },
+    watch: {
+        "islogout":{
+            handler: function (val, oldVal) { 
+               if(val!==oldVal){
+                    this.$alert('当前用户在别处登录', '提示', {
+                        confirmButtonText: '退出',
+                        callback: action => {
+                            me.$store.dispatch('user/logout');
+                            me.$router.push("/login");
+                        }
+                    });
+               }
+            },
+            deep: true
         }
     },
     created() {
@@ -77,12 +93,11 @@ export default {
 
         })
 
-        //this.getloginState(this.loginid,this.userid);
+        this.getloginState(this.loginid,this.userid);
     },
     methods: {
         getloginState(sessionid,userid){
             var me=this;
-            var dialog=false;
             
             window.setInterval(() => {
                 setTimeout(() => {
@@ -97,17 +112,8 @@ export default {
                         .then(res=>{
                             if(res.Status==='success'){
                                 if(!res.data){
-                                    dialog=true
+                                    me.islogout=true
                                 }
-                            }
-                            if(dialog){
-                                me.$alert('当前用户在别处登录', '提示', {
-                                    confirmButtonText: '退出',
-                                    callback: action => {
-                                        me.$store.dispatch('user/logout');
-                                        me.$router.push("/login");
-                                    }
-                                });
                             }
                         })
                         .catch(err=>{
