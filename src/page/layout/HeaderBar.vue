@@ -69,7 +69,7 @@
 import { mapState, mapActions } from "vuex";
 import md5 from 'js-md5'
 import desHelper from "@/util/desHelper"
-import auth from "@/util/auth.js"
+import auth from "@/util/auth"
 export default {
   data() {
     return {
@@ -152,7 +152,11 @@ export default {
       sysLogout: "user/logout"
     }),
       userinfoget:function(){
-          this.userInfoHead=auth.getUserInfoData().userInfo;
+        let user=auth.getUserInfoData();
+        if(user){
+          this.userInfoHead=user.userInfo
+        }
+        //this.userInfoHead=auth.getUserInfoData().userInfo;
       },
     userOperation(command) {
         // 用户名下拉菜单选择事件

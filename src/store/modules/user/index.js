@@ -4,6 +4,7 @@ import Auth from "@/util/auth";
 import httpajax from "axios";
 import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 import qs from 'qs'
+import { uuid } from "@/util/validate";
 
 
 //状态
@@ -26,7 +27,7 @@ const state = {
     //EmpowerInfo 判断是否是试用用户
     EmpowerInfo:'',
     //登录的ID
-    loginid:''
+    sessionId:''
 
 };
 
@@ -53,6 +54,7 @@ const mutations = {
             state.token = data.token;
             state.appKey = data.appKey;
             state.appSecret = data.appSecret;
+            state.sessionId=data.sessionId;
         } else {
             Auth.removeToken();
         }
@@ -69,7 +71,6 @@ const mutations = {
             state.orgName = data.orgInfo.OrgName;
             state.username=data.userInfo.RealName;
             state.EmpowerInfo=data.orgInfo.EmpowerInfo;
-            state.loginid=data.loginid;
 
         } else {
             Auth.removeUserInfoData();
@@ -83,7 +84,7 @@ const actions = {
     getToken({ commit, state }, parameters) {
         return new Promise((resolve, reject) => {
             console.log('window.global:'+window.global.baseUrl)
-            let base=httpConfig.getAxiosBaseConfig(window.global.baseUrl);
+            let base=httpConfig.getAxiosBaseConfig();
             let url=httpConfig.baseurl;
 
             httpajax.create({
@@ -102,7 +103,8 @@ const actions = {
                     var object = {
                         token: response.Token,
                         appKey: response.AppKey,
-                        appSecret: response.AppSecret
+                        appSecret: response.AppSecret,
+                        sessionId:uuid()
                     };
                     //用户信息缓存
                     commit("setToken", object);
@@ -127,12 +129,13 @@ const actions = {
             let base=httpConfig.getAxiosBaseConfig();
             //测试的Header
             let headconfig=httpConfig.getTestHeaderConfig();
+            var token=Auth.getToken();
 
             var data={
                 uname_login:userInfo.name,
                 orgid:userInfo.orgid,
                 password:userInfo.password,
-                loginid:userInfo.loginid
+                sessionId:token.sessionId||''
             };
 
             httpajax.create(base)({
@@ -144,7 +147,7 @@ const actions = {
                 var response=JSON.parse(res.data);
                 if (response.Status === "success") {
                     var user = response.Data;
-                    user.loginid=userInfo.loginid;
+                    user.sessionid=userInfo.loginid;
                     //用户信息缓存
                     commit("setUserInfo", user);
                 }
@@ -281,7 +284,7 @@ const actions = {
     },
 
     // 获取该用户的菜单列表
-    getNavList({ commit, state }) {
+    getNavList({ commit, state },data) {
         return new Promise((resolve, reject) => {
             //let base=httpConfig.getAxiosBaseConfig();
             //测试的Header
@@ -291,8 +294,8 @@ const actions = {
                 url: "/SysMenu/GetMenuList",
                 methods: "get",
                 params: {
-                    uid:state.userid,
-                    orgid:state.orgid
+                    uid:data.userid ||state.userid,
+                    orgid:data.orgid ||state.orgid
                 }
             }).then(res => {
                 //var response=JSON.parse(res.data);
@@ -312,7 +315,7 @@ const actions = {
         return new Promise(resolve => {
             let permissionList = [];
             // 将菜单数据扁平化为一级
-            function flatNavList(arr) {
+            function flatNavList(arr) {              
                 for (let v of arr) {
                     if (v.child && v.child.length) {
                         flatNavList(v.child);
@@ -323,6 +326,7 @@ const actions = {
                     }
                 }
             }
+
             flatNavList(data);
             resolve(permissionList);
         });

@@ -70,7 +70,7 @@
                         </div>
                         <a><li style='margin:0 0 0px 10px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li></a>
                         <a><li style='margin:0 0 0px 10px;' @click="printContent">打印</li></a>
-                        <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
+                        <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                     </ul>
                 </div>
                 <div class="flexPublic  tableContent">
@@ -907,10 +907,6 @@
         overflow-x: hidden;
         height: 100%;
         padding-top: 45px;
-    }
-    .manageContent:before{
-        content:"";
-        display: inline-block;
     }
     .unionLists~.formData{
         width:100%;

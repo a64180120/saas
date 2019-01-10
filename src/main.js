@@ -19,8 +19,8 @@ import infiniteScroll from 'vue-infinite-scroll'
 import Print from '@/plugins/printJS/print'
 import getPdf from './plugins/PDF/getPdf'
 //import httpajax from "axios";
-import Auth from "./util/auth";
-import $ from 'jquery'
+//import Auth from "./util/auth";
+//import $ from 'jquery'
 
 import '../static/css/icon.css';  //阿里的图标样式
 import saasMessage from "@/components/message"

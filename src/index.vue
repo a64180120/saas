@@ -13,15 +13,34 @@ import Auth from "@/util/auth"
 export default {
     data() {
         return {
-
+            islogout:false,
+            interval:''
         }
     },
     computed: {
-        loginid:function(){
-            return this.$store.state.user.loginid
-        },
+        // sessionId:function(){
+        //     return this.$store.state.user.sessionId
+        // },
         userid:function(){
             return this.$store.state.user.userid
+        }
+    },
+    watch: {
+        "islogout":{
+            handler: function (val, oldVal) { 
+               if(val!==oldVal){
+                    this.$alert('当前用户在别处登录', '提示', {
+                        confirmButtonText: '退出',
+                        callback: action => {
+                            clearInterval(this.interval);//停止
+                            this.$store.dispatch('user/logout');
+                            this.$router.push("/login");
+                            
+                        }
+                    });
+               }
+            },
+            deep: true
         }
     },
     created() {
@@ -76,46 +95,41 @@ export default {
             }
 
         })
-
-        //this.getloginState(this.loginid,this.userid);
+        //测试可以注释这条
+        //this.getloginState();
     },
     methods: {
-        getloginState(sessionid,userid){
-            var me=this;
-            var dialog=false;
-            
-            window.setInterval(() => {
+        //循环判断，当前用户的登录状态
+        getloginState(){
+            var me=this;           
+            this.interval = window.setInterval(() => {
                 setTimeout(() => {
-                    var userinfo=Auth.getUserInfoData();
-                    console.log(sessionid);
-                    if(sessionid!='' && userinfo){
-                       
+                    var user=Auth.getUserInfoData(),
+                        token=Auth.getToken();
+                    if(user && token){
+                        console.log(user.userInfo.PhId);
+                        console.log(token.sessionId);
+                        //let userid=user.userInfo.PhId
+
                         me.$axios.get('/SysUser/GetLoginState',{params:{
-                            sessionid:sessionid,
-                            userid:userid
+                            uid:this.userid,
+                            sessionid:token.sessionId
                         }})
                         .then(res=>{
+                            console.log(res)
                             if(res.Status==='success'){
-                                if(!res.data){
-                                    dialog=true
+                                if(res.data==="true"){
+                                    me.islogout=true
                                 }
                             }
-                            if(dialog){
-                                me.$alert('当前用户在别处登录', '提示', {
-                                    confirmButtonText: '退出',
-                                    callback: action => {
-                                        me.$store.dispatch('user/logout');
-                                        me.$router.push("/login");
-                                    }
-                                });
-                            }
+                            
                         })
                         .catch(err=>{
                             console.log(err)
                         })
                     }
                 }, 0)
-            }, 30000)
+            }, 40000)
         }
     }
 }

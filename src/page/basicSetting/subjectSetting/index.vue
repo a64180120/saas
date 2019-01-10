@@ -94,12 +94,24 @@
                 </el-form-item>
                 <el-form-item label="科目类别：" prop="KTypeRule">
                     <el-select v-model="form.KType" placeholder="请选择">
-                        <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                        <template v-if="singleSelection.length>0">
+                            <el-option v-for="item in singleSelection[0].KType" :key="item" :label="subjectType[item-1].name" :value="item"></el-option>
+                        </template>
+                        <template v-else>
+                            <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                        </template>
+
                     </el-select>
                 </el-form-item>
                 <el-form-item label="余额方向：" prop="KBalanceType">
                     <el-radio-group v-model="form.KBalanceType">
-                        <el-radio v-for="item in balanceType" :key="item.code" :label="item.code">{{item.name}}</el-radio>
+                        <template v-if="singleSelection.length>0">
+                            <el-radio v-for="item in singleSelection[0].KBalanceType" :key="item" :label="item">{{balanceType[item-1].name}}</el-radio>
+                        </template>
+                        <template v-else>
+                            <el-radio v-for="item in balanceType" :key="item.code" :label="item.code">{{item.name}}</el-radio>
+                        </template>
+
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="辅助核算：">
@@ -543,7 +555,20 @@ export default {
     },
     //新增保存
     async saveAdd(formName){
-          let selectSub = this.singleSelection;
+          let selectSub = this.singleSelection[0];/*
+          console.log('===============start===============');
+          var parentCode={};
+          for(var i in selectSub){
+              console.log(i);
+              if(i==='PhId_DealingMst0'){
+                  console.log(i);
+                  break ;
+              }else{
+                  parentCode[i]=selectSub[i];
+              }
+          }
+          console.log(parentCode);
+return*/
           //获取缓存 的用户 组织，角色基本信息
           let cookiesUser = Auth.getUserInfoData();
 
@@ -558,11 +583,40 @@ export default {
             KName:this.form.KName,
             KType:this.form.KType,
             KBalanceType:this.form.KBalanceType,
-            Layers:selectSub[0].Layers+1,
+            Layers:selectSub.Layers+1,
             OrgId:this.orgid,
             OrgCode:cookiesUser.orgInfo.EnCode,
-            ParentId:selectSub[0].PhId
+            ParentId:selectSub.PhId
           };
+          /*
+          *
+          * */
+          var parentinfo={
+            NCAccount:selectSub.NCAccount,
+            PVoucherDel:selectSub.PVoucherDel,
+            PhId:selectSub.PhId,
+            Layers:selectSub.Layers,
+            KCode:selectSub.KCode,
+            KName:selectSub.KName,
+            KBalanceType:selectSub.KBalanceType,
+            KProperty:selectSub.KProperty,
+            KType:selectSub.KType,
+            KAmountCheck:selectSub.KAmountCheck,
+            KForeignCheck:selectSub.KForeignCheck,
+            KDepartmentCheck:selectSub.KDepartmentCheck,
+            OrgId:selectSub.OrgId,
+            OrgCode:selectSub.OrgCode,
+            IsLast:selectSub.IsLast,
+            DeleteMark:selectSub.DeleteMark,
+            EnabledMark:selectSub.EnabledMark,
+            IsSystem:selectSub.IsSystem,
+            Uyear:selectSub.Uyear,
+            Description:selectSub.Description,
+            CreatorName:selectSub.CreatorName,
+            EditorName:selectSub.EditorName,
+            ParentId:selectSub.ParentId,
+          };
+
 
           //辅助项类别 实体信息组合
           var auxiliarytypeInfo=[];
@@ -576,7 +630,6 @@ export default {
                 auxiliarytypeInfo.push(typeModel[0]);
             }
           };
-
           var vm=this;
           this.loading = true;
           //提交asiox
@@ -584,6 +637,7 @@ export default {
               otype:this.dialogState,
               uid:this.userid,
               orgid:this.orgid,
+              ParentSubject:parentinfo,
               Subject: subjectinfo,
               AuxiliaryTypeList:auxiliarytypeInfo
           }).then(res => {
