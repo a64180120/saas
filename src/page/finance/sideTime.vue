@@ -152,9 +152,9 @@ export default {
                 if(this.mouseDown){
                     var Y=$event.clientY-this.mouseStartY;
                     var month= document.getElementById('scrollMonth');
-                    var H=window.getComputedStyle(month).height;debugger
+                    var H=window.getComputedStyle(month).height;
                     var top=parseInt(month.style.top);
-                     console.log(month,Y,top);debugger
+                     console.log(month,Y,top);
                     if(top==0&&Y<0){             
                         return;
                     }else if(top>0){

@@ -56,7 +56,7 @@
                     <span style="float:right" class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
                     <span style="float:right" class="btn" @click.stop="keepChoose(false)">取消</span>
                 </div>
-                
+
                 <div class="voucherDisabledCon">
                     <div :class="{voucherDisabled:voucherAdd}"></div>
                     <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
@@ -168,11 +168,11 @@
         <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
         <!-- 下月账******************* -->
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
-        <div class="footInfo " >
+        <!-- <div class="footInfo " >
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
-        </div>
+        </div> -->
         <!-- 存为模板******************** -->
         <div v-if="temp.tempMask" class="tempMask">
             <div>
@@ -272,6 +272,7 @@
         },
         mounted(){  
             this.getChecked();
+            //this.moveNavTop();
         },
         methods:{
             //操作列表按钮********
@@ -403,6 +404,14 @@
                         break;
                 }
             },
+            // //导航栏位置上移************
+            // moveNavTop(){
+            //    var footer= document.getElementsByClassName("sys-footer")[0];
+            //   var  navtitle= document.getElementsByClassName("navtitle")[0];
+            //    console.log(footer,navtitle);
+            //    footer.style.bottom="65px";
+            //    navtitle.style.bottom="65px";
+            // },
             //保存凭证*******************
             keepVoucher(str){
                 var url='Add';
