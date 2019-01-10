@@ -19,7 +19,8 @@ import infiniteScroll from 'vue-infinite-scroll'
 import Print from '@/plugins/printJS/print'
 import getPdf from './plugins/PDF/getPdf'
 //import httpajax from "axios";
-//import Auth from "./util/auth";
+import Auth from "./util/auth";
+import $ from 'jquery'
 
 import '../static/css/icon.css';  //阿里的图标样式
 import saasMessage from "@/components/message"
@@ -49,6 +50,8 @@ Vue.use(Print)
 // 注册Pdf
 Vue.use(getPdf)
 
+//Vue.prototype.getConfigJson()//调用声明的全局方法
+
 new Vue({
     i18n,
     axios,
@@ -57,5 +60,3 @@ new Vue({
     filter,
     render: h => h(App)
 }).$mount('#app')
-
-//Vue.prototype.getConfigJson()//调用声明的全局方法

@@ -4,7 +4,7 @@
             <div class="unionState flexPublic">
                 <div class="flexPublic">
                     <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="标题"></div>
-                    <div @click="unionSearch" class="searcherBtn">搜索</div>
+                    <div @click="unionSearch" class="searcherBtn btn" style="width: 60px">搜索</div>
                 </div>
                 <ul class="flexPublic handle">
                     <a @click.prevent="handlePage('add')"><li>新增</li></a>

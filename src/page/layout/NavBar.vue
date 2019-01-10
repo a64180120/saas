@@ -20,14 +20,12 @@
         :mode="navMode" 
         :default-active="defActive"
         :collapse="isCollapse"
-        menu-trigger="click" 
+        menu-trigger="hover" 
         @select="selectMenu"
-        @open="openMenu" 
-		    @close="closeMenu" 
         unique-opened>
             <nav-bar-item v-for="(item, n) in navList" :item="item" :navIndex="String(n)" :key="n"></nav-bar-item>
         </el-menu>
-        <div v-show="navBgShow" class="full-screen-navBg" @click.self="closeAll"></div>
+        <!-- <div v-show="navBgShow" class="full-screen-navBg" @click.self="closeAll"></div> -->
     </div>
 </template>
 
@@ -89,21 +87,6 @@ export default {
       openMenuList.forEach(ele => {
         this.$refs.navbar.closeMenu(ele);
       });
-    },
-    openMenu(){
-      this.navBgShow = true 
-    },
-    closeMenu(){
-      this.navBgShow = false    
-    },
-    closeAll(){
-      console.log("背景遮罩图")
-      let openMenu = this.$refs.navbar.openedMenus.concat([])
-      openMenu = openMenu.reverse()
-      openMenu.forEach((ele) => {
-          this.$refs.navbar.closeMenu(ele)
-      })
-      this.navBgShow = false  
     }
   },
   components: { NavBarItem }

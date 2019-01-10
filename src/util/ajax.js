@@ -72,7 +72,23 @@ function stopRepeatRequest(url, cancelfunction) {
 //let base=httpConfig.getAxiosBaseConfig();
 
 // 超时设置
-const service = axios.create(httpConfig.getAxiosBaseConfig());
+const service = axios.create({
+    baseURL: httpConfig.getAxiosBaseConfig().baseURL,
+    // 请求超时时间
+    timeout: 10000
+    // transformRequest:[function transformRequest(data, headers) {      
+    //     /* 把类似content-type这种改成Content-Type */
+    //     let keys = Object.keys(headers);
+    //     let normalizedName = 'Content-Type';
+    //     keys.forEach(name => {
+    //         if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+    //             headers[normalizedName] = headers[name];
+    //             delete headers[name];
+    //         }
+    //     });
+    // }]
+});
+
 
 // baseURL
 // axios.defaults.baseURL = 'http://10.0.45.51:8028/api/GCW';

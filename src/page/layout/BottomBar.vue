@@ -72,6 +72,7 @@ export default {
     }
     
 }
+
 .navtitle{
     display: flex;
     position: absolute;
