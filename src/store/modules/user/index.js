@@ -4,6 +4,7 @@ import Auth from "@/util/auth";
 import httpajax from "axios";
 import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 import qs from 'qs'
+import { uuid } from "@/util/validate";
 
 
 //状态
@@ -26,7 +27,7 @@ const state = {
     //EmpowerInfo 判断是否是试用用户
     EmpowerInfo:'',
     //登录的ID
-    loginid:''
+    sessionId:''
 
 };
 
@@ -53,6 +54,7 @@ const mutations = {
             state.token = data.token;
             state.appKey = data.appKey;
             state.appSecret = data.appSecret;
+            state.sessionId=data.sessionId;
         } else {
             Auth.removeToken();
         }
@@ -69,7 +71,6 @@ const mutations = {
             state.orgName = data.orgInfo.OrgName;
             state.username=data.userInfo.RealName;
             state.EmpowerInfo=data.orgInfo.EmpowerInfo;
-            state.loginid=data.loginid;
 
         } else {
             Auth.removeUserInfoData();
@@ -102,7 +103,8 @@ const actions = {
                     var object = {
                         token: response.Token,
                         appKey: response.AppKey,
-                        appSecret: response.AppSecret
+                        appSecret: response.AppSecret,
+                        sessionId:uuid()
                     };
                     //用户信息缓存
                     commit("setToken", object);
@@ -127,12 +129,13 @@ const actions = {
             let base=httpConfig.getAxiosBaseConfig();
             //测试的Header
             let headconfig=httpConfig.getTestHeaderConfig();
+            var token=Auth.getToken();
 
             var data={
                 uname_login:userInfo.name,
                 orgid:userInfo.orgid,
                 password:userInfo.password,
-                loginid:userInfo.loginid
+                sessionId:token.sessionId||''
             };
 
             httpajax.create(base)({
@@ -144,7 +147,7 @@ const actions = {
                 var response=JSON.parse(res.data);
                 if (response.Status === "success") {
                     var user = response.Data;
-                    user.loginid=userInfo.loginid;
+                    user.sessionid=userInfo.loginid;
                     //用户信息缓存
                     commit("setUserInfo", user);
                 }
