@@ -17,13 +17,14 @@
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
                     <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
+
                     <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
                 </ul>
             </div>
 
-        <div class="formData" ref="printFrom">
+        <div class="formData" >
             <ul>
                 <li>编码</li>
                 <li>资产</li>
@@ -35,7 +36,7 @@
                 <li>年初数(元)</li>
                 <li>期末数(元)</li>
             </ul>
-
+<div class="formData formData_content" ref="printFrom">
                 <ul class="formDataItems flexPublic">
                     <li></li>
                     <li class="align-center bolder">一、资产</li>
@@ -205,6 +206,7 @@
                     <li>制表：</li>
                     <li></li>
                 </ul>-->
+</div>
             </div>
         </div>
         <div class="timeSelectBox">
@@ -439,7 +441,12 @@
             },
              // 打印
             printContent(e){
-                this.$print(this.$refs.printFrom) // 使用
+                let dm = this.$refs.printFrom.parentNode.firstChild.cloneNode(true);
+                dm.classList.add('first_child');
+                let cop = this.$refs.printFrom.cloneNode(true);
+                cop.insertBefore(dm,cop.firstChild);
+                cop.classList.remove('formData_content');
+                this.$print(cop) // 使用
             },
         //    刷新
             refresh:function(){
@@ -469,6 +476,19 @@
     }
     .formData{
         margin-bottom: 50px;
+    }
+    .formData_content{
+        position: absolute;
+        overflow-y: scroll;
+        bottom: -50px;
+        top: 96px;
+        left: 0;
+        right: -17px;
+    }
+
+    .formData_content>ul:first-child{
+        background: white;
+        margin-top: 0;
     }
     .formData>ul>li{
         border-right:1px solid #fff;

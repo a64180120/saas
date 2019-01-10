@@ -1,6 +1,7 @@
 <template>
-  <div class="sys-page">
+
     <div class="container">
+        <div class="manageContent">
         <div class="handle-box">
             <el-row>
                 <el-col :span="14">
@@ -113,7 +114,7 @@
             </span>
         </el-dialog>
     </div>
-  </div>
+    </div>
 </template>
 
 <script>
@@ -140,7 +141,7 @@ export default {
         }
       ],
       data: [],
-      extraheight:250,
+      extraheight:300,
       expandAll: true,
       loading: false,
       is_search: false,

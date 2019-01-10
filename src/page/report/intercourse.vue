@@ -14,7 +14,7 @@
                             <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
                         </ul>
                     </div>
-                        <div class="formData" ref="printFrom">
+                        <div class="formData">
                             <ul>
                                 <li>资产类科目</li>
                                 <li>具体内容</li>
@@ -23,6 +23,7 @@
                                 <li>具体内容</li>
                                 <li>余额(元)</li>
                             </ul>
+                            <div class="formData formData_content"  ref="printFrom">
                             <template v-for="item in interCourse">
                                 <ul class="formDataItems flexPublic">
                                     <li :class="{'bolder':item.Layer==1,'algin-center':item.Layer==2}">{{item.Asset_Name}}</li>
@@ -41,7 +42,7 @@
                                     </li>
                                 </ul>
                             </template>
-
+                            </div>
                         </div>
                 </div>
                 <!--新增和修改共用同一个界面，通过aocType 去判断调用哪边的接口-->
@@ -288,20 +289,17 @@
                     "Year":  param,
                     'Type': this.checkType
                 }
-                this.loading=true;
                 this.$axios.get(
                     // 'PSubjectBudget/GetBeginYear',
                     'DealingsMst/GetPSubjectByType',
                     {params:data}
                 ).then(res=>{
-                    this.loading=false;
                     this.subjectList=res.Record;
                     this.chooseSubject=res.Record[0];
                     if(type==1){
                         this.getCodeDetailData(true);
                     }
                 }).catch(err=>{
-                    this.loading=false;
                     this.$message(err);
                 })
             },
@@ -557,7 +555,12 @@
             },
             // 打印
             printContent(e){
-                this.$print(this.$refs.printFrom) // 使用
+                let dm = this.$refs.printFrom.parentNode.firstChild.cloneNode(true);
+                dm.classList.add('first_child');
+                let cop = this.$refs.printFrom.cloneNode(true);
+                cop.insertBefore(dm,cop.firstChild);
+                cop.classList.remove('formData_content');
+                this.$print(cop) // 使用
             },
         }
     }
@@ -680,6 +683,19 @@
         line-height: 30px;
         text-align:center ;
         cursor: pointer;
+    }
+    .formData_content{
+        margin-top: 0;
+        position: absolute;
+        overflow-y: scroll;
+        bottom: 0px;
+        top: 105px;
+        left: 0;
+        right: -17px;
+    }
+    .formData_content>ul:first-child{
+        background: white;
+        margin-top: 0;
     }
     .formData>ul>li{
         border-right:1px solid #fff;

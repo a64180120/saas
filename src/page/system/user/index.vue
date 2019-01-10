@@ -1015,6 +1015,7 @@
     }
 
     .el-checkbox-role2 {
+        cursor:pointer;
         width: 30%;
         float: right;
         margin-bottom: 0px;

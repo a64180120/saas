@@ -41,7 +41,7 @@
             <div class="flexPublic" style="float: right">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue1" type="text" style="width: 200px"
                                                   placeholder="企业/单位名称/联系人姓名"></div>
-                <div @click="unionSearch" class="searcherBtn">搜索</div>
+                <div @click="unionSearch" class="searcherBtn btn" style="width: 60px">搜索</div>
             </div>
         </div>
         <div v-show="examineTab" class="formData">
@@ -66,7 +66,7 @@
                 <li :title="item.Address">{{item.Address}}</li>
                 <li class="flexPublic">
                     <div class="progressContainer">
-                        <div class="progress" :style="{background:infoStyle[index],width:item.Integrity+'%'}" style="background-color: #FFFFFF">
+                        <div class="progress" :style="{background:infoStyle[index],width:item.Integrity+'%'}" style="background-color: #ffffff">
                             {{item.Integrity < 80 ?'':item.Integrity+' %'}}
                         </div>
                         <div
@@ -115,7 +115,7 @@
             <div class="flexPublic">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue2" type="text" style="width: 200px"
                                                   placeholder="企业名称/单位名称/联系人姓名"></div>
-                <div @click="unionSearch" class="searcherBtn">搜索</div>
+                <div @click="unionSearch" class="searcherBtn btn" style="width: 60px">搜索</div>
             </div>
             <!--<div class="flexPublic">-->
                 <!--<div class="seacherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"-->
@@ -310,6 +310,7 @@
                             newArr = i + 1;
                         }
                         this.pageCount = newArr;
+                        this.getInfoStyle();
                     })
                     .catch(err => {
                         console.log(err)
@@ -328,8 +329,8 @@
                 var infos = this.userInfo;
                 var val = [];
                 for (var i in infos) {
-                    infos[i].info = parseInt(infos[i].info);
-                    val[i] = infos[i].info;
+                    infos[i].Integrity = parseInt(infos[i].Integrity);
+                    val[i] = infos[i].Integrity;
                     if (val[i] < 30) {
                         val[i] = `#ff0000`;
                     } else if (val[i] >= 30 && val[i] < 50) {
@@ -341,6 +342,7 @@
                     }
                 }
                 this.infoStyle = val;
+                console.log(this.infoStyle);
             },
             newPage(val) {//分页展示****************************************
                 if (val == 'next') {
@@ -509,6 +511,7 @@
                             newArr = i + 1;
                         }
                         this.pageCount = newArr;
+                        this.getInfoStyle();
                     })
                     .catch(err => {
                         console.log(err)

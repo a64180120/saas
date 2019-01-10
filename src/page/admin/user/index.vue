@@ -43,11 +43,11 @@
                         <el-cascader
                             placeholder="选择组织所在区域"
                             :options="options"
+                            :clearable="true"
                             class="wggcascader"
                             @active-item-change="handleItemChange"
-                            filterable
-                            @dblclick="changeAreaForOrg"
                             @change ="changeArea"
+                            @visible-change="visOnChange"
                             change-on-select
                             style="position: relative;top: 9px;width: 90%;left:5%"
                             size="small"
@@ -298,7 +298,7 @@
                     idArea = val[2];
                     sizeArea = val.length;// 3:一级 4:二级 6:三级
                 }
-                console.log(idArea);
+                // console.log(idArea);
                 this.$axios.get("/SysArea/GetAreaList", {
                     params: {
                         uid: "0",
@@ -308,7 +308,7 @@
                 }).then(response => {
                     if (response) {
                         let Items = response;
-                        console.log(Items.length);
+                        // console.log(Items.length);
                         if (sizeArea === 0) { // 初始化 加载一级 省
                             this.options = Items.map((value, i) => {
                                 return {
@@ -337,7 +337,6 @@
                                     value.children.map((value, i) => {
                                         if (value.value === val[1]) {
                                             if (!value.children.length) {
-                                                console.log(Items.length);
                                                 value.children = Items.map((value, i) => {
                                                     return {
                                                         value: value.value,
@@ -384,26 +383,27 @@
             },
             handleItemChange (val) {
                 this.getNodes(val);
+                this.getOrgtree(val);
+            },
+            visOnChange(val){
+                alert("aaa");
+                if(val == true){
+                    alert("aaa");
+                }else{
+                    alert("bbb");
+                }
             },
             changeArea(val){
                 this.data2 = [];
                 this.tableData = [];
                 this.getNodes(val);
                 this.aresId = val;
-                //this.getOrgtree(this.aresId);
-                // console.log(this.aresId);
-                // let timer = null;
-                // timer = setTimeout(this.click, 200);
-                // console.log(timer);
-                //
-                // if(timer){
-                //     this.getOrgtree(this.aresId);
-                // }
-            },
-            changeAreaForOrg(){
-                console.log(this.aresId);
                 this.getOrgtree(this.aresId);
             },
+            // changeAreaForOrg(val){
+            //     console.log(this.aresId);
+            //     this.getOrgtree(this.aresId);
+            // },
             //获取角色数据
             async getRoleData(){
                 var vm=this;
@@ -444,7 +444,6 @@
             },
             //获取组织树
             getOrgtree(array){
-                this.loading = true;
                 console.log(array);
                 if(array.length > 0){
                     this.$axios.get("/SysAdminOrganize/GetAllOrgForUser", {
@@ -455,14 +454,12 @@
                     }).then(
                         res => {
                             console.log(res);
-                            this.loading = false;
                             this.data2 = res;
 
                             console.log(this.data2);
                         },
                         error => {
                             console.log(error);
-                            this.loading = false;
                         }
                     );
                 }

@@ -62,7 +62,7 @@
             <div class="flexPublic" style="float: right">
                 <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text"
                                                   placeholder="组织编码/名称"></div>
-                <div @click="unionSearch" class="searcherBtn">搜索</div>
+                <div @click="unionSearch" class="searcherBtn btn" style="width: 60px">搜索</div>
             </div>
         </div>
         <div class="formData">
