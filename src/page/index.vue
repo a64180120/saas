@@ -7,17 +7,37 @@
           <div><img src="@/assets/img/d1.png" alt=""><span> &nbsp;0571-88270588</span></div>
           <div >
             <img src="@/assets/img/ren.png" alt=""> 
-            <div class="userInfo" v-if="uid">
+            <div @click.stop="userDropDown=!userDropDown" class="userInfo" v-if="uid">
               <div>{{username}}<div></div></div>
-              <ul>
-                <li>{{uid}}</li>
-                <li>修改密码</li>
+              <ul :class="{userDropDown:userDropDown}">
+                <li>
+                  <div>{{username}}</div>
+                  <div>({{uid}})</div>
+                </li>
+                <li @click.stop="dialog.editPaw.show=true">修改密码</li>
                 <li>退出登录</li>
               </ul>
             </div>
             <router-link v-if="!uid" to="/login">登录</router-link><router-link v-if="!uid" to="/register">注册</router-link>
           </div>
           <div><img src="@/assets/img/fdj.png" alt=""></div>
+          <!-- el-dialog 弹出修改密码页面-->
+          <el-dialog title="修改密码" :visible.sync="dialog.editPaw.show" :modal-append-to-body="false" custom-class="editPawDialog">
+              <el-form :model="editPaw" :rules="editPawRules" ref="editPaw" label-width="100px" >
+                  <el-form-item label="旧密码" prop="oldPaw">
+                      <el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="新密码" prop="newPaw" id="newPaw">
+                      <el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="确认新密码" prop="confirmNewPaw" >
+                      <el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>
+                  </el-form-item>
+              </el-form>
+              <div class="textC">
+                  <el-button type="primary" @click="editPawSubmit">保存</el-button>
+              </div>
+          </el-dialog>
         </div>
       </div>
       <div class="carrouselContainer">
@@ -232,6 +252,66 @@
     name: "home",
     data(){
       return {
+        userDropDown:false,
+        //修改密码弹窗***********
+        dialog: {
+        editPaw: {
+          show: false
+        }
+      },
+      editPaw: {
+        oldPaw: "",
+        newPaw: "",
+        confirmNewPaw: ""
+      },
+      editPawRules: {
+        oldPaw: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+        newPaw: [
+          { required: true, message: "请输入新密码", trigger: "blur" },
+          {
+            min: 8,
+            max: 20,
+            message: "长度在 8 到 20 个字符",
+            trigger: "blur"
+          },
+          {
+            // eslint-disable-next-line
+            validator(rule, value, callback, source, options) {
+              var errors = [];
+              if (!/^[a-z0-9]+$/.test(value)) {
+                console.log("不符合输入规则");
+                errors.push("请输入字母或特殊字符");
+              }
+              callback(errors);
+            }
+          }
+        ],
+        confirmNewPaw: [
+          { required: true, message: "请再次输入新密码", trigger: "blur" },
+          {
+            min: 8,
+            max: 20,
+            message: "长度在 8 到 20 个字符",
+            trigger: "blur"
+          },
+          {
+            // eslint-disable-next-line
+            validator(rule, value, callback, source, options) {
+              var errors = [];
+
+              if (!/^[a-z0-9]+$/.test(value)) {
+                console.log("不符合输入规则");
+                errors.push("请输入字母或特殊字符");
+              }
+              callback(errors);
+            }
+          }
+        ]
+      },
+       message: 2,
+        userInfoHead:{},
+
+        //页面数据
         nav:'',
         active:'all',
         proInfoList:[
@@ -959,26 +1039,50 @@
   .userInfo{
     display: inline-block;
     position:relative;
+    color:#333;
     >div{
       padding:0 20px 10px;
       position:relative;
+      cursor:pointer;
       >div{
         position:absolute;
-        border:10px solid transparent;
+        border:5px solid transparent;
         border-top-color:#333;
+        top:30px;
+        right:0px;
       }
     }
     >ul{
       position: absolute;
-      bottom:-100px;
-      left:-20px;
+      height:0;
+      overflow: hidden;
+      bottom:-110px;
+      right:0;
       z-index: 99;
       background: #fff;
-      padding:0 5px;
+      transition:all 0.3s linear;
+      opacity:0;
       >li{
-        height:40px;
-        line-height:40px;
+        height:45px;
+        line-height:45px;
         text-align:center;
+        cursor:pointer;
+        padding:0 5px;
+        &:hover{
+          background:#e6f8fd;
+          color:#33c6f1;
+        }
+      }
+    }
+    >ul.userDropDown{
+      height:auto;
+      opacity:1;
+      >li:first-of-type{
+        margin-top:10px;
+        >div{
+          height:50%;
+          line-height:100%;
+        }
       }
     }
   }

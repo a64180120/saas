@@ -38,76 +38,79 @@
                     <li>停用/启用</li>
                     <li>年初余额</li>
                 </ul>
-                <ul @click.stop="chooseOn(item,index)" :class="{clickActive:choosedCss[index]}" class="listTitle listContent" v-for="(item,index) of dataList" :key="index">
-                    <li :title="item.KCode">{{item.KCode}}</li>
-                    <li>{{item.KName}}</li>
-                    <li><span v-if="item.KBalanceType==1">借</span><span v-if="item.KBalanceType==2">贷</span><span v-if="item.KBalanceType==3">借/贷</span></li>
-                    <li>
-                        <div class="assistCss" v-for="(aux,index) of item.AuxiliaryTypes" :key=index>
-                            <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                            <span>{{aux.BaseName}} &nbsp;</span>    
-                        </div>     
-                    </li>
-                    <li>
-                        <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
-                        <!-- <div v-show="updatePage">
-                            <label>启用 <input type="radio"></label>
-                            <label>停用 <input type="radio"></label>
-                        </div> -->
-                    </li>
-                    <li>
-                        <div v-show="(!updatePage)">{{item.NCAccount==0?'':item.NCAccount}}</div>
-                        <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" v-model="item.NCAccount"></div>
-                    </li>
-                    <li v-if="item.children.length>0" class="child">                       
-                        <ul @click.stop="childChoose($event,item,child,index2)"  v-for="(child,index2) of item.children" :key=index2>
-                             <li style="padding:0 0 0 20px;" :title="child.KCode">{{child.KCode}}</li>
-                            <li style="padding-left:20px;" >{{child.KName}}</li>
-                            <li><span v-if="child.KBalanceType==1">借</span><span v-if="child.KBalanceType==2">贷</span><span v-if="child.KBalanceType==3">借/贷</span></li>
-                            <li>
-                                <div class="assistCss" v-for="(aux,index) of child.AuxiliaryTypes" :key=index>
-                                    <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                                    <span>{{aux.BaseName}} &nbsp;</span>    
-                                </div>     
-                            </li>
-                            <li>
-                                <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
-                                <!-- <div v-show="updatePage">
-                                    <label>启用 <input type="radio"></label>
-                                    <label>停用 <input type="radio"></label>
-                                </div> -->
-                            </li>
-                            <li>
-                                <div v-show="(!updatePage)">{{child.NCAccount==0?'':child.NCAccount}}</div>
-                                <div class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" v-model="child.NCAccount"></div>
-                            </li>
-                            <li v-if="child.children.length>0" class="child">
-                                <ul @click.stop="childChoose($event,child,child3,index3)"  v-for="(child3,index3) of child.children" :key=index3>
-                                    <li style="padding:0 0 0 30px;" :title="child3.KCode">{{child3.KCode}}</li>
-                                    <li style="padding-left:30px;" >{{child3.KName}}</li>
-                                    <li><span v-if="child3.KBalanceType==1">借</span><span v-if="child3.KBalanceType==2">贷</span><span v-if="child3.KBalanceType==3">借/贷</span></li>
-                                    <li>
-                                        <div class="assistCss" v-for="(aux,index) of child3.AuxiliaryTypes" :key=index>
-                                            <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                                            <span>{{aux.BaseName}} &nbsp;</span>    
-                                        </div>     
-                                    </li>
-                                    <li>
-                                        <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
-                                        <!-- <div v-show="updatePage">
-                                            <label>启用 <input type="radio"></label>
-                                            <label>停用 <input type="radio"></label>
-                                        </div> -->
-                                    </li>
-                                    <li>
-                                        <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child3.NCAccount}}</div>
-                                        <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" v-model="child3.NCAccount"></div>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                <div class="listOver">
+                    <ul @click.stop="chooseOn(item,index)" :class="{clickActive:choosedCss[index]}" class="listTitle listContent" v-for="(item,index) of dataList" :key="index">
+                        <li :title="item.KCode">{{item.KCode}}</li>
+                        <li>{{item.KName}}</li>
+                        <li><span v-if="item.KBalanceType==1">借</span><span v-if="item.KBalanceType==2">贷</span><span v-if="item.KBalanceType==3">借/贷</span></li>
+                        <li>
+                            <div class="assistCss" v-for="(aux,index) of item.AuxiliaryTypes" :key=index>
+                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                                <span>{{aux.BaseName}} &nbsp;</span>    
+                            </div>     
+                        </li>
+                        <li>
+                            <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                            <!-- <div v-show="updatePage">
+                                <label>启用 <input type="radio"></label>
+                                <label>停用 <input type="radio"></label>
+                            </div> -->
+                        </li>
+                        <li>
+                            <div v-show="(!updatePage)">{{item.NCAccount==0?'':item.NCAccount}}</div>
+                            <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" v-model="item.NCAccount"></div>
+                        </li>
+                        <li v-if="item.children.length>0" class="child">                       
+                            <ul @click.stop="childChoose($event,item,child,index2)"  v-for="(child,index2) of item.children" :key=index2>
+                                <li style="padding:0 0 0 20px;" :title="child.KCode">{{child.KCode}}</li>
+                                <li style="padding-left:20px;" >{{child.KName}}</li>
+                                <li><span v-if="child.KBalanceType==1">借</span><span v-if="child.KBalanceType==2">贷</span><span v-if="child.KBalanceType==3">借/贷</span></li>
+                                <li>
+                                    <div class="assistCss" v-for="(aux,index) of child.AuxiliaryTypes" :key=index>
+                                        <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                                        <span>{{aux.BaseName}} &nbsp;</span>    
+                                    </div>     
+                                </li>
+                                <li>
+                                    <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                                    <!-- <div v-show="updatePage">
+                                        <label>启用 <input type="radio"></label>
+                                        <label>停用 <input type="radio"></label>
+                                    </div> -->
+                                </li>
+                                <li>
+                                    <div v-show="(!updatePage)">{{child.NCAccount==0?'':child.NCAccount}}</div>
+                                    <div class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" v-model="child.NCAccount"></div>
+                                </li>
+                                <li v-if="child.children.length>0" class="child">
+                                    <ul @click.stop="childChoose($event,child,child3,index3)"  v-for="(child3,index3) of child.children" :key=index3>
+                                        <li style="padding:0 0 0 30px;" :title="child3.KCode">{{child3.KCode}}</li>
+                                        <li style="padding-left:30px;" >{{child3.KName}}</li>
+                                        <li><span v-if="child3.KBalanceType==1">借</span><span v-if="child3.KBalanceType==2">贷</span><span v-if="child3.KBalanceType==3">借/贷</span></li>
+                                        <li>
+                                            <div class="assistCss" v-for="(aux,index) of child3.AuxiliaryTypes" :key=index>
+                                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                                                <span>{{aux.BaseName}} &nbsp;</span>    
+                                            </div>     
+                                        </li>
+                                        <li>
+                                            <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                                            <!-- <div v-show="updatePage">
+                                                <label>启用 <input type="radio"></label>
+                                                <label>停用 <input type="radio"></label>
+                                            </div> -->
+                                        </li>
+                                        <li>
+                                            <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child3.NCAccount}}</div>
+                                            <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" v-model="child3.NCAccount"></div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul> 
+                </div>
+               
                
             </section>
         </div> 
@@ -118,11 +121,13 @@
                 <ul>
                     <li>
                         <div>上级科目</div>
-                        <div class="selectContainer">
-                            <select :disabled="addPageShow=='update'?true:false" v-model="subjectInfo.preSubject">
+                        <div class="inputContainer">
+                            &nbsp;{{subjectInfo.preSubject.KCode}}&nbsp;{{subjectInfo.preSubject.KName}}
+                            
+                            <!-- <select :disabled="addPageShow=='update'?true:false" v-model="subjectInfo.preSubject">
                                 <option v-show="addData.PSubject.length>1" value="0">必填</option>
                                 <option :value="item" v-for="(item,index) of addData.PSubject" :key=index>{{item.KName}}</option>
-                            </select>
+                            </select> -->
                         </div>
                         <div style="clear:both"></div>
                     </li>
@@ -131,7 +136,7 @@
                         <div class="subCodeCss">
                             <span v-show="addPageShow=='add'">{{subjectInfo.preSubject?subjectInfo.preSubject.KCode:''}}</span>
                             <div class="inputContainer">
-                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject?(subjectInfo.preSubject.children?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'):''" 
+                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject.children?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'" 
                                         type="text" v-model="subjectInfo.KCode">
                             </div>
                             
@@ -147,12 +152,10 @@
                     </li>
                     <li>
                         <div>科目类别</div>
-                        <div v-if="addPageShow=='add'" style="padding-left:10px;border:1px solid #ccc">
-                            {{subjectInfo.preSubject.KType?navList[subjectInfo.preSubject.KType-1].name:''}}
+                        <div  style="padding-left:10px;border:1px solid #ccc">
+                            {{navList[subjectInfo.preSubject.KType-1].name}}
                         </div>
-                        <div v-if="addPageShow=='update'" style="padding-left:10px;border:1px solid #ccc">
-                            {{navList[subjectInfo.KType-1].name}}
-                        </div>
+                      
                         <div style="clear:both"></div>
                     </li>
                     <li>
@@ -356,7 +359,7 @@ export default {
                         this.$forceUpdate();
                     })
                     
-                }
+            }
         })
         .catch(err=>{
             loading2.close();
@@ -588,16 +591,31 @@ export default {
     },
     //新增*****
     addPage(){
+        if(this.choosedData.length<=0){
+            this.message={
+                message:'请选择修改的科目!',
+                visible:true,
+                delay:4000
+            }
+            return;
+        }
+      
+        this.addData={};
         this.addPageShow='add';
-        this.addData=JSON.parse(JSON.stringify(this.addInfo));
+        this.addData=this.choosedData[0].child;
+        this.addData.Type=this.addInfo.Type;
+        console.log(this.addData,this.addInfo)
+        debugger;
         this.subjectInfo={
-            preSubject:0,
+            preSubject:this.addData,
             KCode:'',
             KName:'',
-            KType:0,
-            KBalanceType:'',
+            KType:this.addData.KType,
+            KBalanceType:this.addData.KBalanceType,
             AuxiliaryTypes:[]
         }
+         console.log(this.addData)
+        debugger;
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
@@ -638,14 +656,12 @@ export default {
             if(this.subjectInfo.AuxiliaryTypes[t])
                 auxi.push(this.addData.Type[t]);
         }
-        
         this.subjectInfo.OrgId=this.orgid;
         this.subjectInfo.Layers=parseInt(this.subjectInfo.preSubject.Layers)+1;
         this.subjectInfo.KType=this.subjectInfo.preSubject.KType;
         this.subjectInfo.Uyear=this.checkedYear;
         this.subjectInfo.OrgCode=this.orgcode;
-        this.subjectInfo.ParentId=this.subjectInfo.preSubject.PhId;
-        
+        this.subjectInfo.ParentId=this.subjectInfo.preSubject.PhId;      
         if(this.addPageShow=="add"){
             //新增***************
             if((!this.subjectInfo.preSubject)||(!this.subjectInfo.KName)){
@@ -662,7 +678,7 @@ export default {
             }else{
                 info.KCode=this.subjectInfo.preSubject.KCode+(this.subjectInfo.preSubject.children?'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1):'01');
             }
-            debugger;
+          
             // if(this.subjectInfo.preSubject.children){
             //     this.subjectInfo.KCode=parseInt(this.subjectInfo.preSubject.KCode)+'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1);
             // }else{
@@ -671,9 +687,12 @@ export default {
             var data1={
               uid:this.uid,
               orgid:this.orgid,
+              ParentSubject:this.addData,
               Subject: info, 
               AuxiliaryTypeList:auxi
             }
+            console.log(data1)
+            debugger;
             SubjectAdd(vm,data1)
             .then(res=>{
                 if(res.Status=='success'){
@@ -788,7 +807,6 @@ export default {
 <style lang='scss' scoped>
     .container{
         height:100%;
-        overflow-y: auto;
         min-width:1000px;
     }
     .subjectNav{
@@ -835,20 +853,33 @@ export default {
     }
     .listContainer{
         min-width:810px;
-        max-height:85%;
-        padding:5px;
+        height:84%;
         margin-top:10px;
+        position:relative;
+        padding-top:40px;
         padding-bottom: 20px;
+        .listOver{
+            height:100%;
+            overflow-y: auto;
+        }
+    }
+    .listContainer >ul.listTitle:first-of-type{
+        width:100%;
+        background: #d3e9f9 ;
+        color:#333;
+        position:absolute;
+        top:0;
+        margin-right:5px;
     }
     .listContainer ul.listTitle{
         height:auto;
         background: #d3e9f9 ;
         color:#333;
-        &:first-of-type{
-            >li{
-                background: #d3e9f9 ;
-            }
-        }
+        // &:first-of-type{
+        //     >li{
+        //         background: #d3e9f9 ;
+        //     }
+        // }
         >li>div{
             height:100%;
             width:100%;
@@ -925,7 +956,7 @@ export default {
             clear:both;
             height:auto;
             width:100%;
-            padding:0;
+            padding:0 ;
             border:0;
             >ul{
                 &.clickActive>li{
@@ -972,7 +1003,7 @@ export default {
         clear:both;
         height:auto !important;
         width:100%;
-        padding:0;
+        padding:0 !important;
         border:0 !important;
         .child{
             background: #fff !important;
@@ -1120,8 +1151,7 @@ export default {
         font-size:16px;
         color:#666;
         background:rgba(0,0,0,0.5);
-        >.addPage{
-            
+        >.addPage{           
             width:556px;
             height:346px;
             position:absolute;
@@ -1134,8 +1164,14 @@ export default {
                 >li{
                     
                     height:30px;
+                    line-height:30px;
                     margin-bottom:10px;
                     overflow-y: auto;
+                    .inputContainer>input{
+                        border:0;
+                        height:95%;
+                    }
+                    
                     .subCodeCss{
                         overflow: hidden;
                         >span{

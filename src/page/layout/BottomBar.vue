@@ -49,12 +49,12 @@ export default {
     position: absolute;   
     border-color: #ccc;
     background: transparent;
-    width:88%;
+    width:100%;
     height: 50px;
-    left: 4%;    
+    left: 0;    
     //border-bottom: 1px solid #00B8EE;
-    z-index: 20;
-    bottom: 70px;
+    z-index: 99;
+    bottom: 0px;
     >.side-nav.top{
         padding-left: 100px;
         background: rgba(171, 234, 232, 0.8);
@@ -80,9 +80,9 @@ export default {
     height: 60px;
     overflow: hidden;
     background: none;
-    left:4%;
-    z-index: 21;
-    bottom: 70px;
+    left:0;
+    z-index: 999;
+    bottom: 0px;
     >button{       
         padding:0 35px 80px 0;
         color:#333;
