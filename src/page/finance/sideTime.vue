@@ -119,6 +119,9 @@ export default {
                         //this.getvoucherList('reset');
                         this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear})
                         this.$forceUpdate();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>this.$message({ showClose: true,message: err, type: "error"}))
             },
@@ -206,6 +209,9 @@ export default {
                         }else{
                             this.$message(res.Msg);
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },

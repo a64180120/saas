@@ -54,14 +54,10 @@ export default {
   watch:{
       visible(val){ 
           var vm=this;
-          console.log(val)
-          if(val){
-           
-            console.log(vm)
+          if(val){  
             vm.delayTime=parseInt(vm.delay/1000);
             vm.oneTime(vm);
           }else{
-              console.log(vm)
              vm.delayTime=0; 
           }
          

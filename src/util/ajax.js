@@ -169,6 +169,7 @@ service.interceptors.response.use(
 
             const res = error.response.data
             //return Promise.reject(JSON.parse(error.response.data));
+            
             return Promise.reject(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
 
         }

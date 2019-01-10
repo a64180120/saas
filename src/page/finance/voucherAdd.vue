@@ -13,7 +13,7 @@
                 </ul>
             </div>
             <ul class="handle">
-                <a @click.prevent="addVoucher('fresh')" style="width:30px;min-width:30px;margin-left:10px"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                <li @click.prevent="addVoucher('fresh')" style='float:right;margin:0 0 0 10px;cursor:pointer;font-size:27px;width:30px !important;background:none;color:#00b7ee;border:0' class="el-icon-refresh" ></li>
                 <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
                     <li class="more" style="width:80px">
                         <ul >
@@ -34,11 +34,12 @@
                 <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li >保存</li></a>
                 <a>
                     <li class="mode" style="width:60px;">
-                        <span >模板</span>
-                        <span @click.prevent="addVoucher('modelList')" >引用模板</span>
-                        <span @click.prevent="addVoucher('keepModel')">存为模板</span>
+                        <div >模板</div>
+                        <div @click.prevent="addVoucher('modelList')" >引用模板</div>
+                        <div @click.prevent="addVoucher('keepModel')">存为模板</div>
                     </li>
-                </a>                   
+                </a> 
+                <a @click.prevent="addVoucher('fresh')"><li style="padding:0 5px;width:70px">返回新增</li></a>                  
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -481,7 +482,12 @@
                                this.$message(res.Msg)
                            }
                            
-                       })
+                       },
+                       err => {
+                        console.log(err);
+                       
+                        } 
+                       )
                        .catch(err =>{
                            this.$message(err);
                         //    loading1.close();
@@ -565,6 +571,10 @@
                                   message:res.Msg
                                };
                         }
+                    },
+                    err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close();})
             },
@@ -602,6 +612,9 @@
                            this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
                         loading.close();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{loading.close();this.$message({ showClose: true,message: err, type: "error"});})
             },
@@ -620,6 +633,9 @@
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
                         loading.close();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{loading.close();this.$message({ showClose: true,message: err, type: "error"});})
             },
@@ -669,6 +685,9 @@
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }  
                         loading2.close();                          
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{
                         this.$message({ showClose: true,message: err, type: "error"});loading2.close();
@@ -683,7 +702,8 @@
                 }
                 const loading=this.$loading();
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                    .then(res=>{      
+                    .then(res=>{  
+                            
                         loading.close();
                         if(!res.CheckRes){
                              this.saasMessage={
@@ -706,8 +726,12 @@
                         this.voucherDataList.bool=true;           
                         this.$forceUpdate(); 
                         
+                    },
+                    err => {
+                        console.log(err);
+                       
                     })
-                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close();})
+                    .catch(error=>{this.$message({ showClose: true,message: error, type: "error"});loading.close();})
             },
             //前后快速翻页定位凭证****************
             getvoucher(str){
@@ -791,6 +815,10 @@
                             };  
                             vm.resetVoucher();                          
                         }
+                    },
+                    err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{vm.$message({ showClose: true,message: err, type: "error"});})
             },
@@ -881,6 +909,10 @@
                         }else{
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
+                    },
+                    err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
             },
@@ -941,7 +973,11 @@
                                 this.resetShow=false;
                             }
                             loading5.close();
-                        })
+                        },
+                        err => {
+                            console.log(err);
+                       
+                         })
                         .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
                 }else{
                     this.resetShow=false;
@@ -1117,6 +1153,10 @@
                                         this.$message({ showClose: true,message: res.MSg, type: "error"});
                                     }
                                     loading.close();
+                                },
+                                err => {
+                                    console.log(err);
+                                
                                 })
                                 .catch(err=>{
                                     this.$message({ showClose: true,message: err, type: "error"});
@@ -1190,7 +1230,11 @@
                            } else {
                                vm.$message('保存失败,请重试!')
                            }
-                       }) 
+                       },
+                       err => {
+                        console.log(err);
+                       
+                        }) 
                        .catch(err =>{loading.close();console.log(err);} )
                }else{
                    vm.$message('当前月份已结账,无法修改凭证!')
@@ -1234,7 +1278,7 @@
        // margin-bottom: 30px;
         >ul{
             
-            >a:last-of-type{
+            >a:nth-last-of-type(2){
                 position:relative;
                 width:70px;
                 height:30px;
@@ -1246,12 +1290,15 @@
                     position:absolute;                   
                     transition:all 0.2s linear;
                     border:1px solid #00b7ee;
-                    >span{
-                        display: block;
+                    >div{
+                        
                         width:100%;
                         margin-right:10px;
                         background: #fff;
                         opacity: 1;
+                        &:first-of-type{
+                            color:#fff;
+                        }
                         &:hover{
                             background: #ccc;
                             color:#fff;
@@ -1342,7 +1389,7 @@
                     position: absolute;
                     width:10px;
                     height:10px;
-                    top:10px;
+                    top:8px;
                     left:10px;
                     border:2px solid #ddd;
                     border-width: 0 0 2px 2px ;
@@ -1355,7 +1402,7 @@
             }
             &:nth-of-type(2):before{
                 border-width:2px 2px 0 0  ;
-                left:8px;
+                left:7px;
             }
             &:nth-of-type(3){
                 width:70px;
@@ -1392,7 +1439,6 @@
         cursor:pointer;
     }
     .unionState .handle{
-        margin-right:20px;
         min-width: 570px;
     }
     .unionState .handle>a{
