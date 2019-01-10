@@ -604,8 +604,6 @@ export default {
         this.addPageShow='add';
         this.addData=this.choosedData[0].child;
         this.addData.Type=this.addInfo.Type;
-        console.log(this.addData,this.addInfo)
-        debugger;
         this.subjectInfo={
             preSubject:this.addData,
             KCode:'',
@@ -614,8 +612,6 @@ export default {
             KBalanceType:this.addData.KBalanceType,
             AuxiliaryTypes:[]
         }
-         console.log(this.addData)
-        debugger;
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
@@ -659,7 +655,7 @@ export default {
         this.subjectInfo.OrgId=this.orgid;
         this.subjectInfo.Layers=parseInt(this.subjectInfo.preSubject.Layers)+1;
         this.subjectInfo.KType=this.subjectInfo.preSubject.KType;
-        this.subjectInfo.Uyear=this.checkedYear;
+        this.subjectInfo.Uyear=this.subjectInfo.preSubject.Uyear;
         this.subjectInfo.OrgCode=this.orgcode;
         this.subjectInfo.ParentId=this.subjectInfo.preSubject.PhId;      
         if(this.addPageShow=="add"){
@@ -691,8 +687,6 @@ export default {
               Subject: info, 
               AuxiliaryTypeList:auxi
             }
-            console.log(data1)
-            debugger;
             SubjectAdd(vm,data1)
             .then(res=>{
                 if(res.Status=='success'){
