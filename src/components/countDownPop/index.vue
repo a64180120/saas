@@ -37,7 +37,7 @@
         },
         methods:{
             toUser:function(){
-                this.$router.push('system/organization');
+                this.$router.push('/system/organization');
                 this.showType=false;
             },
             timer:function(t){

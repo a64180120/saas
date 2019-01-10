@@ -420,10 +420,6 @@
         margin-right: 10px;
         margin-top: 10px;
     }
-    .manageContent:before{
-        content:"";
-        display: inline-block;
-    }
     .unionLists~.formData{
         width:80%;
         align-self: flex-start;

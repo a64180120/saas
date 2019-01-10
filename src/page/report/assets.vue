@@ -48,7 +48,7 @@
                     <li></li>
                     <li></li>
                 </ul>
-                <template v-if="cashInData.length >= cashOutData.length+cashData.length+6">
+                <template v-if="cashInData.length >= cashOutData.length+cashData.length+5">
                     <template v-for="(item,index) in cashInData">
                         <ul class="formDataItems flexPublic">
                             <li>{{item.KCode}}</li>
@@ -56,11 +56,17 @@
                             <li class="align-right">{{item.StartSum}}</li>
                             <li class="align-right">{{item.EndSum}}</li>
                             <li></li>
-                            <template v-if="index<=cashOutData.length">
-                                <li>{{cashOutData[index-1].KCode}}</li>
-                                <li>{{cashOutData[index-1].KName}}</li>
-                                <li class="align-right">{{cashOutData[index-1].StartSum}}</li>
-                                <li class="align-right">{{cashOutData[index-1].EndSum}}</li>
+                            <template v-if="index<cashOutData.length">
+                                <li>{{cashOutData[index].KCode}}</li>
+                                <li>{{cashOutData[index].KName}}</li>
+                                <li class="align-right">{{cashOutData[index].StartSum}}</li>
+                                <li class="align-right">{{cashOutData[index].EndSum}}</li>
+                            </template>
+                            <template v-else-if="index==cashOutData.length">
+                                <li></li>
+                                <li class="align-center bolder">负债合计</li>
+                                <li class="align-right">{{cashCounts}}</li>
+                                <li class="align-right">{{cashCountsQ}}</li>
                             </template>
                             <template v-else-if="index==cashOutData.length+1">
                                 <li></li>
@@ -70,33 +76,21 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+2">
                                 <li></li>
-                                <li class="align-center bolder">负债合计</li>
-                                <li class="align-right">{{cashCounts}}</li>
-                                <li class="align-right">{{cashCountsQ}}</li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+3">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+4">
-                                <li></li>
                                 <li class="align-center bolder">三、净资产类</li>
                                 <li></li>
                                 <li></li>
                             </template>
-                            <template v-else-if="index==cashOutData.length+cashData.length+5">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+cashData.length+6">
+                            <template v-else-if="index==cashOutData.length+cashData.length+3">
                                 <li></li>
                                 <li class="align-center bolder">净资产合计</li>
                                 <li class="align-right">{{cashCounts}}</li>
                                 <li class="align-right">{{cashCountsQ}}</li>
+                            </template>
+                            <template v-else-if="index>cashOutData.length+cashData.length+3">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
                             </template>
                             <template v-else>
                                 <li>{{cashData[index-cashOutData.length-3].KCode}}</li>
@@ -108,7 +102,7 @@
                     </template>
                 </template>
                 <template v-else>
-                    <template v-for="index in (cashOutData.length+cashData.length+6)">
+                    <template v-for="index in (cashOutData.length+cashData.length+4)">
                         <ul class="formDataItems flexPublic">
                             <template v-if="index<=cashInData.length">
                                 <li>{{cashInData[index-1].KCode}}</li>
@@ -131,41 +125,29 @@
                             </template>
                             <template v-else-if="index==cashOutData.length+1">
                                 <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+2">
-                                <li></li>
                                 <li class="align-center bolder">负债合计</li>
                                 <li class="align-right">{{cashOutCounts | NumFormat}}</li>
                                 <li class="align-right">{{cashOutCountsQ | NumFormat}}</li>
                             </template>
-                            <template v-else-if="index==cashOutData.length+3">
+                            <template v-else-if="index==cashOutData.length+2">
                                 <li></li>
                                 <li></li>
                                 <li></li>
                                 <li></li>
                             </template>
-                            <template v-else-if="index==cashOutData.length+4">
+                            <template v-else-if="index==cashOutData.length+3">
                                 <li></li>
                                 <li class="align-center bolder">三、净资产类</li>
                                 <li></li>
                                 <li></li>
                             </template>
-                            <template v-else-if="index <= cashOutData.length+cashData.length+4">
-                                <li>{{cashData[index-cashOutData.length-5].KCode}}</li>
-                                <li>{{cashData[index-cashOutData.length-5].KName}}</li>
-                                <li class="align-right">{{cashData[index-cashOutData.length-5].StartSum | NumFormat}}</li>
-                                <li class="align-right">{{cashData[index-cashOutData.length-5].EndSum | NumFormat}}</li>
+                            <template v-else-if="index <= cashOutData.length+cashData.length+3">
+                                <li>{{cashData[index-cashOutData.length-4].KCode}}</li>
+                                <li>{{cashData[index-cashOutData.length-4].KName}}</li>
+                                <li class="align-right">{{cashData[index-cashOutData.length-4].StartSum | NumFormat}}</li>
+                                <li class="align-right">{{cashData[index-cashOutData.length-4].EndSum | NumFormat}}</li>
                             </template>
-                            <template  v-if="index == cashOutData.length+cashData.length+5">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-if="index == cashOutData.length+cashData.length+6">
+                            <template v-if="index == cashOutData.length+cashData.length+4">
                                 <li></li>
                                 <li class="align-center bolder">净资产合计</li>
                                 <li class="align-right">{{cashCounts | NumFormat}}</li>
@@ -327,6 +309,7 @@
                        this.cashInData=cashIn;
                        this.cashOutData=cashOut;
                        this.cashData=cash;
+                       console.log(this.cashData);
                        this.cashInCounts=cashInCount;
                        this.cashOutCounts=cashOutCount;
                        this.cashCounts=cashCount;
@@ -334,7 +317,7 @@
                         this.cashOutCountsQ=cashOutCountQ;
                         this.cashCountsQ=cashCountQ;
                     })
-                    .catch(err => {that.loading=false;console.log(err)})
+                    .catch(err => {this.loading=false;console.log(err)})
             },
             /*
              *时间处理方法
@@ -477,11 +460,14 @@
     .formData{
         margin-bottom: 50px;
     }
+    .container{
+        overflow-y: hidden;
+    }
     .formData_content{
         position: absolute;
         overflow-y: scroll;
         bottom: -50px;
-        top: 96px;
+        top: 80px;
         left: 0;
         right: -17px;
     }
@@ -546,10 +532,6 @@
         align-self: flex-start;
         margin-right: 10px;
         margin-top: 10px;
-    }
-    .manageContent:before{
-        content:"";
-        display: inline-block;
     }
     .unionLists~.formData{
         width:80%;
