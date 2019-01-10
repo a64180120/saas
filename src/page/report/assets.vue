@@ -20,7 +20,7 @@
                     <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                     <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
 
-                    <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
+                    <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                 </ul>
             </div>
 
@@ -358,8 +358,8 @@
                         orgid:this.orgid
                     }
                 }) .then(res => {
-                    window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
-                    this.downloadLoading = false
+                    /*window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
+                    this.downloadLoading = false*/
                 }).catch(err => {
                     console.log(err)
                 })

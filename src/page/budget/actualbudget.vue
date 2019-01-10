@@ -12,7 +12,7 @@
 
                     <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                     <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
-                    <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
+                    <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                 </ul>
             </div>
             <div class="formData" id="form1">
