@@ -117,14 +117,14 @@ service.interceptors.request.use(
         //     console.log(token);
         //     //config.headers.Authorization = `${store.state.user.token}`
         // })
-
-
+        //debugger;
         //添加请求的url
-        //stopRepeatRequest(config.url, cancel)
+        //stopRepeatRequest(config.baseURL+config.url, cancel)
 
         return config;
     },
     err => {
+        Message.error({message: '请求超时!'});
         return Promise.reject(err);
     }
 );
@@ -154,17 +154,36 @@ service.interceptors.response.use(
             return Promise.reject("Ajax Abort: 该请求在axios拦截器中被中断");
         } else if (error.response) {
             switch (error.response.status) {
+                case 400:
+                    error.message = '请求错误'
+                    break;
                 case 401:
                     router.push("error/401");
                 case 403:
                     router.push("error/403");
+                case 404:
+                    error.message = `请求地址出错: ${error.response.config.url}`
+                    break
+                case 500:
+                    error.message = '服务器内部错误'
+                    break
+                case 501:
+                    error.message = '服务未实现'
+                    break
+                case 502:
+                    error.message = '网关错误'
+                    break
+                case 503:
+                    error.message = '服务不可用'
+                    break
+                case 504:
+                    error.message = '网关超时'
+                    break
+                case 505:
+                    error.message = 'HTTP版本不受支持'
+                    break
                 default:
-                    Message({
-                        message: `服务器错误！错误代码：${
-                            error.response.status
-                        }`,
-                        type: "error"
-                    });
+                    Message({message: `服务器错误！错误代码：${error.response.status}`,type: "error" });
             }
 
             const res = error.response.data
