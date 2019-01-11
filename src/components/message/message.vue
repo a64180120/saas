@@ -99,8 +99,8 @@ export default {
                 justify-content: flex-end;
             }
             >.imgCon{
-                width:60px;
-                height:60px;
+                width:55px;
+                height:55px;
                 margin-right:15px;
                 >img{
                     width:100%;

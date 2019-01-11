@@ -195,13 +195,14 @@
             </div>
         </div>
         <message :visible.sync="message.visible" :delay="message.delay" :message='message.message'></message>
-
+        <time-select :showtype='"yearTime"' @item-click="yearSelect"></time-select>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 import { SubjectAdd,SubjectUpdate,SubjectDelete } from '@/api/subject/subjectInfo'
+import timeSelect from '@/components/TimeSelectBar'
 //科目期初
 export default {
   name: "subjectInit",
@@ -209,6 +210,7 @@ export default {
     return {
         searchVal:'',
         dataList:[],
+        year:(new Date).getFullYear(), //选择的年份
         asset:[],  //资产
         liabilities:[],  //负债
         netAsset:[],//净资产
@@ -265,8 +267,7 @@ export default {
           var vm=this;
           this.activeNav=item.name;
           this.dataList=vm[item.code];
-           console.log(this.addInfo);
-        debugger
+     
     },
     //样式初始化
     initCss(){
@@ -318,7 +319,7 @@ export default {
     getSubjectList(){
         var data={
             orgid:this.orgid,
-            Ryear:2019  
+            Ryear:this.year  
         }
         this.asset=[];
         this.liabilities=[];
@@ -354,7 +355,7 @@ export default {
                 var data1={
                     orgid:this.orgid,
                     uid:this.uid,
-                    Ryear:this.checkedYear?this.checkedYear:(new Date).getFullYear()
+                    Ryear:this.year
                 }
                 const loading2=this.$loading();
                 this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})
@@ -417,8 +418,7 @@ export default {
            subjects=vm.infi(vm,subjects,p);   
         }
         
-        console.log(subjects)
-        debugger
+        
         if(!this.Mst){
             url='Add';
             for(var s in subjects){
@@ -450,6 +450,7 @@ export default {
         
             }
         }else{
+            //修改
             for(var s in subjects){
                 
                 if(!subjects[s].PVoucherDel){
@@ -508,7 +509,7 @@ export default {
                             OrgCode:this.orgcode,
                             PersistentState:1,
                             PMonth:0,
-                            Uyear:2019,
+                            Uyear:this.year,
                             Dtls:Dtls
                         }
                     }
@@ -524,8 +525,7 @@ export default {
                 }
             }
             
-            console.log(data1);
-        debugger;
+     
         const loading1=this.$loading();
         this.$axios.post('/PVoucherMst/Post'+url, data1)
         .then(res=>{
@@ -602,6 +602,7 @@ export default {
         var data={
             orgid:this.orgid,
             uid:this.uid,
+            Ryear:this.year,  
             infoData:{
                 KType:'',
                 KCode:this.searchVal,
@@ -694,7 +695,7 @@ export default {
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
-         console.log(this.addData,this.addInfo,this.dataList)
+        
     },
     //修改*****
     updateSubject(){
@@ -887,6 +888,12 @@ export default {
                 }
         })
     },
+    //接收年份选择****
+    yearSelect(data){
+        this.year=data.choosedYear;
+        console.log(this.year)
+        this.getSubjectList();
+    },
     //刷新
     refresh(){
         this.searchVal='';
@@ -901,6 +908,9 @@ export default {
         this.getSubjectList();
     }
   },
+  components:{
+      timeSelect,
+  }
 
 }
 </script>
@@ -919,6 +929,9 @@ export default {
             >li{
                 text-align: center;
                 height:20%;
+                display:flex;  //垂直居中
+                align-items:center;  //垂直居中
+                padding-top:30px\9\0;
                 min-height: 130px;
                 cursor:pointer;
                 &.active{
@@ -926,17 +939,12 @@ export default {
                     color:#fff;
                 }
                 >span{
-                    display: block;
-                    height:50%;
+                    
                     position:relative;
-                    top:25%;
-                    min-height: 130px;
+                   
+                    
                 }
-                 &:nth-of-type(3)>span{
-                        height:60%;
-                        top:20%;
-                        
-                    }
+                 
             }
         }
     }
@@ -954,7 +962,7 @@ export default {
     }
     .listContainer{
         min-width:810px;
-        height:84%;
+        height:90%;
         margin-top:10px;
         position:relative;
         padding-top:40px;
@@ -1360,6 +1368,11 @@ export default {
         >:nth-of-type(2){
             float:right;
         }
+    }
+    .box{
+        top:40px;
+        height:88%;
+        box-shadow:0 0 20px 2px #ccc;
     }
     
 </style>

@@ -406,8 +406,6 @@
                     }
                 }
                 this.Attachements=this.imglist; 
-                console.log(this.fatherData)
-                debugger;
                 return {
                     Mst:this.fatherData,
                     Attachements: this.Attachements

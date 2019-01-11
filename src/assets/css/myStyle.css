@@ -306,102 +306,7 @@ ul{
     display: flex;
     align-items: center;
 }
-.el-submenu__title:hover,
-.el-submenu__title:focus,
-.sidebar .el-menu-item:hover, .el-menu-item:focus {
-    background: rgb(100,220,255);
-    color:#fff !important;
 
-  }
-.el-menu-item:hover >.el-icon-lx-SAAS_tb1::before,
-.el-menu-item:focus > .el-icon-lx-SAAS_tb1::before{
-    background: url(../images/finance/SAAS_tb1-2.png);
-    background-size:cover;
-  }
-    .el-submenu__title:hover  >.el-icon-lx-SAAS_tb2::before,
-    .el-submenu__title:focus>.el-icon-lx-SAAS_tb2::before{
-        background: url(../images/finance/SAAS_tb2-2.png);
-        background-size:cover;
-        color:#fff;
-  }
-  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb3::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb3::before{
-    background: url(../images/finance/SAAS_tb3-2.png);
-    background-size:cover;
-  }
-  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb4::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb4::before{
-    background: url(../images/finance/SAAS_tb4-2.png);
-    background-size:cover;
-  }
-  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb5::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb5::before{
-    background: url(../images/finance/SAAS_tb5-2.png);
-    background-size:cover;
-  }
-  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb6::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb6::before{
-    background: url(../images/finance/SAAS_tb8-2.png);
-    background-size:cover;
-  }
-  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb7::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb7::before{
-    background: url(../images/finance/SAAS_tb7-2.png);
-    background-size:cover;
-  }
-  .sidebar  .el-submenu__title:hover>.el-icon-lx-SAAS_tb8::before, .el-submenu__title:focus>.el-icon-lx-SAAS_tb8::before{
-    background: url(../images/finance/SAAS_tb6-2.png);
-    background-size:cover;
-  }
-
-
-.el-icon-menu:before{
-    content:"";
-    position:relative;
-    width:65px;
-    height:35px;
-    display: block;
-    background: url(../images/logo2.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb1::before,
-.el-icon-lx-SAAS_tb2::before,
-.el-icon-lx-SAAS_tb3::before,
-.el-icon-lx-SAAS_tb4::before,
-.el-icon-lx-SAAS_tb5::before,
-.el-icon-lx-SAAS_tb6::before,
-.el-icon-lx-SAAS_tb7::before,
-.el-icon-lx-SAAS_tb8::before{
-    content:"";
-    width:24px;
-    height:24px;
-    display: block;
-    background: url(../images/finance/SAAS_tb6.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb1::before{
-    background: url(../images/finance/SAAS_tb1.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb2::before{
-    background: url(../images/finance/SAAS_tb2.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb3::before{
-    background: url(../images/finance/SAAS_tb3.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb4::before{
-    background: url(../images/finance/SAAS_tb4.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb5::before{
-    background: url(../images/finance/SAAS_tb5.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb6::before{
-    background: url(../images/finance/SAAS_tb8.png);
-    background-size:cover;
-}
-.el-icon-lx-SAAS_tb7::before{
-    background: url(../images/finance/SAAS_tb7.png);
-    background-size:cover;
-}
 .sidebar .el-menu{
     background: #fff;
     color:#333;
@@ -443,4 +348,15 @@ ul{
     border-radius: 5px;
     transform: rotate(30deg);
     background-color: white;
+}
+
+/* 导航子菜单 */
+.el-menu--horizontal .el-menu--popup-bottom-start{
+    min-width:120px;
+    left:40px;
+    text-align: center;
+    bottom:5px;
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 0 0 1px 1px  #00b7ee;
 }
