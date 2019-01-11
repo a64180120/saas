@@ -214,6 +214,7 @@ export default {
         netAsset:[],//净资产
         income:[],//收入
         pay:[],//支出
+        Mst:{},//凭证信息
         addInfo:{}, //获取的新增科目的返回结果
         addData:{},//json转换的addInfo
         subjectInfo:{  //新增科目的值
@@ -264,6 +265,8 @@ export default {
           var vm=this;
           this.activeNav=item.name;
           this.dataList=vm[item.code];
+           console.log(this.addInfo);
+        debugger
     },
     //样式初始化
     initCss(){
@@ -305,15 +308,17 @@ export default {
                     // //this.getvoucherList('reset');
                     // this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear})
                     // this.$forceUpdate();
-                })
+                },err => {
+                        console.log(err);
+                       
+                    })
                 .catch(err=>this.$message({ showClose: true,message: err, type: "error"}))
         },
     //获取页面数据*********************
     getSubjectList(){
         var data={
             orgid:this.orgid,
-            Ryear:this.checkedYear
-           
+            Ryear:2019  
         }
         this.asset=[];
         this.liabilities=[];
@@ -342,6 +347,8 @@ export default {
                         break;
                     }
                 } 
+                console.log(res)
+                this.Mst=res.Mst;
                 this.dataList=this.asset;
                 this.initCss();
                 var data1={
@@ -353,13 +360,20 @@ export default {
                 this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})
                 .then(res=>{
                         loading2.close();
+                        
                         if(res.Status=='success'){
                             this.addInfo=res;
                         }
                         this.$forceUpdate();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     
             }
+        },err => {
+            console.log(err);
+            
         })
         .catch(err=>{
             loading2.close();
@@ -384,6 +398,8 @@ export default {
     endInit(){
         var vm=this;
         var subjects=[];
+        var Dtls=[];
+        var url='Update';
         //加入末级科目到subject***
         for(var ass of this.asset){
                 subjects=vm.infi(vm,subjects,ass);      
@@ -400,70 +416,118 @@ export default {
         for(var p of this.pay){
            subjects=vm.infi(vm,subjects,p);   
         }
-        var Dtls=[];
-        for(var s in subjects){
-            Dtls[s]={
-                SubjectCode:subjects[s].KCode, 
-                SubjectName:subjects[s].KName,
-                PersistentState:1
+        
+        console.log(subjects)
+        debugger
+        if(!this.Mst){
+            url='Add';
+            for(var s in subjects){
+                Dtls[s]={
+                    SubjectCode:subjects[s].KCode, 
+                    SubjectName:subjects[s].KName,
+                    PersistentState:1
+                }
+                if(subjects[s].KBalanceType==1){
+                    Dtls[s].JSum=subjects[s].NCAccount;
+                    Dtls[s].DSum=0;
+                    
+                }else if(subjects[s].KBalanceType==2){
+                    Dtls[s].DSum=subjects[s].NCAccount;
+                    Dtls[s].JSum=0;
+                }
+                // if(subjects[s].AuxiliaryTypes.length>0){  //添加Dtls的辅助项
+                //         Dtls[s].DtlAccounts={
+                //             SubjectCode: Dtls[s].SubjectCode,
+                //             SubjectName: Dtls[s].SubjectName,
+                //             JSum: Dtls[s].JSum,
+                //             DSum:0,
+                //             PersistentState:1
+                //         }
+                //     for(var i of subjects[s].AuxiliaryTypes){
+                //         Dtls[s].DtlAccounts[i.GLS]=i.PhId;
+                //     }
+                // }
+        
             }
-            if(subjects[s].KBalanceType==1){
-                Dtls[s].JSum=subjects[s].NCAccount;
-                Dtls[s].DSum=0;
-                if(subjects[s].AuxiliaryTypes.length>0){
-                    Dtls[s].DtlAccounts={
-                        SubjectCode: Dtls[s].SubjectCode,
-                        SubjectName: Dtls[s].SubjectName,
-                        JSum: Dtls[s].JSum,
-                        DSum:0,
+        }else{
+            for(var s in subjects){
+                
+                if(!subjects[s].PVoucherDel){
+                    Dtls[s]={
+                        SubjectCode:subjects[s].KCode, 
+                        SubjectName:subjects[s].KName,
                         PersistentState:1
                     }
-                    for(var i of subjects[s].AuxiliaryTypes){
-                        Dtls[s].DtlAccounts[i.GLS]=i.PhId;
+                   
+                }else{
+                    Dtls[s]=subjects[s].PVoucherDel;
+                    Dtls[s].PersistentState=2;
+                    Dtls[s].SubjectCode=subjects[s].KCode; 
+                    Dtls[s].SubjectName=subjects[s].KName;
+                    
+                }  
+                if(subjects[s].KBalanceType==1){
+                    Dtls[s].JSum=subjects[s].NCAccount;
+                    Dtls[s].DSum=0;
+                    
+                }else if(subjects[s].KBalanceType==2){
+                    Dtls[s].DSum=subjects[s].NCAccount;
+                    Dtls[s].JSum=0;
+                } 
+            }
+            this.Mst.Dtls=Dtls;
+            this.Mst.PersistentState=2;
+        }
+            //试算平衡*****************
+            var J=0;
+            var D=0;
+            for(var dt of Dtls){
+                J=parseFloat(J)+parseFloat(dt.JSum);
+                D=parseFloat(D)+parseFloat(dt.DSum);
+               
+            }
+            if(J!=D){
+                var c=J-D;  //差额**
+                this.message={
+                    message:'借贷试算平衡不通过,借贷差额为'+c+'请检查余额!',
+                    delay:4000,
+                    visible:true
+                }
+                return;
+            }
+            if(!this.Mst){
+                var data1={
+                    uid: this.uid,
+                    orgid: this.orgid,
+                    orgcode: this.orgcode,
+                    infoData: {
+                        Mst:{
+                            PMakePerson:this.username,
+                            PType:'记',
+                            OrgId:this.orgid,
+                            OrgCode:this.orgcode,
+                            PersistentState:1,
+                            PMonth:0,
+                            Uyear:2019,
+                            Dtls:Dtls
+                        }
                     }
                 }
-            }else if(subjects[s].KBalanceType==2){
-                Dtls[s].DSum=subjects[s].NCAccount;
-                Dtls[s].JSum=0;
+            }else{
+                 var data1={
+                    uid: this.uid,
+                    orgid: this.orgid,
+                    orgcode: this.orgcode,
+                    infoData: {
+                        Mst:this.Mst
+                    }
+                }
             }
-           
-        }
-        //试算平衡*****************
-        var J=0;
-        var D=0;
-        for(var dt of Dtls){
-             J=parseFloat(J)+parseFloat(dt.JSum);
-             D=parseFloat(D)+parseFloat(dt.DSum);
-        }
-        if(J!=D){
-            var c=J-D;  //差额**
-            this.message={
-                message:'借贷试算平衡不通过,借贷差额为'+c+'请检查余额!',
-                delay:4000,
-                visible:true
-            }
-            return;
-        }
-        var data1={
-            uid: this.uid,
-            orgid: this.orgid,
-            orgcode: this.orgcode,
-            infoData: {
-                 Mst:{
-                    PMakePerson:this.username,
-                    PType:'记',
-                    OrgId:this.orgid,
-                    OrgCode:this.orgcode,
-                    PersistentState:1,
-                    PMonth:0,
-                    Uyear:2018,
-                    Dtls:Dtls
-                 }
-            }
-        }
-        console.log(data1);
+            
+            console.log(data1);
+        debugger;
         const loading1=this.$loading();
-        this.$axios.post('/PVoucherMst/PostAdd', data1)
+        this.$axios.post('/PVoucherMst/Post'+url, data1)
         .then(res=>{
             loading1.close();
             if(res.Status=="success"){
@@ -484,7 +548,10 @@ export default {
                         this.updatePage=false;
                     }
                     this.getChecked();
-                })
+                },err => {
+                        console.log(err);
+                       
+                    })
                 .catch(err=>{
                     loading1.close();
                     this.message={
@@ -521,6 +588,9 @@ export default {
                 }
             }
             this.getChecked();
+        },err => {
+            console.log(err);
+            
         })
         .catch(err=>{
             loading1.close();
@@ -541,23 +611,32 @@ export default {
         }
         for(var nav in this.navList){
             if(this.navList[nav].name==this.activeNav)
-            data.KType=parseInt(nav)+1;
+            data.infoData.KType=parseInt(nav)+1;
         }
+        const loading=this.$loading();
         this.$axios.post('PSubject/PostPSubjectQueryList',data)
         .then(res=>{
+            loading.close();
             if(res.Status=='success'){
-                var str=this.navList[data.KType-1].code;
+                var str=this.navList[data.infoData.KType-1].code;
                 var vm=this;
                 vm[str]=res.Data;
                 this.dataList=res.Data;
+                if(res.Data.length==0){
+                    this.message={
+                        message:'未搜索到匹配的科目',
+                        delay:3000,
+                        visible:true
+                    }
+                }
             }
+        },err => {
+            console.log(err);
+            
         })
-        .catch(err=>{
-            this.message={
-                message:err,
-                delay:4000,
-                visible:true
-            }
+        .catch(err=>{ 
+            loading.close();
+            this.$message(err);
         })
     },
     //选择行****
@@ -644,7 +723,7 @@ export default {
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
     },
-    //新增修改保存按钮
+    //科目新增修改保存按钮
     addFinish(){
         var auxi=[];
         var vm=this;
@@ -687,8 +766,10 @@ export default {
               Subject: info, 
               AuxiliaryTypeList:auxi
             }
+            const loading=this.$loading();
             SubjectAdd(vm,data1)
             .then(res=>{
+                loading.close();
                 if(res.Status=='success'){
                     this.message={
                         message:res.Msg,
@@ -698,8 +779,13 @@ export default {
                 }
                 this.addPageShow=false;
                 this.getSubjectList();
+            },err => {
+                loading.close();
+                console.log(err);
+                
             })
             .catch(err=>{
+                loading.close();
                 this.message={
                         message:err?err:'出错了!',
                         visible:true,
@@ -717,8 +803,10 @@ export default {
               Subject: this.subjectInfo, 
               AuxiliaryTypeList:auxi
             }
+            const loading2=this.$loading();
             SubjectUpdate(vm,data2)
             .then(res=>{
+                loading2.close();
                 if(res.Status=='success'){
                     this.message={
                         message:res.Msg,
@@ -735,8 +823,13 @@ export default {
                     }
                 }
                 
+            },err => {
+                loading2.close();
+                console.log(err);
+                
             })
             .catch(err=>{
+                loading2.close();
                 this.message={
                         message:err?err:'出错了!',
                         visible:true,
@@ -761,18 +854,32 @@ export default {
             uid:this.uid,
             id:this.choosedData[0].child.PhId
         }
+        const loading2=this.$loading();
         SubjectDelete(vm,data3)
         .then(res=>{
+            loading2.close();
             if(res.Status=='success'){
                 this.message={
                     message:res.Msg,
                     delay:4000,
                     visible:true
                 }
+                 this.getSubjectList();
+            }else{
+               this.message={
+                    message:res.Msg,
+                    delay:4000,
+                    visible:true
+                } 
             }
-            this.getSubjectList();
+           
+        },err => {
+            loading2.close();
+            console.log(err);
+            
         })
         .catch(err=>{
+            loading2.close();
             this.message={
                     message:err,
                     delay:4000,
@@ -854,7 +961,7 @@ export default {
         padding-bottom: 20px;
         .listOver{
             height:100%;
-            overflow-y: auto;
+            overflow-y: scroll;
         }
     }
     .listContainer >ul.listTitle:first-of-type{
@@ -864,6 +971,9 @@ export default {
         position:absolute;
         top:0;
         margin-right:5px;
+        // >li{
+        //     border-right:1px solid #fff;
+        // }
     }
     .listContainer ul.listTitle{
         height:auto;

@@ -19,7 +19,7 @@
                 <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
                 <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
 
-                <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
+                <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
             </ul>
         </div>
         <div class="formData" ref="printFrom">
@@ -58,9 +58,12 @@
     import { IncomList,IncomListToExcel } from '@/api/voucher/reportInfo'
     import { mapState, mapActions } from 'vuex'
     import treeTable from "@/components/tree-table/indexHeight";
+    //import treeTable from "@/components/tree-table";
     import treeSum from './totalAmount'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
+    import printJS from 'print-js'
+    
     export default {
         name: "expensesRe",
         data(){
