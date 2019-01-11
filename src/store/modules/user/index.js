@@ -233,7 +233,7 @@ const actions = {
 
         return new Promise(resolve => {
             //清除缓存
-            commit("setToken", "");  //token
+            //commit("setToken", "");  //token
             commit("setUserInfo", ""); //用户信息
             commit('setNavList',''); //菜单
             //若需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可
