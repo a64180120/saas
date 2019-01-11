@@ -1,0 +1,20 @@
+cnpm install -S file-saver
+
+cnpm install -S xlsx
+
+cnpm install -D script-loader
+
+cnpm install jspdf html2canvas -D
+
+cnpm install vue-img-inputer
+
+cnpm install crypto-js
+
+cnpm install --save-dev generate-asset-webpack-plugin
+cnpm install wangeditor --save
+
+cnpm install vue-quill-editor --save
+
+
+-------2019-01-11----------------
+cnpm install print-js --save
