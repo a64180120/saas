@@ -42,6 +42,9 @@ a {
     box-sizing: border-box;
     margin-right: 10px;
 }
+.timeSelect{
+    min-height: 650px;
+}
 .timeSelect .container{
     position: absolute;
     top: 60px;
@@ -49,7 +52,7 @@ a {
     left: 20px;
     right: 75px;
     overflow: hidden;
-    min-height: 600px;
+    min-height: 300px;
 }
 .content-collapse {
     left: 65px;

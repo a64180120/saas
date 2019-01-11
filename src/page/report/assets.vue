@@ -1,201 +1,203 @@
 <template>
     <div class="timeSelect">
         <div class="container">
-    <div class="manageContent" v-loading="loading">
-        <div class="reportBox">
-            <div class="unionState flexPublic">
-                <ul class="flexPublic">
-                    <li class="flexPublic">
-                        <div>条件：</div>
-                        <div  class="block selectContainer">
-                            <select class="el-input__inner el-button--small" v-model="proofType">
-                                <option value="1">包含未审核凭证</option>
-                                <option value="0">不包含未审核凭证</option>
-                            </select>
-                        </div>
+            <div class="manageContent" v-loading="loading">
+                <div class="reportBox">
+                    <div class="unionState flexPublic">
+                        <ul class="flexPublic">
+                            <li class="flexPublic">
+                                <div>条件：</div>
+                                <div  class="block selectContainer">
+                                    <select class="el-input__inner el-button--small" v-model="proofType">
+                                        <option value="1">包含未审核凭证</option>
+                                        <option value="0">不包含未审核凭证</option>
+                                    </select>
+                                </div>
 
-                    </li>
-                </ul>
-                <ul class="flexPublic handle">
-                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
-                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
-
-                    <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
-                </ul>
-            </div>
-
-        <div class="formData" >
-            <ul>
-                <li>编码</li>
-                <li>资产</li>
-                <li>年初数(元)</li>
-                <li>期末数(元)</li>
-                <li></li>
-                <li>编码</li>
-                <li>资产与净资产</li>
-                <li>年初数(元)</li>
-                <li>期末数(元)</li>
-            </ul>
-<div class="formData formData_content" ref="printFrom">
-                <ul class="formDataItems flexPublic">
-                    <li></li>
-                    <li class="align-center bolder">一、资产</li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li class="align-center bolder">二、负债</li>
-                    <li></li>
-                    <li></li>
-                </ul>
-                <template v-if="cashInData.length >= cashOutData.length+cashData.length+5">
-                    <template v-for="(item,index) in cashInData">
-                        <ul class="formDataItems flexPublic">
-                            <li>{{item.KCode}}</li>
-                            <li>{{item.KName}}</li>
-                            <li class="align-right">{{item.StartSum}}</li>
-                            <li class="align-right">{{item.EndSum}}</li>
-                            <li></li>
-                            <template v-if="index<cashOutData.length">
-                                <li>{{cashOutData[index].KCode}}</li>
-                                <li>{{cashOutData[index].KName}}</li>
-                                <li class="align-right">{{cashOutData[index].StartSum}}</li>
-                                <li class="align-right">{{cashOutData[index].EndSum}}</li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length">
-                                <li></li>
-                                <li class="align-center bolder">负债合计</li>
-                                <li class="align-right">{{cashCounts}}</li>
-                                <li class="align-right">{{cashCountsQ}}</li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+1">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+2">
-                                <li></li>
-                                <li class="align-center bolder">三、净资产类</li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+cashData.length+3">
-                                <li></li>
-                                <li class="align-center bolder">净资产合计</li>
-                                <li class="align-right">{{cashCounts}}</li>
-                                <li class="align-right">{{cashCountsQ}}</li>
-                            </template>
-                            <template v-else-if="index>cashOutData.length+cashData.length+3">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else>
-                                <li>{{cashData[index-cashOutData.length-3].KCode}}</li>
-                                <li>{{cashData[index-cashOutData.length-3].KName}}</li>
-                                <li class="align-right">{{cashData[index-cashOutData.length-3].StartSum}}</li>
-                                <li class="align-right">{{cashData[index-cashOutData.length-3].EndSum}}</li>
-                            </template>
+                            </li>
                         </ul>
-                    </template>
-                </template>
-                <template v-else>
-                    <template v-for="index in (cashOutData.length+cashData.length+4)">
-                        <ul class="formDataItems flexPublic">
-                            <template v-if="index<=cashInData.length">
-                                <li>{{cashInData[index-1].KCode}}</li>
-                                <li>{{cashInData[index-1].KName}}</li>
-                                <li class="align-right">{{cashInData[index-1].StartSum | NumFormat}}</li>
-                                <li class="align-right">{{cashInData[index-1].EndSum | NumFormat}}</li>
-                            </template>
-                            <template v-else>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <li></li>
-                            <template v-if="index<=cashOutData.length">
-                                <li>{{cashOutData[index-1].KCode}}</li>
-                                <li>{{cashOutData[index-1].KName}}</li>
-                                <li class="align-right">{{cashOutData[index-1].StratSum | NumFormat}}</li>
-                                <li class="align-right">{{cashOutData[index-1].EndSum | NumFormat}}</li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+1">
-                                <li></li>
-                                <li class="align-center bolder">负债合计</li>
-                                <li class="align-right">{{cashOutCounts | NumFormat}}</li>
-                                <li class="align-right">{{cashOutCountsQ | NumFormat}}</li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+2">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else-if="index==cashOutData.length+3">
-                                <li></li>
-                                <li class="align-center bolder">三、净资产类</li>
-                                <li></li>
-                                <li></li>
-                            </template>
-                            <template v-else-if="index <= cashOutData.length+cashData.length+3">
-                                <li>{{cashData[index-cashOutData.length-4].KCode}}</li>
-                                <li>{{cashData[index-cashOutData.length-4].KName}}</li>
-                                <li class="align-right">{{cashData[index-cashOutData.length-4].StartSum | NumFormat}}</li>
-                                <li class="align-right">{{cashData[index-cashOutData.length-4].EndSum | NumFormat}}</li>
-                            </template>
-                            <template v-if="index == cashOutData.length+cashData.length+4">
-                                <li></li>
-                                <li class="align-center bolder">净资产合计</li>
-                                <li class="align-right">{{cashCounts | NumFormat}}</li>
-                                <li class="align-right">{{cashCountsQ | NumFormat}}</li>
-                            </template>
+                        <ul class="flexPublic handle">
+                            <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                            <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent">打印</li></a>
+
+                            <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                         </ul>
-                    </template>
-                </template>
-                <ul class="formDataItems flexPublic">
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                </ul>
-                <ul class="formDataItems flexPublic">
-                    <li></li>
-                    <li class="align-center bolder">资产总计</li>
-                    <li class="align-right">{{cashInCounts | NumFormat}}</li>
-                    <li class="align-right">{{cashInCountsQ | NumFormat}}</li>
-                    <li></li>
-                    <li></li>
-                    <li class="align-center bolder">负债与净资产总计</li>
-                    <li class="align-right">{{cashOutCounts+cashCounts | NumFormat}}</li>
-                    <li class="align-right">{{cashOutCountsQ+cashCountsQ | NumFormat}}</li>
-                </ul>
-                <!--<ul class="formDataItems flexPublic bottomForm">
-                    <li>工会主席：</li>
-                    <li></li>
-                    <li>财务负责人：</li>
-                    <li></li>
-                    <li>复核：</li>
-                    <li></li>
-                    <li>制表：</li>
-                    <li></li>
-                </ul>-->
-</div>
+                    </div>
+
+                <div class="formData" >
+                    <ul>
+                        <li>编码</li>
+                        <li>资产</li>
+                        <li>年初数(元)</li>
+                        <li>期末数(元)</li>
+                        <li></li>
+                        <li>编码</li>
+                        <li>资产与净资产</li>
+                        <li>年初数(元)</li>
+                        <li>期末数(元)</li>
+                    </ul>
+        <div class="formData formData_content" ref="printFrom">
+                        <ul class="formDataItems flexPublic">
+                            <li></li>
+                            <li class="align-center bolder">一、资产</li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li class="align-center bolder">二、负债</li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                        <template v-if="cashInData.length >= cashOutData.length+cashData.length+5">
+                            <template v-for="(item,index) in cashInData">
+                                <ul class="formDataItems flexPublic">
+                                    <li>{{item.KCode}}</li>
+                                    <li>{{item.KName}}</li>
+                                    <li class="align-right">{{item.StartSum}}</li>
+                                    <li class="align-right">{{item.EndSum}}</li>
+                                    <li></li>
+                                    <template v-if="index<cashOutData.length">
+                                        <li>{{cashOutData[index].KCode}}</li>
+                                        <li>{{cashOutData[index].KName}}</li>
+                                        <li class="align-right">{{cashOutData[index].StartSum}}</li>
+                                        <li class="align-right">{{cashOutData[index].EndSum}}</li>
+                                    </template>
+                                    <template v-else-if="index==cashOutData.length">
+                                        <li></li>
+                                        <li class="align-center bolder">负债合计</li>
+                                        <li class="align-right">{{cashCounts}}</li>
+                                        <li class="align-right">{{cashCountsQ}}</li>
+                                    </template>
+                                    <template v-else-if="index==cashOutData.length+1">
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                    </template>
+                                    <template v-else-if="index==cashOutData.length+2">
+                                        <li></li>
+                                        <li class="align-center bolder">三、净资产类</li>
+                                        <li></li>
+                                        <li></li>
+                                    </template>
+                                    <template v-else-if="index==cashOutData.length+cashData.length+3">
+                                        <li></li>
+                                        <li class="align-center bolder">净资产合计</li>
+                                        <li class="align-right">{{cashCounts}}</li>
+                                        <li class="align-right">{{cashCountsQ}}</li>
+                                    </template>
+                                    <template v-else-if="index>cashOutData.length+cashData.length+3">
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                    </template>
+                                    <template v-else>
+                                        <li>{{cashData[index-cashOutData.length-3].KCode}}</li>
+                                        <li>{{cashData[index-cashOutData.length-3].KName}}</li>
+                                        <li class="align-right">{{cashData[index-cashOutData.length-3].StartSum}}</li>
+                                        <li class="align-right">{{cashData[index-cashOutData.length-3].EndSum}}</li>
+                                    </template>
+                                </ul>
+                            </template>
+                        </template>
+                        <template v-else>
+                            <template v-for="index in (cashOutData.length+cashData.length+4)">
+                                <ul class="formDataItems flexPublic">
+                                    <template v-if="index<=cashInData.length">
+                                        <li>{{cashInData[index-1].KCode}}</li>
+                                        <li>{{cashInData[index-1].KName}}</li>
+                                        <li class="align-right">{{cashInData[index-1].StartSum | NumFormat}}</li>
+                                        <li class="align-right">{{cashInData[index-1].EndSum | NumFormat}}</li>
+                                    </template>
+                                    <template v-else>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                    </template>
+                                    <li></li>
+                                    <template v-if="index<=cashOutData.length">
+                                        <li>{{cashOutData[index-1].KCode}}</li>
+                                        <li>{{cashOutData[index-1].KName}}</li>
+                                        <li class="align-right">{{cashOutData[index-1].StratSum | NumFormat}}</li>
+                                        <li class="align-right">{{cashOutData[index-1].EndSum | NumFormat}}</li>
+                                    </template>
+                                    <template v-else-if="index==cashOutData.length+1">
+                                        <li></li>
+                                        <li class="align-center bolder">负债合计</li>
+                                        <li class="align-right">{{cashOutCounts | NumFormat}}</li>
+                                        <li class="align-right">{{cashOutCountsQ | NumFormat}}</li>
+                                    </template>
+                                    <template v-else-if="index==cashOutData.length+2">
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                    </template>
+                                    <template v-else-if="index==cashOutData.length+3">
+                                        <li></li>
+                                        <li class="align-center bolder">三、净资产类</li>
+                                        <li></li>
+                                        <li></li>
+                                    </template>
+                                    <template v-else-if="index <= cashOutData.length+cashData.length+3">
+                                        <li>{{cashData[index-cashOutData.length-4].KCode}}</li>
+                                        <li>{{cashData[index-cashOutData.length-4].KName}}</li>
+                                        <li class="align-right">{{cashData[index-cashOutData.length-4].StartSum | NumFormat}}</li>
+                                        <li class="align-right">{{cashData[index-cashOutData.length-4].EndSum | NumFormat}}</li>
+                                    </template>
+                                    <template v-if="index == cashOutData.length+cashData.length+4">
+                                        <li></li>
+                                        <li class="align-center bolder">净资产合计</li>
+                                        <li class="align-right">{{cashCounts | NumFormat}}</li>
+                                        <li class="align-right">{{cashCountsQ | NumFormat}}</li>
+                                    </template>
+                                </ul>
+                            </template>
+                        </template>
+                        <ul class="formDataItems flexPublic">
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                        <ul class="formDataItems flexPublic">
+                            <li></li>
+                            <li class="align-center bolder">资产总计</li>
+                            <li class="align-right">{{cashInCounts | NumFormat}}</li>
+                            <li class="align-right">{{cashInCountsQ | NumFormat}}</li>
+                            <li></li>
+                            <li></li>
+                            <li class="align-center bolder">负债与净资产总计</li>
+                            <li class="align-right">{{cashOutCounts+cashCounts | NumFormat}}</li>
+                            <li class="align-right">{{cashOutCountsQ+cashCountsQ | NumFormat}}</li>
+                        </ul>
+                        <!--<ul class="formDataItems flexPublic bottomForm">
+                            <li>工会主席：</li>
+                            <li></li>
+                            <li>财务负责人：</li>
+                            <li></li>
+                            <li>复核：</li>
+                            <li></li>
+                            <li>制表：</li>
+                            <li></li>
+                        </ul>-->
+        </div>
+                    </div>
+                </div>
+                <div class="timeSelectBox">
+                    <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
+                </div>
             </div>
         </div>
-        <div class="timeSelectBox">
-            <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
-        </div>
-    </div>
-    </div>
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -205,7 +207,7 @@
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs';
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { mapState, mapGetters } from "vuex";
-
+    import saasMsg from '../finance/message'
     let balanceData=[];
     export default {
         name: "assets",
@@ -223,10 +225,15 @@
                 cashCountsQ:0,
                 date1:[],
                 proofType:'1',
-                loading:false
+                loading:false,
+                saasMessage:{
+                    visible:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                },
             }
         },
-        components: {TimeSelectBar},
+        components: {TimeSelectBar,saasMsg},
         computed:{
             ...mapState({
                 userid: state => state.user.userid,

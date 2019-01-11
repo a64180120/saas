@@ -149,6 +149,7 @@ const actions = {
                     var user = response.Data;
                     user.sessionid=userInfo.loginid;
                     //用户信息缓存
+                    console.log();
                     commit("setUserInfo", user);
                 }
                 resolve(response);
@@ -215,6 +216,7 @@ const actions = {
                     orgid:state.orgid
                 }
             }).then(res => {
+                console.log('用户缓存信息');
                 console.log(res)
                 if (res.Status === "success") {
                     //用户信息缓存
@@ -315,7 +317,7 @@ const actions = {
         return new Promise(resolve => {
             let permissionList = [];
             // 将菜单数据扁平化为一级
-            function flatNavList(arr) {              
+            function flatNavList(arr) {
                 for (let v of arr) {
                     if (v.child && v.child.length) {
                         flatNavList(v.child);

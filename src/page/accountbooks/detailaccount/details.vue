@@ -180,6 +180,8 @@
                                 :showtype="'doubleTime'"
                 ></time-select-bar>
             </div>
+            <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+            <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
         </div>
 </template>
 
@@ -190,6 +192,7 @@
     import TimeSelectBar from "@/components/TimeSelectBar/index";
     import voucher from '../..//finance/voucher'
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
+    import saasMsg from '../../finance/message'
     /**
      * 明细表
      */
@@ -233,7 +236,12 @@
                 startMoney:'',
                 endMoney:'',
                 que:'',
-                KBalanceType:''//用于判断本月累计和本年累计计算方式
+                KBalanceType:'',//用于判断本月累计和本年累计计算方式
+                saasMessage:{
+                    visible:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                },
             }
         },
         created() {
@@ -258,7 +266,7 @@
                 this.getData(false);
             }
         },
-        components: {TimeSelectBar,voucher},
+        components: {TimeSelectBar,voucher,saasMsg},
         computed:{
             ...mapState({
                 orgid:state=>state.user.orgid,
@@ -302,9 +310,19 @@
             },
             searchDetail:function(){
                 if(this.startCode>this.endCode){
-                    this.$message.error('开始凭证号码不应大于结束凭证号码');
+                    this.saasMessage={
+                        message:'开始凭证号不应大于结束凭证号码',
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message.error('开始凭证号码不应大于结束凭证号码');
                 }else if(this.startMoney>this.endMoney){
-                    this.$message.error('开始发生金额不应大于结束发生金额');
+                    this.saasMessage={
+                        message:'开始发生金额不应大于结束发生金额',
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message.error('开始发生金额不应大于结束发生金额');
                 }else{
                     this.showType='none';
                     this.getData(false);
@@ -350,7 +368,12 @@
 //获取单个凭证**************
             getVoucherData(PhId){
                 if(PhId==''){
-                    this.$message('当前凭证不支持查看','error')
+                    this.saasMessage={
+                        message:'当前凭证不支持查看',
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message('当前凭证不支持查看','error')
                     return
                 }
                 var data={
@@ -366,12 +389,23 @@
                             this.voucherDataList.bool=true;
                             this.resetVoucher();
                         }else{
-                            this.$message({ showClose: true,message: res.Msg, type: "error"});
+                            this.saasMessage={
+                                message:res.Msg,
+                                delay:3000,
+                                visible:true
+                            };
+                            //this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
                         loading2.close();
                     })
                     .catch(err=>{
-                        this.$message({ showClose: true,message: err, type: "error"});loading2.close();
+                        this.saasMessage={
+                            message:err,
+                            delay:3000,
+                            visible:true
+                        };
+                        //this.$message({ showClose: true,message: err, type: "error"});
+                        loading2.close();
                     })
             },
             //查询详细数据
@@ -423,7 +457,12 @@
                         //res.Record=this.changeData(res.Record);
 
                         if(res.Status==='error'){
-                            this.$message.error(res.Msg);
+                            this.saasMessage={
+                                message:res.Msg,
+                                delay:3000,
+                                visible:true
+                            };
+                            //this.$message.error(res.Msg);
                             this.dataInfo=[]
                             return
                         }
@@ -458,7 +497,12 @@
                     .catch(err=>{
                         console.log(err)
                         loading1.close();
-                        this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
+                        this.saasMessage={
+                            message:'获取科目明细错误',
+                            delay:3000,
+                            visible:true
+                        };
+                        //this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
                     })
             },
             //查询月初数据
@@ -491,6 +535,9 @@
                     else{
                         year=this.date1.choosedYear;
                         Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
+                        if(this.date1.choosedMonth==1){
+                            return
+                        }
                     }
                 }
                 var data = {
@@ -516,7 +563,12 @@
                     .then(res=>{
                         loading1.close();
                         if(res.Status==='error'){
-                            this.$message.error(res);
+                            this.saasMessage={
+                                message:res,
+                                delay:3000,
+                                visible:true
+                            };
+                            //this.$message.error(res);
                             return
                         }
                         that.dataInfoMonth=res;
@@ -524,7 +576,12 @@
                     .catch(err=>{
                         console.log(err)
                         loading1.close();
-                        this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
+                        this.saasMessage={
+                            message:'获取科目明细错误',
+                            delay:3000,
+                            visible:true
+                        };
+                        //this.$message({ showClose: true, message:'获取科目明细错误',type: 'error' })
                     })
             },
             async getSubjectData(queryfil){
@@ -561,11 +618,16 @@
                     }
                 }).catch(error =>{
                         loading1.close();
-                    this.$message({
+                        this.saasMessage={
+                            message:'科目列表获取错误',
+                            delay:3000,
+                            visible:true
+                        };
+                    /*this.$message({
                         showClose: true,
                         message: '科目列表获取错误',
                         type: 'error'
-                    })
+                    })*/
                 })
 
             },

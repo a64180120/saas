@@ -55,8 +55,14 @@
                                          :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode">{{timertitle}}</div>
                                 </el-form-item>
                                 <div style="text-align: center">
-                                    <div class="selfBtn blueBtn" @click="changeshowArea('secondStep')">下一步</div>
-                                    <router-link to="/index"><button class="selfBtn whiteBtn">取消</button></router-link>
+                                    <template v-if="checkType==0">
+                                        <div class="selfBtn blueBtn" @click="changeshowArea('secondStep')">下一步</div>
+                                        <router-link to="/index"><button class="selfBtn whiteBtn">取消</button></router-link>
+                                    </template>
+                                    <template v-else>
+                                        <div class="selfBtn blueBtn" @click="codeRegister">完成</div>
+                                    </template>
+
                                 </div>
                             </div>
                         </el-form>
@@ -440,6 +446,10 @@
                 }).catch(err=>{
                     console.log(err);
                 })
+            },
+            //邀请码注册
+            codeRegister:function(){
+                alert('待开发');
             },
             timer:function(t){
                     let that=this;

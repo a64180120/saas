@@ -2,130 +2,132 @@
 
     <div class="container">
         <div class="manageContent">
-        <div class="handle-box">
-            <el-row>
-                <el-col :span="14">
-                    <div style="float: left;margin-right: 10px">
-                        <el-select v-model="s_type" placeholder="请选择科目类别" @change="search" class="handle-select mr10" style="margin-top: 0px">
-                            <el-option label="全部" value=""></el-option>
-                            <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
+            <div class="handle-box">
+                <el-row>
+                    <el-col :span="14">
+                        <div style="float: left;margin-right: 10px">
+                            <el-select v-model="s_type" placeholder="请选择科目类别" @change="search" class="handle-select mr10" style="margin-top: 0px">
+                                <el-option label="全部" value=""></el-option>
+                                <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                            </el-select>
+                        </div>
+                        <el-input v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10" size="small"></el-input>
+                        <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
+
+                    </el-col>
+                    <el-col :span="10">
+                        <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad" style="float: right;margin-left: 10px">导入</el-button>
+                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="Delete" style="float: right">删除</el-button>
+                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="Edit" style="float: right">修改</el-button>
+                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add" style="float: right">新增</el-button>
+                    </el-col>
+                </el-row>
+            </div>
+
+            <tree-table
+            :data="data"
+            :expand-all="expandAll"
+            :columns="columns"
+            :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
+            v-loading="loading"
+            highlight-current-row
+            @onRowClick="handleClickRow"
+            :extraheight='extraheight'
+            border>
+                <el-table-column label="科目类别" align="center">
+                    <template slot-scope="scope">
+                         <span v-if="scope.row.KType==='1'">资产</span>
+                        <span v-else-if="scope.row.KType==='2'">负债</span>
+                        <span v-else-if="scope.row.KType==='3'">净资产</span>
+                        <span v-else-if="scope.row.KType==='4'">收入</span>
+                        <span v-else-if="scope.row.KType==='5'">支出</span>
+                        <span v-else>{{scope.row.KType}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="余额方向" align="center">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.KBalanceType==='1'">借方</span>
+                        <span v-else-if="scope.row.KBalanceType==='2'">贷方</span>
+                        <span v-else-if="scope.row.KBalanceType==='3'">两性</span>
+                        <span v-else>{{scope.row.KBalanceType}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="辅助核算">
+                    <template slot-scope="scope">
+                        <template v-if="scope.row.AuxiliaryTypes.length>0">
+                            <span v-for="(v,index) in scope.row.AuxiliaryTypes" :key="v.PhId">
+                                <span v-if="index<( scope.row.AuxiliaryTypes.length)">{{v.BaseName}},</span>
+                                <span v-else>{{v.BaseName}}</span>
+                            </span>
+                        </template>
+                        <template v-else>
+                            <span></span>
+                        </template>
+                    </template>
+
+                </el-table-column>
+                <el-table-column label="停用/启用" align="center" >
+                    <template slot-scope="scope">
+                        <template  v-if="scope.row.EnabledMark===0">
+                            <div class="rightIcon" :data-value="scope.row.PhId+'-'+scope.row.EnabledMark" @click="abdis"></div>
+
+                        </template>
+                        <template v-else>
+                            <div class="falseIcon el-icon-close" :data-value="scope.row.PhId+'-'+scope.row.EnabledMark" @click="abdis"></div>
+                        </template>
+                        <!--<el-button type="success" icon="el-icon-check" size="mini" circle @click="abdis"></el-button>
+                        <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>-->
+                    </template>
+                </el-table-column>
+            </tree-table>
+
+            <!-- 编辑弹出框 -->
+            <el-dialog :title="dialogState=='add'?'新增':'编辑'" :visible.sync="editVisible" width="40%">
+                <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
+                    <el-form-item label="科目编码：" prop="KCode">
+                        <el-input v-model="form.KCode">
+                            <template v-if="parentKCode!==''" slot="prepend">{{parentKCode}}</template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="科目名称：" prop="KName">
+                        <el-input v-model="form.KName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="科目类别：" prop="KTypeRule">
+                        <el-select v-model="form.KType" placeholder="请选择">
+                            <template v-if="singleSelection.length>0">
+                                <el-option v-for="item in singleSelection[0].KType" :key="item" :label="subjectType[item-1].name" :value="item"></el-option>
+                            </template>
+                            <template v-else>
+                                <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                            </template>
+
                         </el-select>
-                    </div>
-                    <el-input v-model.trim="s_word" placeholder="科目编码/名称" prefix-icon="el-icon-search" class="handle-input mr10" size="small"></el-input>
-                    <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
+                    </el-form-item>
+                    <el-form-item label="余额方向：" prop="KBalanceType">
+                        <el-radio-group v-model="form.KBalanceType">
+                            <template v-if="singleSelection.length>0">
+                                <el-radio v-for="item in singleSelection[0].KBalanceType" :key="item" :label="item">{{balanceType[item-1].name}}</el-radio>
+                            </template>
+                            <template v-else>
+                                <el-radio v-for="item in balanceType" :key="item.code" :label="item.code">{{item.name}}</el-radio>
+                            </template>
 
-                </el-col>
-                <el-col :span="10">
-                    <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="DownLoad" style="float: right;margin-left: 10px">导入</el-button>
-                    <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="Delete" style="float: right">删除</el-button>
-                    <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="Edit" style="float: right">修改</el-button>
-                    <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="Add" style="float: right">新增</el-button>
-                </el-col>
-            </el-row>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="辅助核算：">
+                        <el-checkbox-group v-model="form.AuxiliaryType">
+                            <el-checkbox v-for="item in  auxiliaryTypes" :label="item.PhId" :key="item.PhId">{{item.BaseName}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="Save('form')">保 存</el-button>
+                    <el-button @click="callof('form')">取 消</el-button>
+                </span>
+            </el-dialog>
         </div>
-
-        <tree-table
-        :data="data"
-        :expand-all="expandAll"
-        :columns="columns"
-        :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
-        v-loading="loading"
-        highlight-current-row
-        @onRowClick="handleClickRow"
-        :extraheight='extraheight'
-        border>
-            <el-table-column label="科目类别" align="center">
-                <template slot-scope="scope">
-                     <span v-if="scope.row.KType==='1'">资产</span>
-                    <span v-else-if="scope.row.KType==='2'">负债</span>
-                    <span v-else-if="scope.row.KType==='3'">净资产</span>
-                    <span v-else-if="scope.row.KType==='4'">收入</span>
-                    <span v-else-if="scope.row.KType==='5'">支出</span>
-                    <span v-else>{{scope.row.KType}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="余额方向" align="center">
-                <template slot-scope="scope">
-                    <span v-if="scope.row.KBalanceType==='1'">借方</span>
-                    <span v-else-if="scope.row.KBalanceType==='2'">贷方</span>
-                    <span v-else-if="scope.row.KBalanceType==='3'">两性</span>
-                    <span v-else>{{scope.row.KBalanceType}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="辅助核算">
-                <template slot-scope="scope">
-                    <template v-if="scope.row.AuxiliaryTypes.length>0">
-                        <span v-for="(v,index) in scope.row.AuxiliaryTypes" :key="v.PhId">
-                            <span v-if="index<( scope.row.AuxiliaryTypes.length)">{{v.BaseName}},</span>
-                            <span v-else>{{v.BaseName}}</span>
-                        </span>
-                    </template>
-                    <template v-else>
-                        <span></span>
-                    </template>
-                </template>
-
-            </el-table-column>
-            <el-table-column label="停用/启用" align="center" >
-                <template slot-scope="scope">
-                    <template  v-if="scope.row.EnabledMark===0">
-                        <div class="rightIcon" :data-value="scope.row.PhId+'-'+scope.row.EnabledMark" @click="abdis"></div>
-
-                    </template>
-                    <template v-else>
-                        <div class="falseIcon el-icon-close" :data-value="scope.row.PhId+'-'+scope.row.EnabledMark" @click="abdis"></div>
-                    </template>
-                    <!--<el-button type="success" icon="el-icon-check" size="mini" circle @click="abdis"></el-button>
-                    <el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>-->
-                </template>
-            </el-table-column>
-        </tree-table>
-
-        <!-- 编辑弹出框 -->
-        <el-dialog :title="dialogState=='add'?'新增':'编辑'" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
-                <el-form-item label="科目编码：" prop="KCode">
-                    <el-input v-model="form.KCode">
-                        <template v-if="parentKCode!==''" slot="prepend">{{parentKCode}}</template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="科目名称：" prop="KName">
-                    <el-input v-model="form.KName"></el-input>
-                </el-form-item>
-                <el-form-item label="科目类别：" prop="KTypeRule">
-                    <el-select v-model="form.KType" placeholder="请选择">
-                        <template v-if="singleSelection.length>0">
-                            <el-option v-for="item in singleSelection[0].KType" :key="item" :label="subjectType[item-1].name" :value="item"></el-option>
-                        </template>
-                        <template v-else>
-                            <el-option v-for="item in subjectType" :key="item.code" :label="item.name" :value="item.code"></el-option>
-                        </template>
-
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="余额方向：" prop="KBalanceType">
-                    <el-radio-group v-model="form.KBalanceType">
-                        <template v-if="singleSelection.length>0">
-                            <el-radio v-for="item in singleSelection[0].KBalanceType" :key="item" :label="item">{{balanceType[item-1].name}}</el-radio>
-                        </template>
-                        <template v-else>
-                            <el-radio v-for="item in balanceType" :key="item.code" :label="item.code">{{item.name}}</el-radio>
-                        </template>
-
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="辅助核算：">
-                    <el-checkbox-group v-model="form.AuxiliaryType">
-                        <el-checkbox v-for="item in  auxiliaryTypes" :label="item.PhId" :key="item.PhId">{{item.BaseName}}</el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="Save('form')">保 存</el-button>
-                <el-button @click="callof('form')">取 消</el-button>
-            </span>
-        </el-dialog>
-    </div>
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -135,10 +137,10 @@ import treeTable from "@/components/tree-table/indexHeight";
 import { SubjectAdd,SubjectUpdate,SubjectList,SubjectDelete } from '@/api/subject/subjectInfo'
 import { AuxiliaryTypeList } from '@/api/Auxiliary/typeInfo'
 import Auth from "@/util/auth";
-
+import saasMsg from '../../finance/message'
 export default {
   name: "subjectList",
-  components: { treeTable },
+  components: { treeTable ,saasMsg},
   data() {
     return {
       columns: [
@@ -197,7 +199,12 @@ export default {
         KBalanceType: [
           { required: true, message: '请选择余额方向', trigger: 'change' }
         ]
-      }
+      },
+        saasMessage:{
+            visible:false,  //消息弹出框*******
+            message:'', //消息主体内容**************
+            delay:0
+        },
     };
   },
   created() {
@@ -232,7 +239,12 @@ export default {
           console.log(res);
           if(res!=undefined){
               if(res.Status==='error'){
-                  this.$message.error(res.Msg);
+                  //this.$message.error(res.Msg);
+                  this.saasMessage={
+                      message:res.Msg,
+                      delay:3000,
+                      visible:true
+                  };
                   return
               }
               else{
@@ -247,11 +259,16 @@ export default {
       }).catch(error =>{
         console.log(error);
         this.loading = false;
-        this.$message({
-            showClose: true,
-            message: '科目列表获取错误',
-            type: 'error'
-        })
+         //this.$message({
+        //     showClose: true,
+        //     message: '科目列表获取错误',
+        //     type: 'error'
+        // })
+          this.saasMessage={
+              message:'科目列表获取错误',
+              delay:3000,
+              visible:true
+          };
       })
 
     },
@@ -266,18 +283,28 @@ export default {
             //console.log(res);
 
             if(res.Status==='error'){
-                this.$message.error("获取辅助项类别错误");
+                //this.$message.error("获取辅助项类别错误");
+                this.saasMessage={
+                    message:'获取辅助项类别错误',
+                    delay:3000,
+                    visible:true
+                };
                 return
             }
             this.auxiliaryTypes=res.type;
 
         }).catch(error =>{
             console.log(error);
-            this.$message({
-                showClose: true,
-                message: '辅助项类别获取错误',
-                type: 'error'
-            })
+            this.saasMessage={
+                message:'辅助项类别获取错误',
+                delay:3000,
+                visible:true
+            };
+            // this.$message({
+            //     showClose: true,
+            //     message: '辅助项类别获取错误',
+            //     type: 'error'
+            // })
         })
     },
     //列表点击事件
@@ -323,10 +350,15 @@ export default {
             this.parentKCode=object[0].KCode
 
         }else{
-            this.$message({
-                message: "请选中列表的其中一行",
-                type: "warning"
-            });
+            this.saasMessage={
+                message:'请选择列表的其中一行',
+                delay:3000,
+                visible:true
+            };
+            // this.$message({
+            //     message: "请选中列表的其中一行",
+            //     type: "warning"
+            // });
         }
     },
     //修改页面
@@ -353,10 +385,15 @@ export default {
             this.editVisible = true;
 
         }else{
-            this.$message({
+            this.saasMessage={
+                message:'请选中列表的其中一行',
+                delay:3000,
+                visible:true
+            };
+            /*this.$message({
                 message: "请选中列表的其中一行",
                 type: "warning"
-            });
+            });*/
         }
     },
       //停用启用EnabledMark
@@ -387,7 +424,11 @@ export default {
               })
           }).catch(er=>{
               this.loading = false;
-              this.$message.error('删除错误');
+              this.saasMessage={
+                  message:'删除异常，请刷新页面后重试',
+                  delay:3000,
+                  visible:true
+              };
           })
       },
     //删除按钮
@@ -411,24 +452,38 @@ export default {
               this.loading = false;
               if(res.Status=='success'){
                   //设置状态，隐藏新增页面
-                  this.$message.success("删除成功");
+                  this.saasMessage={
+                      message:'删除成功',
+                      delay:3000,
+                      visible:true
+                  };
+
                   this.singleSelection = [];
                   //刷新列表
                   this.getData('');
               }else{
-                  this.$message.error(res.Msg);
+                  this.saasMessage={
+                      message:res.Msg,
+                      delay:3000,
+                      visible:true
+                  };
               }
           }).catch(error =>{
             console.log(error);
             this.loading = false;
-            this.$message.error('删除错误');
+              this.saasMessage={
+                  message:'删除异常，请刷新页面后重试',
+                  delay:3000,
+                  visible:true
+              };
           })
         });
       } else {
-        this.$message({
-          message: "请选中列表的其中一行",
-          type: "warning"
-        });
+          this.saasMessage={
+              message:'请选择列表中的一行',
+              delay:3000,
+              visible:true
+          };
       }
     },
     //导入按钮
@@ -518,10 +573,18 @@ export default {
           }).then(res => {
                 this.loading = false;
                 if(res.Status==='error'){
-                    this.$message.error(res.Msg);
+                    this.saasMessage={
+                        message:res.Msg,
+                        delay:3000,
+                        visible:true
+                    };
                     return
                 }
-                this.$message.success('保存成功!');
+              this.saasMessage={
+                  message:'保存成功',
+                  delay:3000,
+                  visible:true
+              };
 
                 //设置状态，隐藏新增页面
                 this.dialogState = "";
@@ -550,7 +613,11 @@ export default {
           }).catch(error =>{
             console.log(error);
             this.loading = false;
-            this.$message.error('保存科目错误');
+              this.saasMessage={
+                  message:'科目保存异常，请刷新页面后重试',
+                  delay:3000,
+                  visible:true
+              };
           })
     },
     //新增保存
@@ -644,11 +711,18 @@ return*/
                 this.loading = false;
 
                 if(res.Status==='error'){
-                    this.$message.error(res.Msg);
+                    this.saasMessage={
+                        message:res.Msg,
+                        delay:3000,
+                        visible:true
+                    };
                     return
                 }
-
-                this.$message.success('保存成功!');
+              this.saasMessage={
+                  message:'保存成功',
+                  delay:3000,
+                  visible:true
+              };
 
                 //设置状态，隐藏新增页面
                 this.dialogState = "";
@@ -676,7 +750,11 @@ return*/
           }).catch(error =>{
             console.log(error);
             this.loading = false;
-            this.$message.error('保存科目错误');
+              this.saasMessage={
+                  message:'科目保存异常，请刷新页面后重试',
+                  delay:3000,
+                  visible:true
+              };
           })
     },
 

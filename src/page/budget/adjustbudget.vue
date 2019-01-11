@@ -3,17 +3,37 @@
         <div class="container">
             <div class="manageContent" v-loading="loading">
                 <div class="reportBox">
+
+                    <div class="unionState" style="width: 100%;height: 40px">
+                        <div style="width:100%;float: right">
+                            <ul class="flexUl handle" :style="{'display': changeBtn.disable?'block':'none'}">
+                                <a ><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="!verify?'':changeBtn.disable=false">编辑</li ></a>
+                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">核定年中调整</li></a>
+
+                                <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                                <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
+                                <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
+                            </ul>
+                            <ul class="flexUl handle" :style="{'display': !changeBtn.disable?'block':'none'}">
+                                <a ><li style='margin:0 0 0px 20px;' @click="changeBtn.disable=true">取消</li ></a>
+                                <a><li style='margin:0 0 0px 20px;' @click="saveChange">保存</li></a>
+                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">保存并核定</li></a>
+                            </ul>
+                        </div>
+
+                    </div><!--
+
                     <div class="unionState flexPublic">
                         <ul class="flexPublic">
                             <li class="flexPublic">
-                                <!--<div>账期:</div>-->
-                                <!--<div class="block selectContainer">-->
-                                    <!--<el-date-picker-->
-                                        <!--v-model="date1"-->
-                                        <!--type="date"-->
-                                        <!--placeholder="选择日期">-->
-                                    <!--</el-date-picker>-->
-                                <!--</div>-->
+                                &lt;!&ndash;<div>账期:</div>&ndash;&gt;
+                                &lt;!&ndash;<div class="block selectContainer">&ndash;&gt;
+                                    &lt;!&ndash;<el-date-picker&ndash;&gt;
+                                        &lt;!&ndash;v-model="date1"&ndash;&gt;
+                                        &lt;!&ndash;type="date"&ndash;&gt;
+                                        &lt;!&ndash;placeholder="选择日期">&ndash;&gt;
+                                    &lt;!&ndash;</el-date-picker>&ndash;&gt;
+                                &lt;!&ndash;</div>&ndash;&gt;
                             </li>
                         </ul>
                         <ul class="flexPublic handle">
@@ -24,7 +44,7 @@
                             <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
                             <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                         </ul>
-                    </div>
+                    </div>-->
                     <div class="formData" id="form1">
                     <ul>
                         <li>科目</li>
@@ -188,6 +208,10 @@
                         </div>
                 </div>
                 </div>
+                <div class="verifyPanel" :style="{display:!verify?'block':'none'}">
+                    <div>已核定</div>
+                    <div style="font-size: 14px">{{verifyTime.substring(0,10)}}</div>
+                </div>
             </div>
             <div class="timeSelectBox">
                 <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
@@ -209,6 +233,8 @@
                 </ul>
             </div>
         </div>
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -218,7 +244,7 @@
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import { mapState, mapGetters } from "vuex";
     import TimeSelectBar from "../../components/TimeSelectBar/index";
-
+    import saasMsg from '../finance/message'
     let balanceData=[];
     export default {
         name: "user",
@@ -236,17 +262,25 @@
                 code_firstCount:[],//一级科目数据对应的合计数
                 specialSubIndex:[],//特殊科目对应的下标数组，用于计算
                 date1:[],
+                currentyear:'',//当前年份
                 proofType:'0',
                 loading:false,
-                verify:true//判断页面是否可以修改，true默认可修改，若为false不可修改
+                verify:true,//判断页面是否可以修改，true默认可修改，若为false不可修改
+                verifyTime:'',
+                saasMessage:{
+                    visible:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                },
             }
         },
-        components: {TimeSelectBar},
+        components: {TimeSelectBar,saasMsg},
         computed:{
             ...mapState({
                 userid: state => state.user.userid,
                 orgid: state => state.user.orgid,
-                OrgIds:state => state.user.OrgIds
+                OrgIds:state => state.user.OrgIds,
+                jyear:Auth =>Auth.Pconfig.jyear
             }),
         },
         mounted(){
@@ -277,7 +311,12 @@
                         }
                     }
                 }else{
-                    this.$message({ showClose: true, message:'已经进行过年中调整核定，不可进行修改',type: 'error' })
+                    this.saasMessage={
+                        message:'已进行过年中调整核定，不可进行修改',
+                        delay:3000,
+                        visible:true
+                    };
+                    /*this.$message({ showClose: true, message:'已经进行过年中调整核定，不可进行修改',type: 'error' })*/
                 }
             },
             /*
@@ -295,11 +334,23 @@
                     }
                 ).then(function(res){
                     that.loading=false;
-                    that.$message({ showClose: true, message:res.Msg,type: 'success' });
+                    that.saasMessage={
+                        message:res.Msg,
+                        delay:3000,
+                        visible:true
+                    };
+                    //that.$message({ showClose: true, message:res.Msg,type: 'success' });
                     that.getMiddleYear();
+                    that.changeBtn.disable=true
                 }).catch(function(err){
                     that.loading=false;
-                    that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
+                    that.changeBtn.disable=true;
+                    that.saasMessage={
+                        message:'保存异常，请刷新页面后重试',
+                        delay:3000,
+                        visible:true
+                    };
+                    //that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
                     console.log(err);
                 })
 
@@ -310,10 +361,11 @@
             verifyMiddle:function(){
                 if(this.verify){
                     let that=this;
-
+                    let time=this.timeFor(new Date());
                     this.loading=true;
                     for(let i in this.budgetList){
                         this.budgetList[i].VerifyMiddle=1;
+                        this.budgetList[i].VerifyMiddle_time=time;
                     }
                     this.$axios.post(
                         'PSubjectBudget/PostSave',
@@ -326,15 +378,25 @@
                         that.loading=false;
                         that.verify=false;
                         that.showCountMsg=false;
-                        that.$message({ showClose: true, message:'年中调整核定成功',type: 'success' });
+                        this.saasMessage={
+                            message:'年中调整核定成功',
+                            delay:3000,
+                            visible:true
+                        };
                         that.getMiddleYear();
-
+                        that.changeBtn.disable=true
                     }).catch(function(err){
                         that.loading=false;
+                        that.changeBtn.disable=true
                         console.log(err);
                     })
                 }else{
-                    this.$message({ showClose: true, message:'已经核定年中调整',type: 'error' })
+                    this.saasMessage={
+                        message:'已经核定年中调整',
+                        delay:3000,
+                        visible:true
+                    };
+                    /*this.$message({ showClose: true, message:'已经核定年中调整',type: 'error' })*/
                 }
             },
             /*
@@ -489,13 +551,17 @@
                     //计算上年决算数对应的本年合计收入，以及本年支出合计
                     // 得到  本年收入合计,本年支出合计，本年结余，上年结余，收回投资，本年投资，本年提取后备金，期末滚存结余  对应数组用于计算
 
+                    //判断是否已经核算
+                    if( res.Record[0].VerifyMiddle==1){
+                        this.verify=false;
+                        this.verifyTime=res.Record[0].VerifyMiddle_time;
+                    }else{
+                        this.verify=true;
+                    }
                     for(var i in res.Record){
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
                         res.Record[i].Uyear=year;
-                        if( res.Record[i].VerifyMiddle==1){
-                            this.verify=false;
-                        }
                         if(res.Record[i].k_name == 'BNSRHJ'){
                             alert('BNSRHJ');
                         }
@@ -616,6 +682,21 @@
             //刷新
             refresh:function(){
                 this.getMiddleYear();
+            },
+            /*
+            * 当前时间格式化
+            *
+            * */
+            timeFor:function(ti){
+                let time=new Date(ti);
+                let year = time.getFullYear(),
+                    month = time.getMonth()+1<10?'0'+(time.getMonth()+1):time.getMonth()+1,
+                    day = time.getDate()<10?"0"+time.getDate():time.getDate() ,
+                    hours=time.getHours()<10?"0"+time.getHours():time.getHours(),
+                    minutes=time.getMinutes()<10?"0"+time.getMinutes():time.getMinutes(),
+                    second=time.getSeconds()<10?"0"+time.getSeconds():time.getSeconds();
+
+                return year+'-'+month+'-'+day+' '+hours+':'+minutes+':'+second
             }
 
         }
@@ -623,6 +704,14 @@
 </script>
 
 <style scoped>
+    .flexUl{
+        float: right;
+    }
+    .flexUl>a>li{
+        display: inline-block;
+        float: left;
+        vertical-align: top;
+    }
     .selectContainer>select {
         background-color: transparent;
         line-height: 30px;
@@ -647,11 +736,10 @@
         margin-bottom: 50px;
     }
     .formData_content{
-        margin-top: 0;
         position: absolute;
         overflow-y: scroll;
         bottom: -50px;
-        top: 80px;
+        top: 90px;
         left: 0;
         right: -17px;
     }
@@ -844,6 +932,12 @@
         color: #FFF;
         background: #3e8cbc;
         padding: 5px 15px;
+    }
+    .disableBtn{
+        color: #cccccc !important;
+        background: #fff !important;
+        border-color: #ccc !important;
+        cursor: not-allowed !important;
     }
 </style>
 

@@ -3,21 +3,24 @@
         <div class="container">
             <div class="manageContent" v-loading="loading">
                 <div class="reportBox">
-                    <div class="unionState flexPublic">
-                        <ul class="flexUl handle">
-                            <a ><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="changeBtnC">{{changeBtn.title}}</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="showCountMsg=verify?true:false">核定年初预算</li></a>
+                    <div class="unionState" style="width: 100%;height: 40px">
+                        <div style="width:100%;float: right">
+                            <ul class="flexUl handle" :style="{'display': changeBtn.disable?'block':'none'}">
+                                <a ><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="!verify?'':changeBtn.disable=false">编辑</li ></a>
+                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">核定年初预算</li></a>
 
-                            <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
-                            <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
-                        </ul>
-                        <ul class="flexPublic handle" >
-                            <a ><li style='margin:0 0 0px 20px;' :disabled="verify" @click="changeBtnC">取消</li ></a>
-                            <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">保存</li></a>
+                                <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                                <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
+                                <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
+                            </ul>
+                            <ul class="flexUl handle" :style="{'display': !changeBtn.disable?'block':'none'}">
+                                <a ><li style='margin:0 0 0px 20px;' @click="changeBtn.disable=true">取消</li ></a>
+                                <a><li style='margin:0 0 0px 20px;' @click="saveChange">保存</li></a>
+                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">保存并核定</li></a>
 
-                            <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">保存并核定</li ></a>
-                        </ul>
+                            </ul>
+                        </div>
+
                     </div>
 
                     <div class="formData" id="form1">
@@ -39,7 +42,7 @@
                                                 <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                                             </li>
                                             <li>
-                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -53,7 +56,7 @@
                                                 <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                                             </li>
                                             <li>
-                                                <input type="text" v-bind:disabled="changeBtn.disable" v-bind:placeholder="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                <input type="text" v-bind:disabled="changeBtn.disable" v-bind:placeholder="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -68,7 +71,7 @@
                                                 <input disabled v-bind:value="item.BudgetTotal| NumFormat">
                                             </li>
                                             <li>
-                                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -82,7 +85,7 @@
                                                 <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
                                             </li>
                                             <li>
-                                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -93,10 +96,10 @@
                                             <li class="align-center">{{item.k_name}}</li>
                                             <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                                             <li class="align-right">
-                                                <input v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
+                                                <input v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  @blur="inputLis">
                                             </li>
                                             <li>
-                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -107,10 +110,10 @@
                                             <li class="align-center">{{item.k_name}}</li>
                                             <li class="align-right">{{item.FinalaccountsTotal | NumFormat}}</li>
                                             <li class="align-right">
-                                                <input  v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  v-on:input="inputLis">
+                                                <input  v-bind:disabled="changeBtn.disable"  v-bind:value="item.BudgetTotal| NumFormat"  v-bind:index="index" v-bind:code="item.SubjectCode"  @blur="inputLis">
                                             </li>
                                             <li>
-                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -124,7 +127,7 @@
                                                 <input disabled  v-bind:value="item.BudgetTotal | NumFormat">
                                             </li>
                                             <li>
-                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -138,7 +141,7 @@
                                                 <input disabled  v-bind:value="item.BudgetTotal | NumFormat" >
                                             </li>
                                             <li>
-                                                其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                                其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" @blur="inputDicription">
                                             </li>
                                         </ul>
                                     </template>
@@ -173,9 +176,9 @@
                             </div>
 
                     </div>
-                    <div class="verifyPanel">
+                    <div class="verifyPanel" :style="{display:!verify?'block':'none'}">
                         <div>已核定</div>
-                        <div>2018-11-17</div>
+                        <div style="font-size: 14px">{{verifyTime.substring(0,10)}}</div>
                     </div>
                 </div>
 
@@ -199,6 +202,9 @@
                 </ul>
             </div>
         </div>
+
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -207,8 +213,8 @@
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import { mapState, mapGetters } from "vuex";
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs'
-    import TimeSelectBar from "../../components/TimeSelectBar/index";
-
+    import TimeSelectBar from "../../components/TimeSelectBar/index"
+    import saasMsg from '../finance/message'
     export default {
         name: "user",
         data(){
@@ -224,23 +230,33 @@
                 code_firstCount:[],//一级科目数据对应的合计数
                 specialSubIndex:[],//特殊科目对应的下标数组，用于计算
                 date1:[],
+                currentyear:'',//当前年份
                 proofType:'0',
                 loading: false,
-                verify:true//判断页面是否可以修改，true默认可修改--未核定，若为false不可修改--已核定
+                verify:true,//判断页面是否可以修改，true默认可修改--未核定，若为false不可修改--已核定
+                verifyTime:'',
+                saasMessage:{
+                    visible:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                },
             }
         },
-        components: {TimeSelectBar},
+        components: {TimeSelectBar,
+            saasMsg},
 
         computed:{
             ...mapState({
                 userid: state => state.user.userid,
                 orgid: state => state.user.orgid,
                 OrgIds:state => state.user.OrgIds,
-                orgcode:state => state.user.orgcode
+                orgcode:state => state.user.orgcode,
+                jyear:Auth =>Auth.Pconfig.jyear
             }),
+
         },
         mounted(){
-            this.getBeginYear()
+            this.getBeginYear();
         },
         methods:{
             /*
@@ -381,15 +397,16 @@
             * 页面数据查询方法
             * */
             getBeginYear:function(){
+                console.log(this.jyear);
                 let year='';
                 if(this.date1.choosedYear==undefined){
                     let currentYear = new Date();
-                    let currentyear=currentYear.getFullYear(currentYear);
+                    this.currentyear=currentYear.getFullYear(currentYear);
                     let currentMonth=currentYear.getMonth()+1;
-                    this.date1.choosedYear=currentyear;
+                    this.date1.choosedYear= this.currentyear;
                     this.date1.choosedMonth=currentMonth;
                     this.date1.choosedMonthEnd=currentMonth;
-                    year=currentyear;
+                    year=this.currentyear;
                 }else{
                     year=this.date1.choosedYear
                 }
@@ -405,24 +422,23 @@
                     'PSubjectBudget/GetBeginYear',
                     {params:data}
                 ).then(res=>{
-                    console.log(res);
-
                     this.loading=false;
                     let  code_firstCount={},//存放一级科目对应预算数
                         specialSubIndex={};//存放特殊的科目
                     //循环遍历，得到一级子目录一级对应的预算数
                     //计算上年决算数对应的本年合计收入，以及本年支出合计
                     // 得到  本年收入合计,本年支出合计，本年结余，上年结余，收回投资，本年投资，本年提取后备金，期末滚存结余  对应数组用于计算
-
+                    if( res.Record[0].VerifyStart==1){
+                        this.verify=false;
+                        this.verifyTime=res.Record[0].VerifyStart_time;
+                    }else{
+                        this.verify=true;
+                    }
                     for(var i in res.Record){
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
                         res.Record[i].Uyear=year;
-                        if( res.Record[i].VerifyStart==1){
-                            this.verify=false;
-                        }else{
-                            this.verify=true;
-                        }
+
                         if(res.Record[i].Layers=='0'){
                             code_firstCount[res.Record[i].SubjectCode]=res.Record[i].BudgetTotal;//本年一级科目预算数
                         }
@@ -462,11 +478,22 @@
                   }
               ).then(function(res){
                   that.loading=false;
-                  that.$message({ showClose: true, message:res.Msg,type: 'success' });
+
+                  this.saasMessage={
+                      message:res.Msg,
+                      delay:3000,
+                      visible:true
+                  };
                   that.getBeginYear();
+                  that.changeBtn.disable=true
               }).catch(function(err){
                   that.loading=false;
-                  that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
+                  that.changeBtn.disable=true;
+                  this.saasMessage={
+                      message:'保存异常，请刷新页面后重试',
+                      delay:3000,
+                      visible:true
+                  };
                   console.log(err);
               })
             },
@@ -477,8 +504,11 @@
                 if(this.verify) {
                     let that = this;
                     this.loading = true;
+                    let time=this.timeFor(new Date());
+
                     for (let i in this.budgetList) {
                         this.budgetList[i].VerifyStart = 1;
+                        this.budgetList[i].VerifyStart_time=time;
                     }
                     this.$axios.post(
                         'PSubjectBudget/PostSave',
@@ -489,7 +519,11 @@
                         }
                     ).then(function (res) {
                         that.loading = false;
-                        that.$message({showClose: true, message: '年初预算核定成功', type: 'success'});
+                        this.saasMessage={
+                            message:"年初预算核定成功!",
+                            delay:3000,
+                            visible:true
+                        };
                         that.showCountMsg = false;
                         that.getBeginYear();
 
@@ -498,11 +532,15 @@
                         console.log(err);
                     })
                 }else{
-                    this.$message({ showClose: true, message:'已经核定年初预算',type: 'error' })
+                    this.saasMessage={
+                        message:"已经核定年初预算!",
+                        delay:3000,
+                        visible:true
+                    };
                 }
             },
 
-            /*
+        /*
             *author:hyz
             *导出Excel表格
             *
@@ -583,8 +621,22 @@
             //刷新
             refresh:function(){
                 this.getBeginYear();
-            }
+            },
+            /*
+            * 当前时间格式化
+            *
+            * */
+            timeFor:function(ti){
+                let time=new Date(ti);
+                let year = time.getFullYear(),
+                    month = time.getMonth()+1<10?'0'+(time.getMonth()+1):time.getMonth()+1,
+                    day = time.getDate()<10?"0"+time.getDate():time.getDate() ,
+                    hours=time.getHours()<10?"0"+time.getHours():time.getHours(),
+                    minutes=time.getMinutes()<10?"0"+time.getMinutes():time.getMinutes(),
+                    second=time.getSeconds()<10?"0"+time.getSeconds():time.getSeconds();
 
+                return year+'-'+month+'-'+day+' '+hours+':'+minutes+':'+second
+            }
         }
     }
 </script>
@@ -596,7 +648,9 @@
         border-color: #ccc !important;
         cursor: not-allowed !important;
     }
-
+    .flexUl{
+        float: right;
+    }
     .flexUl>a>li{
         display: inline-block;
         float: left;
@@ -621,7 +675,7 @@
         position: absolute;
         overflow-y: scroll;
         bottom: -50px;
-        top: 90px;
+        top: 100px;
         left: 0;
         right: -17px;
     }
