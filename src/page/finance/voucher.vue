@@ -478,6 +478,12 @@
                         }   
                         
                         loading1.close();
+                    },err => {
+                        console.log(err);
+                       
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{
                         this.$message({ showClose: true,message: 'err', type: "error"});loading1.close();
@@ -534,6 +540,9 @@
                         
                         this.imglist=res.Record;
                         loading.close();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{
                             this.$message({ showClose: true,message: err, type: "error"});loading.close();
@@ -558,6 +567,9 @@
                                 kemu:this.subjectlist  //总的科目列表
                             }
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
             },
@@ -583,6 +595,9 @@
                         }
                         loading1.close();
                         this.moneyInputMask=false;
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();this.moneyInputMask=false;})
 
@@ -638,6 +653,9 @@
                         console.log(this.voucherInfo[Msg.id].balance)
                         this.$forceUpdate();
                         loading5.close();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{
                         this.$message({ showClose: true,message: err, type: "error"})
@@ -919,6 +937,9 @@
                         this.$message({ showClose: true, message: res.Msg, type: 'error'});
                         return;
                     }
+                },err => {
+                    console.log(err);
+                    
                 }).catch(error => {
                     this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
                 });

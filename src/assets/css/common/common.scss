@@ -24,6 +24,9 @@
 .el-message-box__header{
     background:$headerBgColor;
 }
+.el-message{
+    top: 250px;
+}
 .sys-content{
     position: absolute;
     top: $headerHeight;

@@ -69,6 +69,8 @@ npm install -save-dev moduleName # -save-dev 的意思是将模块安装到项�
 cnpm install --save js-base64
 cnpm install --save js-md5   
 cnpm install --save crypto-js  
+cnpm install --save vue-quill-editor
+cnpm install --save print-js
 ================================VSCode===================================
 
 1.snippet生成代码块
