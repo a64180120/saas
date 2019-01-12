@@ -102,22 +102,41 @@ export function SysUserTransferList(object,param) {
     });
   }
 
-/** 
+/**
  * 说明:密码重置
  * object 当前对象 vue
  * param 参数集合
-*/
+ */
 export function SysUserUpdatePassword(object,param) {
     return new Promise((resolve, reject) => {
-      object.$axios({
-          url: "/SysUser/PostUpdateUserPassword",
-          method: "post",
-          data: param
-      }).then(res => {
-          resolve(res)
-      }).catch(error => {
-          //错误
-          reject(error);
-      });
+        object.$axios({
+            url: "/SysUser/PostUpdateUserPassword",
+            method: "post",
+            data: param
+        }).then(res => {
+            resolve(res)
+        }).catch(error => {
+            //错误
+            reject(error);
+        });
     });
-  }
+}
+/**
+ * 说明:发送邀请码
+ * object 当前对象 vue
+ * param 参数集合
+ */
+export function SysUserSendInvitationCode(object,param) {
+    return new Promise((resolve, reject) => {
+        object.$axios({
+            url: "/SysUser/GetSendInvitationCode",
+            method: "get",
+            data: param
+        }).then(res => {
+            resolve(res)
+        }).catch(error => {
+            //错误
+            reject(error);
+        });
+    });
+}
