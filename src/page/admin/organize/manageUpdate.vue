@@ -122,7 +122,7 @@
                 </li>
                 <li>
                     <div class="addFormItemTitle">
-                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span style="position: relative;left: 5px;color: #d8281d" v-show="showFlam">*</span>
                         <span>
                             隶属工会
                         </span>

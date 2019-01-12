@@ -24,24 +24,24 @@
                                 <li>余额(元)</li>
                             </ul>
                             <div class="formData formData_content"  ref="printFrom">
-                            <template v-for="item in interCourse">
-                                <ul class="formDataItems flexPublic">
-                                    <li :class="{'bolder':item.Layer==1,'algin-center':item.Layer==2}">{{item.Asset_Name}}</li>
-                                    <li>{{item.Asset_Content}}</li>
-                                    <li class="align-right">
-                                       <template v-if="item.Asset_Content">
-                                            {{item.Asset_Amount | NumFormat}}
-                                        </template>
-                                    </li>
-                                    <li :class="{'bolder':item.Layer==1,'algin-center':item.Layer==2}">{{item.Liability_Name}}</li>
-                                    <li>{{item.Liability_Content}}</li>
-                                    <li class="align-right">
-                                        <template v-if="item.Liability_Content">
-                                            {{item.Liability_Amount | NumFormat}}
-                                        </template>
-                                    </li>
-                                </ul>
-                            </template>
+                                <template v-for="item in interCourse">
+                                    <ul class="formDataItems flexPublic">
+                                        <li :class="{'bolder':item.Layer==1,'algin-center':item.Layer==2}">{{item.Asset_Name}}</li>
+                                        <li>{{item.Asset_Content}}</li>
+                                        <li class="align-right">
+                                           <template v-if="item.Asset_Content">
+                                                {{item.Asset_Amount | NumFormat}}
+                                            </template>
+                                        </li>
+                                        <li :class="{'bolder':item.Layer==1,'algin-center':item.Layer==2}">{{item.Liability_Name}}</li>
+                                        <li>{{item.Liability_Content}}</li>
+                                        <li class="align-right">
+                                            <template v-if="item.Liability_Content">
+                                                {{item.Liability_Amount | NumFormat}}
+                                            </template>
+                                        </li>
+                                    </ul>
+                                </template>
                             </div>
                         </div>
                 </div>
@@ -160,11 +160,11 @@
 </template>
 
 <script>
-    import TimeSelectBar from "../../components/TimeSelectBar/index";
+    import TimeSelectBar from "@/components/TimeSelectBar/index";
     import { mapState, mapGetters } from "vuex";
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import qs from 'qs'
-    import saasMsg from '../finance/message'
+    import saasMsg from '@/components/message/message'
     export default {
         name: "user",
         data(){

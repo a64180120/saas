@@ -27,7 +27,7 @@ export default {
     },
     watch: {
         "islogout":{
-            handler: function (val, oldVal) { 
+            handler: function (val, oldVal) {
                if(val!==oldVal){
                     this.$alert('当前用户在别处登录', '提示', {
                         confirmButtonText: '退出',
@@ -35,7 +35,7 @@ export default {
                             clearInterval(this.interval);//停止
                             this.$store.dispatch('user/logout');
                             this.$router.push("/login");
-                            
+
                         }
                     });
                }
@@ -44,7 +44,7 @@ export default {
         }
     },
     created() {
-        
+
     },
     // TODO: 全局状态加载及变更。请根据实际情况改写
     beforeMount(){
@@ -101,7 +101,7 @@ export default {
     methods: {
         //循环判断，当前用户的登录状态
         getloginState(){
-            var me=this;           
+            var me=this;
             this.interval = window.setInterval(() => {
                 setTimeout(() => {
                     var user=Auth.getUserInfoData(),
@@ -122,7 +122,7 @@ export default {
                                     me.islogout=true
                                 }
                             }
-                            
+
                         })
                         .catch(err=>{
                             console.log(err)

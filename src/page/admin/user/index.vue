@@ -47,20 +47,20 @@
                             class="wggcascader"
                             @active-item-change="handleItemChange"
                             @change ="changeArea"
-                            @visible-change="visOnChange"
+                            @visibleChange="visOnChange"
                             change-on-select
                             style="position: relative;top: 9px;width: 90%;left:5%"
                             size="small"
                         ></el-cascader>
                     </div>
-                    <div style="height: 40px;">
-                        <el-button style="height: 25px;width: 20%; margin-left: 10px; text-align: center; float: left; overflow: hidden" @click="oneClick">
-                            {{areaOne}}
-                        </el-button>
-                        <el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="twoClick">{{areaTwo}}</el-button>
-                        <el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="threeClick">{{areaThree}}</el-button>
-                        <el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="fourClick">{{areaFour}}</el-button>
-                    </div>
+                    <!--<div style="height: 40px;">-->
+                        <!--<el-button style="height: 25px;width: 20%; margin-left: 10px; text-align: center; float: left; overflow: hidden" @click="oneClick">-->
+                            <!--{{areaOne}}-->
+                        <!--</el-button>-->
+                        <!--<el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="twoClick">{{areaTwo}}</el-button>-->
+                        <!--<el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="threeClick">{{areaThree}}</el-button>-->
+                        <!--<el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="fourClick">{{areaFour}}</el-button>-->
+                    <!--</div>-->
                     <div align="center">
                         工会组织列表
                     </div>
@@ -449,34 +449,34 @@
                         this.getOrgtree(this.aresId);
                     }
                 }
-                for(let k = 0; k < val.length;k++){
-                    if(k == 0){
-                        this.areaOne = val[k];
-                        this.areaTwo='';
-                        this.areaThree ='';
-                        this.areaFour ='';
-                    }if(k == 1){
-                        this.areaTwo=val[k];
-                        this.areaThree ='';
-                        this.areaFour ='';
-                    }if(k== 2){
-                        this.areaThree =val[k];
-                        this.areaFour ='';
-                    }
-                    if(k == 3) {
-                        this.areaFour = val[k];
-                    }
-                }
+                // for(let k = 0; k < val.length;k++){
+                //     if(k == 0){
+                //         this.areaOne = val[k];
+                //         this.areaTwo='';
+                //         this.areaThree ='';
+                //         this.areaFour ='';
+                //     }if(k == 1){
+                //         this.areaTwo=val[k];
+                //         this.areaThree ='';
+                //         this.areaFour ='';
+                //     }if(k== 2){
+                //         this.areaThree =val[k];
+                //         this.areaFour ='';
+                //     }
+                //     if(k == 3) {
+                //         this.areaFour = val[k];
+                //     }
+                // }
                 this.aresId = val;
                 let l = val.length;
                 l=-l *160;
                 // console.log(l);
                 //document.getElementById('.wggcascader .el-cascader-menu').style.left= "-160px";
-                console.log(document.getElementsByClassName('el-cascader-menu')[0].style);
-                if(val.length != 4){
-                    document.getElementsByClassName('el-cascader-menu')[0].style.marginLeft= l+"px";
-                }
-                document.getElementsByClassName('el-cascader-menus')[0].style.marginTop= "50px";
+                // console.log(document.getElementsByClassName('el-cascader-menu')[0].style);
+                // if(val.length != 4){
+                //     document.getElementsByClassName('el-cascader-menu')[0].style.marginLeft= l+"px";
+                // }
+                // document.getElementsByClassName('el-cascader-menus')[0].style.marginTop= "50px";
             },
             // changeAreaForOrg(val){
             //     console.log(this.aresId);

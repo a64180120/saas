@@ -27,8 +27,9 @@ const state = {
     //EmpowerInfo 判断是否是试用用户
     EmpowerInfo:'',
     //登录的ID
-    sessionId:''
-
+    sessionId:'',
+    //该用户可用的邀请码
+    invitationCode:''
 };
 
 //计算获取取新数据
@@ -71,7 +72,7 @@ const mutations = {
             state.orgName = data.orgInfo.OrgName;
             state.username=data.userInfo.RealName;
             state.EmpowerInfo=data.orgInfo.EmpowerInfo;
-
+            state.invitationCode=data.orgInfo.InvitationCode;
         } else {
             Auth.removeUserInfoData();
         }
