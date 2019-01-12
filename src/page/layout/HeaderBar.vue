@@ -1,9 +1,9 @@
 <template>
     <div class="sys-header">
          <!-- 折叠按钮 -->
-        <div class="collapse-btn" >
+        <!-- <div class="collapse-btn" >
             <i class="el-icon-menu" @click="collapseChage"></i>
-        </div>
+        </div> -->
         <div class="logo">
             <slot name="logo"></slot>
         </div>
@@ -70,6 +70,7 @@ import { mapState, mapActions } from "vuex";
 import md5 from 'js-md5'
 import desHelper from "@/util/desHelper"
 import auth from "@/util/auth"
+
 export default {
   data() {
     return {
