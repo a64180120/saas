@@ -83,7 +83,7 @@
                         <li>{{item.EnCode}}</li>
                         <li>{{item.OrgName}}</li>
                         <li>{{item.ParentName}}</li>
-                        <li>{{item.NgInsertDt}}</li>
+                        <li>{{item.NgInsertDt.replace('T',' ')}}</li>
                         <li>{{item.Chairman}}</li>
                         <li>{{item.Director}}</li>
                         <li class="stateControl flexPublic">

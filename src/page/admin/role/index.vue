@@ -88,6 +88,7 @@
                         :data="data2"
                         ref="tree"
                         show-checkbox
+                        @check="checkTree"
                         node-key="ItemId"
                         default-expand-all
                         :check-strictly="checkStrictly"
@@ -192,6 +193,17 @@
                     }
                 );
             },
+            //获取所有的组织列表
+            getCheckedAll:function(){
+                return this.flatState.filter(function (e) {
+                    if(e.node.indeterminate){
+                        return e.node.indeterminate
+                    }
+                    return e.node.checked
+                }).map(function (e) {
+                    return e.node
+                })
+            },
             // 获取数据
             getData(query) {
                 this.loading = true;
@@ -206,6 +218,7 @@
                 }).then(
                     res => {
                         this.loading = false;
+                        this.checkStrictly = true;
                         console.log(res);
                         this.tableData = res.Record;
                         this.totalCount = Number(res.totalRows);
@@ -217,6 +230,9 @@
                         this.$message({ showClose: true, message: '角色列表获取错误', type: 'error' });
                     }
                 );
+            },
+            checkTree(){
+                this.checkStrictly = false;
             },
             search() {
                 // let queryfilter;
@@ -372,6 +388,7 @@
                                     }
                                     //this.$message.success("删除成功");
                                     this.singleSelection = [];
+                                    this.getData('');
                                 });
                         })
                         .catch(() => {
@@ -416,15 +433,20 @@
             // 保存编辑
             saveEdit(formName) {
                 //let infoData = this.form + this.form2;
+                let roleAuthorizeLists = this.$refs.tree.getCheckedNodes();
+                let ll = this.$refs.tree.getCheckedNodes().length;
+                for(let i = 0; i< this.$refs.tree.getHalfCheckedNodes().length; i++){
+                    roleAuthorizeLists[ll+i] = this.$refs.tree.getHalfCheckedNodes()[i];
+                }
                 this.$refs[formName].validate(valid => {
                     if (valid) {
                         var data = {
                             uid: "0",
                             orgid: "0",
-                            infoData: {Role:this.form, RoleAuthorizes:this.$refs.tree.getCheckedNodes()}
+                            infoData: {Role:this.form, RoleAuthorizes:roleAuthorizeLists}
                         };
-                        console.log(this.$refs.tree.getCheckedNodes());
-                        console.log(this.form);
+                        console.log(roleAuthorizeLists);
+                        //console.log(this.$refs.tree.getCheckedAll());
                         if (this.dialogState == "add") {
                             this.$axios
                                 .post("/SysRole/PostAdd", data)
