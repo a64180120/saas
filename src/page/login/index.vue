@@ -13,7 +13,7 @@
                             <el-form :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px">
                                 <el-form-item prop="name">
                                     <img src="@/assets/images/register/1.png">
-                                    <el-input v-model="loginForm.name" type="text" placeholder="用户名"></el-input>
+                                    <el-input v-model="loginForm.name" type="text" placeholder="手机号"></el-input>
                                 </el-form-item>
                                 <el-form-item prop="password">
                                     <img src="@/assets/images/register/2.png">
@@ -38,16 +38,16 @@
                                     </div>
                                 </el-form-item>
                                 <div class="flexPublic">
-                                    <p @click="selectArea='phoneLogin'">短信快捷登录</p>
+                                    <p @click="selectArea='phoneLogin'" style="cursor: pointer">短信快捷登录</p>
                                     <div  class="flexPublic">
-                                        <p  @click="selectArea='fixPassword'">忘记密码</p>
-                                        <router-link to="/register"><p>注册账号</p></router-link>
+                                        <p  @click="selectArea='fixPassword'" style="cursor: pointer">忘记密码</p>
+                                        <router-link to="/register"><p style="cursor: pointer">注册账号</p></router-link>
                                     </div>
 
                                 </div>
                                 <div style="text-align: center;margin-top: 10px">
-                                    <div class="selfBtn blueBtn" @click="submitForm('loginForm')">登录</div>
-                                    <router-link to="/index"><div class="selfBtn whiteBtn">取消</div></router-link>
+                                    <div class="selfBtn blueBtn" @click="submitForm('loginForm')" style="cursor: pointer">登录</div>
+                                    <router-link to="/index"><div class="selfBtn whiteBtn" style="cursor: pointer">取消</div></router-link>
                                 </div>
                             </el-form>
                         </div>
@@ -62,7 +62,7 @@
                                          :style="{'background-color':disabled?'#CCCCCC':'#2473EB',
                                                     'color':disabled?'grey':'white',
                                                     'border-color':disabled?'#CCCCCC':'#2473EBe'}"
-                                         @click="sendCode(1)">{{timertitle}}</div>
+                                         @click="sendCode(1)" id="timerArea1">{{timertitle}}</div>
                                 </el-form-item>
                                 <el-form-item prop="phoneCode">
                                     <img src="@/assets/images/register/4.png">
@@ -93,7 +93,7 @@
                                     <img src="@/assets/images/register/sj.png">
                                     <el-input v-model="fixPwdForm.phoneNum" type="text" placeholder="请输入手机号"></el-input>
                                     <div :disabled="disabledPwd" class="selfBtn verifyCode"
-                                         :style="{'background-color':disabledPwd?'#CCCCCC':'#2473EB','color':disabledPwd?'grey':'white'}" @click="sendCode(2)">{{timertitlePwd}}</div>
+                                         :style="{'background-color':disabledPwd?'#CCCCCC':'#2473EB','color':disabledPwd?'grey':'white'}" @click="sendCode(2)" id="timerArea2">{{timertitlePwd}}</div>
                                 </el-form-item>
                                 <el-form-item prop="phoneCode">
                                     <img src="@/assets/images/register/4.png">
@@ -287,7 +287,7 @@ export default {
             getDatas:'',
             loginRules: {
                 name: [
-                    {required: true, message: '请输入用户名', trigger: 'blur'}
+                    {required: true, message: '请输入手机号', trigger: 'blur'}
                 ],
                 password :[
                     {required: true, message: '请输入密码', trigger: 'blur'},
@@ -460,7 +460,7 @@ export default {
                         if(!this.disabled){
                             this.disabled=true;
                             /*this.phoneCaptcha=*/this.getPhoneCode('login',this.loginFormPhone.phoneNum);
-                            this.timer(59,'phoneCaptcha');
+                            this.timer(59,'timerArea1');
                             this.timertitle='59S后重新发送';
                         }
                     }
@@ -476,7 +476,7 @@ export default {
                             this.passwordCaptcha = this.code;
                             this.getPhoneCode('fixPwd',this.fixPwdForm.phoneNum);
                             this.disabledPwd = true;
-                            this.timer(59,'passwordCaptcha');
+                            this.timer(59,'timerArea2');
                             this.timertitlePwd = '59S后重新发送';
                         }
                     }
@@ -530,19 +530,15 @@ export default {
             t--;
             setTimeout(function(){
                 if(t>0){
-                    if(type=='phoneCaptcha'){
-                        that.timertitle=t+'S后重新发送';
-                    }else{
-                        that.timertitlePwd=t+'S后重新发送';
-                    }
+                    document.getElementById(type).innerText=t+'S后重新发送';
                     that.timer(t,type);
                 }else{
-                    if(type=='phoneCaptcha'){
+                    if(type=='timerArea1'){
                         that.disabled = false;
-                        that.timertitle = '重新发送验证码';
+                        document.getElementById(type).innerText='重新发送验证码';
                     }else {
                         that.disabledPwd = false;
-                        that.timertitlePwd = '重新发送验证码';
+                        document.getElementById(type).innerText='重新发送验证码';
                     }
                 }
             },1000)
@@ -701,7 +697,7 @@ export default {
         height:61px;
         line-height: 61px;
         width: 100%;
-        background-color: #211f20;
+        background-color: #f5f5f5;
         overflow: hidden;
         position: fixed;
         top: 0;

@@ -20,14 +20,15 @@
         </div>
         <template>
             <bottom-bar :isCollapse="collapsevule" v-once>
-                
+
             </bottom-bar>
         </template>
         <!--15天提示弹窗-->
         <!--timerShowType?'block':'none'-->
-        <div :style="{'display':timerShowType?'block':'none','position':'fixed','z-index':'9999'}">
+        <!--此处代码用于开启15天弹窗提示-->
+        <!--<div :style="{'display':timerShowType?'block':'none','position':'fixed','z-index':'9999'}">
             <countdownpop></countdownpop>
-        </div>
+        </div>-->
     </div>
 </template>
 

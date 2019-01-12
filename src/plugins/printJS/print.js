@@ -83,23 +83,24 @@ Print.prototype = {
   },
 
   writeIframe: function (content) {
-    var w, doc, iframe = document.createElement('iframe'),
-      f = document.body.appendChild(iframe);
-    iframe.id = "myIframe";
-    //iframe.style = "position:absolute;width:0;height:0;top:-10px;left:-10px;";
-    iframe.setAttribute('style', 'position:absolute;width:0;height:0;top:-10px;left:-10px;');
-    w = f.contentWindow || f.contentDocument;
-    doc = f.contentDocument || f.contentWindow.document;
-    doc.open();
-    doc.write(content);
-    doc.close();
-    var _this = this
-    setTimeout(function(){
-      _this.toPrint(w);
-      setTimeout(function () {
-        document.body.removeChild(iframe)
-      }, 100)
-    },1000)
+    var w, doc,
+        iframe = document.createElement('iframe'),
+        f = document.body.appendChild(iframe);
+        iframe.id = "myIframe";
+        //iframe.style = "position:absolute;width:0;height:0;top:-10px;left:-10px;";
+        iframe.setAttribute('style', 'position:absolute;width:0;height:0;top:-10px;left:-10px;');
+        w = f.contentWindow || f.contentDocument;
+        doc = f.contentDocument || f.contentWindow.document;
+        doc.open();
+        doc.write(content);
+        doc.close();
+        var _this = this
+        setTimeout(function(){
+          _this.toPrint(w);
+          setTimeout(function () {
+            document.body.removeChild(iframe)
+          }, 100)
+        },1000)
   },
 
   toPrint: function (frameWindow) {
