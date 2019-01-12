@@ -7,37 +7,20 @@
           <div><img src="@/assets/img/d1.png" alt=""><span> &nbsp;0571-88270588</span></div>
           <div >
             <img src="@/assets/img/ren.png" alt=""> 
-            <div @click.stop="userDropDown=!userDropDown" class="userInfo" v-if="uid">
+            <div @click.stop="userDropDown=!userDropDown" class="userInfo" v-if="userinfo">
               <div>{{username}}<div></div></div>
               <ul :class="{userDropDown:userDropDown}">
                 <li>
-                  <div>{{username}}</div>
-                  <div>({{uid}})</div>
+                  <div>{{userinfo.RealName}}</div>
+                  <div>({{userinfo.MobilePhone}})</div>
                 </li>
-                <li @click.stop="dialog.editPaw.show=true">修改密码</li>
-                <li>退出登录</li>
+                <li @click.stop="editPawClick">修改密码</li>
+                <li @click.stop="logoutClick">退出登录</li>
               </ul>
             </div>
-            <router-link v-if="!uid" to="/login">登录</router-link><router-link v-if="!uid" to="/register">注册</router-link>
+            <router-link v-if="!userinfo" to="/login">登录</router-link><router-link v-if="!userinfo" to="/register">注册</router-link>
           </div>
           <div><img src="@/assets/img/fdj.png" alt=""></div>
-          <!-- el-dialog 弹出修改密码页面-->
-          <el-dialog title="修改密码" :visible.sync="dialog.editPaw.show" :modal-append-to-body="false" custom-class="editPawDialog">
-              <el-form :model="editPaw" :rules="editPawRules" ref="editPaw" label-width="100px" >
-                  <el-form-item label="旧密码" prop="oldPaw">
-                      <el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
-                  </el-form-item>
-                  <el-form-item label="新密码" prop="newPaw" id="newPaw">
-                      <el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>
-                  </el-form-item>
-                  <el-form-item label="确认新密码" prop="confirmNewPaw" >
-                      <el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>
-                  </el-form-item>
-              </el-form>
-              <div class="textC">
-                  <el-button type="primary" @click="editPawSubmit">保存</el-button>
-              </div>
-          </el-dialog>
         </div>
       </div>
       <div class="carrouselContainer">
@@ -143,7 +126,6 @@
           </el-carousel>
         </div>
       </div>
-
       <div class="ourInfo">
         <div>
           <ul>
@@ -192,15 +174,15 @@
             </li>
             <li>
               <p>姓名/单位</p>
-              <div class="inputContainer"><input type="text" class="input_box" /></div>
+              <div class="inputContainer" style="width: 200px;"><input type="text" class="input_box" /></div>
             </li>
             <li>
               <p>联系方式</p>
-              <div class="inputContainer"><input type="text" class="input_box" /></div>
+              <div class="inputContainer" style="width: 200px;"><input type="text" class="input_box" /></div>
             </li>
             <li>
               <p>需求描述</p>
-              <div class="inputContainer"><textarea  cols="30" rows="4"></textarea></div>
+              <div class="inputContainer" style="width: 200px;"><textarea style="width: 200px;"  cols="30" rows="4"></textarea></div>
             </li>
             <li class="onlineBtn" >提交</li>
           </ul>
@@ -233,21 +215,41 @@
                 <div>新中大</div>
             </div>
             <div>
-                <img src="@/assets/img/r2.png" class="g1" />
+                <img src="@/assets/img/r2.jpg" class="g1" />
                 <div>政云</div>
 
             </div>
 
         </div>
       </div>
-
     </footer>
+    <!-- el-dialog 弹出修改密码页面-->
+    <el-dialog title="修改密码" :visible.sync="dialog.editPaw.show" custom-class="editPawDialog">
+        <el-form :model="editPaw" :rules="editPawRules" ref="editPaw" label-width="100px" >
+            <el-form-item label="旧密码" prop="oldPaw">
+                <el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="新密码" prop="newPaw" id="newPaw">
+                <el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="确认新密码" prop="confirmNewPaw" >
+                <el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div class="textC">
+            <el-button type="primary" @click="editPawSubmit">保存</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import { mapState, mapActions } from 'vuex'
   import config from '@/util/ajaxConfig'
+  import Auth from "@/util/auth";
+  import md5 from 'js-md5'
+  import desHelper from "@/util/desHelper"
+
   export default {
     name: "home",
     data(){
@@ -308,21 +310,20 @@
           }
         ]
       },
-       message: 2,
-        userInfoHead:{},
+      message: 2,
+      userInfoHead:{},
 
         //页面数据
         nav:'',
         active:'all',
-        proInfoList:[
-          {info:'杭州市总启动2019平安返乡活动 万个车票补贴名额等你领',date:'2018-03-05',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167368656243964.html'},
-          {info:'杭州市总工会推出工间操公益培训',date:'2018-05-12',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29168762730849606.html'},
-          {info:'郑荣胜赴萧山区开展“五个一”蹲点调研',date:'2018-06-15',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29169282380215988.html'},
-          {info:'宁波市工会系统第一批“爱心托管班”出炉 每家给予3000元的经费补助',date:'2018-06-15',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29169286514242548.html'},
-          {info:'丽水与对口帮扶合作地区分享改革成果 “最多跑一次” 跨省传真经',date:'2018-08-20',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167357212420899.html'},
-          {info:'台州市域铁路巨晓林工作室“五小”成果丰硕 27项创新成果节约成本100万元',date:'2018-08-20',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167363932484398.html'},
-          {info:'线上线下齐发力，宁波市总工会“圈粉”有招',date:'2018-10-20',url:'ttps://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080941579871468.html'},
-          // {info:'龙游县龙天红木小镇工会：从单一“小工会”走向多元“大工会”',date:'2018-10-21',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-20/29080945165230067.html'}
+        proInfoList:[ 
+          {info:'余杭区总工会调研崇贤工会工作',date:'2018-12-25',url:'http://www.hzgh.org/newsview60670.htm'},
+          {info:'崇贤街道人大工委联合街道总工会开展执法检查',date:'2018-11-27',url:'http://www.yhrd.gov.cn/detail.aspx?artid=8131&classid=293'},
+          {info:'崇贤街道总工会召开村(社区)联合工会工资集体协商交流会',date:'2018-03-20',url:'http://www.hzgh.org/newsview51442.htm'},
+          {info:'崇贤街道总工会召开职工医疗互助保障工作动员大会',date:'2017-11-21',url:'http://www.hzgh.org/newsview47266.htm'},
+          {info:'余杭工会信息-杭州余杭区总工会',date:'2017-09-07',url:'http://www.docin.com/p-2099512458.html '},
+          {info:'浙江杭州市余杭区总工会网上服务大厅正式开通上线”',date:'2017-09-21',url:'http://acftu.workercn.cn/28961/201709/21/170921220648933.shtml'},
+          {info:'崇贤街道总工会“十佳好职工”结果出炉，会是你支持的那个人吗',date:'2016-10-19',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167357212420899.html'},
         ],
         newsInfo:[
           {info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
@@ -340,13 +341,19 @@
         picUrl:function(){
             return config.baseurl;
         },
-       
-      ...mapState({
+        ...mapState({
           uid: state => state.user.userid,
           username: state => state.user.username,
           orgcode: state => state.user.orgcode,
           orgid: state => state.user.orgid
-      })
+        }),
+        userinfo:function(){
+          var user=Auth.getUserInfoData();
+
+          if(user){
+           return user.userInfo
+          }
+        }
 
     },
     mounted(){
@@ -356,6 +363,9 @@
       this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t4.jpg')
     },
     methods:{
+      ...mapActions({
+        sysLogout: "user/logout"
+      }),
       navEnter(val){
         this.nav=val;
       },
@@ -421,6 +431,59 @@
           this.newsInfo=allInfo;
         }
 
+      },
+      logoutClick() {
+          //退出事件
+        this.sysLogout().then(() => {
+          this.$router.push("/login");
+        });
+      },
+      //修改密码
+      editPawClick(){
+        this.dialog.editPaw.show=true
+      },
+      editPawSubmit() {
+        this.$refs.editPaw.validate(valid => {
+          if (valid) {
+            if (this.editPaw.newPaw!= this.editPaw.confirmNewPaw) {
+              console.log("新密码与确认新密码不一致!");
+              this.$message.error("新密码与确认新密码不一致!");
+              return;
+            }
+
+            var oldPwd = md5(this.editPaw.oldPaw);
+            var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);
+
+            //接口要包含3个参数： uid、 oldPwd、 newPwd
+            let data={
+                uid:this.uid,
+                orgid:this.orgid,
+                OldPwd: oldPwd,
+                NewPwd: newPwd
+            };
+            this.$axios.post('/SysUser/PostUpdatePassword',data)
+              .then(res=>{
+                  if (res.Status=='success'){
+                      this.$message.success("密码修改成功!");
+                      this.dialog.editPaw.show = false;
+                      this.editPaw.oldPaw="";
+                      this.editPaw.newPaw="";
+                      this.editPaw.confirmNewPaw="";
+                      this.$router.push("/login");
+                  }
+
+                  if (res.Status=="error"){
+                      this.$message.error(res.Msg);
+                      return false;
+                  }
+              })
+              .catch(err=>console.log(err));
+
+          } else {
+            console.log("error submit!!");
+            return false;
+          }
+        });
       }
     }
   }
@@ -1081,6 +1144,7 @@
     >ul.userDropDown{
       height:auto;
       opacity:1;
+      border: 1px solid #E6E6FA;
       >li:first-of-type{
         margin-top:10px;
         >div{

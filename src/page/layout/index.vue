@@ -3,7 +3,11 @@
         <template>
             <!-- v-once只渲染元素和组件一次 头部 -->
             <header-bar v-on:collapseByValue="collapseChange" v-once>
-                <p slot="logo"><router-link to="/index" class="header-title">工会云财务</router-link></p>
+                <p slot="logo">
+                    <router-link to="/index" class="header-title" style="width: 100%;height: 78%;left: 10px;display: block;">
+                        <img style="height: 45px;margin-top: 5px;" src="../../assets/images/logo2.png">
+                    </router-link>
+                </p>
             </header-bar>
             <!-- 左侧菜单 -->
             <!-- <nav-bar :isCollapse="collapsevule"></nav-bar> -->
