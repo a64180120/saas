@@ -22,13 +22,13 @@
                                 <li @click="Backups" style='margin:0 0 0px 10px;'>备份</li>
                             </a>
                             <a>
-                                <li style='margin:0 0 0px 10px;'>恢复</li>
+                                <li @click="Recover" style='margin:0 0 0px 10px;'>恢复</li>
                             </a>
                             <!--<a>-->
                                 <!--<li  @click="testFile" style='margin:0 0 0px 10px;'>附件</li>-->
                             <!--</a>-->
                             <a>
-                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;'></li>
+                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;'></li>
                             </a>
                             <!--<a @click="freshPage"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>-->
                         </ul>
@@ -666,8 +666,10 @@
             },
             //备份
             Backups() {
-
-                alert('正在开发.....')
+                this.$message.error('正在开发中！');
+            },
+            Recover(){
+                this.$message.error('正在开发中！');
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -770,6 +772,11 @@
 </script>
 <style lang="scss" scoped>
 
+    .el-icon-refresh:before {
+        content: "\E633";
+        font-size: 20px;
+        color: #00B8EE;
+    }
     .inf-change-recordz{
         /* width: 100%; */
         height: 100%;

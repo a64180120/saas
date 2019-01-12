@@ -546,8 +546,11 @@ export default {
                             visible:true
                         }
                         this.updatePage=false;
+                        this.getChecked();
+                    }else{
+                        
                     }
-                    this.getChecked();
+                    
                 },err => {
                         console.log(err);
                        

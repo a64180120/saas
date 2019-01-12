@@ -1,15 +1,16 @@
 <template>
-    <div v-show="visible" class="saasMsgCon">
+    <div  class="saasConfirm">
         <div class="saasMsg">
             <p class="title"><span>提示</span>
-                <i @click="close"></i>
+                <i @click="close(false)"></i>
             </p>
             <div>
-                <div class="imgCon"><img src="../../assets/images/message.png"></div>  
-                <span v-if="delay">{{message}}&nbsp;({{delayTime}}s) 后自动关闭</span>
+                <div class="imgCon"><img src="../../assets/images/error.png"></div>  
+                <span >{{message}}</span>
             </div>
             <div>
-                <span @click="close" class="btn">立即关闭</span>
+                <span @click="close(true)" class="btn">确定</span>
+                <span @click="close(false)" class="btn">取消</span>
             </div>    
         </div>
     </div>
@@ -20,7 +21,6 @@
 export default {
   data() {
     return {
-        delayTime:''
     };
   },
   mounted(){
@@ -30,41 +30,25 @@ export default {
     //  vm.$nextTick(vm.oneTime(vm));
   },
   methods:{
-      close(){
-          
-          this.$emit('update:visible',false);
+      close(bool){
+          this.$emit('confirm-click',bool);
       },
-      oneTime(vm){
-          var vm=this;
-          vm.delayTime--;
-          console.log(vm.delayTime)
-          if(vm.delayTime>0){
-            setTimeout(vm.oneTime,1000)
-          }else{
-              vm.close();
-          }
-      }
+      
   },
-  props:{
-      delay:Number,
+  props:{    
       message:String,
-      visible:{type:Boolean}
   },
   computed:{
       
   },
   watch:{
-      visible(val){
-          var vm=this;
-          vm.delayTime=parseInt(vm.delay/1000);
-          vm.oneTime(vm);
-      }
+      
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.saasMsgCon{
+.saasConfirm{
     position:fixed;
     left:0;
     top:0;
@@ -77,7 +61,7 @@ export default {
         width: 370px;
         height: 220px;
         position:absolute;
-        top:100px;
+        top:200px;
         left:40%;
         background: #fff;
         border:1px solid #ccc;
@@ -96,8 +80,8 @@ export default {
                 justify-content: flex-end;
             }
             >.imgCon{
-                width:60px;
-                height:60px;
+                width:55px;
+                height:55px;
                 margin-right:15px;
                 >img{
                     width:100%;

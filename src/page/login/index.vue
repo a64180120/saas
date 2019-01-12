@@ -19,7 +19,7 @@
                                     <img src="@/assets/images/register/2.png">
                                     <el-input v-model="loginForm.password" type="password"  placeholder="密码"></el-input>
                                 </el-form-item>
-                                <el-form-item v-if="isOrganize" prop="orgid"><!--v-if="isOrganize" -->
+                                <el-form-item v-if="isOrganize" prop="orgid">
                                     <img src="@/assets/images/register/3.png">
                                     <el-select v-model="loginForm.orgid" filterable placeholder="请选择组织">
                                         <el-option v-for="item in options"
@@ -31,7 +31,7 @@
                                 </el-form-item>
                                 <el-form-item prop="verifyCode">
                                     <img src="@/assets/images/register/4.png">
-                                    <el-input v-model="loginForm.verifyCode" type="text"  placeholder="请输入验证码（必填）"></el-input>
+                                    <el-input v-model="loginForm.verifyCode" type="text"  placeholder="请输入验证码（必填）" @keyup.enter.native="submitForm('loginForm')"></el-input>
                                     <div :disabled="disabled" class="selfBtn verifyCode"
                                          :style="{'background-color':'#fff','color':'blue'}">
                                          <img @click="VCodeChange" style="bottom: 1px;width: 90px;right: 3px;height: 25px;line-height: 25px;" :src="Verifycode" alt="">
@@ -120,7 +120,7 @@
                         </div>
 
                         <div v-if="sysMsg" class="err-msg">{{sysMsg}}</div>
-                    </div>
+                      </div>
             </div>
             </div>
         </div>
@@ -417,7 +417,7 @@ export default {
                     console.log(err)
             })
 
-        },500)
+        },1000)
     },
     beforeMount(){
         // 初始化错误信息。保证单独点击input时可以弹出正确的错误提示
@@ -669,6 +669,9 @@ export default {
                 this.Verifycode=window.URL.createObjectURL(new Blob(binaryData, {type: "image/png"}))
             })
 
+        },
+        EnterShow(ev){
+             alert('你按回车键了');
         }
     },
     components: {countdownpop},
@@ -723,7 +726,7 @@ export default {
         height:61px;
         line-height: 61px;
         width: 100%;
-        background-color: #211f20;
+        background-color: #464144;
         overflow: hidden;
         position: fixed;
         bottom: 0;

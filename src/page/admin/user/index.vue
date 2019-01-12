@@ -38,7 +38,7 @@
             </div>
             <div style="width: 100%;">
                 <div style="float: left; width: 16%; height: 100%;border: 1px solid #eaeaea;">
-                    <div class="block" style="margin-bottom:10px;background-color: #00B8EE;height: 50px;">
+                    <div  class="block" style="margin-bottom:10px;background-color: #00B8EE;height: 50px;">
                         <!--<span class="demonstration">请选择要查看的组织所在区域</span>-->
                         <el-cascader
                             placeholder="选择组织所在区域"
@@ -52,6 +52,14 @@
                             style="position: relative;top: 9px;width: 90%;left:5%"
                             size="small"
                         ></el-cascader>
+                    </div>
+                    <div style="height: 40px;">
+                        <el-button style="height: 25px;width: 20%; margin-left: 10px; text-align: center; float: left; overflow: hidden" @click="oneClick">
+                            {{areaOne}}
+                        </el-button>
+                        <el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="twoClick">{{areaTwo}}</el-button>
+                        <el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="threeClick">{{areaThree}}</el-button>
+                        <el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="fourClick">{{areaFour}}</el-button>
                     </div>
                     <div align="center">
                         工会组织列表
@@ -179,6 +187,11 @@
                 }
             }
             return {
+                areaOne:'',
+                areaTwo:'',
+                areaThree:'',
+                areaFour:'',
+                areaValues:[],
                 clearable:true,
                 aresId: [],
                 options:[],
@@ -282,7 +295,7 @@
                 });
             },
             getNodes (val) {
-                this.aresId = val;
+                //this.aresId = val;
                 let idArea = '';
                 let sizeArea;
                 if (!val) {
@@ -381,6 +394,28 @@
                     console.log(error);
                 })
             },
+            oneClick(){
+                if(this.aresId.length > 1){
+                    let areaValues = this.aresId.splice(0, this.aresId.length);
+                    this.changeArea(areaValues);
+                }
+            },
+            twoClick(){
+                if(this.aresId.length > 1){
+                    let areaValues = this.aresId.splice(1, this.aresId.length-1);
+                    this.changeArea(areaValues);
+                }
+                console.log()
+            },
+            threeClick(){
+                if(this.aresId.length > 2){
+                    let areaValues = this.aresId.splice(2, this.aresId.length-2);
+                    this.changeArea(areaValues);
+                }
+            },
+            fourClick(){
+                this.changeArea(this.aresId);
+            },
             handleItemChange (val) {
                 this.getNodes(val);
                 this.getOrgtree(val);
@@ -396,9 +431,52 @@
             changeArea(val){
                 this.data2 = [];
                 this.tableData = [];
+                let j = 0;
                 this.getNodes(val);
+                let area = JSON.parse(JSON.stringify(this.aresId));
+                if(val.length == 4){
+                    this.getOrgtree(this.aresId);
+                }else{
+                    if(area.length == val.length){
+                        for(let i = 0; i< val.length; i++){
+                            if(area[i] == val[i]){
+                                j++;
+                            }
+                        }
+                    }
+                    console.log(area);
+                    if(j == val.length){
+                        this.getOrgtree(this.aresId);
+                    }
+                }
+                for(let k = 0; k < val.length;k++){
+                    if(k == 0){
+                        this.areaOne = val[k];
+                        this.areaTwo='';
+                        this.areaThree ='';
+                        this.areaFour ='';
+                    }if(k == 1){
+                        this.areaTwo=val[k];
+                        this.areaThree ='';
+                        this.areaFour ='';
+                    }if(k== 2){
+                        this.areaThree =val[k];
+                        this.areaFour ='';
+                    }
+                    if(k == 3) {
+                        this.areaFour = val[k];
+                    }
+                }
                 this.aresId = val;
-                this.getOrgtree(this.aresId);
+                let l = val.length;
+                l=-l *160;
+                // console.log(l);
+                //document.getElementById('.wggcascader .el-cascader-menu').style.left= "-160px";
+                console.log(document.getElementsByClassName('el-cascader-menu')[0].style);
+                if(val.length != 4){
+                    document.getElementsByClassName('el-cascader-menu')[0].style.marginLeft= l+"px";
+                }
+                document.getElementsByClassName('el-cascader-menus')[0].style.marginTop= "50px";
             },
             // changeAreaForOrg(val){
             //     console.log(this.aresId);
