@@ -740,6 +740,7 @@
                 for(var vou of this.voucherList){
                     this.printData.push(vm.printDataTurn(vm,vou));  
                 }
+                this.$print(this.$refs.print)
             },
              //冲红***********************
             chongh(){

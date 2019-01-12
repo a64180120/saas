@@ -1,7 +1,8 @@
 <template>
     <div style="border:5px solid #fff">
-        <div class="navtitle navCss">
-            <el-button type="success" round size="small"  @click="Navingclick()">功能导航</el-button>
+        <div class="navtitle navCss" @click="Navingclick()" :class="{NavShow:barshow,NavHide:!barshow}">
+            <div></div>
+            <el-button type="success" round size="small"  >功能导航</el-button>
         </div>
         <div class="sys-footer" :class="{NavShow:barshow,NavHide:!barshow}" >
             <transition name="move" mode="out-in" appear>
@@ -56,7 +57,7 @@ export default {
     //border-bottom: 1px solid #00B8EE;
     z-index: 99;
     bottom: 0px;
-    border-bottom:5px solid #fff;
+    border-bottom:5px solid #eaeaea;
     
     >.side-nav.top{
         background: none;
@@ -90,6 +91,20 @@ export default {
     z-index: 999;
     bottom: 10px;
     text-align: right;
+    transition: all 0.5s linear;
+    cursor:pointer;
+    >div:first-of-type{
+        position:absolute;
+        background: url('../../assets/images/dh.png');
+        background-size:cover;
+        width:50px;
+        height:80%;
+        top:5px ;
+        left:-50px;
+        color:#333;
+        opacity:0;
+        transition: all 0.5s linear;
+    }
     >button{       
         padding:0;
         color:#333;
@@ -100,6 +115,27 @@ export default {
         text-align: right;
         background: none;
         border:0;
+        left:10px;
+        top:5px;
+        opacity:1;
+        transition: all 0.5s linear;
+    }
+}
+.navtitle.NavShow{
+    left:-45px;
+}
+.sys-footer.NavShow{
+    left:-310px;
+}
+.NavShow{
+    
+    >div:first-of-type{
+        left:50px;
+        opacity:1;
+    }
+    >button{       
+        left:-100px;
+        opacity:0;
     }
 }
 
@@ -195,11 +231,36 @@ export default {
                 position:relative;
                 z-index:6;
             }
+            &:nth-of-type(2){
+                transform:translate(290px);
+                position:relative;
+                z-index:5;
+
+            }
+             &:nth-of-type(3){
+                transform:translate(230px);
+                position:relative;
+                z-index:4;
+            }
+            &:nth-of-type(4){
+                transform:translate(170px);
+                position:relative;
+                z-index:3;
+            }
+            &:nth-of-type(5){
+                transform:translate(110px);
+                position:relative;
+                z-index:2;
+            }
             &:nth-of-type(6){
                 transform:translate(50px);
                 position:relative;
                 z-index:1;
-               
+            }
+            &:nth-of-type(7){
+                transform:translate(-10px);
+                position:relative;
+                z-index:0;
             }
         }
         .el-submenu{
@@ -216,7 +277,12 @@ export default {
                 .el-submenu__title {
                     background:none;
                 }       
-            }     
+            }  
+            &:nth-of-type(1){
+                transform:translate(350px);
+                position:relative;
+                z-index:6;
+            }   
             &:nth-of-type(2){
                 transform:translate(290px);
                 position:relative;
@@ -269,9 +335,28 @@ export default {
             &:nth-of-type(1){
                 
             }
+            &:nth-of-type(2){
+              
+                transition-delay:0.03s
+            }
+             &:nth-of-type(3){
+              
+                transition-delay:0.06s
+            }
+            &:nth-of-type(4){
+              
+                transition-delay:0.09s 
+            }
+            &:nth-of-type(5){
+             
+                transition-delay:0.12s 
+            }
             &:nth-of-type(6){
-                
+              
                 transition-delay:0.15s
+            }
+            &:nth-of-type(7){ 
+                transition-delay:0.18s
             }
         }
         .el-submenu{

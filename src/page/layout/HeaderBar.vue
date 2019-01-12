@@ -21,9 +21,12 @@
                 <div class="telPhone"><img src="../../assets/images/finance/SAAS-03.png"><span>0571-88270588</span></div>
                 <div class="btn-bell">
                     <el-tooltip effect="dark" :content="message?`有${message}条未读消息`:`消息中心`" placement="bottom">
-                        <router-link to="/notice">
+                        <a @click="developing">
                             <div class="message"><img src="../../assets/images/finance/SAAS-02.png"></div>
-                        </router-link>
+                        </a>
+                        <!-- <router-link to="/notice">
+                            <div class="message"><img src="../../assets/images/finance/SAAS-02.png"></div>
+                        </router-link> -->
                     </el-tooltip>
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div>
@@ -149,6 +152,9 @@ export default {
     }
   },
   methods: {
+    developing(){
+      this.$message('功能开发中!')
+    },
     ...mapActions({
       sysLogout: "user/logout"
     }),
