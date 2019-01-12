@@ -54,14 +54,10 @@ export default {
   watch:{
       visible(val){ 
           var vm=this;
-          console.log(val)
-          if(val){
-           
-            console.log(vm)
+          if(val){  
             vm.delayTime=parseInt(vm.delay/1000);
             vm.oneTime(vm);
           }else{
-              console.log(vm)
              vm.delayTime=0; 
           }
          
@@ -103,8 +99,8 @@ export default {
                 justify-content: flex-end;
             }
             >.imgCon{
-                width:60px;
-                height:60px;
+                width:55px;
+                height:55px;
                 margin-right:15px;
                 >img{
                     width:100%;

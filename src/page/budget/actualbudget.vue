@@ -1,195 +1,218 @@
 <template>
     <div class="timeSelect">
         <div class="container">
-    <div class="manageContent" v-loading="loading">
-        <div class="reportBox">
-            <div class="unionState flexPublic">
-                <ul class="flexPublic">
-                </ul>
-                <ul class="flexPublic handle">
-                    <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
-                    <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">核定年末决算</li></a>
+            <div class="manageContent" v-loading="loading">
+            <div class="reportBox">
+                <div class="unionState" style="width: 100%;height: 40px">
+                    <div style="width:100%;float: right">
+                        <ul class="flexUl handle" :style="{'display': changeBtn.disable?'block':'none'}">
+                            <a ><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="!verify?'':changeBtn.disable=false">编辑</li ></a>
+                            <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">核定年末决算</li></a>
 
-                    <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
-                    <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
-                    <a><li style='margin:0 0 0px 20px;' class="el-icon-refresh" @click="refresh"></li></a>
-                </ul>
-            </div>
-            <div class="formData" id="form1">
-                <ul>
-                    <li>科目编码</li>
-                    <li>科目名称</li>
-                    <li>核定预算数(元)</li>
-                    <li>决算数(元)</li>
-                    <li>完成预算(%)</li>
-                    <li>说明</li>
-                </ul>
-                <div class="formData formData_content"  ref="printFrom">
-                <template v-for="(item,index) in budgetList">
-                    <template v-if="item.SubjectCode=='BNSRHJ'">
-                        <ul class="formDataItems flexPublic">
-                            <li class=" bolder" style="width:30%;text-align: center;min-width: 270px">{{item.k_name}}</li>
-                            <li style="display: none"></li>
-
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">
-                                {{item.ThisaccountsTotal | NumFormat}}
-                            </li>
-                            <li>
-                                <div class="progressContainer" >
-                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
-                                    <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
-                                </div>
-                            </li>
-                            <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
-                            </li>
+                            <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                            <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
+                            <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                         </ul>
-                    </template>
+                        <ul class="flexUl handle" :style="{'display': !changeBtn.disable?'block':'none'}">
+                            <a ><li style='margin:0 0 0px 20px;' @click="changeBtn.disable=true">取消</li ></a>
+                            <a><li style='margin:0 0 0px 20px;' @click="saveChange">保存</li></a>
+                            <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">保存并核定</li></a>
 
-                    <template v-else-if="item.SubjectCode=='BNZCHJ'">
-                        <ul class="formDataItems flexPublic">
-                            <li class=" bolder" style="width:30%;text-align: center;min-width: 270px">{{item.k_name}}</li>
-                            <li style="display: none"></li>
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">
-                                {{item.ThisaccountsTotal | NumFormat}}
-                            </li>
-                            <li>
-                                <div class="progressContainer" >
-                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
-                                    <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
-                                </div>
-                            </li>
-                            <li>
-                                <input type="text" v-bind:disabled="changeBtn.disable" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
-                            </li>
                         </ul>
-                    </template>
+                    </div>
 
-                    <template v-else-if="item.SubjectCode=='BNJY'">
-                        <ul class="formDataItems flexPublic">
-                            <li class="bolder">{{item.k_name}}</li>
-                            <li></li>
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
-                            <li></li>
-                            <li>
-                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:value="item.Description" v-on:input="inputDicription">
-                            </li>
-                        </ul>
-                    </template>
-
-                    <template v-else-if="item.SubjectCode=='SNJY'">
-                        <ul class="formDataItems flexPublic">
-                            <li></li>
-                            <li>{{item.k_name}}</li>
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
-                            <li></li>
-                            <li>
-                                其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
-                            </li>
-                        </ul>
-                    </template>
-
-                    <template v-else-if="item.SubjectCode=='BNSHTZ'">
-                        <ul class="formDataItems flexPublic">
-                            <li></li>
-                            <li>{{item.k_name}}</li>
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
-                            <li></li>
-                            <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
-                            </li>
-                        </ul>
-                    </template>
-
-                    <template v-else-if="item.SubjectCode=='BNTZ'">
-                        <ul class="formDataItems flexPublic">
-                            <li></li>
-                            <li>{{item.k_name}}</li>
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
-                            <li></li>
-                            <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
-                            </li>
-                        </ul>
-                    </template>
-
-                    <template v-else-if="item.SubjectCode=='BNTQHBJ'">
-                        <ul class="formDataItems flexPublic">
-                            <li></li>
-                            <li>{{item.k_name}}</li>
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
-                            <li></li>
-                            <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
-                            </li>
-                        </ul>
-                    </template>
-
-                    <template v-else-if="item.SubjectCode=='QMGCJY'">
-                        <ul class="formDataItems flexPublic">
-                            <li class="bolder">{{item.k_name}}</li>
-                            <li></li>
-                            <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
-                            <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
-                            <li>
-                                <!--<div class="progressContainer" >
-                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
-                                    <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
-                                </div>-->
-                            </li>
-                            <li>
-                                其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
-                            </li>
-                        </ul>
-                    </template>
-
-                    <template v-else-if="item.k_name!='未找到该科目编码对应的科目'">
-                        <ul class="formDataItems flexPublic">
-                            <li v-bind:class="{'align-centers':item.Layers==1}">{{item.SubjectCode}}</li>
-                            <li v-bind:class="{'align-center':item.Layers==1}">{{item.k_name}}</li>
-                            <li class="align-right">{{item.BudgetTotal | NumFormat}}</li>
-                            <li class="align-right">
-                                {{item.ThisaccountsTotal | NumFormat}}
-                            </li>
-                            <li>
-                                <div class="progressContainer" >
-                                    <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%','color':'#fff'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
-                                    <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
-                                </div>
-                            </li>
-                            <li>
-                                <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description" v-bind:index="index" v-on:input="inputDicription">
-                            </li>
-                        </ul>
-                    </template>
-                </template>
                 </div>
-                <!--<ul class="formDataItems flexPublic bottomForm">
-                    <li>工会主席：</li>
-                    <li></li>
-                    <li>财务负责人：</li>
-                    <li></li>
-                    <li>复核：</li>
-                    <li></li>
-                    <li>制表：</li>
-                    <li></li>
-                </ul>-->
+                <!--<div class="unionState flexPublic">
+                    <ul class="flexPublic">
+                    </ul>
+                    <ul class="flexPublic handle">
+                        <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
+                        <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">核定年末决算</li></a>
 
+                        <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
+                        <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
+                        <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
+                    </ul>
+                </div>-->
+                <div class="formData" id="form1">
+                    <ul>
+                        <li>科目编码</li>
+                        <li>科目名称</li>
+                        <li>核定预算数(元)</li>
+                        <li>决算数(元)</li>
+                        <li>完成预算(%)</li>
+                        <li>说明</li>
+                    </ul>
+                    <div class="formData formData_content"  ref="printFrom">
+                    <template v-for="(item,index) in budgetList">
+                        <template v-if="item.SubjectCode=='BNSRHJ'">
+                            <ul class="formDataItems flexPublic">
+                                <li class=" bolder" style="width:30%;text-align: center;min-width: 270px">{{item.k_name}}</li>
+                                <li style="display: none"></li>
+
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">
+                                    {{item.ThisaccountsTotal | NumFormat}}
+                                </li>
+                                <li>
+                                    <div class="progressContainer" >
+                                        <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                        <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.SubjectCode=='BNZCHJ'">
+                            <ul class="formDataItems flexPublic">
+                                <li class=" bolder" style="width:30%;text-align: center;min-width: 270px">{{item.k_name}}</li>
+                                <li style="display: none"></li>
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">
+                                    {{item.ThisaccountsTotal | NumFormat}}
+                                </li>
+                                <li>
+                                    <div class="progressContainer" >
+                                        <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                        <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <input type="text" v-bind:disabled="changeBtn.disable" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.SubjectCode=='BNJY'">
+                            <ul class="formDataItems flexPublic">
+                                <li class="bolder">{{item.k_name}}</li>
+                                <li></li>
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
+                                <li></li>
+                                <li>
+                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text"  v-bind:index="index" v-bind:value="item.Description" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.SubjectCode=='SNJY'">
+                            <ul class="formDataItems flexPublic">
+                                <li></li>
+                                <li>{{item.k_name}}</li>
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
+                                <li></li>
+                                <li>
+                                    其中：政府补助结余：<input v-bind:disabled="changeBtn.disable" class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.SubjectCode=='BNSHTZ'">
+                            <ul class="formDataItems flexPublic">
+                                <li></li>
+                                <li>{{item.k_name}}</li>
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
+                                <li></li>
+                                <li>
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.SubjectCode=='BNTZ'">
+                            <ul class="formDataItems flexPublic">
+                                <li></li>
+                                <li>{{item.k_name}}</li>
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
+                                <li></li>
+                                <li>
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.SubjectCode=='BNTQHBJ'">
+                            <ul class="formDataItems flexPublic">
+                                <li></li>
+                                <li>{{item.k_name}}</li>
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
+                                <li></li>
+                                <li>
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.SubjectCode=='QMGCJY'">
+                            <ul class="formDataItems flexPublic">
+                                <li class="bolder">{{item.k_name}}</li>
+                                <li></li>
+                                <li class="align-right">{{item.ApprovedBudgetTotal | NumFormat}}</li>
+                                <li class="align-right">{{item.ThisaccountsTotal | NumFormat}}</li>
+                                <li>
+                                    <!--<div class="progressContainer" >
+                                        <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                        <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
+                                    </div>-->
+                                </li>
+                                <li>
+                                    其中：政府补助结余：<input  v-bind:disabled="changeBtn.disable"class="other" type="text" v-bind:value="item.Description"  v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+
+                        <template v-else-if="item.k_name!='未找到该科目编码对应的科目'">
+                            <ul class="formDataItems flexPublic">
+                                <li v-bind:class="{'align-centers':item.Layers==1}">{{item.SubjectCode}}</li>
+                                <li v-bind:class="{'align-center':item.Layers==1}">{{item.k_name}}</li>
+                                <li class="align-right">{{item.BudgetTotal | NumFormat}}</li>
+                                <li class="align-right">
+                                    {{item.ThisaccountsTotal | NumFormat}}
+                                </li>
+                                <li>
+                                    <div class="progressContainer" >
+                                        <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%','color':'#fff'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                        <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="item.Description" v-bind:index="index" v-on:input="inputDicription">
+                                </li>
+                            </ul>
+                        </template>
+                    </template>
+                    </div>
+                    <!--<ul class="formDataItems flexPublic bottomForm">
+                        <li>工会主席：</li>
+                        <li></li>
+                        <li>财务负责人：</li>
+                        <li></li>
+                        <li>复核：</li>
+                        <li></li>
+                        <li>制表：</li>
+                        <li></li>
+                    </ul>-->
+
+                </div>
+                <div class="verifyPanel" :style="{display:!verify?'block':'none'}">
+                    <div>已核定</div>
+                    <div style="font-size: 14px">{{verifyTime.substring(0,10)}}</div>
+                </div>
+            </div>
+
+            <div class="timeSelectBox">
+                <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
             </div>
         </div>
-
-        <div class="timeSelectBox">
-            <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
         </div>
-    </div>
-    </div>
        <!--核定弹窗提示-->
         <div class="cover" :style="{'display':(showCountMsg?'block':'none')}">
             <div class="coverContent">
@@ -206,6 +229,8 @@
                 </ul>
             </div>
         </div>
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -215,7 +240,7 @@
     import { mapState, mapGetters } from "vuex";
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
-
+    import saasMsg from '../finance/message'
     let balanceData=[];
     export default {
         name: "user",
@@ -224,6 +249,7 @@
                 showCountMsg:false,//核定显示
                 downloadLoading: false,
                 date1:[],
+                currentyear:'',//当前年份
                 dataInfo:[{zhixing:30}],
                 infoStyle:[`#ff9900`],
                 budgetList:[],
@@ -233,15 +259,22 @@
                     disable:true,
                 },
                 loading:true,
-                verify:true//判断页面是否可以修改，true默认可修改，若为false不可修改
+                verifyTime:'',
+                verify:true,//判断页面是否可以修改，true默认可修改，若为false不可修改
+                saasMessage:{
+                    visible:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                },
             }
         },
-        components: {TimeSelectBar},
+        components: {TimeSelectBar,saasMsg},
         computed:{
             ...mapState({
                 userid: state => state.user.userid,
                 orgid: state => state.user.orgid,
-                OrgIds:state => state.user.OrgIds
+                OrgIds:state => state.user.OrgIds,
+                jyear:Auth =>Auth.Pconfig.jyear
             }),
         },
         mounted(){
@@ -278,7 +311,12 @@
                         }
                     }
                 }else{
-                    this.$message({ showClose: true, message:'已经进行过年末决算核定，不可进行修改',type: 'error' })
+                    this.saasMessage={
+                        message:'已经进行过年末决算核定，不可进行修改',
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message({ showClose: true, message:'已经进行过年末决算核定，不可进行修改',type: 'error' })
                 }
             },
             /*
@@ -353,14 +391,18 @@
                 ).then(res=>{
                     that.loading=false;
                     let dataInfo=[];
+
+                    //判断是否已经核算
+                    if( res.Record[0].VerifyEnd==1){
+                        this.verify=false;
+                        this.verifyTime=res.Record[0].VerifyEnd_time;
+                    }else{
+                        this.verify=true;
+                    }
                     for(var i in res.Record){
                         res.Record[i].OrgId=this.orgid;
                         res.Record[i].OrgCod=this.orgcode;
                         res.Record[i].Uyear=year;
-                        //判断是否已经核算
-                        if( res.Record[i].VerifyEnd==1){
-                            this.verify=false;
-                        }
                         if(res.Record[i].ApprovedBudgetTotal==0||res.Record[i].ApprovedBudgetTotal==''||res.Record[i].ApprovedBudgetTotal==null){
                             let anwser=0;
                             dataInfo.push({zhixing:anwser})
@@ -400,11 +442,23 @@
                     }
                 ).then(function(res){
                     that.loading=false;
-                    that.$message({ showClose: true, message:res.Msg,type: 'success' });
+                    that.saasMessage={
+                        message:res.Msg,
+                        delay:3000,
+                        visible:true
+                    };
+                    //that.$message({ showClose: true, message:res.Msg,type: 'success' });
+                    that.changeBtn.disable=true;
                     that.getEndYear();
                 }).catch(function(err){
                     that.loading=false;
-                    that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
+                    that.saasMessage={
+                        message:'保存异常，请刷新页面后重试',
+                        delay:3000,
+                        visible:true
+                    };
+                    //that.$message({showClose:true, message:'保存异常，请刷新页面后重试'});
+                    that.changeBtn.disable=true
                     console.log(err);
                 })
 
@@ -440,10 +494,11 @@
             verifyEnd:function(){
                 if(this.verify){
                     let that=this;
-
+                    let time=this.timeFor(new Date());
                     this.loading=true;
                     for(let i in this.budgetList){
                         this.budgetList[i].VerifyEnd=1;
+                        this.budgetList[i].VerifyEnd_time=time;
                     }
                     this.$axios.post(
                         'PSubjectBudget/PostSave',
@@ -454,16 +509,28 @@
                         }
                     ).then(function(res){
                         that.loading=false;
-                        that.$message({ showClose: true, message:'年末决算核定成功',type: 'success' });
+                        that.saasMessage={
+                            message:'年末决算核定成功',
+                            delay:3000,
+                            visible:true
+                        };
+                        //that.$message({ showClose: true, message:'年末决算核定成功',type: 'success' });
                         that.getEndYear();
+                        that.changeBtn.disable=true
                         that.verify=false;
                         that.showCountMsg=false;
                     }).catch(function(err){
                         that.loading=false;
+                        that.changeBtn.disable=true
                         console.log(err);
                     })
                 }else{
-                    this.$message({ showClose: true, message:'已经核定年末决算',type: 'error' })
+                    this.saasMessage={
+                        message:'已经核定年末决算',
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message({ showClose: true, message:'已经核定年末决算',type: 'error' })
                 }
             },
 
@@ -553,13 +620,35 @@
             //刷新
             refresh:function(){
                 this.getEndYear();
-            }
+            },
+            /*
+            * 当前时间格式化
+            *
+            * */
+            timeFor:function(ti){
+                let time=new Date(ti);
+                let year = time.getFullYear(),
+                    month = time.getMonth()+1<10?'0'+(time.getMonth()+1):time.getMonth()+1,
+                    day = time.getDate()<10?"0"+time.getDate():time.getDate() ,
+                    hours=time.getHours()<10?"0"+time.getHours():time.getHours(),
+                    minutes=time.getMinutes()<10?"0"+time.getMinutes():time.getMinutes(),
+                    second=time.getSeconds()<10?"0"+time.getSeconds():time.getSeconds();
 
+                return year+'-'+month+'-'+day+' '+hours+':'+minutes+':'+second
+            }
         }
     }
 </script>
 
 <style scoped>
+    .flexUl{
+        float: right;
+    }
+    .flexUl>a>li{
+        display: inline-block;
+        float: left;
+        vertical-align: top;
+    }
     .selectContainer>select {
         background-color: transparent;
         line-height: 30px;
@@ -574,11 +663,10 @@
         margin-bottom: 50px;
     }
     .formData_content{
-        margin-top: -10px;
         position: absolute;
         overflow-y: scroll;
         bottom: -50px;
-        top: 105px;
+        top: 90px;
         left: 0;
         right: -17px;
     }
@@ -793,6 +881,12 @@
         color: #FFF;
         background: #3e8cbc;
         padding: 5px 15px;
+    }
+    .disableBtn{
+        color: #cccccc !important;
+        background: #fff !important;
+        border-color: #ccc !important;
+        cursor: not-allowed !important;
     }
 </style>
 

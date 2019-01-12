@@ -31,13 +31,13 @@
                 <div class="list">
                     <div>
                         <ul>
-                            <template v-for="n in (currentyear-startyear+2)">
-                                <template v-if="n+startyear<=currentyear+2">
+                            <template v-for="n in (currentyear-startyear+1)">
+                                <template v-if="n+startyear<=currentyear+1">
                                     <li :date="(startyear+n)+'-'+1"
                                         :class="{'selectMonth':(startyear+n==choosedYear)}"
                                         @click="chosedata"
                                         >{{startyear+n}}</li>
-                                    <i :class="{'colour':(startyear+n==currentyear+2)?true:false}" style="margin: 12px 25px;"></i>
+                                    <i :class="{'colour':(startyear+n==currentyear+1)?true:false}" style="margin: 12px 25px;"></i>
                                 </template>
                                 <template v-else></template>
                             </template>

@@ -11,7 +11,7 @@
                             <a><li style='margin:0 0 0px 10px;' @click="aoc(1)">修改</li ></a>
                             <a><li style='margin:0 0 0px 10px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                             <a><li style='margin:0 0 0px 10px;' @click="printContent">打印</li ></a>
-                            <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
+                            <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                         </ul>
                     </div>
                         <div class="formData">
@@ -154,6 +154,8 @@
                 <time-select-bar @item-click="dateChoose" :showtype="'yearTime'"></time-select-bar>
             </div>
         </div>
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -162,6 +164,7 @@
     import { mapState, mapGetters } from "vuex";
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import qs from 'qs'
+    import saasMsg from '../finance/message'
     export default {
         name: "user",
         data(){
@@ -179,7 +182,12 @@
                 changeList:[],//默认添加的空白表格
                 addCountMoney:0,
                 changeListFix:[],//修改保存的数据
-                fixCountMoney:0
+                fixCountMoney:0,
+                saasMessage:{
+                    visible:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                },
             }
         },
         computed:{
@@ -199,7 +207,7 @@
             this.addBlock();
 
         },
-        components: { TimeSelectBar },
+        components: { TimeSelectBar,saasMsg },
         watch:{
             checkType:function(){
                 this.getCodeData();
@@ -268,7 +276,12 @@
                     this.interCourse=res.Record;
                 }).catch(err=>{
                     this.loading=false;
-                  this.$message(err);
+                    this.saasMessage={
+                        message:err,
+                        delay:3000,
+                        visible:true
+                    };
+                  //this.$message(err);
                 })
             },
             //根据类型获取科目列表
@@ -300,7 +313,12 @@
                         this.getCodeDetailData(true);
                     }
                 }).catch(err=>{
-                    this.$message(err);
+                    this.saasMessage={
+                        message:err,
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message(err);
                 })
             },
             //根据科目类型获取明细列表
@@ -332,7 +350,12 @@
                         this.loading=false;
                         console.log(res);
                         if(res.Record.length==0){
-                            this.$message('当前科目不存在可修改内容，清先添加');
+                            this.saasMessage={
+                                message:'当前科目不存在可修改内容，请先添加',
+                                delay:3000,
+                                visible:true
+                            };
+                            //this.$message('当前科目不存在可修改内容，清先添加');
                         }
                         this.changeListFix=res.Record;
 
@@ -342,7 +365,12 @@
                         }
                     }).catch(err=>{
                         this.loading=false;
-                        this.$message(err);
+                        this.saasMessage={
+                            message:err,
+                            delay:3000,
+                            visible:true
+                        };
+                        //this.$message(err);
                     })
                 }
             },
@@ -383,7 +411,12 @@
                }else{
                    for(var i in this.changeListFix){
                        if(this.changeListFix[i].Content==''||this.changeListFix.AccountSum==''){
-                           this.$message({showClose: true, message:'存在未填写的内容，请补全信息，或删除不必要的数据',type: 'error' });
+                           this.saasMessage={
+                               message:'存在未填写的内容，请补全信息，或删除不必要的数据',
+                               delay:3000,
+                               visible:true
+                           };
+                           //this.$message({showClose: true, message:'存在未填写的内容，请补全信息，或删除不必要的数据',type: 'error' });
                            return
                        }
                    }
@@ -406,7 +439,12 @@
                     'DealingsMst/PostSaveDealings',
                     data
                 ).then(res=>{
-                    this.$message(res.Msg,'success');
+                    this.saasMessage={
+                        message:res.Msg,
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message(res.Msg,'success');
                     if(res.Status=='success'){
                         this.aocType.show=false;
                         this.getCodeData();//每次保存成功之后都要测重新获取科目列表，刷新版本号

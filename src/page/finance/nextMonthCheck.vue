@@ -216,7 +216,10 @@
                                                         }  
                                                      }
                                                      this.$message("检查结束!")
-                                                 })
+                                                 },err => {
+                                                    console.log(err);
+                                                
+                                                })
 
                                          })
 
@@ -249,7 +252,10 @@
                     this.checkedTime=res.Record[0].JAccountPeriod+1;
                     this.year=this.nowTime.getFullYear();
                     this.month=this.checkedTime;
-                  })
+                  },err => {
+                        console.log(err);
+                       
+                    })
                   .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close()})
           },
           //结账功能**********************
@@ -282,7 +288,10 @@
                       }else{
                           this.$message({ showClose: true,message: res.Msg, type: "error"});
                       }
-                  })
+                  },err => {
+                        console.log(err);
+                       
+                    })
                   .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
           },
         
@@ -345,6 +354,9 @@
                                };
                             }
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
@@ -380,6 +392,9 @@
                                 this.getvoucherList();
                             }
                             loading5.close();
+                        },err => {
+                            console.log(err);
+                        
                         })
                         .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
                 }else{
@@ -429,7 +444,10 @@
                         this.voucherList= res.Record;
                     }
                         
-                })
+                },err => {
+                        console.log(err);
+                       
+                    })
                 .catch(err=>{this.$message({ showClose: true,message: 'err', type: "error"});})
         },
       },

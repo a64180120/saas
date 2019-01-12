@@ -79,14 +79,15 @@ router.beforeEach((to, from, next) => {
 
     // 判断用户是否处于登录状态
     let userinfo=Auth.getUserInfoData(),
-        menuInfo = Auth.getMenuStatus();
-        console.log('menuInfo');
-        console.log(menuInfo);
+        menuInfo = Auth.getMenuStatus(),
+        token_Cookies=Auth.getToken();
+        //console.log('menuInfo');
+        //console.log(menuInfo);
         if(menuInfo.Status=='error'){
             menuInfo=[];
         }
 
-    if (userinfo && userinfo.isLogin) {
+    if (userinfo && userinfo.isLogin && token_Cookies) {
         // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
         // 这种情况出现在手动修改地址栏地址时
         if (to.path === "/login") {

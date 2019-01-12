@@ -23,6 +23,7 @@
     "lodash": "^4.17.10",
     "mockjs": "^1.0.1-beta3",
     "nprogress": "^0.2.0",
+    "print-js": "^1.0.54",
     "vue": "^2.5.16",
     "vue-i18n": "^7.3.2",
     "vue-img-inputer": "^2.1.0",

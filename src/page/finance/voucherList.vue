@@ -2,7 +2,7 @@
     <div class="voucherList">               
         <div class="voucherNav">
             <ul>
-                <a @click.prevent="handle('fresh')" style="background:#fff;width:30px;min-width:30px;border-radius:50%;"><li ><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
+                <a @click.prevent="handle('fresh')" style="width:30px"><li style='font-size:27px;' class="el-icon-refresh" ></li></a>
                 <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
                     <li class="more" style="width:80px">
                         <ul >
@@ -596,6 +596,9 @@
                                };
                             }
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
@@ -620,6 +623,9 @@
                                };
                         }
                         this.getvoucherList(); 
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
@@ -857,7 +863,10 @@
                                   message:res.Msg
                                }
                            }   
-                       })
+                       },err => {
+                        console.log(err);
+                       
+                    })
                        .catch(err =>{
                            this.saasMessage={
                                   visible:true,
@@ -953,6 +962,9 @@
                                         };
                                     }
                                     loading.close();
+                                },err => {
+                                    console.log(err);
+                                
                                 })
                                 .catch(err=>{
                                     this.$message({ showClose: true,message: err, type: "error"});
@@ -1019,7 +1031,10 @@
                            } else {
                                vm.$message('保存失败,请重试!')
                            }
-                       })
+                       },err => {
+                        console.log(err);
+                       
+                        })
                        
                        .catch(err =>{console.log(err);loading.close()} )
                }else{
@@ -1089,6 +1104,9 @@
                             this.chooseItem='';
                         }
 
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
             },
@@ -1141,7 +1159,10 @@
                                 this.getvoucherList();
                             }
                             loading5.close();
-                        })
+                        },err => {
+                        console.log(err);
+                       
+                    })
                         .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
                 }else{
                     this.resetShow=false;
@@ -1167,6 +1188,9 @@
                         this.assistItemList.kemu=res.list;
                         this.superSearchVal.show=true;
                         loading.close();
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{
                         loading.close();
@@ -1191,6 +1215,9 @@
                         }
                         this.superSearchVal.assistItemList.type=res.type;
                         //this.assistItemList.kemu=res.list;
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{
                         this.$message({ showClose: true,message: err, type: "error"});loading.close();
@@ -1236,6 +1263,9 @@
                         this.$message({ showClose: true, message: res.Msg, type: 'error'});
                         return;
                     }
+                },err => {
+                    console.log(err);
+                    
                 }).catch(error => {
                     this.$message({ showClose: true, message: '附件删除错误', type: 'error'});
                 });
@@ -1270,7 +1300,10 @@
                     }else{
                         this.GetImportVoucherListFromExcel(data);
                     }
-                })
+                },err => {
+                        console.log(err);
+                       
+                 })
                 .catch(err=>{
                     loading.close();
                     this.$message({ showClose: true, message: err, type: 'error'});
@@ -1318,6 +1351,9 @@
                             }
                             this.fileSuccessMsg=res.Msg;                              
                         }
+                    },err => {
+                        console.log(err);
+                       
                     })
                     .catch(err=>{
                         loading.close();
@@ -1958,6 +1994,11 @@
             height:100%;
             overflow-y: auto;
         }
+    }
+    .listContainer>ul.listTitle{
+        // >li{
+        //     border-right:1px solid #fff;
+        // }
     }
     .listContainer ul.listTitle{
         height:40px;

@@ -1,53 +1,55 @@
 <template>
     <div class="timeSelect">
         <div class="container">
-    <div class="manageContent" v-loading="loading">
-        <div class="reportBox">
-        <div class="unionState flexPublic">
-            <ul class="flexPublic">
-                <li class="flexPublic">
-                    <div>条件：</div>
-                    <div  class="block selectContainer">
-                        <select class="el-input__inner el-button--small" v-model="proofType">
-                            <option value="1">包含未审核凭证</option>
-                            <option value="0">不包含未审核凭证</option>
-                        </select>
-                    </div>
-                </li>
-            </ul>
-            <ul class="flexPublic handle">
-                <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
-                <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
+            <div class="manageContent" v-loading="loading">
+            <div class="reportBox">
+            <div class="unionState flexPublic">
+                <ul class="flexPublic">
+                    <li class="flexPublic">
+                        <div>条件：</div>
+                        <div  class="block selectContainer">
+                            <select class="el-input__inner el-button--small" v-model="proofType">
+                                <option value="1">包含未审核凭证</option>
+                                <option value="0">不包含未审核凭证</option>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="flexPublic handle">
+                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
+                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
 
-                <a><li style='margin:0 0 0px 10px;' class="el-icon-refresh" @click="refresh"></li></a>
-            </ul>
-        </div>
-        <div class="formData" ref="printFrom">
-            <tree-table
-                :isindex="false"
-                :data="inMoney"
-                :expand-all="expandAll"
-                node-key="KCode"
-                :columns="columns"
-                :header-cell-style="{background:'#d3e9f9',color:'#000','text-align':'center'}"
-                v-loading="loading"
-                highlight-current-row
-                :extraheight='extraheight'
-                border>
-            </tree-table>
-            <!--<ul>
-                <li v-for="item in columns">{{item.text}}</li>
-            </ul>
-            <ul v-for="">
+                    <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
+                </ul>
+            </div>
+            <div class="formData" ref="printFrom">
+                <tree-table
+                    :isindex="false"
+                    :data="inMoney"
+                    :expand-all="expandAll"
+                    node-key="KCode"
+                    :columns="columns"
+                    :header-cell-style="{background:'#d3e9f9',color:'#000','text-align':'center'}"
+                    v-loading="loading"
+                    highlight-current-row
+                    :extraheight='extraheight'
+                    border>
+                </tree-table>
+                <!--<ul>
+                    <li v-for="item in columns">{{item.text}}</li>
+                </ul>
+                <ul v-for="">
 
-            </ul>-->
+                </ul>-->
+            </div>
+            </div>
+            <div class="timeSelectBox">
+                <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
+            </div>
         </div>
-        </div>
-        <div class="timeSelectBox">
-            <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
-        </div>
-    </div>
-   </div>
+       </div>
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
 </template>
 
@@ -58,9 +60,11 @@
     import { IncomList,IncomListToExcel } from '@/api/voucher/reportInfo'
     import { mapState, mapActions } from 'vuex'
     import treeTable from "@/components/tree-table/indexHeight";
+    //import treeTable from "@/components/tree-table";
     import treeSum from './totalAmount'
     import TimeSelectBar from "../../components/TimeSelectBar/index";
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
+    import saasMsg from '../finance/message'
     export default {
         name: "expensesRe",
         data(){
@@ -99,10 +103,15 @@
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
                 proofType:'1',
                 date1:[],
-                loading:false
+                loading:false,
+                saasMessage:{
+                    visible:false,  //消息弹出框*******
+                    message:'', //消息主体内容**************
+                    delay:0
+                },
             }
         },
-        components: { treeTable,TimeSelectBar },
+        components: { treeTable,TimeSelectBar,saasMsg },
         computed:{
             ...mapState({
                 orgid:state=>state.user.orgid,
@@ -168,7 +177,12 @@
                 IncomList(vm,data).then(res => {
                     this.loading = false;
                     if(res.Status==='error'){
-                        this.$message.error(res.Msg);
+                        this.saasMessage={
+                            message:res.Msg,
+                            delay:3000,
+                            visible:true
+                        };
+                        //this.$message.error(res.Msg);
                         return
                     }
                     var data=res.Data;
@@ -230,7 +244,12 @@
                 }).catch(error =>{
                     console.log(error);
                     this.loading = false;
-                    this.$message({ showClose: true,  message: '收入科目获取错误',  type: 'error' })
+                    this.saasMessage={
+                        message:'收入科目获取错误',
+                        delay:3000,
+                        visible:true
+                    };
+                    //this.$message({ showClose: true,  message: '收入科目获取错误',  type: 'error' })
                 })
 
             },
