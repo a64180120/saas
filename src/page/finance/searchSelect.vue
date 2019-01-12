@@ -12,7 +12,7 @@
           <span class="list-item-text">{{item.KCode}} &nbsp;{{item.KName}}</span>
         </li>
       </ul>
-      <div class="tip__nodata" v-show="inputFocus"><router-link to="/setting/subject">{{nodatatext}}</router-link></div>
+      <div class="tip__nodata" v-show="inputFocus"><router-link to="/setting/subjectstart">{{nodatatext}}</router-link></div>
     </div>
 </template>
 

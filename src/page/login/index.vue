@@ -701,7 +701,7 @@ export default {
         height:61px;
         line-height: 61px;
         width: 100%;
-        background-color: #211f20;
+        background-color: #464144;
         overflow: hidden;
         position: fixed;
         top: 0;
@@ -727,7 +727,7 @@ export default {
         height:61px;
         line-height: 61px;
         width: 100%;
-        background-color: #211f20;
+        background-color: #464144;
         overflow: hidden;
         position: fixed;
         bottom: 0;

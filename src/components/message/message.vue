@@ -18,6 +18,7 @@
 <script>
 
 export default {
+    name:'message',
   data() {
     return {
         delayTime:''
@@ -80,7 +81,7 @@ export default {
         width: 370px;
         height: 220px;
         position:absolute;
-        top:100px;
+        top:200px;
         left:40%;
         background: #fff;
         border:1px solid #ccc;

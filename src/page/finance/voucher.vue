@@ -16,7 +16,7 @@
                 </li>
                 <li class="flexPublic">
                     <div @click.stop="picUploadShow" class="uploaderTitle"></div>    
-                    <div >附单据&nbsp;<span class="fileCount">{{PAttachment}}</span>&nbsp;张&nbsp;</div>                         
+                    <div class="fileContainer" ><div>附单据&nbsp;</div><div class="inputContainer"><input type="text" v-model="PAttachment"></div><div>&nbsp;张&nbsp;</div><div style="clear:both"></div></div>                         
                 </li>
                 
             </ul>
@@ -71,7 +71,7 @@
                         </div>
                         <li>
                             <div class="inputContainer" >
-                                <textarea :class="{chongHcss:AbstractCss=='冲红'}" v-model="item.Abstract" @focus="showAddIcon(index)" maxlength="100"></textarea>
+                                <textarea :disabled="disabled" :class="{chongHcss:AbstractCss=='冲红',gengZcss:AbstractCss=='更正'}" v-model="item.Abstract" @focus="showAddIcon(index,item,$event)" @blur="defaultHandle(item.Abstract)" maxlength="100"></textarea>
                             </div>
                         </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
@@ -192,6 +192,9 @@
         <el-dialog title="选择附件"  :visible.sync="picVisible" :modal=false width="40%">
             <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
         </el-dialog>
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
+  
     </div>
 </template>
 
@@ -206,7 +209,8 @@
         name: "voucher",
         props:{
             'dataList':Object,
-            'sideDate':String
+            'sideDate':String,
+            'disabled':Boolean
         },
         data(){return{
             fatherData:'',
@@ -247,7 +251,17 @@
             assistCheck:true,
             sideDateNew:'',
             nowTime:new Date,
-            AbstractCss:false
+            AbstractCss:false,
+            defaultData:{ //摘要默认值
+                Abstract:'',
+                JSum:0,
+                DSum:0
+            },
+            saasMessage:{
+                message:'',
+                delay:0,
+                visible:false
+            }
         }},
         created(){
             if((!this.dataList.data.Mst)||typeof(this.dataList.data.Mst)=='string'){//没有传参时初始化页面
@@ -410,7 +424,6 @@
                     Mst:this.fatherData,
                     Attachements: this.Attachements
                 }
-            
             },
             //添加删除行信息********************************
             handleContent(bool,index){
@@ -526,6 +539,7 @@
                     }
                 }
                 this.AbstractCss=data.PSource?data.PSource:'';//摘要样式******************
+                console.log(this.AbstractCss)
             },
             //获取附件信息*******************
             getAttachements(PhId){                 
@@ -638,9 +652,10 @@
                 const loading5=this.$loading();
                 this.$axios.get('/PVoucherMst/GetSubjectBalance',{params:data})
                     .then(res=>{
-                        console.log(res.Record)
+                        console.log(res)
                         if(res.Status=='error'){
-                            this.$message(res.Msg)
+                            this.$message(res.Msg);
+                            return;
                         }
                         if(res.Record.length==0){
                             this.voucherInfo[Msg.id].balance=0
@@ -650,7 +665,6 @@
                         if(this.voucherInfo[Msg.id].balance==0){
                             this.voucherInfo[Msg.id].balance='0';
                         }
-                        console.log(this.voucherInfo[Msg.id].balance)
                         this.$forceUpdate();
                         loading5.close();
                     },err => {
@@ -686,7 +700,6 @@
             },
             //
             moneyCancle(item,val){
-                console.log(item,val)
                 item.money[val]='';
             },
             //金额输入框键入***************
@@ -704,7 +717,7 @@
                 }else{
                     input=$event;
                 }
-                if(!this.countJie||!this.countDai){  //数据监听不好判断数组,尝试加了countJIe中间值尝试******后续研究
+                if(!this.countJie||!this.countDai){  //数据监听不好判断数组,为了触发合计尝试加了countJIe中间值尝试******后续研究
                     this.countJie=0;
                     this.countDai=0;
                 }else{
@@ -818,7 +831,7 @@
                     item.checked=false;
                 }
                 this.$forceUpdate();
-                console.log(this.kemuSel)
+                
             },
             moneyInputHide(){//输入框隐藏**********************
                 for(var input of this.voucherInfo){
@@ -828,18 +841,41 @@
                 for(var item of this.kemuSel){
                     item.checked=false;
                 }
-                console.log(this.kemuSel)
                 for(var assist of this.assistItem){
                     assist.checked=false;
                 }
                 this.moneyInputMask=false;
             },
-            showAddIcon(index){//增删icon显示*************
-                for(var item of this.addIcon){
-                    item.checked=false;
+            showAddIcon(index,item,$event){//增删icon显示*************//添加默认摘要*****************
+                for(var add of this.addIcon){
+                    add.checked=false;
                 }
                 this.addIcon[index].checked=true;
+                item.Abstract=this.defaultData.Abstract; //自动添加上一个摘要
+                console.log(this.jiefang,this.daifang);
+                if(!this.countJie||!this.countDai){  //数据监听不好判断数组,为了触发合计尝试加了countJIe中间值尝试******后续研究
+                    this.countJie=0;
+                    this.countDai=0;
+                }else{
+                    this.countJie++;
+                    this.countDai++;
+                }
+                var children1;
+                if(this.jiefang-this.daifang>0){  //自动添加本级金额
+                     item.money.daifang= this.jiefang-this.daifang;
+                     children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.nextElementSibling.children;
+                     this.moneyTurn(item.money.daifang,children1);
+                }else if(this.jiefang-this.daifang<0){
+                    item.money.jiefang= (this.jiefang-this.daifang)*-1;
+                    children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.children;  
+                    this.moneyTurn(item.money.jiefang,children1);
+                }
+                this.countJie++;  //触发合计更新
+                this.countDai++;    
                 this.$forceUpdate();
+            },
+            defaultHandle(val,){
+                this.defaultData.Abstract=val;
             },
             //附件上传************************************
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
@@ -1445,6 +1481,15 @@
 }
 .chongHcss{
     color:red;
+}
+.gengZcss{
+    color:blue;
+}
+.fileContainer >div{
+    float:left;
+    &.inputContainer{
+        width:50px;
+    }
 }
 </style>
 <style>

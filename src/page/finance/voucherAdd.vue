@@ -39,7 +39,7 @@
                         <div @click.prevent="addVoucher('keepModel')">存为模板</div>
                     </li>
                 </a> 
-                <a @click.prevent="addVoucher('fresh')"><li style="padding:0 5px;width:70px">返回新增</li></a>                  
+                <a @click.prevent="addVoucher('fresh')"><li style="padding:0 5px;width:60px">新增</li></a>                  
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -51,7 +51,7 @@
                     <span v-if="voucherMask=='chongh'">冲红凭证</span>
                     <span v-if="voucherMask=='gengz'">更正凭证</span>
                     <span v-if="voucherMask=='update'">修改凭证</span>
-                    <i @click="voucherMaskShow(false)"></i>
+                    <i @click="keepChoose(false)"></i>
                 </p>
                 <div style="height:40px;" v-if="voucherMask">
                     <span style="float:right" class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
@@ -60,7 +60,7 @@
 
                 <div class="voucherDisabledCon">
                     <div :class="{voucherDisabled:voucherAdd}"></div>
-                    <voucher :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                    <voucher :disabled="voucherAdd" :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                 </div>
                  <div v-show="(!voucherMask)&&voucherDataList.bool" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
             </div>
@@ -194,12 +194,13 @@
             </div>
         </div>
         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
+        <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
+        <saasconfirm :message="saasConfirm.message" v-show="saasConfirm.show" @confirm-click="confirmData"></saasconfirm>
     </div>
 </template>
 
 <script>
-    import saasMsg from './message'
+    
     import nextMonth from './nextMonthCheck'
     import voucher from './voucher'
     import {mapState, mapActions} from 'vuex'
@@ -259,6 +260,10 @@
                 visible:false,  //消息弹出框*******
                 message:'', //消息主体内容**************
                 delay:0
+            },
+            saasConfirm:{
+                message:'',
+                show:false
             }
         }},
         created(){ 
@@ -290,7 +295,6 @@
                             }
                             return;
                         }
-                        console.log(this.voucherDataList.data);
                         this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
                         this.voucherMaskShow('update');
                         this.voucherAdd=false;
@@ -366,7 +370,11 @@
                             return;
                         }
                         if(this.voucherDataList.data.Mst.Dtls.length<=0){
-                            this.$massage('请输入内容!')
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'请输入内容!'
+                            }
                             return;
                         }
                          if(confirm('确定删除记录!')){
@@ -415,6 +423,14 @@
             // },
             //保存凭证*******************
             keepVoucher(str){
+                if(!this.dataCheck()){
+                    this.saasMessage={
+                        visible:true,
+                        delay:3000,
+                        message:'借贷不平衡,请查看!'
+                    }
+                    return;
+                }
                 var url='Add';
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
                 var Vdata=this.voucherDataList.data;
@@ -641,7 +657,24 @@
             },
             voucherData(){//接收voucher组件传值************
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
-                console.log('voucher传值',this.voucherDataList)
+            },
+            confirmData(data){
+                
+            },
+            //判断借贷平衡***********
+            dataCheck(){
+                var data=this.voucherDataList.data.Mst.Dtls;
+                var Jcount=0;
+                var Dcount=0;
+                for(var dtl of data){
+                    Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
+                    Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
+                }
+                if(Jcount==Dcount){
+                    return true;
+                }else{
+                    return false;
+                }
             },
             //接收temp组件传值***********************
             tempClick(data){
@@ -782,8 +815,11 @@
                     itemValuePhid:vm.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":vm.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":vm.superSearchVal.date2.replace('-','')}
                 }
+                const loading1=this.$loading();
                 vm.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
+                        loading1.close();
+                        console.log(res);
                          if(res.Status=='success'){        
                             vm.$message(res.Msg);
                             vm.voucherDataList.data={
@@ -792,7 +828,14 @@
                              }
                              vm.resetVoucher();
                              return;
-                        } else{               
+                        } else if(res.Status=='error'){
+                            this.saasMessage={
+                                visible:false,  //消息弹出框*******
+                                message:'', //消息主体内容**************
+                                delay:0
+                            }
+                        }
+                         else{               
                             if(val=='searcher'&&res.Record.length>1){
                                vm.$store.commit("tagNav/upexcludeArr", ['voucherList']);
                                  vm.$router.push({path:'/finance/voucherList',query:{voucherList:res.Record}})   
@@ -817,10 +860,11 @@
                         }
                     },
                     err => {
+                        loading1.close();
                         console.log(err);
                        
                     })
-                    .catch(err=>{vm.$message({ showClose: true,message: err, type: "error"});})
+                    .catch(err=>{loading1.close();vm.$message({ showClose: true,message: err, type: "error"});})
             },
             
             //选择会计期***************
@@ -1010,13 +1054,15 @@
                         return;
                     }
                 }
+                var year;
                 var month;
                 var date1;
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
+                year=Mst.PDate.slice(0,4);
                 month=Mst.PDate.slice(5,7);
                 date1=Mst.PDate.slice(8,10);
                 for(var dtl of Mst.Dtls){   
-                    dtl.Abstract=`注销${month}月${date1}号${Mst.PNo}号凭证`;                   
+                    dtl.Abstract=`注销${year}年${month}月${date1}号${Mst.PNo}号凭证`;                   
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
                     if(dtl.DtlAccounts){
@@ -1077,6 +1123,7 @@
             },
             keepChoose(val){
                 var vm=this;
+                console.log(val);
                 if(val){
                     this.voucherData();
                     var id = this.voucherDataList.data.Mst.PhId;
@@ -1139,8 +1186,14 @@
                                             vm.voucherDataList.data.Mst.PSource='更正';
                                             for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
                                                 if(dtl.SubjectCode){
-                                                    dtl.Abstract=dtl.Abstract.replace("注销",'更正错账')
-                                                }                                            
+                                                    dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                                    dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                                    if(dtl.DtlAccounts){
+                                                        dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                                        dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                                    }   
+                                                }                                                   
                                             }
                                             vm.voucherMask='gengz';
                                             this.voucherAdd=false; 
@@ -1254,7 +1307,6 @@
             voucher,
             voucherTemp,
             nextMonth,
-            saasMsg
         }
     }
 </script>
@@ -1693,7 +1745,7 @@
                         }
                     }
                 }
-
+                
                 >ul{          
                     padding:5px 20px;
                     width:100%;
@@ -1883,6 +1935,12 @@
                         }
                     }
                 }
+                .year-month{
+                   
+                    >li{
+                        float:left;
+                    }
+                }
                 >ul{
                    
                     padding:5px 20px;
@@ -1981,7 +2039,7 @@
           overflow-y: auto;
           padding:10px;
           >div:first-of-type{
-              float:right;
+              //float:right;
               padding:5px 10px;
               position: relative;
               z-index: 1;
@@ -2037,13 +2095,14 @@
          width:100%;  
          z-index: 1; 
          background:#fff;
-        .voucherDisabled{
-            
+        .voucherDisabled{            
             position:absolute;
             background: none;
             z-index: 99;
-            width:100%;
+            width:74%;
             height:100%;
+            top:0;
+            right:0;
             >div{
                 position:relative;
                 z-index:89;

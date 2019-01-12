@@ -11,8 +11,8 @@
               <div>{{username}}<div></div></div>
               <ul :class="{userDropDown:userDropDown}">
                 <li>
-                  <div>{{username}}</div>
-                  <div>({{uid}})</div>
+                  <div>{{userInfoHead.RealName}}</div>
+                  <div>({{userInfoHead.MobilePhone}})</div>
                 </li>
                 <li @click.stop="dialog.editPaw.show=true">修改密码</li>
                 <li>退出登录</li>
@@ -248,6 +248,7 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import config from '@/util/ajaxConfig'
+  import auth from "@/util/auth"
   export default {
     name: "home",
     data(){
@@ -345,11 +346,13 @@
           uid: state => state.user.userid,
           username: state => state.user.username,
           orgcode: state => state.user.orgcode,
-          orgid: state => state.user.orgid
+          orgid: state => state.user.orgid,
+          phone:state=>state.user.username
       })
 
     },
     mounted(){
+      this.userinfoget()
       this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t1.jpg')
       this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t2.jpg')
       this.imgList.push(this.picUrl+'/UpLoadFiles/Title/t3.jpg')
@@ -366,6 +369,78 @@
       openUrl(object){
         window.open(object.url);
       },
+      ...mapActions({
+      sysLogout: "user/logout"
+    }),
+      userinfoget:function(){
+        let user=auth.getUserInfoData();
+        if(user){
+          this.userInfoHead=user.userInfo
+        }
+        //this.userInfoHead=auth.getUserInfoData().userInfo;
+      },
+    userOperation(command) {
+        // 用户名下拉菜单选择事件
+      switch (command) {
+        case "logout":
+          this.logout();
+          break;
+        case "editPaw":
+          this.dialog.editPaw.show = true;
+          console.log("编辑密码");
+          console.log(this.uphone);
+          break;
+      }
+    },
+    logout() {
+        //退出事件
+      this.sysLogout().then(() => {
+        this.$router.push("/login");
+      });
+    },
+      editPawSubmit() {
+      this.$refs.editPaw.validate(valid => {
+        if (valid) {
+          if (this.editPaw.newPaw!= this.editPaw.confirmNewPaw) {
+            console.log("新密码与确认新密码不一致!");
+            this.$message.error("新密码与确认新密码不一致!");
+            return;
+          }
+
+          var oldPwd = md5(this.editPaw.oldPaw);
+          var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);
+
+          //接口要包含3个参数： uid、 oldPwd、 newPwd
+          let data={
+              uid:this.uid,
+              orgid:this.orgid,
+              OldPwd: oldPwd,
+              NewPwd: newPwd
+          };
+          this.$axios.post('/SysUser/PostUpdatePassword',data)
+            .then(res=>{
+                if (res.Status=='success'){
+                    this.$message.success("密码修改成功!");
+                    this.dialog.editPaw.show = false;
+                    this.editPaw.oldPaw="";
+                    this.editPaw.newPaw="";
+                    this.editPaw.confirmNewPaw="";
+                    return true;
+                }
+
+                if (res.Status=="error"){
+                    this.$message.error(res.Msg);
+                    return false;
+                }
+            })
+            .catch(err=>console.log(err));
+
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
       typeclick(object){
         //alert(object);
         this.active=object;
@@ -893,7 +968,7 @@
     .ourInfo{
       width:100%;
       height:360px;
-      background: #282828;
+      background: #464144;
       padding:19px 7px 10px 10px;
 
       >div{
@@ -955,7 +1030,7 @@
               width:80px;
             }
             div{
-              width:150px;
+              width:229px;
               color:#333;
               input{
                 height:30px;
@@ -986,7 +1061,7 @@
   }
   footer{
     padding:0 70px;
-    background: #000;
+    background: #464144;
     height:300px;
     margin-top:15px;
     >div{

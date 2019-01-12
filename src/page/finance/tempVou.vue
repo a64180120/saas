@@ -237,10 +237,7 @@
         methods:{
             //voucher组件要返回数据的函数********************
             voucherData() {
-                if(this.jiefang!==this.daifang){
-                    alert('借方金额不等于贷方金额,请查看');
-                    return;
-                }else{
+                
                     var dtls = this.fatherData.Dtls;
                     var account;
                     var item;
@@ -347,7 +344,7 @@
                         Mst:this.fatherData,
                         Attachements:this.fileList
                     }
-                }
+                
             },
             //添加删除行信息********************************
             handleContent(bool,index){
