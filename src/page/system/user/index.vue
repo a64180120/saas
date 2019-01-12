@@ -22,6 +22,9 @@
                         <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10"
                                    @click="PageReset">密码重置
                         </el-button>
+                        <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10"
+                                   @click="SendInvite">发送邀请
+                        </el-button>
                         <el-button type="info"  size="small" class="el-icon-refresh"
                                    @click="refresh">
                         </el-button>
@@ -170,6 +173,7 @@
 </template>
 <script>
     import {mapState, mapActions} from 'vuex'
+    import httpConfig from "../../../util/ajaxConfig";
     import Auth from "@/util/auth";
     import {
         SysUserAdd,
@@ -265,7 +269,8 @@
         computed: {
             ...mapState({
                 userid: state => state.user.userid,
-                orgid: state => state.user.orgid
+                orgid: state => state.user.orgid,
+                username:state=> state.user.username
             })
         },
         methods: {
@@ -701,6 +706,49 @@
                 }
 
             },
+            //发送邀请码
+            SendInvite(){
+                let object = this.singleSelection;
+                var vm = this;
+
+                let id = object.length > 0 ? object[0].PhId : 0;
+                if(object.length > 0){
+                    if(object[0].EnabledMark == '2'){
+                        this.messageTs();
+                        return;
+                    }
+                }
+                if (id != 0) {
+                    let base = httpConfig.getAxiosBaseConfig();
+                    console.log(this.namee);
+                    this.$confirm('确定要向该账户发送邀请?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        SysUserSendInvitationCode(vm, {
+                            Uname: vm.username,
+                            Url: base + "/register",
+                            Phone:object[0].MobilePhone,
+                            InvitationCode:object[0].InvitationCode
+                        }).then(res => {
+                            if (res.Status === 'error') {
+                                vm.$message.error(res.Msg);
+                                return
+                            }
+                            vm.$message.success('发送邀请成功! 邀请码为：123456');
+
+                        }).catch(error => {
+                            console.log(error);
+                            vm.$message({showClose: true, message: "发送邀请错误", type: "error"});
+                        })
+                    }).catch(() => {
+                        this.$message({type: 'info', message: '已取消邀请！'});
+                    });
+                } else {
+                    this.$message({showClose: true, message: "请选中列表的其中一行", type: "warning"});
+                }
+            },
             //账号移交
             Transfer() {
 
@@ -1001,6 +1049,19 @@
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style scoped>
+    .el-button--info:checked, .el-button--info:focus{
+        background: #00B8EE;
+        color: #FFFFFF;
+    }
+    .el-icon-refresh:before {
+        content: "\E633";
+        font-size: 20px;
+        color: #00B8EE;
+    }
+    .el-icon-refresh{
+        background: #FFFFFF;
+        border-color: #ffffff;
+    }
     .el-checkbox-role {
         width: 100%;
         float: left;
