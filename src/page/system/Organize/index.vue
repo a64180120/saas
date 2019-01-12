@@ -292,6 +292,8 @@
             <!--<router-link to="">运营规范</router-link>-->
             <!--<router-link to="">关于政云</router-link>-->
         <!--</div>-->
+        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+        <message :visible.sync="message.visible" :delay="message.delay" :message='message.message'></message>
     </div>
 
 </template>
@@ -307,6 +309,11 @@
         name: 'demo',
         data() {
             return {
+                message:{
+                    message:'',
+                    delay:0,
+                    visible:false
+                },
                 record: false,
                 changePhid:'',
                 beforeChange:{},
@@ -385,7 +392,7 @@
         },
         //组件
         components: {
-            pictureUpload
+            pictureUpload,
         },
         created() {
 
@@ -441,8 +448,8 @@
                 this.selectArea(this.orgForm.Province, 1);
                 this.selectArea(this.orgForm.City, 2);
                 this.selectArea(this.orgForm.County, 3);
-                this.getParentByArea(4, this.orgForm.Street);
                 this.getAdminOrganize(this.orgForm.ParentId);
+                this.getParentByArea(4, this.orgForm.Street);
             },
             //改变省后的点击事件
             changeProvince(){
@@ -509,17 +516,17 @@
                     .then(res => {
                         console.log(res);
                         this.ParentLists = res;
-                        if(res.length > 0){
-                            this.orgForm.Parent = res[0];
-                            this.orgForm.ParentId = res[0].PhId;
-                            this.orgForm.ParentEnCode = res[0].EnCode;
-                            this.orgForm.ParentName = res[0].OrgName;
-                        }else{
-                            this.orgForm.Parent = '';
-                            this.orgForm.ParentId = '';
-                            this.orgForm.ParentEnCode = '';
-                            this.orgForm.ParentName = '';
-                        }
+                        // if(res.length > 0){
+                        //     this.orgForm.Parent = res[0];
+                        //     this.orgForm.ParentId = res[0].PhId;
+                        //     this.orgForm.ParentEnCode = res[0].EnCode;
+                        //     this.orgForm.ParentName = res[0].OrgName;
+                        // }else{
+                        //     this.orgForm.Parent = '';
+                        //     this.orgForm.ParentId = '';
+                        //     this.orgForm.ParentEnCode = '';
+                        //     this.orgForm.ParentName = '';
+                        // }
                     })
                     .catch(err => {
                         console.log(err);
@@ -532,6 +539,9 @@
                 this.$axios.get('/SysAdminOrganize/GetSysAdminOrganize', {params: data})
                     .then(res => {
                         this.orgForm.Parent = res;
+                        this.orgForm.ParentId = res.PhId;
+                        this.orgForm.ParentEnCode = res.EnCode;
+                        this.orgForm.ParentName = res.OrgName;
                     })
                     .catch(err => {
                         console.log(err);
@@ -581,7 +591,12 @@
                 }).then(res => {
                     this.loading = false;
                     if (res.Status == 'success') {
-                        this.$message.success("保存成功！");
+                        this.message={
+                            message:'保存成功！',
+                            delay:4000,
+                            visible:true
+                        }
+                        //this.$message.success("保存成功！");
                         this.editVisible = false;
                         this.isedit = false;
                         this.getData();

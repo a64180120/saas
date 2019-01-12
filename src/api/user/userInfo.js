@@ -130,8 +130,8 @@ export function SysUserSendInvitationCode(object,param) {
     return new Promise((resolve, reject) => {
         object.$axios({
             url: "/SysUser/GetSendInvitationCode",
-            method: "get",
-            data: param
+            method: 'get',
+            params: param
         }).then(res => {
             resolve(res)
         }).catch(error => {
