@@ -205,9 +205,9 @@
     import * as axios from "axios";
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs';
-    import TimeSelectBar from "../../components/TimeSelectBar/index";
+    import TimeSelectBar from "@/components/TimeSelectBar/index";
     import { mapState, mapGetters } from "vuex";
-    import saasMsg from '../finance/message'
+    import saasMsg from '@/components/message/message'
     let balanceData=[];
     export default {
         name: "assets",

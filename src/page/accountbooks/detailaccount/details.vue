@@ -192,7 +192,7 @@
     import TimeSelectBar from "@/components/TimeSelectBar/index";
     import voucher from '../..//finance/voucher'
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
-    import saasMsg from '../../finance/message'
+    import saasMsg from '@/components/message/message'
     /**
      * 明细表
      */

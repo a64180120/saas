@@ -62,9 +62,9 @@
     import treeTable from "@/components/tree-table/indexHeight";
     //import treeTable from "@/components/tree-table";
     import treeSum from './totalAmount'
-    import TimeSelectBar from "../../components/TimeSelectBar/index";
+    import TimeSelectBar from "@/components/TimeSelectBar/index";
     import { getLodop } from '@/plugins/Lodop/LodopFuncs'
-    import saasMsg from '../finance/message'
+    import saasMsg from '@/components/message/message'
     export default {
         name: "expensesRe",
         data(){

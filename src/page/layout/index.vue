@@ -3,7 +3,11 @@
         <template>
             <!-- v-once只渲染元素和组件一次 头部 -->
             <header-bar v-on:collapseByValue="collapseChange" v-once>
-                <p slot="logo"><router-link to="/index" class="header-title">工会云财务</router-link></p>
+                <p slot="logo">
+                    <router-link to="/index" class="header-title" style="width: 100%;height: 78%;left: 10px;display: block;">
+                        <img style="height: 45px;margin-top: 5px;" src="../../assets/images/logo2.png">
+                    </router-link>
+                </p>
             </header-bar>
             <!-- 左侧菜单 -->
             <!-- <nav-bar :isCollapse="collapsevule"></nav-bar> -->
@@ -20,14 +24,15 @@
         </div>
         <template>
             <bottom-bar :isCollapse="collapsevule" v-once>
-                
+
             </bottom-bar>
         </template>
         <!--15天提示弹窗-->
         <!--timerShowType?'block':'none'-->
-        <div :style="{'display':timerShowType?'block':'none','position':'fixed','z-index':'9999'}">
+        <!--此处代码用于开启15天弹窗提示-->
+        <!--<div :style="{'display':timerShowType?'block':'none','position':'fixed','z-index':'9999'}">
             <countdownpop></countdownpop>
-        </div>
+        </div>-->
     </div>
 </template>
 

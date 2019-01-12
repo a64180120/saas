@@ -32,6 +32,20 @@
                             <li>说明</li>
                         </ul>
                             <div class="formData formData_content"  ref="printFrom">
+                                <!--<template v-for="n in 100">
+                                    <ul class="formDataItems flexPublic">
+                                        <li class=" bolder" style="width: 30%;text-align: center">{{n}}</li>
+                                        <li style="display: none"></li>
+                                        <li class="align-right">{{n}}</li>
+                                        <li class="align-right">
+                                            <input disabled v-bind:value="n| NumFormat">
+                                        </li>
+                                        <li>
+                                            <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="n">
+                                        </li>
+                                    </ul>
+                                </template>-->
+
                                 <template v-for="(item,index) in budgetList">
                                     <template v-if="item.SubjectCode=='BNSRHJ'">
                                         <ul class="formDataItems flexPublic">
@@ -172,7 +186,6 @@
                                         </ul>
                                     </template>
                                 </template>
-
                             </div>
 
                     </div>
@@ -213,8 +226,8 @@
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     import { mapState, mapGetters } from "vuex";
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs'
-    import TimeSelectBar from "../../components/TimeSelectBar/index"
-    import saasMsg from '../finance/message'
+    import TimeSelectBar from "@/components/TimeSelectBar/index"
+    import saasMsg from '@/components/message/message'
     export default {
         name: "user",
         data(){
@@ -612,11 +625,67 @@
             printContent(e){
                 /*this.getPdf(this.$refs.printFrom);*/
                 let dm = this.$refs.printFrom.parentNode.firstChild.cloneNode(true);
+
                 dm.classList.add('first_child');
+
                 let cop = this.$refs.printFrom.cloneNode(true);
-                cop.insertBefore(dm,cop.firstChild);
                 cop.classList.remove('formData_content');
-                this.$print(cop) // 使用
+                cop.insertBefore(dm,cop.firstChild);
+                //获取打印内容的子节点 ;
+                let childList=cop.childNodes;
+
+                let len=15;
+                let level=Math.ceil(childList.length/len);
+                for(var i=1; i<level ; i++){
+                    childList[i*len].setAttribute('style','page-break-after:always');
+                }
+                this.$print(cop);
+
+               /*var ht='<html><head><meta http-equiv="Content-Type" content="text/html"; charset="utf-8">' +
+                   '<link href="../../../assets/css/myStyle.css" type="text/css" />'+
+                   '</head><body>';
+               ht+='<div class="formData">';
+                ht+=cop.innerHTML;
+                ht+='</div></body></html>';
+                console.log(ht);
+                var p=window.open("Print.html",'ht');
+                p.document.write(ht);
+                p.document.close();
+                p.print();*/
+
+
+                //this.$print(cop)
+                //window.print(ht);
+               /*for (var i =0; i<=level ; i++){
+                    var hed=cop.cloneNode(true);
+                    hed.innerHTML='';
+                    hed.id=level;
+                    hed.appendChild(dm);//打印表头
+                    console.log(2222222222222222);
+                    console.log(hed);
+                    for(var j=i*len ; j<(i+1)*len&&(i+1)*len<childList.length ; j++){
+                        hed.appendChild(childList[j])
+                    }
+                    hed.setAttribute('style','page-break-after:always');
+                    win.appendChild(hed);
+                }*/
+
+                /* let win=document.body;
+                 win.innerHTML='';
+                 cop.style.height='100%';
+                 win.id='printForm';
+                win.appendChild(cop);
+                win.style.height='100%';
+                win.style.overflowY='auto';
+                win.parentNode.style.height='100%';*/
+                //win.print();
+              /* var p=window.open("Print.html",'ht');
+                p.window.write('ht');
+                p.document.close();
+                p.print();*/
+                //window.print(win.parentNode);
+
+               /* this.$print(win) // 使用*/
             },
             //刷新
             refresh:function(){
@@ -642,6 +711,17 @@
 </script>
 
 <style scoped>
+    @media print{
+        html,body{
+            height: inherit;
+        }
+        body{
+            height: inherit !important;
+        }
+        #printForm{
+            height: inherit !important;
+        }
+    }
     .disableBtn{
         color: #cccccc !important;
         background: #fff !important;

@@ -45,11 +45,11 @@
                     <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
                     <ul>
                         <li>
-                            <div>科目预算</div>
+                            <div>科目编码</div>
                             <div class="inputContainer"><input type="text" placeholder="科目/凭证号/摘要" v-model="superSearchVal.keyword"></div>
                         </li>
                         <li>
-                            <div>辅助预算</div>
+                            <div>辅助核算</div>
                             <div >
                                 <div class="selectContainer">
                                     <select v-model="superSearchValPhId">
@@ -73,7 +73,7 @@
                             </div>
                         </li>
                         <li>
-                            <div>账期</div>
+                            <div>凭证日期</div>
                             <div >
                                 <div class="block">
                                     <el-date-picker type="date" v-model="superSearchVal.date1" placeholder="日期">
@@ -527,6 +527,15 @@
                     this.highGradeCss = bool; 
                 }   
                 
+            },
+             //会计期年份上下切换******
+            nextYear(bool){
+                var year=this.year;
+                if(bool){
+                    this.year=year>=this.sideDate.split('-')[0]?year:parseInt(year)+1;
+                }else{
+                   this.year=year<=2000?year:--year;
+                }
             },
             //凭证详情***************************
             voucherDel(item){
@@ -1560,6 +1569,7 @@
             top:40px;
             right:20px;                                                                                                                                                                                                                                                                                                                                                                                              
             border:1px solid #ccc;
+            box-shadow: 0 1px 8px #b3acac;
             border-radius: 7px 7px 0 0;     
             >div{
                 width:100%;
@@ -1886,6 +1896,11 @@
                         }
                     }
                 }
+                .year-month{
+                    >li{
+                        float:left;
+                    }
+                }
                 >ul{
                    
                     padding:5px 20px;
@@ -1898,11 +1913,11 @@
                         cursor:pointer;
                         font-size: 16px;
                         &:hover{
-                            background:#2780d1 ;
+                            background:#00b7ee ;
                             color:#fff;
                         }
                         &.active{
-                            background:#2780d1 ;
+                            background:#00b7ee ;
                             color:#fff;
                         }
                     }
@@ -1916,18 +1931,18 @@
                         line-height: 30px;
                         text-align: center;
                         margin-left: 40px;
-                        color:#3e8cbc;
-                        border:1px solid #3e8cbc;
+                        color:#00b7ee;
+                        border:1px solid #00b7ee;
                         border-radius: 3px;
                         cursor:pointer;
                         &:hover{
                             color:#fff;
-                            background: #3e8cbc;
+                            background: #00b7ee;
                         }
                     }
                 }
                 .allActive>li{
-                    background:#2780d1 ;
+                    background:#00b7ee ;
                     color:#fff;
                 }
             }

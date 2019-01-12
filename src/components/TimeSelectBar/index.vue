@@ -186,14 +186,14 @@
         data(){
           return{
               startyear:2013,//开始年份
-              currentyear:2018,//当前年份
+              currentyear:'',//当前年份
               currentmonth:0,//当前月
-              choosedYear:2018,//选择的年份
-              choosedMonth:8,//选择的开始月份
-              choosedMonthEnd:8,//选择的开始月份
+              choosedYear:'',//选择的年份
+              choosedMonth:'',//选择的开始月份
+              choosedMonthEnd:'',//选择的结束月份
 
-              jiezhangMonth:1,//结账的月份
-              fanjiezhangMonth:1,//反结账的月份
+              jiezhangMonth:'',//结账的月份
+              fanjiezhangMonth:'',//反结账的月份
               month:12,//一共12个月
               showTog:'none',//显示隐藏
               monthsSelCss:'kuaiji',
@@ -239,9 +239,9 @@
                 let time=res.target.attributes.date.value;
                 console.log(time);
                 let timeLis=time.split('-');
-                if(timeLis[0]==this.currentyear&&timeLis[1]>this.currentmonth){
+                /*if(timeLis[0]==this.currentyear&&timeLis[1]>this.currentmonth){
                     return
-                };
+                };*/
                 this.choosedYear=timeLis[0];
                 this.choosedMonth = timeLis[1];
                 this.choosedMonthEnd = timeLis[1];
@@ -415,9 +415,9 @@
         color: #45c0f7;
         cursor: pointer;
     }
-    .list div ul .Font_color{
+    /*.list div ul .Font_color{
         cursor: not-allowed;
-    }
+    }*/
     .list div ul li:hover{
         background:#00B8EE;
         color:#fff;
@@ -587,7 +587,7 @@
         color:#CCC !important;
         border:#ececec 1px solid !important;
         box-shadow: 0px 2px 2px #e0e0e0 !important;
-        cursor: default;
+        cursor: pointer;
     }
     .anniu{
         width: 216px;

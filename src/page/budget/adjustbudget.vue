@@ -243,8 +243,8 @@
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import { mapState, mapGetters } from "vuex";
-    import TimeSelectBar from "../../components/TimeSelectBar/index";
-    import saasMsg from '../finance/message'
+    import TimeSelectBar from "@/components/TimeSelectBar/index";
+    import saasMsg from '@/components/message/message'
     let balanceData=[];
     export default {
         name: "user",

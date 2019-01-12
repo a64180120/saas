@@ -9,15 +9,15 @@
             <div class="form-area">
                 <div class="form-group">
                     <div class="form-box">
-                        <i class="el-icon-close" :style="{display:((showArea=='selectArea'||showArea=='firstStep')?'block':'none')}" @click="backToLogin"></i>
+                        <i class="el-icon-close" :style="{display:((showArea=='selectArea'||showArea=='firstStep')?'block':'none')}" @click="backToLogin" style="cursor: pointer"></i>
                         <div :class="{active_showarea:showArea!='selectArea'}">
                             <div class="el-message-box__title" style="color: rgb(1,131,253)">请选择注册方式</div>
                             <div class="card_content">
-                                <div @click="changeshowArea('firstStep','0')">
+                                <div @click="changeshowArea('firstStep','0')" style="cursor: pointer">
                                     <img src="@/assets/images/register/register_ordinary.png">
                                     <p>普通注册</p>
                                 </div>
-                                <div @click="changeshowArea('firstStep','1')">
+                                <div @click="changeshowArea('firstStep','1')" style="cursor: pointer">
                                     <img src="@/assets/images/register/register_code.png">
                                     <p>邀请码注册</p>
                                 </div>
@@ -52,7 +52,7 @@
                                     <img src="@/assets/images/register/4.png">
                                     <el-input v-model="registerForm1.phonecode" type="text"  placeholder="请输入手机验证码（必填）"></el-input>
                                     <div :disabled="disabled" class="selfBtn verifyCode"
-                                         :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode">{{timertitle}}</div>
+                                         :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode" id="timerArea">{{timertitle}}</div>
                                 </el-form-item>
                                 <div style="text-align: center">
                                     <template v-if="checkType==0">
@@ -273,7 +273,7 @@
                     ],
                     phonecode:[
                         {required:true,message:'请输入验证码',trigger:'blur'},
-                        {required:true,validator:validCode,trigger:'blur'}
+                        // {required:true,validator:validCode,trigger:'blur'}
                     ],
                 },
                 registerForm2:{
@@ -424,7 +424,7 @@
                             this.disabled = true;
                             this.getPhoneCode('register', this.registerForm1.phone);
                             this.timer(59);
-                            this.timertitle = '59S后重新发送';
+                            document.getElementById('timerArea').innerText = '59S后重新发送';
                         }
                     }
                 })
@@ -449,7 +449,27 @@
             },
             //邀请码注册
             codeRegister:function(){
-                alert('待开发');
+
+                this.$refs.validFormF.validate((valid) => {
+                    console.log(valid);
+                    if(valid){
+                        console.log(this.registerForm1.phone);
+                        console.log(this.registerForm1.code);
+                        console.log(this.registerForm1.phonecode);
+                        //alert('待开发');
+                        let base = httpConfig.getAxiosBaseConfig();
+                        let headconfig = httpConfig.getTestHeaderConfig();
+                        httpajax.create(base)({
+                            method: 'get',
+                            url: '/SysUser/GetCheckInvitationCode?Phone='+this.registerForm1.phone+'&Code='+this.registerForm1.code,
+                            headers: headconfig
+                        }).then(res => {
+                            console.log(res);
+                        }).catch(err=>{
+                            console.log(err);
+                        })
+                    }
+                })
             },
             timer:function(t){
                     let that=this;
@@ -457,11 +477,11 @@
                     setTimeout(function(){
                         if(t>0){
 
-                            that.timertitle=t+'S后重新发送';
+                            document.getElementById('timerArea').innerText =t+'S后重新发送';
                             that.timer(t);
                         }else{
                             that.disabled=false;
-                            that.timertitle='重新发送验证码';
+                            document.getElementById('timerArea').innerText ='重新发送验证码';
                         }
                     },1000)
             },
@@ -534,7 +554,7 @@
         height:61px;
         line-height: 61px;
         width: 100%;
-        background-color: #211f20;
+        background-color: #f5f5f5;
         overflow: hidden;
         position: fixed;
         top: 0;
@@ -715,7 +735,7 @@
         width: 120px;
         height: 33px;
         border-radius: 5px 5px;
-        line-height: 38px;
+        line-height: 33px;
         font-size: 16px;
         text-align: center;
         display: inline-block;

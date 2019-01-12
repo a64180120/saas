@@ -5,7 +5,7 @@
             <p class="title"><span>凭证模板</span><i @click.stop="finish(false)"></i></p>
             <div class="flexPublic searcherCon">
                 <div class="searcherValue"><input v-model="searchVal" @keyup.13="getvoucherList" type="text" placeholder="模板名称"></div>
-                <div @click.stop="getvoucherList"  class="searcherBtn btn">搜索</div>
+                <div @click.stop="getvoucherList" style="border-radius:0;"  class="searcherBtn btn">搜索</div>
             </div>
             <div class="voucherList">
                 <ul>
@@ -458,7 +458,7 @@
         width:20%;
         text-align: center;
         line-height: 30px;
-        background:#509edc;
+        background:#00b7ee;
         color:#fff;
         cursor:pointer;
     }
@@ -474,8 +474,8 @@
             background: #fff;
             padding:10px 30px;
             width:1100px;
-            height:650px;
-            margin:100px auto 0;
+            height:540px;
+            margin:80px auto 0;
             border-radius: 10px;
             .title{
                 border-bottom: 1px solid #ccc;
@@ -500,7 +500,7 @@
             }
             .voucherList{
                 overflow-y:auto;
-                height:500px;
+                height:410px;
                 width:100%;
                 >ul{
                     display: flex;

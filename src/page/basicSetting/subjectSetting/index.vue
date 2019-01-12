@@ -137,7 +137,7 @@ import treeTable from "@/components/tree-table/indexHeight";
 import { SubjectAdd,SubjectUpdate,SubjectList,SubjectDelete } from '@/api/subject/subjectInfo'
 import { AuxiliaryTypeList } from '@/api/Auxiliary/typeInfo'
 import Auth from "@/util/auth";
-import saasMsg from '../../finance/message'
+import saasMsg from '@/components/message/message'
 export default {
   name: "subjectList",
   components: { treeTable ,saasMsg},

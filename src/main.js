@@ -24,6 +24,7 @@ import getPdf from './plugins/PDF/getPdf'
 
 import '../static/css/icon.css';  //阿里的图标样式
 import saasMessage from "@/components/message"
+import saasConfirm from "./components/confirm"
 import vueQuillEditor from "vue-quill-editor"
 // quill-editor styles
 import 'quill/dist/quill.core.css'
@@ -33,6 +34,7 @@ Vue.use(vueQuillEditor)
 
 
 Vue.use(saasMessage)
+Vue.use(saasConfirm)
 
 // 注册组件到Vue
 Vue.prototype.$axios = axios
