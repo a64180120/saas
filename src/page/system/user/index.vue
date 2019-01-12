@@ -181,7 +181,8 @@
         SysUserList,
         SysUserDelete,
         SysUserTransferList,
-        SysUserUpdatePassword
+        SysUserUpdatePassword,
+        SysUserSendInvitationCode
     } from '@/api/user/userInfo'
     import {SysRoleList} from '@/api/role/roleInfo'
     import {isvalidatemobile} from '@/util/validate'
@@ -270,7 +271,8 @@
             ...mapState({
                 userid: state => state.user.userid,
                 orgid: state => state.user.orgid,
-                username:state=> state.user.username
+                username:state=> state.user.username,
+                invitationCode: state=> state.user.invitationCode,
             })
         },
         methods: {
@@ -710,7 +712,7 @@
             SendInvite(){
                 let object = this.singleSelection;
                 var vm = this;
-
+                console.log(vm.invitationCode);
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if(object.length > 0){
                     if(object[0].EnabledMark == '2'){
@@ -720,7 +722,8 @@
                 }
                 if (id != 0) {
                     let base = httpConfig.getAxiosBaseConfig();
-                    console.log(this.namee);
+                    let url = base.baseURL + "/register";
+                    console.log(vm.invitationCode);
                     this.$confirm('确定要向该账户发送邀请?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -728,16 +731,14 @@
                     }).then(() => {
                         SysUserSendInvitationCode(vm, {
                             Uname: vm.username,
-                            Url: base + "/register",
+                            Url: url,
                             Phone:object[0].MobilePhone,
-                            InvitationCode:object[0].InvitationCode
+                            InvitationCode:vm.invitationCode
                         }).then(res => {
-                            if (res.Status === 'error') {
-                                vm.$message.error(res.Msg);
-                                return
+                            console.log(res);
+                            if (res.Status === 'success') {
+                                vm.$message.success('发送邀请成功!');
                             }
-                            vm.$message.success('发送邀请成功! 邀请码为：123456');
-
                         }).catch(error => {
                             console.log(error);
                             vm.$message({showClose: true, message: "发送邀请错误", type: "error"});
