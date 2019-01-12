@@ -461,10 +461,18 @@
                         let headconfig = httpConfig.getTestHeaderConfig();
                         httpajax.create(base)({
                             method: 'get',
-                            url: '/SysUser/GetCheckInvitationCode?Phone='+this.registerForm1.phone+'&Code='+this.registerForm1.code,
+                            url: '/SysUser/GetCheckInvitationCode?Phone='+this.registerForm1.phone+'&InvitationCode='+this.registerForm1.code,
                             headers: headconfig
                         }).then(res => {
                             console.log(res);
+                            //data: "{"Status":"error","Msg":"邀请不存在，请联系邀请人"}";
+                            if(JSON.parse(res.data).Status=='error'){
+                                this.$message(JSON.parse(res.data).Msg);
+                                this.registerForm1.code='';
+                            }else{
+                                this.$message('验证成功!');
+                                this.$router.push({ path: "/login"})
+                            }
                         }).catch(err=>{
                             console.log(err);
                         })
