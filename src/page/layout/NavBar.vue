@@ -124,7 +124,7 @@ export default {
 }
 
 .el-menu{
-  border-bottom:5px solid #eaeaea;
+  
   margin-right:10px;
 }
 .sidebar::-webkit-scrollbar {
@@ -136,6 +136,8 @@ export default {
 .sidebar > ul {
   height: 100%;
 }
-
+.el-menu.el-menu--horizontal {
+  border:0;
+}
 
 </style>

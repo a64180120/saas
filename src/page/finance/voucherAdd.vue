@@ -25,7 +25,7 @@
                         </ul>
                     </li>
                 </a>
-                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a> 
+                <!-- <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a>  -->
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a> 
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li >反审核</li></a>
                 <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
@@ -544,7 +544,11 @@
                     this.temp.tempMask=false;
                 }else{
                     if(!this.temp.TemName){
-                        this.message("请输入凭证名称!")
+                        this.saasMessage={
+                            message:'请输入模板名称!',
+                            delay:4000,
+                            visible:true
+                        }
                     }else{
                         this.voucherData();
                         var dtls=this.voucherDataList.data.Mst.Dtls;
@@ -573,6 +577,10 @@
                     return;
                 }
                 this.voucherDataList.data.Mst.TemName=name;
+                this.voucherDataList.data.Mst.Userid=this.uid;
+                console.log(this.usercount)
+                debugger;
+                this.voucherDataList.data.Mst.UseCount=this;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -588,13 +596,7 @@
                                   delay:3000,
                                   message:res.Msg
                                };
-                            this.voucherDataList.bool=false;
-                            this.voucherMask=false;
-                            var vm=this;
-                            function delay(){
-                                vm.voucherDataList.bool=true
-                            }
-                            setTimeout(delay,10);
+                            this.getvoucherList();
                         }else{
                             this.saasMessage={
                                   visible:true,
@@ -1315,6 +1317,7 @@
                 uid: state => state.user.userid,
                 uname: state => state.user.username,
                 orgcode: state => state.user.orgcode,
+                usercount:state => state.user,
                 cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
             }),
         },
