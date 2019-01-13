@@ -186,14 +186,18 @@
         data(){
           return{
               startyear:2013,//开始年份
+              startmonth:'',//开始月份
+
               currentyear:'',//当前年份
               currentmonth:0,//当前月
+
               choosedYear:'',//选择的年份
               choosedMonth:'',//选择的开始月份
               choosedMonthEnd:'',//选择的结束月份
 
               jiezhangMonth:'',//结账的月份
               fanjiezhangMonth:'',//反结账的月份
+
               month:12,//一共12个月
               showTog:'none',//显示隐藏
               monthsSelCss:'kuaiji',
@@ -208,7 +212,8 @@
             ...mapState({
                 orgid: state => state.user.orgid,
                 orgcode: state => state.user.orgcode,
-                uid:state=>state.user.userid
+                uid:state=>state.user.userid,
+                startYear:state=>state.user.startYear
             })
         },
         mounted(){
@@ -221,6 +226,7 @@
                 this.choosedYear=currentyear;
                 this.choosedMonth=currentMonth;
                 this.choosedMonthEnd=currentMonth;
+                this.startyear=this.startYear;
         },
         methods:{
 
