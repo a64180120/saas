@@ -43,6 +43,9 @@
                             <el-form-item label="工会名称：" prop="OrgName">
                                 <el-input v-model="orgForm.OrgName" class="pic-input"></el-input>
                             </el-form-item>
+                            <el-form-item label="工会编码：" prop="EnCode">
+                                <el-input v-model="orgForm.EnCode" class="pic-input"></el-input>
+                            </el-form-item>
                             <el-form-item label="统一社会信用代码：" prop="EnterpriseCode">
                                 <el-input v-model="orgForm.EnterpriseCode" class="pic-input"></el-input>
                                 <el-upload
@@ -189,6 +192,10 @@
                                 <div class="orgedit-value">{{orgForm.OrgName}}</div>
                             </li>
                             <li class="orgedit-linehight">
+                                <div class="orgedit-title"><span class="orgtitle-ringt">工会编码：</span></div>
+                                <div class="orgedit-value">{{orgForm.EnCode}}</div>
+                            </li>
+                            <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">统一社会信用代码：</span></div>
                                 <div class="orgedit-value">{{orgForm.EnterpriseCode}}
                                 </div>
@@ -229,7 +236,7 @@
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">启用日期：</span></div>
-                                <div class="orgedit-value">{{orgForm.EnableTime.substr(0,10)}}</div>
+                                <div class="orgedit-value">{{orgForm.EnableTime}}</div>
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">工会主席：</span></div>
@@ -247,7 +254,7 @@
                             </li>
                             <li class="orgedit-linehight">
                                 <div class="orgedit-title"><span class="orgtitle-ringt">使用期限：</span></div>
-                                <div class="orgedit-value">{{orgForm.ServiceStartTime.substr(0,16)}}-{{orgForm.ServiceEndTime.substr(0,16)}}</div>
+                                <div class="orgedit-value">{{orgForm.ServiceStartTime}}-{{orgForm.ServiceEndTime}}</div>
                             </li>
                         </ul>
                     </div>
@@ -344,6 +351,7 @@
                 orgForm: {
                     // PhId: 0,
                     OrgName: '',
+                    EnCode:'',
                     EnterpriseCode: '',
                     EnterpriseAttachment: '',
                     Address: '',
@@ -371,6 +379,9 @@
                 rules: {
                     Address: [
                         {required: true, message: '请输入详细地址信息', trigger: 'blur'},
+                    ],
+                    EnCode: [
+                        {required: true, message: '请输入工会编码', trigger: 'blur'},
                     ],
                     OrgName: [
                         {required: true, message: '请输入工会名称', trigger: 'blur'},
@@ -559,8 +570,8 @@
                 var vm = this;
                 this.loading = true;
                 console.log(this.orgForm.Director);
-                if(this.orgForm.OrgName ==null|| this.orgForm.EnterpriseCode == null || this.orgForm.Parent == null || this.orgForm.Chairman == null || this.orgForm.Director == null
-                    || this.orgForm.OrgName ==''|| this.orgForm.EnterpriseCode == '' || this.orgForm.Parent == '' || this.orgForm.Chairman == '' || this.orgForm.Director == ''
+                if(this.orgForm.OrgName ==null||this.orgForm.EnCode ==null|| this.orgForm.EnterpriseCode == null || this.orgForm.Parent == null || this.orgForm.Chairman == null || this.orgForm.Director == null
+                    || this.orgForm.OrgName ==''||this.orgForm.EnCode ==''||  this.orgForm.EnterpriseCode == '' || this.orgForm.Parent == '' || this.orgForm.Chairman == '' || this.orgForm.Director == ''
                     || this.orgForm.Province ==null|| this.orgForm.City == null  || this.orgForm.County == null || this.orgForm.Street == null || this.orgForm.Address == null
                     || this.orgForm.Province ==''|| this.orgForm.City == '' || this.orgForm.County == '' || this.orgForm.Street == '' || this.orgForm.Address == '' ) {
                     this.$message.error('保存失败,请将必填信息填写完整!');
@@ -600,6 +611,12 @@
                         this.editVisible = false;
                         this.isedit = false;
                         this.getData();
+                        let info=UserInfo.getUserInfoData();
+                        info.orgInfo.OrgName = this.orgForm.OrgName;
+                        info.orgInfo.EnCode = this.orgForm.EnCode;
+                        this.$store.commit("user/setUserInfo", info);
+                        let info2 = UserInfo.getUserInfoData();
+                        console.log(info2);
                         //移除TagNav
                         //this.$store.commit("tagNav/removeTagNav", route);
                         //跳转路由
@@ -667,6 +684,15 @@
                             return;
                         }
                         this.orgForm = res;
+                        if(this.orgForm.EnableTime != null && this.orgForm.EnableTime != ''){
+                            this.orgForm.EnableTime = this.orgForm.EnableTime.substr(0,10);
+                        }
+                        if(this.orgForm.ServiceStartTime != null && this.orgForm.ServiceStartTime != ''){
+                            this.orgForm.ServiceStartTime = this.orgForm.ServiceStartTime.substr(0,16);
+                        }
+                        if(this.orgForm.ServiceEndTime != null && this.orgForm.ServiceEndTime != ''){
+                            this.orgForm.ServiceEndTime = this.orgForm.ServiceEndTime.substr(0,16);
+                        }
                         this.changePhid = res.PhId;
                     }).catch(error => {
                         console.log(error);

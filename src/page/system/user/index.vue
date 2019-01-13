@@ -710,6 +710,9 @@
             },
             //发送邀请码
             SendInvite(){
+                // let basetttt = httpConfig.baseurl;
+                // //let urlttt = basetttt.baseURL.substr(0,20) + "/ghc/saas/index#/register";
+                // console.log(basetttt);
                 let object = this.singleSelection;
                 var vm = this;
                 console.log(vm.invitationCode);
@@ -721,8 +724,8 @@
                     }
                 }
                 if (id != 0) {
-                    let base = httpConfig.getAxiosBaseConfig();
-                    let url = base.baseURL + "/register";
+                    let base = httpConfig.baseurl;
+                    let url = base + "/ghc/saas/index#/register";
                     console.log(vm.invitationCode);
                     this.$confirm('确定要向该账户发送邀请?', '提示', {
                         confirmButtonText: '确定',
