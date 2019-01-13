@@ -18,7 +18,7 @@
                     </div>
                     <div class="inputContainer"><input @blur="unionInput(true)" type="text" placeholder="必填"
                                                        v-model="OrgName"></div>
-                    <div v-show="unionCss.name">请输入工会名称</div>
+                    <!--<div v-show="unionCss.name">请输入工会名称</div>-->
                 </li>
                 <li>
                     <div class="addFormItemTitle">
@@ -27,7 +27,7 @@
                     </div>
                     <div class="inputContainer"><input @blur="unionInput(true)" type="text" placeholder="必填"
                                                        v-model="EnCode"></div>
-                    <div v-show="unionCss.name">请输入工会名称</div>
+                    <!--<div v-show="unionCss.name">请输入工会编码</div>-->
                 </li>
                 <li>
                     <div class="addFormItemTitle">
@@ -36,20 +36,22 @@
                             统一社会信用代码
                         </span>
                     </div>
-                    <div class="inputContainer"><input @blur="unionInput(false)" type="text" placeholder="必填" style="width: 90%"
-                                                       v-model="EnterpriseCode"></div>
-                    <div v-show="unionCss.id">请输入信用代码</div>
-                    <div style="position: relative">
-                        <el-upload
-                            ref="uploadEnterprise"
-                            class="avatar-uploader"
-                            action=""
-                            :show-file-list="false"
-                            :before-upload="beforeAvatarUpload"
-                            :http-request='uploadFileMethodEnterprise'>
-                            <img v-if="EnterpriseAttachment" :src="picUrl+EnterpriseAttachment" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        </el-upload>
+                    <div class="inputContainer">
+                        <div class="inputContainer" style="height: 100%"><input @blur="unionInput(false)" type="text" placeholder="必填" style="width: 90%"
+                                                           v-model="EnterpriseCode"></div>
+                        <!--<div v-show="unionCss.id">请输入信用代码</div>-->
+                        <div style="position: relative; top:-20px">
+                            <el-upload
+                                ref="uploadEnterprise"
+                                class="avatar-uploader"
+                                action=""
+                                :show-file-list="false"
+                                :before-upload="beforeAvatarUpload"
+                                :http-request='uploadFileMethodEnterprise'>
+                                <img v-if="EnterpriseAttachment" :src="picUrl+EnterpriseAttachment" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </div>
                     </div>
                 </li>
                 <li>
@@ -118,7 +120,7 @@
                         </div>
                         <div>-</div>
                         <div class="inputContainer">
-                            <input type="text" v-model="MobilePhone" placeholder="请输入联系电话">
+                            <input type="text" v-model="Telephone" placeholder="请输入联系电话">
                         </div>
                     </div>
                     <div></div>
@@ -181,8 +183,8 @@
                             工会主席
                         </span>
                     </div>
-                    <div>
-                        <div class="inputContainer"><input style="width: 90%" type="text" v-model="Chairman"></div>
+                    <div class="inputContainer">
+                        <div class="inputContainer" style="height: 100%"><input style="width: 90%" type="text" v-model="Chairman" placeholder="必填"></div>
                         <!--<div @click="testFile">附件</div>-->
                         <!--<el-button type="primary" round @click="testFile">附件</el-button>-->
                         <!--<input @change="getFile($event)" type="file">-->
@@ -207,7 +209,7 @@
                             经审会主任
                         </span>
                     </div>
-                    <div class="inputContainer"><input type="text" v-model="Director"></div>
+                    <div class="inputContainer"><input type="text" v-model="Director" placeholder="必填"></div>
                     <div></div>
                 </li>
                 <li>
@@ -604,8 +606,8 @@ import qs from 'qs';
                             'EnterpriseCode': this.EnterpriseCode,
                             'Address': this.Address,
                             //'phoneHead': this.phoneHead,
-                            'MobilePhone': this.MobilePhone,
-                            //'Telephone': this.Telephone,
+                            //'MobilePhone': this.MobilePhone,
+                            'Telephone': this.Telephone,
                             'Chairman': this.Chairman,
                             'EnableTime': this.EnableTime,
                             'ServiceStartTime': this.ServiceStartTime,
@@ -633,7 +635,7 @@ import qs from 'qs';
                             if(this.ChairmanAttachment != null && this.ChairmanAttachment != ''){
                                 this.Integrity = parseInt(this.Integrity) + 5;
                             }
-                            if(this.MobilePhone != null && this.MobilePhone != ''){
+                            if(this.Telephone != null && this.Telephone != ''){
                                 this.Integrity = parseInt(this.Integrity) + 10;
                             }
                             page.Integrity = this.Integrity;
@@ -668,8 +670,8 @@ import qs from 'qs';
                             'EnterpriseCode': this.EnterpriseCode,
                             'Address': this.Address,
                             //'phoneHead': this.phoneHead,
-                            'MobilePhone': this.MobilePhone,
-                            //'Telephone': this.Telephone,
+                            //'MobilePhone': this.MobilePhone,
+                            'Telephone': this.Telephone,
                             'Chairman': this.Chairman,
                             'ServiceStartTime': this.ServiceStartTime,
                             'ServiceEndTime': this.ServiceEndTime,
