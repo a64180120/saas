@@ -599,7 +599,7 @@
                 if(val&&val!=0) {
                     val = parseFloat(val).toFixed(2).split('.');
                     var num = val[0];
-                    var float = val[1];debugger;
+                    var float = val[1];
                     if(num==='0'||num==='-0'){
                         num=[];
                     }

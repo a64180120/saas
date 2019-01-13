@@ -15,7 +15,7 @@
                     </li>
                     <li v-for="(item,index) of voucherList" :key="index">
                         <div class="flexPublic">
-                            <div><img src="@/assets/icon/0a7856c2-a547-424e-940f-1039697ec329.svg" alt=""><span>{{item.TemName}}</span></div>
+                            <div><img src="@/assets/icon/0a7856c2-a547-424e-940f-1039697ec329.svg" alt=""><span :title="item.TemName">{{item.TemName}}</span></div>
                             <div>
                                 <img @click.stop="finish(item)" title="使用模板" src="@/assets/icon/eye.svg" alt="">
                                 <img @click.stop="tempHandle('update',item)" title="编辑" src="@/assets/icon/update.svg" alt="">
@@ -30,11 +30,10 @@
                                 <div></div>
                             </div>
                             <div class="tempContent">
+
                                 <ul>
-                                    <li  v-for="(it1,index2) of item.Dtls" :key="index2"><span >{{index2==0?'借:':''}}</span><span v-if="it1.JSum">{{it1.SubjectCode}}{{it1.SubjectName}}</span></li>
-                                </ul>
-                                <ul>
-                                    <li  v-for="(it2,index3) of item.Dtls" :key="index3"><span >{{index3==0?'贷:':''}}</span><span v-if="it2.DSum">{{it2.SubjectCode}}{{it2.SubjectName}}</span></li>
+                                    <li><span>摘要</span><span>科目代码</span><span>科目名称</span></li>  
+                                    <li  v-for="(it1,index2) of item.Dtls" :key="index2"><span>{{it1.Abstract}}</span><span>{{it1.SubjectCode}}</span><span>{{it1.SubjectName}}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -69,12 +68,14 @@
                 TemName:'',
                 voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
                 voucherList:[],
-                pagesize:10,
+                pagesize:100,
                 pageindex:0,
-                tempCss:'list'
+                tempCss:'list',
+                
             }
         },
         methods:{
+            //凭证列表***********
             getvoucherList(){
                 var data={
                     uid:this.uid,
@@ -86,9 +87,11 @@
                 this.$axios.get('PVoucherTemplateMst/GetVoucherTemplateList',{params:data})
                     .then(res=>{
                         this.voucherList=res.Record;
+                        console.log(this.voucherList)
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
                         }
+
                     },err => {
                         console.log(err);
                        
@@ -167,7 +170,7 @@
                     orgid:this.orgid,
                     id: item.PhId
                 }
-                console.log(data,this.voucherDataList.data)
+                
                 this.$axios.post('PVoucherTemplateMst/PostDelete',data)
                     .then(res=>{
                         console.log(res)
@@ -521,6 +524,11 @@
                                     width:30px;
                                     height:30px;
                                 }
+                                >span{
+                                    overflow: hidden;
+                                    text-overflow:ellipsis;
+                                    white-space: nowrap;
+                                }
                                 display: flex;
                                 align-items: center;
                                 &:nth-of-type(2){
@@ -589,17 +597,17 @@
                 }
                 >div:nth-of-type(2){
                     cursor: pointer;
-                    background: #3e8cbc;
+                    background: #00b7ee;
                     color:#fff;
                     text-align: center;
-                    border:1px solid #3e8cbc;
+                    border:1px solid #00b7ee;
                     border-radius: 5px;
                     height:30px;
                     line-height: 30px;
                     width:90px;
                     &:hover{
                         background: #fff;
-                        color:#333;
+                        color:#00b7ee;
                     }
                 }
             }
@@ -645,8 +653,14 @@
                         display: flex;
                         align-items: center;
                         margin-bottom: 5px;
+                        >span{
+                            width:33.33%;
+                            overflow: hidden;
+                            text-overflow:ellipsis;
+                            white-space: nowrap;
+                        }
                         >span:first-of-type{
-                            width:20px;
+                            
                             margin-right: 10px;
                         }
                     }

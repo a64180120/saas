@@ -90,7 +90,7 @@
                     <div>
                         <div>
                             <div class="btn" @click.stop="highGradeToggle('reset')">重置</div>
-                            <div class="btn" @click="getvoucherList">搜索</div>
+                            <div class="btn" @click.stop="getvoucherList">搜索</div>
                         </div>    
                     </div>
                 </div>
@@ -205,7 +205,7 @@
             <span class="btn" @click.stop="printCss=false">取消打印 </span>
             <div class="container" ref="print">
                 <div>
-                   <div class="sys-page" >
+                   <div class="sys-page printDataCss" >
 
                         <div class="manageContent" v-for="(item, n) in tableData" :key="n">
                             <div class="title">
@@ -796,7 +796,9 @@
                 var vm=this;
                 this.printData=[];
                 this.printCss=true;
-                
+                var data=document.getElementsByClassName('printCon')[0].children[2].children[0].children[0];
+                 console.log(data)
+                data.className='sys-page printDataCss';
                 var list=JSON.parse(JSON.stringify(this.voucherList));
                 console.log(list,this.printCss)
                 //拼凑数据供打印使用,凭证头，尾信息
@@ -809,13 +811,15 @@
             },
             print(){
                 var data=document.getElementsByClassName('printCon')[0].children[2].children[0].children[0];
-                data.className='';
-                console.log(data);debugger
-                var copyData=document.body.cloneNode(true);
-                copyData.innerHTML='';
-                copyData.appendChild(data);
-                console.log(copyData)
-                 this.$print(copyData)
+                console.log(data)
+                data.className='printDataCss';
+                // console.log(data);debugger
+                // var copyData=document.body.cloneNode(true);
+                // copyData.innerHTML='';
+                // copyData.appendChild(data);
+                //console.log(copyData)
+                 this.$print(data);
+                 this.printCss=false;
                
             },
             //每5列切成一张凭证
@@ -915,7 +919,7 @@
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 this.voucherDataList.data.Mst.PSource='冲红'
                 //this.resetVoucher();        
-                this.$message("请查看凭证信息,确认无误点击保存!")               
+                
                 
                 
                               
@@ -976,8 +980,9 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-             
-               if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+                console.log(Vdata.Mst,this.checkedTime,this.checkedYear,Vdata.Mst.Uyear>=this.checkedYear, Vdata.Mst.PMonth>=this.checkedTime);
+                        debugger
+               if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                  
                    var data = {
                        uid: this.uid,
@@ -1074,6 +1079,7 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
+                        
                         if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
                             var data = {
                                 uid: this.uid,
@@ -1221,7 +1227,7 @@
                     sum2:this.superSearchVal.sum2,
                     keyword:this.superSearchVal.keyword,
                     export2excel:str,
-                    sort:['PNo DESC','PType','PDate DESC'],
+                    sort:['PNo ASC','PType','PDate ASC'],
                    // itemValuePhid:649181122000008,
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
@@ -1734,7 +1740,7 @@
                             float:left;
                             width:70px;
                             margin-top:5px;
-                            background:#00b7ee;
+                            
                             &:last-of-type{
                                 margin-left:20px;
                             }
@@ -2187,7 +2193,7 @@
         width:19%;
     }
     ul.listContent{
-        border-top:1px solid #ccc;
+        border:1px solid #bbb;
         margin-bottom: 20px;
         width:100%;
         background: #fff;
@@ -2436,14 +2442,16 @@
         position: fixed;
         width:100%;
         height:100%;
-        // overflow-y: auto;
-        // overflow-x: auto;
+        overflow-y: auto;
+        overflow-x: auto;
         left:0;
         top:0;
         z-index:99;
         background:rgba(0,0,0,0.5);
         >.container{
+            width:920px;
             padding:0;
+            margin:8% auto;
             >.sys-page{
                padding:0;     
             }
@@ -2492,24 +2500,32 @@
    .fileSuccessMsg{
        color:#6aca25;
    }
-    .sys-page{
+   .sys-page{
+       overflow-y: auto;
+   }
+    .printDataCss,.sys-page{
+        
         .manageContent{
             &:nth-of-type(2n+1){
-                border:none;        
+                border:0;
+                padding:0 ;
+                margin: 0 0 30px 0;       
             }
             &:nth-of-type(2n):before{
                 display: inline-block;
                 content:"";
             }
             overflow: hidden;
-            height:861px;        
+            //height:861px;  
+            height:500px;        
             font-size:17px;
-            padding:110px 50px;
+           // padding: 50px;
             border-top:1px solid #aaa;
             .title{
+                border-bottom:0;
                 font-size: 25px;
                 text-align: center;
-                padding-bottom: 40px;
+                padding-bottom: 20px;
                 font-weight: 600;
             }
             .title div{
@@ -2524,13 +2540,13 @@
                 margin-bottom: 5px;
                 >ul:last-of-type{
                     >li:first-of-type{
-                        width:70%;
+                        width:60%;
                     }
                     >li:nth-of-type(2){
-                        width:15%;
+                        width:20%;
                     }
                     >li:nth-of-type(3){
-                        width:15%;
+                        width:20%;
                     }
                 }
             }
@@ -2554,12 +2570,12 @@
                 padding:0 2px;
             }
             .formData>ul>li:nth-of-type(2){
-                width:40%;
+                width:30%;
                 padding:0 2px;
             }
             .formData>ul>li:nth-of-type(3),
             .formData>ul>li:nth-of-type(4){
-                width:15%;
+                width:20%;
                 padding:0 2px;
             }
 
@@ -2579,8 +2595,8 @@
                 border-left:0;
                 border-bottom:0;
                 text-align: center;
-                line-height: 49px;
-                height:49px;
+                line-height: 39px;
+                height:39px;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }

@@ -205,12 +205,12 @@
                     <li>
                         <div>启/停用</div>
                         <div style="border:0">
-                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==1&&addPageShow=='update')">
-                                <input v-model="subjectInfo.KBalanceType" value="1" type="radio" name="enable">
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')">
+                                <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
                                 &nbsp;启用&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==0&&addPageShow=='update')">
-                                    <input v-model="subjectInfo.KBalanceType" value="0" type="radio" name="enable">
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')">
+                                    <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
                                     &nbsp;停用&nbsp;&nbsp;&nbsp;
                             </label>
                         </div>
@@ -267,6 +267,7 @@ export default {
             KCode:'',
             KName:'',
             KType:'',
+            EnabledMark:'',
             KBalanceType:'',
             AuxiliaryTypes:[]
         },
@@ -295,7 +296,6 @@ export default {
   //加载数据
   mounted:function(){
       this.getChecked();
-      
       this.startYear=userInfo.getUserInfoData().orgInfo.StartYear;  
   },
   //计算
@@ -417,7 +417,7 @@ export default {
                 this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})
                 .then(res=>{
                         loading2.close();
-                        
+                        console.log(res);
                         if(res.Status=='success'){
                             this.addInfo=res;
                           
@@ -567,7 +567,8 @@ export default {
                             PersistentState:1,
                             PMonth:0,
                             Uyear:this.year,
-                            Dtls:Dtls
+                            Dtls:Dtls,
+                            Verify:1
                         }
                     }
                 }
@@ -758,6 +759,7 @@ export default {
             preSubject:this.addData,
             KCode:'',
             KName:'',
+            EnabledMark:this.addData.EnabledMark,
             KType:this.addData.KType,
             KBalanceType:this.addData.KBalanceType,
             AuxiliaryTypes:[]
@@ -795,6 +797,7 @@ export default {
             preSubject:this.choosedData[0].parent,
             KName:this.choosedData[0].child.KName,
             KCode:this.choosedData[0].child.KCode,
+            EnabledMark:this.choosedData[0].child.EnabledMark,
             KType:this.choosedData[0].child.KType,
             KBalanceType:this.choosedData[0].child.KBalanceType,
             AuxiliaryTypes:[]
@@ -1024,19 +1027,18 @@ export default {
                 display:flex;  //垂直居中
                 align-items:center;  //垂直居中
                 padding-top:30px\9\0;
-                // min-height: 130px;
+                min-height: 60px;
                 cursor:pointer;
                 &.active{
                     background: #00b7ee;
                     color:#fff;
                 }
-                >span{
-                    
-                    position:relative;
-                   
-                    
+                >span{   
+                    position:relative;  
                 }
-                 
+                &:nth-of-type(3){
+                    min-height: 75px;
+                }
             }
         }
     }
@@ -1370,17 +1372,19 @@ export default {
                     height:30px;
                     line-height:30px;
                     margin-bottom:10px;
-                    overflow-y: auto;
+                    
                     .inputContainer>input{
                         border:0;
-                        height:95%;
+                        height:28px;
+                        position:relative;
+                        
                     }
                     
                     .subCodeCss{
                         overflow: hidden;
                         >span{
                             float:left;
-                            height:100%;
+                            height:30px;
                             line-height: 30px;
                             width:20%;
                             background: #ccc;
@@ -1411,7 +1415,7 @@ export default {
                     }
                     >div:nth-of-type(2){
                         float:left;        
-                        width:360px;
+                        width:359px;
                         border:1px solid #ccc;
                         
                     }
@@ -1424,6 +1428,7 @@ export default {
                     
                 }
                 &>li:last-of-type{
+                    overflow-y: auto;
                     margin-top:10px;
                     height:40px;
                 }

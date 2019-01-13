@@ -702,11 +702,11 @@
             transition: all .3s;
             >img{
               margin-top:35px;
-              transition: all .5s;
+              transition: all 0.5s linear;
+              position:relative;
+              left:0;
               &.moveShow{
-                transform: translateX(200%);
-                transform: translateX(0)\9\0;
-                transition: all .5s;
+                left:40%;
               }
             }
             >span{
