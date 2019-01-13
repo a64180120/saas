@@ -46,7 +46,7 @@ const mutations = {
         if (data) {
             state.navList = data;
             Auth.setMenuStatus(data);
-        }else{
+        } else {
             Auth.removeMenuStatus();
         }
     },
@@ -64,11 +64,11 @@ const mutations = {
     },
     //用户信息 包括 userInfo orgInfo
     setUserInfo: (state, data) => {
-        if (data) {
+
+        if (data && typeof data === 'object') {
             data.isLogin=true;
             Auth.setUserInfoData(data);
-            console.log('缓存======');
-            console.log(data);
+
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
             state.orgcode = data.orgInfo.EnCode;
@@ -128,7 +128,7 @@ const actions = {
     },
 
     // 业务用户登录
-    loginByPhone({ commit }, userInfo) {
+    loginByPhone({ commit,dispatch }, userInfo) {
         return new Promise((resolve, reject) => {
 
             let base=httpConfig.getAxiosBaseConfig();
@@ -143,6 +143,10 @@ const actions = {
                 sessionId:token.sessionId||''
             };
 
+            //重新登录，清除所有缓存
+            //Auth.removeMenuStatus();
+            //Auth.removeUserInfoData();
+
             httpajax.create(base)({
                 url: "/SysUser/PostLogin",
                 method: "post",
@@ -152,10 +156,23 @@ const actions = {
                 var response=JSON.parse(res.data);
                 if (response.Status === "success") {
                     var user = response.Data;
-                    user.sessionid=userInfo.loginid;
                     commit("setUserInfo", user);
+
+                    //加载菜单信息
+                    var param={
+                        userid:user.userInfo.PhId,
+                        orgid:user.orgInfo.PhId
+                    };
+                    dispatch('getNavList', param).then((navList) => {
+                        var data= navList||[];
+                        //数据序列化
+                        commit("setNavList", data);
+                        resolve(response);
+                    })
+                }else{
+                    resolve(response);
                 }
-                resolve(response);
+               
             }).catch(error =>{
                 console.log(error)
                 reject(error)
@@ -304,9 +321,6 @@ const actions = {
                 }
             }).then(res => {
                 //var response=JSON.parse(res.data);
-                if(res){
-                    commit("setNavList", res);
-                }
                 resolve(res);
             }).catch(error =>{
                 console.log(error)

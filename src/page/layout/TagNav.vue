@@ -25,8 +25,6 @@
     </div>
 </template>
 
-
-
 <script>
 import ScrollBar from "@/Components/ScrollBar";
 //import ScrollPane from "@/Components/ScrollBar/scrollPane";

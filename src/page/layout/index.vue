@@ -78,6 +78,8 @@ export default {
         if(!this.EmpowerInfo){
             this.timerShowType=true;
         }
+        //加载菜单
+        //this.getMenuList();
     },
     methods: {
       collapseChange: function (childValue) {

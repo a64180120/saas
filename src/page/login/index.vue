@@ -222,16 +222,17 @@ export default {
                     url: '/SysUser/GetCheckMsgCode?phone='+that.loginFormPhone.phoneNum+'&type=login&code='+value,
                     headers: headconfig
                 }).then(res => {
-                    console.log(JSON.parse(res.data).Status);
-                    if(JSON.parse(res.data).Status=='error'){
-                        callback(new Error(JSON.parse(res.data).Msg))
+                    
+                    var resdata=JSON.parse(res.data);
+                    console.log(resdata);
+                    if(resdata.Status=='error'){
+                        callback(new Error(resdata.Msg))
                     }else{
-                        //"{\"orgs\":[{\"PhId\":436190108000001,\"ParentId\":0,\"ParentEnCode\":null,\"ParentName\":null,\"Layers\":0,\"EnCode\":null,\"OrgName\":\"新中大\",\"Category\":null,\"EnterpriseCode\":null,\"EnterpriseAttachment\":null,\"MobilePhone\":\"13456219399\",\"Email\":null,\"Fax\":null,\"LinkMan\":null,\"TelePhone\":null,\"Province\":\"330000\",\"City\":\"杭州市\",\"County\":\"330105\",\"Street\":\"330105009\",\"Address\":\"88号\",\"Chairman\":\"hyz\",\"ChairmanAttachment\":null,\"Director\":null,\"ServiceStartTime\":null,\"ServiceEndTime\":null,\"EnableTime\":\"2019-01-08T20:07:41\",\"AccountSystem\":null,\"DeleteMark\":0,\"EnabledMark\":0,\"Verify\":0,\"VerifyOpinion\":null,\"VerifyDt\":null,\"SortCode\":0,\"Description\":null,\"Integrity\":null,\"UserCount\":0,\"EmpowerInfo\":null,\"FinanceAccount\":null,\"BankName\":null,\"BankAccount\":null,\"OrgType\":0,\"PersistentState\":0,\"NgRecordVer\":1,\"NgInsertDt\":\"2019-01-08T20:07:41\",\"NgUpdateDt\":\"2019-01-08T20:07:41\",\"Creator\":521180820000001,\"Editor\":521180820000001,\"CurOrgId\":521180820000002}],\"Status\":\"success\"}"
-                        console.log(JSON.parse(res.data));
+
                         this.loginFormPhoneRules.phoneCode[1].required=false;
-                        this.loginFormPhone.orgid=JSON.parse(res.data).orgs[0].PhId;
-                        this.phonePwd=JSON.parse(res.data).user.Password;
-                        this.phoneoptions=JSON.parse(res.data).orgs;
+                        //this.loginFormPhone.orgid=JSON.parse(res.data).orgs[0].PhId;
+                        this.phonePwd=resdata.user.Password;
+                        this.phoneoptions=resdata.orgs;
                        /*if(this.phoneoptions.length==1){
                             this.submitForm('loginFormPhone');
                         }*/
@@ -302,12 +303,7 @@ export default {
                     {required: true, message: '请输入验证码', trigger: 'blur'},
                     {required:true, validator:validCaptcha, trigger: 'blur'}
                 ]
-            },/*
-            captcha: {
-                show: false,
-                src: ''
-            },*/
-
+            },
             //手机登录表单
             loginFormPhone: {
                 phoneNum: '',
@@ -466,7 +462,7 @@ export default {
                     }else{
                         if(!this.disabled){
                             this.disabled=true;
-                            /*this.phoneCaptcha=*/this.getPhoneCode('login',this.loginFormPhone.phoneNum);
+                            this.getPhoneCode('login',this.loginFormPhone.phoneNum);
                             this.timer(59,'timerArea1');
                             this.timertitle='59S后重新发送';
                         }
