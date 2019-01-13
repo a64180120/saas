@@ -288,10 +288,11 @@ ul{
 .content{
     height:100%;
     overflow-y: auto;
-    margin-bottom: 500px;
+    /* margin-bottom: 500px; */
     padding: 20px;
     background: #fff;
-    margin-top: 40px;
+    padding-top: 50px;
+    margin-top:0;
 }
 .popper{
     top: 235px !important;

@@ -381,7 +381,7 @@
       sysLogout: "user/logout"
     }),
       userinfoget:function(){
-        let user=auth.getUserInfoData();
+        let user=Auth.getUserInfoData();
         if(user){
           this.userInfoHead=user.userInfo
         }

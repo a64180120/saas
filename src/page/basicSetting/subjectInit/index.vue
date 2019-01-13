@@ -12,7 +12,7 @@
                     <div  @click="getSubjectQueryList()" class="searcherBtn btn">搜索</div>
                 </div>
                 <ul class="subjectHanle">
-                    <li><span>系统默认启用日期:</span><span>{{(new Date).getFullYear()+'年'+'1月'}}</span></li>
+                    <li><span>系统默认启用日期:</span><span>{{startYear+'年'+'1月'}}</span></li>
                     <li v-show="!updatePage" :class="{btnDisabled:CheckRes}" @click.stop="CheckRes?0:updatePage=true" class="btn">开始初始化</li>
                     <li v-show="updatePage"  @click.stop="endInit()" class="btn">结束初始化</li>
                     <li :class="{btnDisabled:!CheckRes}" @click.stop="unInit()" class="btn">反初始化</li>
@@ -36,7 +36,7 @@
                     <li>余额方向</li>
                     <li>辅助核算</li>
                     <li>停用/启用</li>
-                    <li>年初余额</li>
+                    <li>年初余额(元)</li>
                 </ul>
                 <div class="listOver">
                     <ul @click.stop="chooseOn(item,index)" :class="{clickActive:choosedCss[index]}" class="listTitle listContent" v-for="(item,index) of dataList" :key="index">
@@ -106,8 +106,8 @@
                                         </li>
                                         <li v-if="child3.children.length>0" class="child">
                                             <ul @click.stop="childChoose($event,child3,child4,index4)"  v-for="(child4,index4) of child3.children" :key=index4>
-                                                <li style="padding:0 0 0 30px;" :title="child4.KCode">{{child4.KCode}}</li>
-                                                <li style="padding-left:30px;" >{{child4.KName}}</li>
+                                                <li style="padding:0 0 0 40px;" :title="child4.KCode">{{child4.KCode}}</li>
+                                                <li style="padding-left:40px;" >{{child4.KName}}</li>
                                                 <li><span v-if="child4.KBalanceType==1">借</span><span v-if="child4.KBalanceType==2">贷</span><span v-if="child4.KBalanceType==3">借/贷</span></li>
                                                 <li>
                                                     <div class="assistCss" v-for="(aux,inde) of child4.AuxiliaryTypes" :key=inde>
@@ -147,7 +147,7 @@
                     <li>
                         <div>上级科目</div>
                         <div class="inputContainer">
-                            &nbsp;{{subjectInfo.preSubject.KCode}}&nbsp;{{subjectInfo.preSubject.KName}}
+                            &nbsp;{{subjectInfo.preSubject?subjectInfo.preSubject.KCode:''}}&nbsp;{{subjectInfo.preSubject?subjectInfo.preSubject.KName:''}}
                             
                             <!-- <select :disabled="addPageShow=='update'?true:false" v-model="subjectInfo.preSubject">
                                 <option v-show="addData.PSubject.length>1" value="0">必填</option>
@@ -159,9 +159,10 @@
                     <li style="overflow: hidden;">
                         <div>科目编码</div>
                         <div class="subCodeCss">
+                            
                             <span v-show="addPageShow=='add'">{{subjectInfo.preSubject?subjectInfo.preSubject.KCode:''}}</span>
                             <div class="inputContainer">
-                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject.children?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'" 
+                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'" 
                                         type="text" v-model="subjectInfo.KCode">
                             </div>
                             
@@ -186,15 +187,15 @@
                     <li>
                         <div>余额方向</div>
                         <div>
-                            <label>
+                            <label v-show='subjectInfo.KBalanceType==1'>
                                 <input v-model="subjectInfo.KBalanceType" value="1" type="radio" name="balance">
                                 &nbsp;借方&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label>
+                            <label v-show='subjectInfo.KBalanceType==2'>
                                 <input v-model="subjectInfo.KBalanceType" value="2"  type="radio" name="balance">
                                 &nbsp;贷方&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label>
+                            <label v-show='subjectInfo.KBalanceType==3'>
                                 <input v-model="subjectInfo.KBalanceType" value="3"  type="radio" name="balance">
                                 &nbsp;借/贷&nbsp;&nbsp;&nbsp;
                             </label>
@@ -226,6 +227,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import userInfo from '@/util/auth'
 import { SubjectAdd,SubjectUpdate,SubjectDelete } from '@/api/subject/subjectInfo'
 import timeSelect from '@/components/TimeSelectBar'
 //科目期初
@@ -268,7 +270,8 @@ export default {
             message:'',
             delay:0,
             visible:false
-        }
+        },
+        orgInfo:''
     }
   },
   created() {
@@ -277,6 +280,8 @@ export default {
   //加载数据
   mounted:function(){
       this.getChecked();
+      console.log(userInfo.getUserInfoData().orgInfo)
+      this.startYear=userInfo.getUserInfoData().orgInfo.StartYear;  
   },
   //计算
   computed: {
@@ -284,7 +289,7 @@ export default {
           uid: state => state.user.userid,
           username: state => state.user.username,
           orgcode: state => state.user.orgcode,
-          orgid: state => state.user.orgid
+          orgid: state => state.user.orgid,
       })
   },
   methods: {
@@ -393,6 +398,7 @@ export default {
                         
                         if(res.Status=='success'){
                             this.addInfo=res;
+                            console.log(res)
                         }
                         this.$forceUpdate();
                     },err => {
@@ -406,7 +412,7 @@ export default {
             
         })
         .catch(err=>{
-            loading2.close();
+           console.log(err)
         })
     },
     //递归查询*****
@@ -512,8 +518,8 @@ export default {
             var J=0;
             var D=0;
             for(var dt of Dtls){
-                J=parseFloat(J)+parseFloat(dt.JSum);
-                D=parseFloat(D)+parseFloat(dt.DSum);
+                J=(parseFloat(J)+parseFloat(dt.JSum)).toFixed(2);
+                D=(parseFloat(D)+parseFloat(dt.DSum)).toFixed(2);
                
             }
             if(J!=D){
@@ -596,10 +602,17 @@ export default {
                             visible:true
                         }
                 })
+            }else{
+               this.message={
+                    delay:4000,
+                    message:res.Msg,
+                    visible:true
+                } 
             }
         })
         .catch(err=>{
             loading1.close();
+            console.log(22222)
         })
         
     },
@@ -718,7 +731,6 @@ export default {
         this.addData={};
         this.addPageShow='add';
         this.addData=this.choosedData[0].child;
-        console.log(this.addData)
         this.addData.Type=this.addInfo.Type;
         this.subjectInfo={
             preSubject:this.addData,
@@ -743,10 +755,19 @@ export default {
             }
             return;
         }
+         if(!this.choosedData[0].child.IsLast){
+             this.message={
+                 message:'只能修改末级科目!',
+                 delay:4000,
+                 visible:true
+             }
+             return;
+         }
         this.addPageShow='update';
         this.addData={};
         this.addData.PSubject=this.choosedData.parent?this.choosedData.parent:[];  
-        this.addData.Type=this.choosedData[0].child.AuxiliaryTypes;
+         this.addData.Type=this.addInfo.Type;
+       
         this.subjectInfo={
             PhId:this.choosedData[0].child.PhId,
             preSubject:this.choosedData[0].parent,
@@ -756,6 +777,13 @@ export default {
             KBalanceType:this.choosedData[0].child.KBalanceType,
             AuxiliaryTypes:[]
         }
+        console.log( this.subjectInfo.preSubject,this.subjectInfo)
+        if(!this.subjectInfo.preSubject){
+            this.subjectInfo.preSubject=JSON.parse(JSON.stringify(this.choosedData[0].child));
+            this.subjectInfo.preSubject.KCode='';
+            this.subjectInfo.preSubject.KName='';
+        }
+        console.log( this.subjectInfo.preSubject)
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }

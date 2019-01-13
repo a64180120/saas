@@ -105,17 +105,17 @@
 
     .search-module {
       position: relative;
-      height: 45px;
-      line-height: 45px;
+      height: 30px;
+      line-height: 30px;
       .search-text {
         width: 100%;
-        height: 45px;
-        line-height:45px;
+        height: 30px;
+        line-height:30px;
         color:#999;
         padding-right: 2em;
         padding-left:0.5em;
         border:1px solid transparent;
-        border-bottom-color: #ddd;
+       
         box-shadow: none;
         position:relative;
         z-index:10 ;
@@ -139,7 +139,7 @@
     }
 
     .list-module {
-      max-height: 200px;
+      max-height: 110px;
       overflow-y: auto;
       background: #fff;
       position:relative;

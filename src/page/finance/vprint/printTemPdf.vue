@@ -136,7 +136,6 @@ export default {
             }
             //this.tableData的赋值
             tr5.forEach(n=>{
-                console.log(n,this.tableData)
                 this.tableData.push({
                     mst:mst,
                     list:n,

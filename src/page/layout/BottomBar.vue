@@ -437,6 +437,9 @@ export default {
 
     }
 }
-
+.side-nav.top > .el-menu > .el-submenu.is-active > .el-submenu__title,
+.side-nav.top > .el-menu > .el-menu-item.is-active{
+    border-bottom:0;
+}
 
 </style>
