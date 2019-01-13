@@ -385,7 +385,7 @@
         if(user){
           this.userInfoHead=user.userInfo
         }
-        //this.userInfoHead=auth.getUserInfoData().userInfo;
+        //this.userInfoHead=Auth.getUserInfoData().userInfo;
       },
     userOperation(command) {
         // 用户名下拉菜单选择事件
