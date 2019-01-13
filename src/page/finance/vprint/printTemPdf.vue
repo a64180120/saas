@@ -88,11 +88,11 @@ export default {
         vm.tableData=[];
        
         vm.voucher5tr(
-            setTimeout(()=>{
-            //下载pdf
+            // setTimeout(()=>{
+            // //下载pdf
 
-            vm.getPdf(vm.$refs.printVoucher);
-            })
+            // vm.getPdf(vm.$refs.printVoucher);
+            // })
         )   
                 
     },

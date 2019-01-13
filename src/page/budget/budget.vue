@@ -7,7 +7,7 @@
                         <div style="width:100%;float: right">
                             <ul class="flexUl handle" :style="{'display': changeBtn.disable?'block':'none'}">
                                 <a ><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify}" @click="!verify?'':changeBtn.disable=false">编辑</li ></a>
-                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">核定年初预算</li></a>
+                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">上报年初预算</li></a>
 
                                 <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
                                 <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
@@ -16,7 +16,7 @@
                             <ul class="flexUl handle" :style="{'display': !changeBtn.disable?'block':'none'}">
                                 <a ><li style='margin:0 0 0px 20px;' @click="changeBtn.disable=true">取消</li ></a>
                                 <a><li style='margin:0 0 0px 20px;' @click="saveChange">保存</li></a>
-                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">保存并核定</li></a>
+                                <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">保存并上报</li></a>
 
                             </ul>
                         </div>
@@ -190,7 +190,7 @@
 
                     </div>
                     <div class="verifyPanel" :style="{display:!verify?'block':'none'}">
-                        <div>已核定</div>
+                        <div>已上报</div>
                         <div style="font-size: 14px">{{verifyTime.substring(0,10)}}</div>
                     </div>
                 </div>
@@ -207,7 +207,7 @@
                     <i class="el-icon-close" style="cursor: pointer" @click="showCountMsg=false"></i>
                 </div>
                 <div>
-                    <p>年初预算核定后不允许更改，确定核定？</p>
+                    <p>年初预算上报后不允许更改，确定上报？</p>
                 </div>
                 <ul class="flexPublic handle">
                     <li style='margin:0 0 0px 20px;cursor: pointer' @click="showCountMsg=false">取消</li>
@@ -232,7 +232,7 @@
         name: "user",
         data(){
             return{
-                showCountMsg:false,//核定显示false隐藏 true显示
+                showCountMsg:false,//上报显示false隐藏 true显示
                 downloadLoading: false,
                 changeBtn:{
                     flag:true,
@@ -246,7 +246,7 @@
                 currentyear:'',//当前年份
                 proofType:'0',
                 loading: false,
-                verify:true,//判断页面是否可以修改，true默认可修改--未核定，若为false不可修改--已核定
+                verify:true,//判断页面是否可以修改，true默认可修改--未上报，若为false不可修改--已上报
                 verifyTime:'',
                 saasMessage:{
                     visible:false,  //消息弹出框*******
@@ -273,7 +273,7 @@
         },
         methods:{
             /*
-            *核定
+            *上报
             *
             * */
             hedin:function(){
@@ -305,7 +305,7 @@
                         }
                     }
                 }else{
-                   /* this.$message({ showClose: true, message:'已经进行过预算核定，不可进行修改',type: 'error' })*/
+                   /* this.$message({ showClose: true, message:'已经进行过预算上报，不可进行修改',type: 'error' })*/
                 }
 
             },
@@ -533,7 +533,7 @@
                     ).then(function (res) {
                         that.loading = false;
                         this.saasMessage={
-                            message:"年初预算核定成功!",
+                            message:"年初预算上报成功!",
                             delay:3000,
                             visible:true
                         };
@@ -546,7 +546,7 @@
                     })
                 }else{
                     this.saasMessage={
-                        message:"已经核定年初预算!",
+                        message:"已经上报年初预算!",
                         delay:3000,
                         visible:true
                     };

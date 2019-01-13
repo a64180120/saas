@@ -104,6 +104,31 @@
                                             <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child3.NCAccount}}</div>
                                             <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" v-model="child3.NCAccount"></div>
                                         </li>
+                                        <li v-if="child3.children.length>0" class="child">
+                                            <ul @click.stop="childChoose($event,child3,child4,index4)"  v-for="(child4,index4) of child3.children" :key=index4>
+                                                <li style="padding:0 0 0 30px;" :title="child4.KCode">{{child4.KCode}}</li>
+                                                <li style="padding-left:30px;" >{{child4.KName}}</li>
+                                                <li><span v-if="child4.KBalanceType==1">借</span><span v-if="child4.KBalanceType==2">贷</span><span v-if="child4.KBalanceType==3">借/贷</span></li>
+                                                <li>
+                                                    <div class="assistCss" v-for="(aux,inde) of child4.AuxiliaryTypes" :key=inde>
+                                                        <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                                                        <span>{{aux.BaseName}} &nbsp;</span>    
+                                                    </div>     
+                                                </li>
+                                                <li>
+                                                    <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                                                    <!-- <div v-show="updatePage">
+                                                        <label>启用 <input type="radio"></label>
+                                                        <label>停用 <input type="radio"></label>
+                                                    </div> -->
+                                                </li>
+                                                <li>
+                                                    <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child4.NCAccount}}</div>
+                                                    <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" v-model="child4.NCAccount"></div>
+                                                </li>
+                                                
+                                            </ul>
+                                        </li>       
                                     </ul>
                                 </li>
                             </ul>
@@ -210,6 +235,7 @@ export default {
     return {
         searchVal:'',
         dataList:[],
+        startYear:'',  //建账日期;
         year:(new Date).getFullYear(), //选择的年份
         asset:[],  //资产
         liabilities:[],  //负债
@@ -284,6 +310,7 @@ export default {
             }
             this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                 .then(res=>{ 
+                    console.log(res)
                     if(!res.CheckRes){
                         this.message={
                             delay:4000,
@@ -291,6 +318,8 @@ export default {
                             visible:true
                         }
                     }
+                   
+                    
                     this.CheckRes=res.CheckRes;
                     this.startInitCss=!res.CheckRes;
                     // console.log(res)                  
@@ -548,7 +577,11 @@ export default {
                         this.updatePage=false;
                         this.getChecked();
                     }else{
-                        
+                        this.message={
+                            delay:4000,
+                            message:res.Msg,
+                            visible:true
+                        }
                     }
                     
                 },err => {
@@ -564,7 +597,6 @@ export default {
                         }
                 })
             }
-      
         })
         .catch(err=>{
             loading1.close();
@@ -686,6 +718,7 @@ export default {
         this.addData={};
         this.addPageShow='add';
         this.addData=this.choosedData[0].child;
+        console.log(this.addData)
         this.addData.Type=this.addInfo.Type;
         this.subjectInfo={
             preSubject:this.addData,
@@ -780,6 +813,12 @@ export default {
                         visible:true,
                         delay:4000
                     }
+                }else{
+                   this.message={
+                        message:res.Msg,
+                        visible:true,
+                        delay:4000
+                    } 
                 }
                 this.addPageShow=false;
                 this.getSubjectList();
@@ -925,7 +964,7 @@ export default {
     }
     .subjectNav{
         width: 25px;
-        height:100%;
+        height:70%;
         float:left;
         >ul{
             height:100%;
