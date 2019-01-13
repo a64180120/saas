@@ -6,7 +6,6 @@ const authToken = {
     // jumpAuthPage  每次请求时判断Token是否超时，若超时则跳转到登录页面
     // getToken  每次请求时判断Token是否超时，若超时则获取新Token (推荐)
     tokenTimeoutMethod: 'getToken',
-    
     // 在Cookie中记录缓存的key
     //loginKey: 'isLogin',
     //用户缓存信息
@@ -64,26 +63,28 @@ const authToken = {
     // 获取用户缓存信息
     getUserInfoData: function() {
 
-        return this.getCookies(this.userinfo)
+        //return this.getCookies(this.userinfo)
+        return  getStore({ name: this.userinfo,type: 'session' })
     },
 
     // 设置用户缓存信息
     setUserInfoData: function(data){
 
-        this.setCookies(this.userinfo,data);
+        //this.setCookies(this.userinfo,data);
+        setStore({ name: this.userinfo,content: data,type: 'session' })
     },
 
     // 移除用户缓存信息 和 移除登录状态
     removeUserInfoData: function(){
-        Cookies.remove(this.userinfo);
-        Cookies.remove(this.loginKey);
+        //Cookies.remove(this.userinfo);
+        removeStore({ name: this.userinfo })
     },
 
     /*******************Menu************************** */
     // 当前是菜单
     getMenuStatus: function(){
         //return this.getCookies(this.menuKey)
-        return  getStore({ name: this.menuKey,type: 'session' })|| []
+        return  getStore({ name: this.menuKey,type: 'session' })
     },
 
     // 设置菜单缓存

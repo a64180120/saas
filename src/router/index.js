@@ -12,35 +12,10 @@ import Cookies from "js-cookie";
 //后台数据库获取的路由信息
 var permissionList = [];
 
-function initRoute(router,menu,user) {
+function initRoute(router,menu) {
     return new Promise(resolve => {
         if (permissionList.length == 0) {
-            if(menu.length==0){
-                console.log("没有权限数据，正在获取");
-                var param={
-                    userid:user.userInfo.PhId,
-                    orgid:user.orgInfo.PhId
-                };
-
-                store.dispatch("user/getNavList",param).then((navList) => {
-                    var data= navList||[];
-                    store.dispatch("user/getPermissionList",data).then(res => {
-                        console.log("权限列表生成完毕");
-                        permissionList = res;
-                        res.forEach(function(v) {
-                            var path=v.path||'';
-                            let routeItem = router.match(path);
-                            if (routeItem) {
-                                routeItem.meta.permission = v.permission? v.permission: [];
-                                routeItem.meta.name = v.name;
-                            }
-                        });
-                        resolve();
-                    });
-                });
-            }else{
-                console.log("缓存有菜单数据");
-                console.log(menu);
+            if(menu){
                 store.dispatch("user/getPermissionList",menu).then(res => {
                     permissionList = res;
                     console.log(res);
@@ -82,12 +57,20 @@ router.beforeEach((to, from, next) => {
         menuInfo = Auth.getMenuStatus(),
         token_Cookies=Auth.getToken();
         //console.log('menuInfo');
-        //console.log(menuInfo);
-        if(menuInfo.Status=='error'){
-            menuInfo=[];
+        console.log(menuInfo);
+        if(menuInfo !== null && typeof menuInfo === 'object'){
+            if(menuInfo.Status=='error'){
+                menuInfo=undefined;
+            }
         }
 
-    if (userinfo && userinfo.isLogin && token_Cookies) {
+        if(userinfo !== null && typeof userinfo === 'object'){
+            if(userinfo.Status=='error'){
+                userinfo=undefined;
+            }
+        }
+    
+    if (userinfo && menuInfo && token_Cookies) {
         // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
         // 这种情况出现在手动修改地址栏地址时
         if (to.path === "/login") {
@@ -96,7 +79,7 @@ router.beforeEach((to, from, next) => {
             // 防止因重定向到error页面造成beforeEach死循环
             next();
         } else {
-            initRoute(router,menuInfo,userinfo).then(() => {
+            initRoute(router,menuInfo).then(() => {
                 let isPermission = true;
                 if (to.meta.requireAuth) {
                     if (to.meta.type == "page") {
