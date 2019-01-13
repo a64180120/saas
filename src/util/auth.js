@@ -6,7 +6,7 @@ const authToken = {
     // jumpAuthPage  每次请求时判断Token是否超时，若超时则跳转到登录页面
     // getToken  每次请求时判断Token是否超时，若超时则获取新Token (推荐)
     tokenTimeoutMethod: 'getToken',
-    
+
     // 在Cookie中记录缓存的key
     //loginKey: 'isLogin',
     //用户缓存信息
@@ -31,7 +31,7 @@ const authToken = {
 
     setCookies:function(key,data){
         var maxAge = new Date(new Date().getTime() + 60 * 60 * 1000)
-        
+
         // 这点要判断是字符串还是对象
         if (typeof data == "string") {
             Cookies.set(key, data, { expires: maxAge })

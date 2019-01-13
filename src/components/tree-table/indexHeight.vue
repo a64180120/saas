@@ -1,10 +1,10 @@
 <template>
-  <el-table 
+  <el-table
   ref="treetable"
-  :data="formatData" 
+  :data="formatData"
   :row-style="showRow"
   :height="tableHeight"
-  v-bind="$attrs" 
+  v-bind="$attrs"
   @row-click="handleClickRow"
   @current-change="handleCurrentChange">
     <el-table-column v-if="isindex" type="index" label="序号" width="64" align="center"></el-table-column>
@@ -18,7 +18,7 @@
         {{scope.$index}}
       </template>
     </el-table-column>
-    <el-table-column v-else v-for="(column, index) in columns" :key="column.value" :label="column.text" :width="column.width":align="column.align">
+    <el-table-column v-else v-for="(column, index) in columns" :key="column.value" :label="column.text" :min-width="column.width":align="column.align">
       <template slot-scope="scope">
         <span v-if="index === 0" v-for="space in scope.row._level" class="ms-tree-space" :key="space"></span>
         <span class="tree-ctrl" v-if="iconShow(index,scope.row)" @click="toggleExpanded(scope.$index)">

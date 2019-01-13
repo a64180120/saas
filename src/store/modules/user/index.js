@@ -29,7 +29,9 @@ const state = {
     //登录的ID
     sessionId:'',
     //该用户可用的邀请码
-    invitationCode:''
+    invitationCode:'',
+    //开始记账时间
+    startYear:''
 };
 
 //计算获取取新数据
@@ -65,11 +67,13 @@ const mutations = {
         if (data) {
             data.isLogin=true;
             Auth.setUserInfoData(data);
-            //console.log(data);
+            console.log('缓存======');
+            console.log(data);
             state.userid = data.userInfo.PhId;
             state.orgid = data.orgInfo.PhId;
             state.orgcode = data.orgInfo.EnCode;
             state.orgName = data.orgInfo.OrgName;
+            state.startYear = data.orgInfo.StartYear;
             state.username=data.userInfo.RealName;
             state.EmpowerInfo=data.orgInfo.EmpowerInfo;
             state.invitationCode=data.orgInfo.InvitationCode;
@@ -149,8 +153,6 @@ const actions = {
                 if (response.Status === "success") {
                     var user = response.Data;
                     user.sessionid=userInfo.loginid;
-                    //用户信息缓存
-                    console.log();
                     commit("setUserInfo", user);
                 }
                 resolve(response);
