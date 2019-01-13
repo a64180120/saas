@@ -78,22 +78,25 @@
                     {
                         text: "编码",
                         value: "KCode",
-                        width: 200,
+                        width: '10%',
                         'text-indent': '40px'
                     },
                     {
                         text: "名称",
                         value: "KName",
+                        width: '10%',
                         align:'center'
                     },
                     {
                         text: "本月数(元)",
                         value: "StartSum",
+                        width: '10%',
                         align:'right'
                     },
                     {
                         text: "本年累计数(元)",
                         value: "EndSum",
+                        width: '10%',
                         align:'right'
                     }
                 ],
@@ -348,7 +351,32 @@
             },
             //打印
             printContent(){
-                this.$print(this.$refs.printFrom) // 使用
+                //console.log(this.$refs.printFrom);
+                let dom=this.$refs.printFrom.cloneNode(true);
+                dom.childNodes[0].style.height='inherit';
+                dom.childNodes[0].childNodes[2].style.height='inherit';
+                dom.childNodes[0].childNodes[2].classList.remove('el-table__body-wrapper');
+                dom.childNodes[0].childNodes[1].childNodes[0].setAttribute('style','width:750px');
+                dom.childNodes[0].childNodes[2].childNodes[0].setAttribute('style','width:720px');
+                console.log(dom.childNodes[0].childNodes[2].childNodes[0]);
+                dom.childNodes[0].childNodes[2].childNodes[0].childNodes[0].childNodes[0].width=100;
+                let tb=dom.childNodes[0].childNodes[2].childNodes[0].childNodes[0].childNodes;
+                console.log(tb);
+                for(var i=0;i<tb.length;i++){
+                    dom.childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[i].width=110;
+                    tb[i].width=100;
+                }
+                let bom = document.body.cloneNode(true);
+                bom.innerHTML='';
+                bom.appendChild(dom);
+                // let bom = document.body.cloneNode(true);
+                // bom.innerHTML='';
+                // bom.appendChild(dom);
+                // console.log(bom);
+                //let ht=bom.parentNode.cloneNode(true);
+                //this.$print(ht.appendChild(bom)) // 使用
+                console.log(bom);
+                this.$print(bom);
             },
             printLodop() {
                 /**
@@ -383,6 +411,17 @@
     }
 </style>-->
 <style scoped>
+    @media print{
+        html,body{
+            height: inherit;
+        }
+        body{
+            height: inherit !important;
+        }
+        #printForm{
+            height: inherit !important;
+        }
+    }
    /* .reportBox{
         margin-right: 60px;
     }

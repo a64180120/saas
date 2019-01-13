@@ -16,14 +16,12 @@
         
         <el-menu 
         router 
-        ref="navbar" 
+        ref="navbarlist" 
         :mode="navMode" 
         :default-active="defActive"
         :collapse="isCollapse"
         menu-trigger="hover" 
         @select="selectMenu"
-        @open="openMenu" 
-		    @close="closeMenu" 
         unique-opened>
             <nav-bar-item v-for="(item, n) in navList" :item="item" :navIndex="String(n)" :key="n"></nav-bar-item>
         </el-menu>
@@ -62,7 +60,7 @@ export default {
     $route() {
       // debugger;
       // let path = this.$route.path;
-      // let indexPath = this.$refs.navbar.items[path].indexPath;
+      // let indexPath = this.$refs.navbarlist.items[path].indexPath;
       // this.selectMenu(path, indexPath);
     }
   },
@@ -74,21 +72,22 @@ export default {
        * 选择时获取点击菜单的父级index，并计算得到该index在已打开菜单中的索引值，
        * 关闭位于当前打开菜单中该索引值之后的全部菜单
        */
-      let openedMenus = this.$refs.navbar.openedMenus;
-      let openMenuList;
+      //debugger
+      //let openedMenus = this.$refs.navbar.openedMenus;
+      //let openMenuList;
       // 如果点击的是二级菜单，则获取其后已经打开的菜单
-      if (indexPath.length > 1) {
-        let parentPath = indexPath[indexPath.length - 2];
-        openMenuList = openedMenus.slice(openedMenus.indexOf(parentPath) + 1);
-      } else {
-        openMenuList = openedMenus;
-      }
+      // if (indexPath.length > 1) {
+      //   let parentPath = indexPath[indexPath.length - 2];
+      //   openMenuList = openedMenus.slice(openedMenus.indexOf(parentPath) + 1);
+      // } else {
+      //   openMenuList = openedMenus;
+      // }
 
       // 关闭菜单
-      openMenuList = openMenuList.reverse();
-      openMenuList.forEach(ele => {
-        this.$refs.navbar.closeMenu(ele);
-      });
+      // openMenuList = openMenuList.reverse();
+      // openMenuList.forEach(ele => {
+      //   this.$refs.navbar.closeMenu(ele);
+      // });
     },
     openMenu(){
       this.navBgShow = true 
@@ -124,7 +123,7 @@ export default {
 }
 
 .el-menu{
-  border-bottom:5px solid #eaeaea;
+  
   margin-right:10px;
 }
 .sidebar::-webkit-scrollbar {
@@ -136,6 +135,8 @@ export default {
 .sidebar > ul {
   height: 100%;
 }
-
+.el-menu.el-menu--horizontal {
+  border:0;
+}
 
 </style>

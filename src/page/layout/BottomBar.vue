@@ -8,8 +8,9 @@
             <transition name="move" mode="out-in" appear>
                 <nav-bar   :isCollapse="collapsevule"></nav-bar>
             </transition>
+            <div class="bottomBorder"></div> 
         </div>
-         
+        
     </div>
     
 </template>
@@ -57,7 +58,16 @@ export default {
     //border-bottom: 1px solid #00B8EE;
     z-index: 99;
     bottom: 0px;
-    border-bottom:5px solid #eaeaea;
+    
+    .bottomBorder{
+        position:absolute;
+        height:10px;
+        width:80%;
+        border-radius:0 10px 0 0;
+        background:#eaeaea;
+        bottom:0;
+        z-index:99;
+    }
     
     >.side-nav.top{
         background: none;
@@ -138,6 +148,7 @@ export default {
         opacity:0;
     }
 }
+
 
 </style>
 <style lang="scss">
@@ -437,6 +448,9 @@ export default {
 
     }
 }
-
+.side-nav.top > .el-menu > .el-submenu.is-active > .el-submenu__title,
+.side-nav.top > .el-menu > .el-menu-item.is-active{
+    border-bottom:0;
+}
 
 </style>

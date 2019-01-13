@@ -1079,7 +1079,7 @@
         width: 339px;
         height: 250px;
         box-shadow: 0 0 6px 2px #c9ccce;
-        /*border-radius: 10px 10px 0 0;*/
+        border-radius: 10px 10px;
     }
     .searchPanel .flexPublic{
         padding: 5px 10px;
@@ -1087,7 +1087,7 @@
     }
     .searchPanel .searchPanel_title{
         height: 29px;
-        background-color: #3E8CBC;
+        background-color: #00b7ee;
         color: #fff;
     }
     .searchPanel .searchPanel_title div:nth-of-type(2){
@@ -1095,7 +1095,7 @@
         border-radius: 15px;
         background: white;
         font-size: 15px;
-        color: #3e8cbc;
+        color: #00b7ee;
         cursor: pointer;
     }
     .searchPanel>.flexPublic:nth-of-type(3)>div:last-child,
@@ -1123,12 +1123,13 @@
         line-height: 33px;
         text-align: center;
         cursor: pointer;
+        border-radius: 5px;
     }
 
     .searchPanel .greybtn{
-        background-color: #606266;
+        background-color: #aaa;
     }
    .searchPanel .bluebtn{
-        background-color: #3e8cbc;
+        background-color: #00b7ee;
     }
 </style>

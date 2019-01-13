@@ -861,15 +861,18 @@
                     this.countDai++;
                 }
                 var children1;
-                if(this.jiefang-this.daifang>0){  //自动添加本级金额
-                     item.money.daifang= this.jiefang-this.daifang;
-                     children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.nextElementSibling.children;
-                     this.moneyTurn(item.money.daifang,children1);
-                }else if(this.jiefang-this.daifang<0){
-                    item.money.jiefang= (this.jiefang-this.daifang)*-1;
-                    children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.children;  
-                    this.moneyTurn(item.money.jiefang,children1);
+                if(!item.SubjectCode){
+                    if(this.jiefang-this.daifang>0){  //自动添加本级金额
+                        item.money.daifang= this.jiefang-this.daifang;
+                        children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.nextElementSibling.children;
+                        this.moneyTurn(item.money.daifang,children1);
+                    }else if(this.jiefang-this.daifang<0){
+                        item.money.jiefang= (this.jiefang-this.daifang)*-1;
+                        children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.children;  
+                        this.moneyTurn(item.money.jiefang,children1);
+                    }
                 }
+                
                 this.countJie++;  //触发合计更新
                 this.countDai++;    
                 this.$forceUpdate();
@@ -1386,7 +1389,7 @@
         height:30px;
         line-height: 30px;
         text-align: center;
-        padding-left:15%;
+        // padding-left:15%;
         >div{
             float:left;
             &.selectContainer{
@@ -1395,9 +1398,15 @@
             }
         }
     }
+    .kemu>.assistContainer>ul>li>div:nth-of-type(2){
+        width:50%;
+        >select{
+            height:99%;
+        }
+    }
     .kemu>.assistContainer>ul>li>div:first-of-type{
-        margin-right: 15px;
-        width:60px;
+        
+        width:50%;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;

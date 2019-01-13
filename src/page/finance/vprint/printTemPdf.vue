@@ -42,7 +42,7 @@
                 <li>制单：{{item.mst.producer}}</li>
             </ul>
         </div>
-      </div>
+    </div>
 
 </template>
 
@@ -88,11 +88,12 @@ export default {
         vm.tableData=[];
        
         vm.voucher5tr(
-            // setTimeout(()=>{
-            // //下载pdf
+            setTimeout(()=>{
+                vm.$emit('print-click',true)
+            //下载pdf
 
             // vm.getPdf(vm.$refs.printVoucher);
-            // })
+            })
         )   
                 
     },
@@ -136,7 +137,6 @@ export default {
             }
             //this.tableData的赋值
             tr5.forEach(n=>{
-                console.log(n,this.tableData)
                 this.tableData.push({
                     mst:mst,
                     list:n,

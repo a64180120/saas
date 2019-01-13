@@ -32,7 +32,7 @@
                             <li>说明</li>
                         </ul>
                             <div class="formData formData_content"  ref="printFrom">
-                                <!--<template v-for="n in 100">
+                                <template v-for="n in 100">
                                     <ul class="formDataItems flexPublic">
                                         <li class=" bolder" style="width: 30%;text-align: center">{{n}}</li>
                                         <li style="display: none"></li>
@@ -44,7 +44,7 @@
                                             <input v-bind:disabled="changeBtn.disable" type="text" v-bind:value="n">
                                         </li>
                                     </ul>
-                                </template>-->
+                                </template>
 
                                 <template v-for="(item,index) in budgetList">
                                     <template v-if="item.SubjectCode=='BNSRHJ'">
