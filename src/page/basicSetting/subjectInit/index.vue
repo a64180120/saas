@@ -172,7 +172,7 @@
                     <li>
                         <div>科目名称</div>
                         <div class="inputContainer">
-                            <input placeholder="必填" type="text" v-model="subjectInfo.KName">
+                            <input :disabled="choosedData[0].child.IsSystem?true:false" placeholder="必填" type="text" v-model="subjectInfo.KName">
                         </div>
                         <div style="clear:both"></div>
                     </li>
@@ -187,20 +187,35 @@
                     <li>
                         <div>余额方向</div>
                         <div>
-                            <label v-show='subjectInfo.KBalanceType==1'>
+                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==1&&addPageShow=='update')">
                                 <input v-model="subjectInfo.KBalanceType" value="1" type="radio" name="balance">
                                 &nbsp;借方&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label v-show='subjectInfo.KBalanceType==2'>
+                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==2&&addPageShow=='update')">
                                 <input v-model="subjectInfo.KBalanceType" value="2"  type="radio" name="balance">
                                 &nbsp;贷方&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label v-show='subjectInfo.KBalanceType==3'>
+                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==3&&addPageShow=='update')">
                                 <input v-model="subjectInfo.KBalanceType" value="3"  type="radio" name="balance">
                                 &nbsp;借/贷&nbsp;&nbsp;&nbsp;
                             </label>
                         </div>
                         <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>启/停用</div>
+                        <div style="border:0">
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')">
+                                <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
+                                &nbsp;启用&nbsp;&nbsp;&nbsp;
+                            </label>
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')">
+                                    <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
+                                    &nbsp;停用&nbsp;&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div style="clear:both"></div>
+                        
                     </li>
                     <li>
                         <div>辅助核算</div>
@@ -252,6 +267,7 @@ export default {
             KCode:'',
             KName:'',
             KType:'',
+            EnabledMark:'',
             KBalanceType:'',
             AuxiliaryTypes:[]
         },
@@ -280,7 +296,6 @@ export default {
   //加载数据
   mounted:function(){
       this.getChecked();
-      console.log(userInfo.getUserInfoData().orgInfo)
       this.startYear=userInfo.getUserInfoData().orgInfo.StartYear;  
   },
   //计算
@@ -314,8 +329,14 @@ export default {
                 queryfilter:{"OrgId*num*eq*1":this.orgid}
             }
             this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
-                .then(res=>{ 
-                    console.log(res)
+                .then(res=>{
+                    if(res.Status=='error'){
+                       this.message={
+                            delay:4000,
+                            message:res.Msg,
+                            visible:true
+                        } 
+                    } 
                     if(!res.CheckRes){
                         this.message={
                             delay:4000,
@@ -362,6 +383,7 @@ export default {
         this.pay=[];
         this.$axios.get('PSubject/GetPSubjectList',{params:data})
         .then(res=>{
+            console.log(res)
             if(res.Status=="success"){
                 for(var sub of res.Data){  //数据分成5类
                     switch(sub.KType){
@@ -382,7 +404,7 @@ export default {
                         break;
                     }
                 } 
-                console.log(res)
+                
                 this.Mst=res.Mst;
                 this.dataList=this.asset;
                 this.initCss();
@@ -395,10 +417,10 @@ export default {
                 this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})
                 .then(res=>{
                         loading2.close();
-                        
+                        console.log(res);
                         if(res.Status=='success'){
                             this.addInfo=res;
-                            console.log(res)
+                          
                         }
                         this.$forceUpdate();
                     },err => {
@@ -545,7 +567,8 @@ export default {
                             PersistentState:1,
                             PMonth:0,
                             Uyear:this.year,
-                            Dtls:Dtls
+                            Dtls:Dtls,
+                            Verify:1
                         }
                     }
                 }
@@ -612,7 +635,7 @@ export default {
         })
         .catch(err=>{
             loading1.close();
-            console.log(22222)
+            console.log(err)
         })
         
     },
@@ -736,6 +759,7 @@ export default {
             preSubject:this.addData,
             KCode:'',
             KName:'',
+            EnabledMark:this.addData.EnabledMark,
             KType:this.addData.KType,
             KBalanceType:this.addData.KBalanceType,
             AuxiliaryTypes:[]
@@ -773,17 +797,18 @@ export default {
             preSubject:this.choosedData[0].parent,
             KName:this.choosedData[0].child.KName,
             KCode:this.choosedData[0].child.KCode,
+            EnabledMark:this.choosedData[0].child.EnabledMark,
             KType:this.choosedData[0].child.KType,
             KBalanceType:this.choosedData[0].child.KBalanceType,
             AuxiliaryTypes:[]
         }
-        console.log( this.subjectInfo.preSubject,this.subjectInfo)
+       
         if(!this.subjectInfo.preSubject){
             this.subjectInfo.preSubject=JSON.parse(JSON.stringify(this.choosedData[0].child));
             this.subjectInfo.preSubject.KCode='';
             this.subjectInfo.preSubject.KName='';
         }
-        console.log( this.subjectInfo.preSubject)
+    
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
@@ -961,7 +986,7 @@ export default {
     //接收年份选择****
     yearSelect(data){
         this.year=data.choosedYear;
-        console.log(this.year)
+    
         this.getSubjectList();
     },
     //刷新
@@ -1002,19 +1027,18 @@ export default {
                 display:flex;  //垂直居中
                 align-items:center;  //垂直居中
                 padding-top:30px\9\0;
-                min-height: 130px;
+                min-height: 60px;
                 cursor:pointer;
                 &.active{
                     background: #00b7ee;
                     color:#fff;
                 }
-                >span{
-                    
-                    position:relative;
-                   
-                    
+                >span{   
+                    position:relative;  
                 }
-                 
+                &:nth-of-type(3){
+                    min-height: 75px;
+                }
             }
         }
     }
@@ -1335,7 +1359,7 @@ export default {
         background:rgba(0,0,0,0.5);
         >.addPage{           
             width:556px;
-            height:346px;
+            height:396px;
             position:absolute;
             left:35%;
             top:120px;
@@ -1348,17 +1372,19 @@ export default {
                     height:30px;
                     line-height:30px;
                     margin-bottom:10px;
-                    overflow-y: auto;
+                    
                     .inputContainer>input{
                         border:0;
-                        height:95%;
+                        height:28px;
+                        position:relative;
+                        
                     }
                     
                     .subCodeCss{
                         overflow: hidden;
                         >span{
                             float:left;
-                            height:100%;
+                            height:30px;
                             line-height: 30px;
                             width:20%;
                             background: #ccc;
@@ -1389,7 +1415,7 @@ export default {
                     }
                     >div:nth-of-type(2){
                         float:left;        
-                        width:360px;
+                        width:359px;
                         border:1px solid #ccc;
                         
                     }
@@ -1402,7 +1428,8 @@ export default {
                     
                 }
                 &>li:last-of-type{
-                    margin-top:-10px;
+                    overflow-y: auto;
+                    margin-top:10px;
                     height:40px;
                 }
                 

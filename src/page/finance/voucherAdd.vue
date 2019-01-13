@@ -3,43 +3,43 @@
     <div class="addVoucher">
         <div class="unionState flexPublic">
             <div class="searcherCon">
-                <div class="searcherValue" style="width:200px"><input @keyup.13="getvoucherList('searcher')" type="text" v-model="superSearchVal.keyword" placeholder="科目/摘要/凭证号"></div>
-                <div @click="getvoucherList('searcher')"  class="searcherBtn btn">凭证定位</div>
+                <div class="searcherValue" style="width:200px"><input @keyup.13.stop="getvoucherList('searcher')" type="text" v-model="superSearchVal.keyword" placeholder="科目/摘要/凭证号"></div>
+                <div @click.stop="getvoucherList('searcher')"  class="searcherBtn btn">凭证定位</div>
                 <ul class="fastGps">
-                    <li class="btn" @click="getvoucher('pre')"></li>
-                    <li class="btn" @click="getvoucher('next')"></li>
-                    <li class="btn"  @click.prevent="addVoucher('moreVoucher')">更多凭证</li>
+                    <li class="btn" @click.stop="getvoucher('pre')"></li>
+                    <li class="btn" @click.stop="getvoucher('next')"></li>
+                    <li class="btn"  @click.prevent.stop="addVoucher('moreVoucher')">更多凭证</li>
                     <li class="btn" @click.stop="nextMonthShow" v-if="!voucherDataList.data.Mst.PhId">做下月账</li>
                 </ul>
             </div>
             <ul class="handle">
-                <li @click.prevent="addVoucher('fresh')" style='float:right;margin:0 0 0 10px;cursor:pointer;font-size:27px;width:30px !important;background:none;color:#00b7ee;border:0' class="el-icon-refresh" ></li>
+                <li @click.prevent.stop="addVoucher('fresh')" style='float:right;margin:0 0 0 10px;cursor:pointer;font-size:27px;width:30px !important;background:none;color:#00b7ee;border:0' class="el-icon-refresh" ></li>
                 <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
                     <li class="more" style="width:80px">
                         <ul >
                             <li>更多</li>
-                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('copy')">复制</li>
-                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('cut')">剪切</li>
-                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('chongh')">冲红</li>
-                            <li @click.prevent="addVoucher('reset')">凭证号重排</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('copy')">复制</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('cut')">剪切</li>
+                            <li v-if="voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('chongh')">冲红</li>
+                            <li @click.prevent.stop="addVoucher('reset')">凭证号重排</li>
                         </ul>
                     </li>
                 </a>
-                <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a> 
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('delete')"><li >删除</li></a> 
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('unAudit')"><li >反审核</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('audit')"><li >审核</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
-                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('update')"><li >修改</li></a>
-                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent="addVoucher('keep')" ><li >保存</li></a>
+                <!-- <a @click.prevent="addVoucher('print')"><li style="width:80px">保存并打印</li></a>  -->
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('delete')"><li >删除</li></a> 
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('unAudit')"><li >反审核</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('audit')"><li >审核</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('keepAdd')"><li style="width:80px">保存并新增</li></a>
+                <a v-if="voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('update')"><li >修改</li></a>
+                <a v-if="!voucherDataList.data.Mst.PhId" @click.prevent.stop="addVoucher('keep')" ><li >保存</li></a>
                 <a>
                     <li class="mode" style="width:60px;">
                         <div >模板</div>
-                        <div @click.prevent="addVoucher('modelList')" >引用模板</div>
-                        <div @click.prevent="addVoucher('keepModel')">存为模板</div>
+                        <div @click.prevent.stop="addVoucher('modelList')" >引用模板</div>
+                        <div @click.prevent.stop="addVoucher('keepModel')">存为模板</div>
                     </li>
                 </a> 
-                <a @click.prevent="addVoucher('fresh')"><li style="padding:0 5px;width:60px">新增</li></a>                  
+                <a @click.prevent.stop="addVoucher('fresh')"><li style="padding:0 5px;width:60px">新增</li></a>                  
             </ul>
         </div>
         <!--凭证组件*******************-->
@@ -200,7 +200,7 @@
 </template>
 
 <script>
-    
+    import userInfo from '@/util/auth'
     import nextMonth from './nextMonthCheck'
     import voucher from './voucher'
     import {mapState, mapActions} from 'vuex'
@@ -264,7 +264,8 @@
             saasConfirm:{
                 message:'',
                 show:false
-            }
+            },
+            uInfo:''
         }},
         created(){ 
             if(this.$route.query.list){
@@ -278,6 +279,8 @@
         },
         mounted(){  
             this.getChecked();
+            this.uInfo= userInfo.getUserInfoData().userInfo; 
+            console.log(this.uInfo)
             //this.moveNavTop();
         },
         methods:{
@@ -290,7 +293,7 @@
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
-                                delay:3000,
+                                delay:4000,
                                 message:'该凭证已审核,无法修改!'
                             }
                             return;
@@ -324,7 +327,7 @@
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
-                                delay:3000,
+                                delay:4000,
                                 message:'该凭证已审核!'
                             }
                             return;
@@ -336,7 +339,7 @@
                         if(!this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
-                                delay:3000,
+                                delay:4000,
                                 message:'该凭证还未审核!'
                             }
                             return;
@@ -378,7 +381,7 @@
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
-                                delay:3000,
+                                delay:4000,
                                 message:'该凭证已审核,无法删除!'
                             }
                             return;
@@ -387,7 +390,7 @@
                         if(this.voucherDataList.data.Mst.Dtls.length<=0){
                             this.saasMessage={
                                 visible:true,
-                                delay:3000,
+                                delay:4000,
                                 message:'请输入内容!'
                             }
                             return;
@@ -441,7 +444,7 @@
                 if(!this.dataCheck()){
                     this.saasMessage={
                         visible:true,
-                        delay:3000,
+                        delay:4000,
                         message:'借贷不平衡,请查看!'
                     }
                     return;
@@ -472,7 +475,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                    var data = {
                        uid: this.uid,
                        orgid: this.orgid,
@@ -490,7 +493,7 @@
                            if (res.Status == 'success') {
                                this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:res.Msg
                                };
                                
@@ -544,7 +547,11 @@
                     this.temp.tempMask=false;
                 }else{
                     if(!this.temp.TemName){
-                        this.message("请输入凭证名称!")
+                        this.saasMessage={
+                            message:'请输入模板名称!',
+                            delay:4000,
+                            visible:true
+                        }
                     }else{
                         this.voucherData();
                         var dtls=this.voucherDataList.data.Mst.Dtls;
@@ -573,6 +580,8 @@
                     return;
                 }
                 this.voucherDataList.data.Mst.TemName=name;
+                this.voucherDataList.data.Mst.Userid=this.uid;
+                this.voucherDataList.data.Mst.UseCount=this.uInfo.Account;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -585,20 +594,14 @@
                         if(res.Status=='success'){
                             this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:res.Msg
                                };
-                            this.voucherDataList.bool=false;
-                            this.voucherMask=false;
-                            var vm=this;
-                            function delay(){
-                                vm.voucherDataList.bool=true
-                            }
-                            setTimeout(delay,10);
+                            this.getvoucherList();
                         }else{
                             this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:res.Msg
                                };
                         }
@@ -628,13 +631,13 @@
                             if(bool){
                                 this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:'审核成功!'
                                };
                             }else{
                                  this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:'反审核成功!'
                                };
                             }
@@ -657,7 +660,7 @@
                         if(res.Status=='success'){
                              this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:res.Msg
                                };
                         }else{
@@ -826,7 +829,7 @@
                     keyword:vm.superSearchVal.keyword,
                     pagesize:vm.pagesize,
                     pageindex:vm.pageindex,
-                    sort:['PNo DESC','PType','PDate DESC'],
+                    sort:['PNo ASC','PType','PDate ASC'],
                     itemValuePhid:vm.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":vm.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":vm.superSearchVal.date2.replace('-','')}
                 }
@@ -961,7 +964,7 @@
                         if(res.Status=='success'){
                             this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:res.Msg
                                };
                             this.getChecked();
@@ -1090,7 +1093,7 @@
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 this.voucherDataList.data.Mst.PSource='冲红'
                 this.resetVoucher();        
-                this.$message("请查看凭证信息,确认无误点击保存!")                      
+                                    
             },
             //清空凭证phid*****************
             clearPhId(item){
@@ -1146,7 +1149,7 @@
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
-                                delay:3000,
+                                delay:4000,
                                 message:'该凭证已审核,无法剪切!'
                             }
                         }
@@ -1178,7 +1181,7 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
-                        if(Vdata.Mst.Uyear==this.nowTime.getFullYear()&& Vdata.Mst.PMonth>=this.checkedTime) {
+                        if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
@@ -1273,7 +1276,7 @@
                    return;
                }
                vm.clearPhId(Vdata.Mst);
-               if(Vdata.Mst.Uyear==vm.nowTime.getFullYear()&& Vdata.Mst.PMonth>=vm.checkedTime) {
+               if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                    var data = {
                        uid: vm.uid,
                        orgid: vm.orgid,
@@ -1290,7 +1293,7 @@
                            if (res.Status == 'success') {
                                 vm.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:res.Msg
                                };
                                vm.voucherMask=false;
@@ -1308,6 +1311,8 @@
                    vm.$message('当前月份已结账,无法修改凭证!')
                }
             },
+            
+            
         },
         computed:{
             ...mapState({
@@ -1315,8 +1320,10 @@
                 uid: state => state.user.userid,
                 uname: state => state.user.username,
                 orgcode: state => state.user.orgcode,
+                usercount:state => state.user,
                 cachePage:state=>state.tagNav.cachePage  //是否利用路由缓存
             }),
+            
         },
         components:{
             voucher,

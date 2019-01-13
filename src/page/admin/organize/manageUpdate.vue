@@ -16,18 +16,18 @@
                         <span style="position: relative;left: 5px;color: #d8281d">*</span>
                         <span>工会名称</span>
                     </div>
-                    <div class="inputContainer"><input  @blur="unionInput(true)" type="text" v-model="OrgName">
+                    <div class="inputContainer"><input  @blur="unionInput(true)" type="text" v-model="OrgName" placeholder="必填">
                     </div>
-                    <div v-show="unionCss.name">请输入工会名称</div>
+                    <!--<div v-show="unionCss.name">请输入工会名称</div>-->
                 </li>
                 <li>
                     <div class="addFormItemTitle">
                         <span style="position: relative;left: 5px;color: #d8281d">*</span>
                         <span>工会编码</span>
                     </div>
-                    <div class="inputContainer"><input  @blur="unionInput(true)" type="text" v-model="EnCode">
+                    <div class="inputContainer"><input  @blur="unionInput(true)" type="text" v-model="EnCode" placeholder="必填">
                     </div>
-                    <div v-show="unionCss.name">请输入工会编码</div>
+                    <!--<div v-show="unionCss.name">请输入工会编码</div>-->
                 </li>
                 <li>
                     <div class="addFormItemTitle">
@@ -36,20 +36,22 @@
                             统一社会信用代码
                         </span>
                     </div>
-                    <div class="inputContainer"><input  @blur="unionInput(false)" type="text" style="width: 90%"
-                                                       v-model="EnterpriseCode"></div>
-                    <div v-show="unionCss.id">请输入信用代码</div>
-                    <div style="position: relative">
-                        <el-upload
-                            ref="uploadEnterprise"
-                            class="avatar-uploader"
-                            action=""
-                            :show-file-list="false"
-                            :before-upload="beforeAvatarUpload"
-                            :http-request='uploadFileMethodEnterprise'>
-                            <img v-if="EnterpriseAttachment" :src="picUrl+EnterpriseAttachment" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        </el-upload>
+                    <div class="inputContainer">
+                        <div class="inputContainer" style="height: 100%"><input  @blur="unionInput(false)" type="text" style="width: 90%"
+                                                            v-model="EnterpriseCode" placeholder="必填"></div>
+                        <!--<div v-show="unionCss.id">请输入信用代码</div>-->
+                        <div style="position: relative; top: -20px">
+                            <el-upload
+                                ref="uploadEnterprise"
+                                class="avatar-uploader"
+                                action=""
+                                :show-file-list="false"
+                                :before-upload="beforeAvatarUpload"
+                                :http-request='uploadFileMethodEnterprise'>
+                                <img v-if="EnterpriseAttachment" :src="picUrl+EnterpriseAttachment" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </div>
                     </div>
                 </li>
                 <li>
@@ -115,7 +117,7 @@
                         </div>
                         <div>-</div>
                         <div class="inputContainer">
-                            <input type="text" v-model="MobilePhone" placeholder="请输入联系电话">
+                            <input type="text" v-model="TelePhone" placeholder="请输入联系电话">
                         </div>
                     </div>
                     <div></div>
@@ -178,8 +180,8 @@
                             工会主席
                         </span>
                     </div>
-                    <div>
-                        <div class="inputContainer"><input type="text" v-model="Chairman" style="width: 90%">
+                    <div class="inputContainer">
+                        <div class="inputContainer" style="height: 100%"><input type="text" v-model="Chairman" style="width: 90%" placeholder="必填">
                         </div>
                         <div style="position: relative; top: -20px">
                             <el-upload
@@ -203,7 +205,7 @@
                             经审会主任
                         </span>
                     </div>
-                    <div class="inputContainer"><input type="text" v-model="Director"></div>
+                    <div class="inputContainer"><input type="text" v-model="Director" placeholder="必填"></div>
                     <div></div>
                 </li>
                 <li>
@@ -232,6 +234,7 @@
     import md5 from 'js-md5'
     import qs from 'qs'
     import { mapState, mapActions } from "vuex";
+    import UserInfo from "@/util/auth";
     import pictureUpload from "@/components/upload";
     import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
 
@@ -274,6 +277,7 @@
                 FinanceAccount:'',
                 BankName:'',
                 BankAccount:'',
+                InvitationCode:'',
                 ProvinceValue:[],
                 CityValue:[],
                 CountyValue:[],
@@ -560,8 +564,8 @@
                             'EnterpriseCode': this.EnterpriseCode,
                             'Address': this.Address,
                             //'phoneHead': this.phoneHead,
-                            'MobilePhone': this.MobilePhone,
-                            //'Telephone': this.Telephone,
+                            //'MobilePhone': this.MobilePhone,
+                            'Telephone': this.Telephone,
                             'Chairman': this.Chairman,
                             'EnableTime': this.EnableTime,
                             'ServiceStartTime': this.ServiceStartTime,
@@ -578,6 +582,7 @@
                             'FinanceAccount': this.FinanceAccount,
                             'BankName': this.BankName,
                             'BankAccount': this.BankAccount,
+                            'InvitationCode': this.InvitationCode,
                             'NgRecordVer': this.NgRecordVer
                         };
                         if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
@@ -591,7 +596,7 @@
                             if(this.ChairmanAttachment != null && this.ChairmanAttachment != ''){
                                 this.Integrity = parseInt(this.Integrity) + 5;
                             }
-                            if(this.MobilePhone != null && this.MobilePhone != ''){
+                            if(this.Telephone != null && this.Telephone != ''){
                                 this.Integrity = parseInt(this.Integrity) + 10;
                             }
                             page.Integrity = this.Integrity;
@@ -628,7 +633,7 @@
                             'EnterpriseCode': this.EnterpriseCode,
                             'Address': this.Address,
                             //'phoneHead': this.phoneHead,
-                            'MobilePhone': this.MobilePhone,
+                            'Telephone': this.Telephone,
                             //'Telephone': this.Telephone,
                             'Chairman': this.Chairman,
                             'ServiceStartTime': this.ServiceStartTime,
@@ -699,7 +704,7 @@
                             this.EnCode = res.EnCode;
                             this.EnterpriseCode = res.EnterpriseCode;
                             this.Address = res.Address;
-                            this.MobilePhone = res.MobilePhone;
+                            //this.Telephone = res.Telephone;
                             this.Telephone = res.Telephone;
                             this.Chairman = res.Chairman;
                             this.Director = res.Director;
@@ -723,6 +728,7 @@
                             this.BankAccount= res.BankAccount,
                             this.Verify = res.Verify;
                             this.Integrity = res.Integrity;
+                            this.InvitationCode = res.InvitationCode;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
@@ -739,7 +745,7 @@
                             this.EnCode = res.EnCode;
                             this.EnterpriseCode = res.EnterpriseCode;
                             this.Address = res.Address;
-                            this.MobilePhone = res.MobilePhone;
+                            //this.MobilePhone = res.MobilePhone;
                             this.Telephone = res.Telephone;
                             this.Chairman = res.Chairman;
                             this.Director = res.Director;

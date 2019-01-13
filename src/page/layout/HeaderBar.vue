@@ -132,7 +132,7 @@ export default {
   },
   methods: {
     developing(){
-      this.$message('功能开发中!')
+      this.$message('功能未开放!')
     },
     ...mapActions({
       sysLogout: "user/logout"
