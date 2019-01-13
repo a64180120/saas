@@ -200,9 +200,9 @@
                                 <div class="orgedit-value">{{orgForm.EnterpriseCode}}
                                 </div>
                                 <div>
-                                    <el-popover trigger="hover">
-                                        <img :src="picUrl+orgForm.EnterpriseAttachment" style="height: 500px;width: 500px"/>
-                                        <img slot="reference" :src="picUrl+orgForm.EnterpriseAttachment" style="height: 30px;width: 30px">
+                                    <el-popover trigger="hover" v-if="orgForm.EnterpriseAttachment">
+                                        <img :src="picUrl+orgForm.EnterpriseAttachment" style="height: 500px;width: 500px" />
+                                        <img slot="reference" :src="picUrl+orgForm.EnterpriseAttachment" style="height: 30px;width: 30px"/>
                                     </el-popover>
                                 </div>
                             </li>
@@ -242,9 +242,9 @@
                                 <div class="orgedit-title"><span class="orgtitle-ringt">工会主席：</span></div>
                                 <div class="orgedit-value">{{orgForm.Chairman}}</div>
                                 <div>
-                                    <el-popover trigger="hover">
+                                    <el-popover trigger="hover" v-if="orgForm.ChairmanAttachment">
                                         <img :src="picUrl+orgForm.ChairmanAttachment" style="height: 500px;width: 500px"/>
-                                        <img slot="reference" :src="picUrl+orgForm.ChairmanAttachment" style="height: 30px;width: 30px">
+                                        <img slot="reference" :src="picUrl+orgForm.ChairmanAttachment" style="height: 30px;width: 30px" />
                                     </el-popover>
                                 </div>
                             </li>
@@ -325,6 +325,7 @@
                 changePhid:'',
                 beforeChange:{},
                 extraheight:300,
+                routerTz:false,
                 afterChange:{},
                 isedit: false,
                 fileVisible: false,
@@ -342,6 +343,7 @@
                         RelPhid: ''
                     }
                 ],
+
                 tableData:[],
                 Provinces:[],
                 Citys:[],
@@ -410,6 +412,13 @@
         },
         mounted() {
             this.getData();
+            let infoData=UserInfo.getUserInfoData();
+            if(infoData.orgInfo.EnCode == '' || infoData.orgInfo.EnCode == null){
+                this.routerTz = true;
+            }else{
+                this.routerTz = false;
+            }
+
             // this.selectArea(0, 0);
             // this.selectArea(this.orgForm.Province, 1);
             // this.selectArea(this.orgForm.City, 2);
@@ -617,6 +626,9 @@
                         this.$store.commit("user/setUserInfo", info);
                         let info2 = UserInfo.getUserInfoData();
                         console.log(info2);
+                        if(this.routerTz){
+                            this.$router.push('/setting/subjectstart');
+                        }
                         //移除TagNav
                         //this.$store.commit("tagNav/removeTagNav", route);
                         //跳转路由

@@ -95,7 +95,7 @@
         </div>
 
         <!-- 编辑弹出框 -->
-        <el-dialog :title="dialogTitle" :visible.sync="editVisible" width="40%" :close="dialogClose">
+        <el-dialog :title="dialogTitle" :visible.sync="editVisible" width="50%" :close="dialogClose" style="max-width: 1400px;">
             <el-form ref="forms" :model="form" :rules="rules" label-width="120px" label-position="right"
                      v-loading.fullscreen.lock="loading">
                 <el-form-item label="用户姓名：" prop="realName">
@@ -105,7 +105,7 @@
                     <el-input v-model="form.mobilePhone"></el-input>
                 </el-form-item>
                 <el-form-item label="角色：" prop="rolesid">
-                    <div style="width: 60%; float: left">
+                    <div style="width: 50%; float: left">
                         <el-checkbox-group v-model="form.rolesid" style="float: left">
                             <el-checkbox v-for="item of roledata" :key="item.PhId" :label="item.PhId"
                                          class="el-checkbox-role">{{item.Name}}
@@ -114,7 +114,7 @@
 
                         </el-checkbox-group>
                     </div>
-                    <div style="width: 40%; float: right">
+                    <div style="width: 50%; float: right">
                         <span v-for="item of roledata" class="el-checkbox-role2" @click="premisList(item.PhId)">
                             权限详情
                         </span>
@@ -544,7 +544,7 @@
             },
             //永久停用账号的提示
             messageTs(){
-                this.$message.success("无法对永久停用的用户进行操作！");
+                this.$message.success("用户已被停用，无法正常登录，请联系系统管理员处理后再试！");
             },
             //新增
             Add() {
@@ -1018,6 +1018,7 @@
                 console.log(selectUser);
 
                 this.loading = true;
+
                 //提交asiox
                 SysUserUpdate(vm, {
                     otype: this.dialogState,
@@ -1025,8 +1026,12 @@
                     orgid: this.orgid,
                     infoData: {Mst: userinfo, Relation: relations, sysUserTransferRecord: transrecord}
                 }).then(res => {
+                    console.log(res);
                     this.loading = false;
-
+                    if(res =='1'){
+                        this.$message.error('不允许将账号移交给系统中已存在的用户，请更换用户信息后重试!');
+                        return;
+                    }
                     if (res.Status === 'error') {
                         this.$message.error(res.Msg);
                         return
@@ -1053,6 +1058,10 @@
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style scoped>
+    .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after {
+        border-color: #00B8EE;
+    }
+
     .el-button--info:checked, .el-button--info:focus{
         background: #00B8EE;
         color: #FFFFFF;
@@ -1115,5 +1124,10 @@
 
     .red {
         color: #ff0000;
+    }
+</style>
+<style>
+    .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after {
+        border-color: #00B8EE;
     }
 </style>
