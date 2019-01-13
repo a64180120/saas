@@ -201,9 +201,13 @@
         </div>
         <!-- 打印************ -->
         <div v-show="printCss" class="printCon">
+            <div @click="printvou">666</div>
             <span @click="printCss=false"><img src="../../assets/icon/close-white.svg" alt=""> </span>
-            <div class="container">
-                <print-tem  ref="print" :printData="printData"></print-tem>
+            <div class="container" ref="print">
+                <div>
+                    <print-tem   :printData="printData"></print-tem>
+                </div>
+                
             </div>
         </div>
         
@@ -475,6 +479,20 @@
                             };
                             return;
                         }
+                        if(item.WriteOff_PhIds.length>0){
+                            this.saasMessage={
+                                message:'该凭证已经冲红,无法冲红!',
+                                delay:4000,
+                                visible:true
+                            }
+                            return;
+                            // if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                            //     return;
+                            // }else{
+                            //     this.voucherMaskShow(false);
+                            //     return;
+                            // }
+                        }   
                         this.voucherDataList.data.Mst=item;
                         this.chongh();
                         this.voucherMaskShow('chongh');
@@ -701,7 +719,7 @@
                     voucherTitle: "记账凭证", //记账凭证
                     billNum: data.PAttachment, //附件数
                     orgName: vm.uname, //核算单位
-                    billdate:data.PDate.split('T')[0], //日期
+                    
                     voucherNum: "记-"+data.PNo, //凭证号：记-0001
                     lotal: 0, //合计
                     supervisor: data.PKeepingPerson, //记账
@@ -709,8 +727,9 @@
                     cashier: data.PCashier, //出纳
                     producer: data.PMakePerson //制单
                 };
-                 console.log(mst)
-                 debugger
+                if(data.PDate)
+                mst.billdate=data.PDate.split('T')[0];//日期
+               
                 var list=[
                     //{ abstract: "代理收入",  subject: "112200050003 应收账款_3_宁波得志",  JSum: '5071.00', DSum: ''},
                    ];
@@ -724,8 +743,6 @@
                     })
                 }
                 mst.lotal=mst.lotal.toFixed(2);
-                
-                console.log(mst,list)
                 return {
                     mst:mst,
                     list:list
@@ -740,6 +757,12 @@
                 for(var vou of this.voucherList){
                     this.printData.push(vm.printDataTurn(vm,vou));  
                 }
+                var data=document.getElementsByClassName('printCon')
+                console.log(data[0]);
+                this.$print(data[0])
+            },
+            printvou(){
+                console.log(this.refs.print);
                 this.$print(this.$refs.print)
             },
              //冲红***********************
@@ -748,21 +771,29 @@
                //this.voucherData(); 
                 var Mst=this.voucherDataList.data.Mst;
                 if(Mst.WriteOff_PhIds.length>0){
-                    if(confirm("该凭证已经冲红,需要重新冲红吗?")){
-                        return;
-                    }else{
-                        this.voucherMaskShow(false);
-                        return;
+                    this.saasMessage={
+                        message:'该凭证已经冲红,无法冲红!',
+                        delay:4000,
+                        visible:true
                     }
+                    return;
+                    // if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                    //     return;
+                    // }else{
+                    //     this.voucherMaskShow(false);
+                    //     return;
+                    // }
                 }
+                var year;
                 var month;
                 var date1;
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
+                year=Mst.PDate.slice(0,4);
                 month=Mst.PDate.slice(5,7);
                 date1=Mst.PDate.slice(8,10);
                 console.log(Mst)
                 for(var dtl of Mst.Dtls){
-                    dtl.Abstract=`注销${month}月${date1}号${Mst.PNo}号凭证`;                    
+                    dtl.Abstract=`注销${year}年${month}月${date1}号${Mst.PNo}号凭证`;                    
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
                     dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
                     if(dtl.DtlAccounts){
@@ -2293,15 +2324,15 @@
         
     }
     .printCon{
-        position: fixed;
-        width:1366px;
-        height:100%;
-        overflow-y: auto;
-        overflow-x: auto;
-        left:0;
-        top:0;
-        z-index:99;
-        background:rgba(0,0,0,0.5);
+        // position: fixed;
+        // width:100%;
+        // height:100%;
+        // overflow-y: auto;
+        // overflow-x: auto;
+        // left:0;
+        // top:0;
+        // z-index:99;
+        // background:rgba(0,0,0,0.5);
         >.container{
             padding:0;
             >.sys-page{

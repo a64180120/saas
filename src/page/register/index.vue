@@ -74,7 +74,7 @@
                                 </el-form-item>
                                 <el-form-item prop="addressDetail">
                                     <img src="@/assets/images/register/dz.png" style="bottom: 35px;">
-                                    <el-select v-model="registerForm2.provincevalue" placeholder="请选择"  @change="searchArea(registerForm2.provincevalue,1)">
+                                    <el-select v-model="registerForm2.provincevalue" placeholder="请选择" style="margin-left: 40px"  @change="searchArea(registerForm2.provincevalue,1)">
                                         <el-option
                                             v-for="item in province"
                                             :key="item.value"
@@ -82,7 +82,7 @@
                                             :value="item.value" >
                                         </el-option>
                                     </el-select>
-                                    <el-select v-model="registerForm2.cityvalue" placeholder="请选择" @change="searchArea(registerForm2.cityvalue,2)">
+                                    <el-select v-model="registerForm2.cityvalue" placeholder="请选择" style="margin-left: 0px" @change="searchArea(registerForm2.cityvalue,2)">
                                         <el-option
                                             v-for="item in city"
                                             :key="item.value"
@@ -90,7 +90,7 @@
                                             :value="item.value">
                                         </el-option>
                                     </el-select>
-                                    <el-select v-model="registerForm2.countyvalue" placeholder="请选择" @change="searchArea(registerForm2.countyvalue,3)">
+                                    <el-select v-model="registerForm2.countyvalue" placeholder="请选择" style="margin-left: 0px" @change="searchArea(registerForm2.countyvalue,3)">
                                         <el-option
                                             v-for="item in county"
                                             :key="item.value"
@@ -98,7 +98,7 @@
                                             :value="item.value">
                                         </el-option>
                                     </el-select>
-                                    <el-select v-model="registerForm2.streetvalue" placeholder="请选择">
+                                    <el-select v-model="registerForm2.streetvalue" placeholder="请选择" style="margin-left: 0px">
                                         <el-option
                                             v-for="item in street"
                                             :key="item.value"
@@ -509,21 +509,40 @@
                         res=time;
                         if(level==0){
                             that.province=res;
-                            that.registerForm2.provincevalue=res[0].label;
+                            that.city=[];
+                            hat.county=[];
+                            that.street=[];
+                            //that.registerForm2.provincevalue=res[0].label;
+                            that.registerForm2.provincevalue='';
+                            that.registerForm2.cityvalue='';
+                            that.registerForm2.countyvalue='';
+                            that.registerForm2.streetvalue='';
+
                             that.searchArea(res[0].value,1)
                         }else if(level==1){
                             that.city=res;
-                            that.registerForm2.cityvalue=res[0].label;
+                            hat.county=[];
+                            that.street=[];
+                            //that.registerForm2.cityvalue=res[0].label;
+                            that.registerForm2.cityvalue='';
+                            that.registerForm2.countyvalue='';
+                            that.registerForm2.streetvalue='';
                             that.searchArea(res[0].value,2)
                         }else if(level==2){
                             that.county=res;
-                            that.registerForm2.countyvalue=res[0].label;
+                            that.street=[];
+                            //that.registerForm2.countyvalue=res[0].label;
+                            that.registerForm2.countyvalue='';
+                            that.registerForm2.streetvalue='';
                             that.searchArea(res[0].value,3)
                         }else if(level==3){
                             that.street=res;
-                            that.registerForm2.streetvalue=res[0].label;
+
+                            that.registerForm2.streetvalue=''
+                            //that.registerForm2.streetvalue=res[0].label;
+
                         }else{
-                            that.registerForm2.streetvalue=val;
+                            //that.registerForm2.streetvalue=val;
                         }
                     }
                 )
@@ -808,8 +827,8 @@
         width: 100px;
     }
     .sys-login .form-group .el-select .el-input .el-input__inner:first-child{
-        margin-left: 40px;
-        padding-left: 10px;
+        margin-left: 0px!important;
+        padding-left: 10px!important;
     }
     .sys-login .form-group .el-input__inner{
         background-color: white;

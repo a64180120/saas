@@ -354,6 +354,20 @@
                         break;
                     case 'chongh':   //冲红
                         this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
+                        if(this.voucherDataList.data.Mst.WriteOff_PhIds.length>0){
+                            this.saasMessage={
+                                message:'该凭证已经冲红,无法冲红!',
+                                delay:4000,
+                                visible:true
+                            }
+                            return;
+                            // if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                            //     return;
+                            // }else{
+                            //     this.voucherMaskShow(false);
+                            //     return;
+                            // }
+                        }  
                         this.voucherMaskShow('chongh');
                         this.voucherAdd=true;
                         this.chongh();
@@ -369,6 +383,7 @@
                             }
                             return;
                         }
+                        
                         if(this.voucherDataList.data.Mst.Dtls.length<=0){
                             this.saasMessage={
                                 visible:true,
