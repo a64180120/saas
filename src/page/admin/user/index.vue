@@ -792,7 +792,7 @@
             },
             //永久停用账号的提示
             messageTs(){
-                this.$message.success("无法对永久停用的用户进行操作！");
+                this.$message.success("用户已被停用，无法正常登录，请联系系统管理员处理后再试！");
             },
             //删除按钮
             PageDelete() {
@@ -1224,8 +1224,12 @@
                     orgid:this.qOrgId,
                     infoData: { Mst:userinfo,Relation:relations,sysUserTransferRecord:transrecord}
                 }).then(res => {
+                    console.log(res);
                     this.loading = false;
-
+                    if(res =='1'){
+                        this.$message.error('不允许将账号移交给系统中已存在的用户，请更换用户信息后重试!');
+                        return;
+                    }
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
                         return
