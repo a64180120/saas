@@ -253,6 +253,18 @@
   export default {
     name: "home",
     data(){
+      let validPaw=(rule,value,callback)=>{
+          if(value==''||value==undefined){
+              callback()
+          }else{
+              let reg=/^([0-9]|[a-z]|[A-Z]|!|@|#|\$|%|\^|&|\*|\(|\)){6,12}$/;
+              if(!reg.test(value)){
+                callback(new Error('不符合输入规则:6-12位'))
+              }else{
+                  callback()
+              }
+          }
+      };
       return {
         userDropDown:false,
         //修改密码弹窗***********
@@ -270,44 +282,11 @@
         oldPaw: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
         newPaw: [
           { required: true, message: "请输入新密码", trigger: "blur" },
-          {
-            min: 8,
-            max: 20,
-            message: "长度在 8 到 20 个字符",
-            trigger: "blur"
-          },
-          {
-            // eslint-disable-next-line
-            validator(rule, value, callback, source, options) {
-              var errors = [];
-              if (!/^[a-z0-9]+$/.test(value)) {
-                console.log("不符合输入规则");
-                errors.push("请输入字母或特殊字符");
-              }
-              callback(errors);
-            }
-          }
+          { required:true, validator:validPaw,trigger:'blur'}
         ],
         confirmNewPaw: [
           { required: true, message: "请再次输入新密码", trigger: "blur" },
-          {
-            min: 8,
-            max: 20,
-            message: "长度在 8 到 20 个字符",
-            trigger: "blur"
-          },
-          {
-            // eslint-disable-next-line
-            validator(rule, value, callback, source, options) {
-              var errors = [];
-
-              if (!/^[a-z0-9]+$/.test(value)) {
-                console.log("不符合输入规则");
-                errors.push("请输入字母或特殊字符");
-              }
-              callback(errors);
-            }
-          }
+          { required:true, validator:validPaw,trigger:'blur'}
         ]
       },
       message: 2,

@@ -56,7 +56,6 @@ router.beforeEach((to, from, next) => {
     let userinfo=Auth.getUserInfoData(),
         menuInfo = Auth.getMenuStatus(),
         token_Cookies=Auth.getToken();
-        //console.log('menuInfo');
         console.log(menuInfo);
         if(menuInfo !== null && typeof menuInfo === 'object'){
             if(menuInfo.Status=='error'){
