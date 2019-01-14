@@ -222,10 +222,10 @@
             <div class="coverContent">
                 <div class="flexPublic">
                     <p>提示</p>
-                    <i class="el-icon-close" style="cursor: pointer" @click="showCountMsg=false"></i>
+                    <i class="el-icon-close" style="cursor: pointer;text-align:right" @click="showCountMsg=false"></i>
                 </div>
                 <div>
-                    <p>年初预算上报后不允许更改，确定上报？</p>
+                    <p>年中调整上报后不允许更改，确定上报？</p>
                 </div>
                 <ul class="flexPublic handle">
                     <li style='margin:0 0 0px 20px;cursor: pointer' @click="showCountMsg=false">取消</li>
@@ -677,6 +677,16 @@
                 let cop = this.$refs.printFrom.cloneNode(true);
                 cop.insertBefore(dm,cop.firstChild);
                 cop.classList.remove('formData_content');
+
+                //获取打印内容的子节点 ;
+                let childList=cop.childNodes;
+
+                let len=15;
+                let level=Math.ceil(childList.length/len);
+                for(var i=1; i<level ; i++){
+                    childList[i*len].setAttribute('style','page-break-after:always');
+                    childList[i*len+1].setAttribute('style','border-top:1px solid #ebeef5;margin-top:20px');
+                }
                 this.$print(cop) // 使用
             },
             //刷新
@@ -909,30 +919,35 @@
         top: 50%;
         left: 50%;
         margin: -87.5px -181px;
-
+        box-shadow: 0 0 5px 1px #d3e9f9;
     }
     .coverContent div:nth-of-type(1){
-        border-bottom: 1px solid grey;
+        border-bottom: 1px solid #eee;
         padding:10px 20px;
+
     }
     .coverContent div:nth-of-type(2){
         padding: 30px 20px;
-
     }
     .coverContent ul{
-        padding: 30px 20px;
+        padding: 30px 50px;
     }
     .coverContent ul li:nth-of-type(1){
-        border: 1px solid #3e8cbc;
-        color: #3e8cbc;
+        border: 1px solid #00B8EE;
+        color: #00B8EE;
         padding: 5px 15px;
+        width: 100px;
+        border-radius: 3px;
     }
     .coverContent ul li:nth-of-type(2){
-        border: 1px solid #3e8cbc;
+        border: 1px solid #00B8EE;
         color: #FFF;
-        background: #3e8cbc;
+        background: #00B8EE;
         padding: 5px 15px;
+        width: 100px;
+        border-radius: 3px;
     }
+
     .disableBtn{
         color: #cccccc !important;
         background: #fff !important;

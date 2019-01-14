@@ -164,17 +164,17 @@
                         </div>-->
                     </div>
                 </div>
-                <!--凭证组件弹窗-->
-                <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none','z-index':'999'}" >
-                    <div class="voucherContent">
-                        <div class="title">凭证查看 <i class="el-icon-close" @click="voucherDataList.bool=false"></i></div>
-                        <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
-                    </div>
-                    <div class="voucherCoverInner"> </div>
-                </div>
+
 
             </div>
-
+            <!--凭证组件弹窗-->
+            <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none','z-index':'999'}" >
+                <div class="voucherContent">
+                    <div class="title">凭证查看 <i class="el-icon-close" @click="voucherDataList.bool=false"></i></div>
+                    <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
+                </div>
+                <div class="voucherCoverInner"> </div>
+            </div>
             <div class="timeSelectBox">
                 <time-select-bar @item-click="dateChoose"
                                 :showtype="'doubleTime'"
@@ -821,16 +821,34 @@
     .timeSelectBox{
         z-index: 99;
     }
+
     .voucherCover{
-        position: fixed;
+        position:fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 100;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: rgba(0, 0, 0, 0.5);
+        height: 100%;
+        width: 100%;
         padding: 0 30px;
     }
+    /*兼容IE11样式  测试后才可确定是否可用*/
+    @media screen and(-ms-high-contrast:active),(-ms-high-contrast:none){
+        .voucherCover{
+            position:-ms-page;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 100%;
+            width: 100%;
+            padding: 0 30px;
+        }
+    }
+
+
     .voucherCover .el-icon-close{
         float: right;
         color: #ccc;
@@ -955,7 +973,7 @@
         border-left:1px solid #ddd;
     }
     .formData>ul.formDataItems>li a,.formData>ul.formDataItems>li a:link,.formData>ul.formDataItems>li a:active,.formData>ul.formDataItems>li a:visited,.formData>ul.formDataItems>li a:hover {
-        color: #000;
+        color:#45c0f7;
         text-decoration: underline;
         cursor: pointer;
     }

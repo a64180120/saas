@@ -13,7 +13,7 @@
                             <el-form :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px">
                                 <el-form-item prop="name">
                                     <img src="@/assets/images/register/1.png">
-                                    <el-input v-model="loginForm.name" type="text" placeholder="手机号"></el-input>
+                                    <el-input v-model="loginForm.name" type="text" placeholder="手机号码"></el-input>
                                 </el-form-item>
                                 <el-form-item prop="password">
                                     <img src="@/assets/images/register/2.png">
@@ -109,7 +109,7 @@
                                 </el-form-item>
                                 <el-form-item prop="confirmPassword" >
                                     <img src="@/assets/images/register/2-1.png">
-                                    <el-input v-model="fixPwdForm.confirmPassword" type="text"  placeholder="请确认新密码"></el-input>
+                                    <el-input v-model="fixPwdForm.confirmPassword" type="password"  placeholder="请确认新密码"></el-input>
                                 </el-form-item>
 
                                 <div style="text-align: center; margin-top: 40px">
@@ -222,7 +222,7 @@ export default {
                     url: '/SysUser/GetCheckMsgCode?phone='+that.loginFormPhone.phoneNum+'&type=login&code='+value,
                     headers: headconfig
                 }).then(res => {
-                    
+
                     var resdata=JSON.parse(res.data);
                     console.log(resdata);
                     if(resdata.Status=='error'){
@@ -597,8 +597,15 @@ export default {
                             orgid: this.loginForm.orgid
                         }).then(res => {
                             loading.close();
+                            console.log(res);
+                            return;
                             if(res.Status==="success"){
-                                this.$router.push('home') //跳转主页
+                                if(res.Data.orgInfo.EnCode){
+                                    this.$router.push('home') //跳转主页
+                                }else{
+                                    this.$router.push('/system/organization') //跳转主页
+                                }
+
                                 var para={
                                     userid:'',
                                     orgid:this.loginForm.orgid,

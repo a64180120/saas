@@ -53,8 +53,8 @@
                             <i class="el-icon-close" @click="aocType.show=false"></i>
                         </div>
                         <div class="selectarea">
-                            <el-radio label="4" v-model="checkType">资产类科目</el-radio>
-                            <el-radio label="5" v-model="checkType">负债类科目</el-radio>
+                            <el-radio label="1" v-model="checkType">资产类科目</el-radio>
+                            <el-radio label="2" v-model="checkType">负债类科目</el-radio>
                             <select v-model="chooseSubject">
                                 <template  v-for="item in subjectList">
                                     <option :value="item">{{item.KName}}</option>
@@ -175,7 +175,7 @@
                 interCourse:[],
                 date1:[],
                 proofType:'1',
-                checkType:'4',//新增往来明细 4选择资产类  5选择负债类
+                checkType:'1',//新增往来明细 1选择资产类  2选择负债类
                 subjectList:[],//选择资产类，查询详细的资产类科目
                 chooseSubject:'',//选择的资产科目
                 aocType:{show:false,choose:0,title:'新增往来明细'}, //选择的增加还是修改,0增加，1修改

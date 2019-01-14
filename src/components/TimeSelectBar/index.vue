@@ -8,16 +8,16 @@
             <!--侧边时间选择器  月-->
             <div class="vertical dragscroll"  v-bind:style="{'display':(showtype=='doubleTime'||showtype=='singleTime'?'block':'none')}" >
                 <div id="List" class="list">
-                    <template v-for="n in (currentyear-startyear)">
-                        <template v-if="n+startyear<=currentyear+1">
+                    <template v-for="n in (currentyear-startyear+ (jiezhangMonth==12?2:1))">
+                        <template v-if="n+startyear<=currentyear+(jiezhangMonth==12?2:1)">
                             <div id="">
                                 <ul>
-                                    <p class="name">{{currentyear-n+1}}</p>
+                                    <p class="name">{{startyear+n-1}}</p>
                                     <template v-for="m in month">
-                                        <li :date="(currentyear-n+1)+'-'+m"
-                                            :class="{'Font_color':(currentyear-n+1==currentyear&& m>currentmonth),'selectMonth':(currentyear-n+1==choosedYear&&m==choosedMonth)}"
+                                        <li :date="(startyear+n-1)+'-'+m"
+                                            :class="{'Font_color':(startyear+n-1==jiezhangYear&& m>jiezhangMonth||startyear+n-1>jiezhangYear),'selectMonth':(startyear+n-1==choosedYear&&m==choosedMonth)}"
                                             @click="chosedata">{{m}}</li>
-                                        <i :class="{'colour':(currentyear-n+1==currentyear&& m>=currentmonth)?true:(m==12?true:false)}"></i>
+                                        <i :class="{'colour':(startyear+n-1==jiezhangYear&& m>=jiezhangMonth||startyear+n-1>jiezhangYear)?true:(m==12?true:false)}"></i>
                                     </template>
                                 </ul>
                             </div>
@@ -31,13 +31,13 @@
                 <div class="list">
                     <div>
                         <ul>
-                            <template v-for="n in (currentyear-startyear+1)">
-                                <template v-if="n+startyear<=currentyear+1">
-                                    <li :date="(startyear+n)+'-'+1"
-                                        :class="{'selectMonth':(startyear+n==choosedYear)}"
+                            <template v-for="n in (currentyear-startyear+ (jiezhangMonth==12?2:1))">
+                                <template v-if="n+startyear<=currentyear+ (jiezhangMonth==12?2:1)">
+                                    <li :date="(startyear+n-1)+'-'+1"
+                                        :class="{'selectMonth':(startyear+n-1==choosedYear)}"
                                         @click="chosedata"
-                                        >{{startyear+n}}</li>
-                                    <i :class="{'colour':(startyear+n==currentyear+1)?true:false}" style="margin: 12px 25px;"></i>
+                                        >{{startyear+n-1}}</li>
+                                    <i :class="{'colour':(startyear+n-1>=jiezhangYear)?true:false}" style="margin: 12px 25px;"></i>
                                 </template>
                                 <template v-else></template>
                             </template>
@@ -49,38 +49,43 @@
         <!--明细账样式-->
         <div v-bind:style="{'display':(showtype=='doubleTime'?'block':'none')}">
             <div class="Popup" v-bind:style="{'display':showTog}">
-                <div class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
-                    <div class="Current_year" >
-                        <i class="el-icon-minus" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
-                        <p style="display:none;"></p>
-                        <span style="width:13px;display:none;">-</span>
-                        <p>{{choosedYear}}</p>
-                        <i class="el-icon-plus" @click="((choosedYear<currentyear)?choosedYear++:choosedYear=currentyear)"></i>
+                <div style="height: 160px;">
+                    <div class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
+                        <div class="Current_year" >
+                            <i class="el-icon-minus" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
+                            <p style="display:none;"></p>
+                            <span style="width:13px;display:none;">-</span>
+                            <p>{{choosedYear}}</p>
+                            <i class="el-icon-plus" @click="((choosedYear<(Math.floor(jiezhangYear) + (jiezhangMonth==='12'?1:0)))?choosedYear++:choosedYear=(Math.floor(jiezhangYear) + (jiezhangMonth==='12'?1:0)))"></i>
+                        </div>
+                        <ul>
+                            <template v-for="n in 12">
+                                <li :class="{'selectMonth':n==choosedMonth,'uncatchMont':n>jiezhangMonth&&choosedYear>=jiezhangYear}"
+                                    @click="chosedataS(n,1)"
+                                >{{n}}月</li>
+                            </template>
+                        </ul>
                     </div>
-                    <ul >
-                        <template v-for="n in 12">
-                            <li :class="{'selectMonth':n==choosedMonth,'uncatchMont':n>currentmonth&&choosedYear==currentyear}"
-                                @click="chosedataS(n,1)"
-                            >{{n}}月</li>
-                        </template>
-                    </ul>
-                </div>
-                <div id="box" class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
-                    <div id="Current_year1" class="Current_year" >
-                        <i class="el-icon-minus" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
-                        <p style="display:none;"></p>
-                        <span style="width:13px;display:none;">-</span>
-                        <p>{{choosedYear}}</p>
-                        <i class="el-icon-plus" @click="((choosedYear<currentyear)?choosedYear++:choosedYear=currentyear)"></i>
+                    <div id="box" class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
+                        <div id="Current_year1" class="Current_year" >
+                            <i class="el-icon-minus" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
+                            <p style="display:none;"></p>
+                            <span style="width:13px;display:none;">-</span>
+                            <p>{{choosedYear}}</p>
+                            <i class="el-icon-plus" @click="((choosedYear<(Math.floor(jiezhangYear) + (jiezhangMonth==='12'?1:0)))?choosedYear++:choosedYear=(Math.floor(jiezhangYear) + (jiezhangMonth==='12'?1:0)))"></i>
+                        </div>
+                        <ul id="Month"  style="border-left: 1px solid #eee;">
+                            <template v-for="n in 12">
+                                <li :class="{'selectMonth':n==choosedMonthEnd,'uncatchMont':n>jiezhangMonth&&choosedYear>=jiezhangYear||n<choosedMonth}"
+                                    @click="(n>=choosedMonth)?chosedataS(n,2):''"
+                                >{{n}}月</li>
+                            </template>
+                        </ul>
                     </div>
-                    <ul id="Month">
-                        <template v-for="n in 12">
-                            <li :class="{'selectMonth':n==choosedMonthEnd,'uncatchMont':n>currentmonth&&choosedYear==currentyear||n<choosedMonth}"
-                                @click="(n>=choosedMonth)?chosedataS(n,2):''"
-                            >{{n}}月</li>
-                        </template>
-                    </ul>
+                    <div style="float: none"></div>
                 </div>
+
+                <div style="border-top: 1px solid #eee;color: #02a7e7;text-align: center;line-height: 30px">可以同时选择起始时间和终止时间</div>
             </div>
         </div>
 
@@ -94,11 +99,11 @@
                         <p style="display:none;"></p>
                         <span style="width:13px;display:none;">-</span>
                         <p>{{choosedYear}}</p>
-                        <i class="el-icon-plus" @click="((choosedYear<currentyear)?choosedYear++:choosedYear=currentyear)"></i>
+                        <i class="el-icon-plus" @click="((choosedYear<(Math.floor(jiezhangYear) + (jiezhangMonth==='12'?1:0)))?choosedYear++:choosedYear=(Math.floor(jiezhangYear) + (jiezhangMonth==='12'?1:0)))"></i>
                     </div>
                     <ul >
                         <template v-for="n in 12">
-                            <li :class="{'selectMonth':n==choosedMonth,'uncatchMont':n>currentmonth&&choosedYear==currentyear}"
+                            <li :class="{'uncatchMont':n>jiezhangMonth&&choosedYear==jiezhangYear||choosedYear>jiezhangYear,'selectMonth':n==choosedMonth}"
                                 @click="chosedataS(n,1)"
                             >{{n}}月</li>
                         </template>
@@ -185,24 +190,24 @@
         name: "timeSelectBar",
         data(){
           return{
-              startyear:2013,//开始年份
-              startmonth:'',//开始月份
+              startyear:'',//开始年份
+              //startmonth:'',//开始月份
 
               currentyear:'',//当前年份
-              currentmonth:0,//当前月
+              currentmonth:'',//当前月
 
               choosedYear:'',//选择的年份
               choosedMonth:'',//选择的开始月份
               choosedMonthEnd:'',//选择的结束月份
 
               jiezhangMonth:'',//结账的月份
-              fanjiezhangMonth:'',//反结账的月份
+              jiezhangYear:'',//反结账的月份
 
               month:12,//一共12个月
               showTog:'none',//显示隐藏
               monthsSelCss:'kuaiji',
               nowTime:new Date,
-              checkedTime:'',//下一个结账月*******
+              //checkedTime:'',//下一个结账月*******
           }
         },
         props:{
@@ -227,6 +232,7 @@
                 this.choosedMonth=currentMonth;
                 this.choosedMonthEnd=currentMonth;
                 this.startyear=this.startYear;
+                this.getChecked();
         },
         methods:{
 
@@ -243,7 +249,6 @@
             /*侧边月份点击事件*/
             chosedata:function(res){
                 let time=res.target.attributes.date.value;
-                console.log(time);
                 let timeLis=time.split('-');
                 /*if(timeLis[0]==this.currentyear&&timeLis[1]>this.currentmonth){
                     return
@@ -262,18 +267,11 @@
             /*弹窗月份点击事件*/
             chosedataS:function(n,level){
                 if(level==1){
-                    if(this.choosedYear==this.currentyear&&n>this.currentmonth){
-                        return
-                    }else{
                         this.choosedMonth = n ;
                         this.choosedMonthEnd = this.choosedMonthEnd>=n?this.choosedMonthEnd:n;
-                    }
                 }else{
-                    if(this.choosedYear==this.currentyear&&n>this.currentmonth){
-                        return
-                    }else{
                         this.choosedMonthEnd = n;
-                    }
+
                 }
                 let data={
                     'choosedYear':this.choosedYear,
@@ -283,7 +281,7 @@
                 this.$emit('item-click',data)
             },
 //获取当前结账的最新月份************
-            /*getChecked(){
+            getChecked(){
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
@@ -291,16 +289,19 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
+                        console.log('=====结账日期===');
                         console.log(res);
-                        this.checkedTime=res.Record[0].JEnableMonth+1;
+                        this.jiezhangMonth=res.Record[0].JEnableMonth;//结账的月份
+                        this.jiezhangYear=res.Record[0].JYear;//结账年
+                        console.log(this.jiezhangYear);
                         //this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         //this.year=this.sideDate.split('-')[0];
-                        this.choosedMonth=this.checkedTime;
+                        //this.choosedMonth=this.checkedTime;
                     })
                     .catch(err=>console.log(err))
             },
             //会计期[反]结账确认选择*****************************
-            yearsTrue(str,val){
+           /* yearsTrue(str,val){
                 if(str=='check'||str=='uncheck'){
                     this.checkOut(str,val);
                 }else{
@@ -352,16 +353,16 @@
         border-bottom: 10px solid white;
     }
     .selectMonth{
-        background:#03a9f4;
-        color:#fff;
+        background:#03a9f4 !important;
+        color:#fff !important;
     }
     .uncatchMont {
         background: #ffffff;
         color: #ccd4dc;
     }
     .date ul li.uncatchMont:hover{
-        background: #ffffff;
-        color: #ccd4dc;
+        background: #ddd;
+        color: #fff;
     }
     .box{
         width: 55px;
@@ -429,7 +430,7 @@
         color:#fff;
     }
     .list div ul .Font_color:hover{
-        background-color: #fff;
+        background:#00B8EE;
         color:#CCC !important;
         border:#ececec 1px solid !important;
         box-shadow: 0px 2px 2px #e0e0e0 !important;
@@ -556,11 +557,12 @@
     }
     .Current_year {
         width: 100%;
-        height: 30px;
-        /* background: #000; */
-        line-height: 30px;
+        height: 35px;
+        background: #00b7ee;
+        color: #fff;
+        line-height: 35px;
         padding-left: 16px;
-        margin-top: 19px;
+        margin-top: 10px;
         border-bottom: #f3f3f3 1px solid;
     }
     .Current_year *{
@@ -569,13 +571,13 @@
         height: 100%;
         margin-top: 0;
         text-align: center;
-        color:#2196f3;
+        color: #fff;
         margin-left: 20px;
     }
     .Current_year i{
         float: left;
         width: 27px;
-        margin-top: 6px;
+        margin-top: 10px;
     }
 
     .list div ul i{
