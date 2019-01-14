@@ -536,54 +536,58 @@ export default {
             this.Mst.Dtls=Dtls;
             this.Mst.PersistentState=2;
         }
-            //试算平衡*****************
-            var J=0;
-            var D=0;
-            for(var dt of Dtls){
-                J=(parseFloat(J)+parseFloat(dt.JSum)).toFixed(2);
-                D=(parseFloat(D)+parseFloat(dt.DSum)).toFixed(2);
-               
-            }
-            if(J!=D){
-                var c=J-D;  //差额**
-                this.message={
-                    message:'借贷试算平衡不通过,借贷差额为'+c+'请检查余额!',
-                    delay:4000,
-                    visible:true
-                }
-                return;
-            }
-            if(!this.Mst){
-                var data1={
-                    uid: this.uid,
-                    orgid: this.orgid,
-                    orgcode: this.orgcode,
-                    infoData: {
-                        Mst:{
-                            PMakePerson:this.username,
-                            PType:'记',
-                            OrgId:this.orgid,
-                            OrgCode:this.orgcode,
-                            PersistentState:1,
-                            PMonth:0,
-                            Uyear:this.year,
-                            Dtls:Dtls,
-                            Verify:1
-                        }
-                    }
-                }
-            }else{
-                 var data1={
-                    uid: this.uid,
-                    orgid: this.orgid,
-                    orgcode: this.orgcode,
-                    infoData: {
-                        Mst:this.Mst
-                    }
-                }
-            }
+        //试算平衡*****************
+        var J=0;
+        var D=0;
+        for(var dt of Dtls){
+            J=(parseFloat(J)+parseFloat(dt.JSum)).toFixed(2);
+            D=(parseFloat(D)+parseFloat(dt.DSum)).toFixed(2);
             
-     
+        }
+        if(J!=D){
+            var c=J-D;  //差额**
+            this.message={
+                message:'借贷试算平衡不通过,借贷差额为'+c+'请检查余额!',
+                delay:4000,
+                visible:true
+            }
+            return;
+        }
+        if(!this.Mst){
+            // var  pDate= new Date;   
+            // var VerifyDate=pDate.getFullYear()+'-'+((pDate.getMonth()+1)<10)?('0'+((pDate.getMonth()+1))):((pDate.getMonth()+1)+'-'+(pDate.getDate()<10?('0'+pDate.getDate()):pDate.getDate()
+            // // PAccper=VerifyDate.slice(0,7);
+            // pDate=VerifyDate;
+            var data1={
+                uid: this.uid,
+                orgid: this.orgid,
+                orgcode: this.orgcode,
+                infoData: {
+                    Mst:{
+                        PMakePerson:this.username,
+                        PType:'记',
+                        OrgId:this.orgid,
+                        OrgCode:this.orgcode,
+                        PersistentState:1,
+                        PMonth:0,
+                        Uyear:this.year,
+                        Dtls:Dtls,
+                        Verify:1,
+                        VerifyDate:VerifyDate,
+                        PDate:pDate,
+                    }
+                }
+            }
+        }else{
+                var data1={
+                uid: this.uid,
+                orgid: this.orgid,
+                orgcode: this.orgcode,
+                infoData: {
+                    Mst:this.Mst
+                }
+            }
+        }
         const loading1=this.$loading();
         this.$axios.post('/PVoucherMst/Post'+url, data1)
         .then(res=>{
@@ -1014,6 +1018,7 @@ export default {
     .container{
         height:100%;
         min-width:1000px;
+        margin-bottom: 0;
     }
     .subjectNav{
         width: 25px;

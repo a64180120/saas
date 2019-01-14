@@ -140,13 +140,11 @@
                 if(bool){
                     this.userInfo.push(this.initInfo());                   
                 }else{
-                    if(this.userInfo.length>1){
-                        if(this.userInfo[index].PhId){
-                            this.userInfo[index].DeleteMark=1;
-                            this.deleteList.push(this.userInfo[index]);
-                        }
-                        this.userInfo.splice(index,1);
+                    if(this.userInfo[index].PhId){
+                        this.userInfo[index].DeleteMark=1;
+                        this.deleteList.push(this.userInfo[index]);
                     }
+                    this.userInfo.splice(index,1);
                 }
             },
             /**
@@ -166,7 +164,16 @@
                             this.$message.error(res.Msg);
                             return
                         }
-
+                        if(res.list.length<=0){
+                            for(var i=0;i<1;i++){
+                                 res.list[i]=this.initInfo();
+                            }
+                            this.message={
+                                message:'暂无辅助项,请先点击编辑添加辅助项!',
+                                delay:4000,
+                                visible:true
+                            }
+                        }
                         this.userInfo=res.list;
                         this.navTab=res.type;
 
@@ -182,7 +189,13 @@
             },
             //保存信息***********
             saveInfo(){
-                var info=JSON.parse(JSON.stringify(this.userInfo));
+                var userinfo=JSON.parse(JSON.stringify(this.userInfo));
+                var info=[];
+                for(var user of userinfo){
+                    if(user.BaseName){
+                        info.push(user);
+                    }
+                }
                 if(this.deleteList.length>0){
                     for(var ind of this.deleteList){
                         info.push(ind);
@@ -196,6 +209,7 @@
                 this.$axios.post("/PVoucherAuxiliaryType/PostUpdateAuxiliary",data)
                 .then(res=>{
                     loading.close();
+                    console.log(res)
                     if(res.Status==='error'){
                         this.message={
                             delay:4000,
@@ -206,12 +220,13 @@
                     }else{
                         this.message={
                             delay:4000,
-                            message:res.Msg,
+                            message:'保存成功!',
                             visible:true
                         }
                         this.userInfo=res.List;
                         this.deleteList=[];
-                        this.updatePage=false;  
+                        this.updatePage=false; 
+                        this.getData(); 
                     }
                       
                 })
@@ -249,7 +264,16 @@
                             this.$message.error(res.Msg);
                             return
                         }
-                        console.log(res)
+                        if(res.list.length<=0){
+                            for(var i=0;i<1;i++){
+                                 res.list[i]=this.initInfo();
+                            }
+                            this.message={
+                                message:'暂无辅助项,请先点击编辑添加辅助项!',
+                                delay:4000,
+                                visible:true
+                            }
+                        }
                         this.userInfo=res.list;
                         
 
@@ -355,6 +379,7 @@
     }
     .formData>ul>li:nth-of-type(3){
         width:45%;
+        
     }
     .formData>ul>li:nth-of-type(4){
         width:15%;
@@ -460,7 +485,9 @@
     .formDataItems>li>.inputContainer{
         height:100%;
     }
-
+    .formDataItems>li>.inputContainer>input{
+        border:0;
+    }
     .addIcon,.deleteIcon{
         width:22px;
         height:22px;

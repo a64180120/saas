@@ -76,7 +76,7 @@
                         <li v-for="item of nowYear-2000"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
-                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>checkedYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
+                                <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:(i>checkedTime)&&(nowYear-item+1>=checkedYear),futureM:(nowYear-item+1>=nowYear)&&(i>(nowTime.getMonth()+1))}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
                             </ul>
                         </li>
                     </ul>
@@ -255,7 +255,7 @@
             allReset:'',
             resetShow:false,
             voucherMask:false,  //凭证状态遮罩层******************
-            voucherAdd:false, //凭证能否修改的遮罩层******************       
+            voucherAdd:false, //凭证不能修改的遮罩层******************       
             saasMessage:{
                 visible:false,  //消息弹出框*******
                 message:'', //消息主体内容**************
@@ -485,7 +485,7 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                   debugger;
+                   
                 //    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
@@ -698,15 +698,17 @@
             tempClick(data){
                 if(data){ 
                     data.PersistentState=1;
-                for(var dtl of data.Dtls){
-                    dtl.PersistentState=1;
-                    if(dtl.DtlAccounts){
-                        dtl.DtlAccounts[0].PersistentState=1;
+                    for(var dtl of data.Dtls){
+                        dtl.PersistentState=1;
+                        if(dtl.DtlAccounts){
+                            dtl.DtlAccounts[0].PersistentState=1;
+                        }
                     }
-                }
-                data.PDate=new Date;
-                this.voucherDataList.data.Mst=data;
-                this.resetVoucher(); 
+                    data.PDate=new Date;
+                    data.PNo='';
+                    this.voucherDataList.data.Mst=data;
+                    this.resetVoucher(); 
+                    this.voucherAdd=false;
                 }
                 this.modelListCss=false;
             },
@@ -2123,7 +2125,7 @@
             z-index: 99;
             width:74%;
             height:100%;
-            top:0;
+            top:74px;
             right:0;
             >div{
                 position:relative;
