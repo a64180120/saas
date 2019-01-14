@@ -10,31 +10,52 @@
   			</div>
 			<div class="Sign_box">
 				<img src="@/assets/images/finance/SAAS-01.png" />
-    			<p>
-					<a href="denglu.html">登录</a>
+				<div @click.stop="userDropDown=!userDropDown" class="userInfo" v-if="userinfo">
+				<div>{{username}}<div></div></div>
+					<ul :class="{userDropDown:userDropDown}">
+						<li>
+							<div>{{userinfo.RealName}}</div>
+							<div>({{userinfo.MobilePhone}})</div>
+						</li>
+						<li @click.stop="editPawClick">修改密码</li>
+						<li @click.stop="logoutClick">退出登录</li>
+					</ul>
+				</div>
+    			<p v-if="!userinfo">
+					<router-link style="color:#7fa409" to="/login">登录</router-link>
 				</p>
-    			<p>|</p>
-    			<p>
-					<a href="denglu.html">注册</a>
+    			<p v-if="!userinfo">|</p>
+    			<p v-if="!userinfo">
+					<router-link style="color:#7fa409" to="/register">注册</router-link>
 				</p>
   			</div>
 			<div class="contact_box">
 				<img src="@/assets/images/finance/SAAS-03.png" />
-    		<p>0571-88270588</p>
-  		</div>
+    			<p>0571-88270588</p>
+  			</div>
 		</div>
   		
   		
 		
 		<div class="decorate"></div>
 		<div class="Broadcast_box" style="animation-delay:0.5s;">
-			
+			<el-carousel height="629px">
+				<el-carousel-item v-for="item in carouselImgs.length" :key="item.index">
+					<div class="carouselImgs">
+						
+						<img src="../../static/img/t1.jpg" alt="">
+						<img src="../../static/img/t2.jpg" alt="">
+						<img src="../../static/img/t3.jpg" alt="">
+						<img src="../../static/img/t4.jpg" alt="">
+					</div>
+				</el-carousel-item>
+			</el-carousel>
 		</div>
 		<div class="Central_navigation" >
-  			<div class="Finance"> <img src="@/assets/img/cai.png" />
+  			<div @click.stop="NavTo('/home')" class="Finance"> <img src="@/assets/img/cai.png" />
     			<h1>工会财务管理</h1>
   			</div>
-  			<div class="data"> <img src="@/assets/img/shu.png" />
+  			<div @click.stop="NavTo('/home')" class="data"> <img src="@/assets/img/shu.png" />
     			<h1>数据直报平台</h1>
   			</div>
 		</div>
@@ -170,7 +191,10 @@
 			  </ul>
 			</div>
 			<div class="policy_left" style="position:relative;">
-				<div class="chuang"></div>
+				<div class="chuang">
+					
+				</div>
+				<img :src="orgWindow.imgUrl" alt="">
 			</div>
 			<div class="policy_right">
 			  <ul>
@@ -325,16 +349,81 @@
   export default {
     name: "home",
     data(){
+		let validPaw=(rule,value,callback)=>{
+          if(value==''||value==undefined){
+              callback()
+          }else{
+              let reg=/^([0-9]|[a-z]|[A-Z]|!|@|#|\$|%|\^|&|\*|\(|\)){6,12}$/;
+              if(!reg.test(value)){
+                callback(new Error('不符合输入规则:6-12位'))
+              }else{
+                  callback()
+              }
+          }
+      };
       return {
+		  
+		  userDropDown:false, //修改密码弹窗
+		  dialog: {
+			editPaw: {
+				show: false
+			}
+		  },
+		  editPaw: {
+			oldPaw: "",
+			newPaw: "",
+			confirmNewPaw: ""
+		},
+		editPawRules: {
+			oldPaw: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+			newPaw: [
+			{ required: true, message: "请输入新密码", trigger: "blur" },
+			{ required:true, validator:validPaw,trigger:'blur'}
+			],
+			confirmNewPaw: [
+			{ required: true, message: "请再次输入新密码", trigger: "blur" },
+			{ required:true, validator:validPaw,trigger:'blur'}
+			]
+		},
+		message: 2,
+		userInfoHead:{},
+		carouselImgs:[   //轮播图片
+			  {url:'../../static/img/t1.jpg',index:1},
+			   {url:'../../static/img/t2.jpg',index:2},
+				{url:'../../static/img/t3.jpg',index:3},
+				 {url:'../../static/img/t4.jpg',index:4}
+		  ],
+		  orgWindow:{
+			  imgUrl:'../../static/img/n1.png'
+		  }
       }
     },
     computed:{
+		picUrl:function(){
+            return config.baseurl;
+        },
+        ...mapState({
+          uid: state => state.user.userid,
+          username: state => state.user.username,
+          orgcode: state => state.user.orgcode,
+          orgid: state => state.user.orgid
+        }),
+        userinfo:function(){
+          var user=Auth.getUserInfoData();
 
+          if(user){
+           return user.userInfo
+          }
+        }
     },
     mounted(){
+		console.log(this.carouselImgs)
     },
     methods:{
-
+		//跳转工会****
+		NavTo(str){
+			this.$router.push({path:str});
+		}
 
       
     }
@@ -343,7 +432,7 @@
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .Top_navigation {
 	width: 1177px;
 	height: 70px;
@@ -540,9 +629,11 @@
 	height: 192px;
 	background: url(../assets/img/q6.png);
 	background-size: 100% 100%;
+	cursor:pointer;
 }
 .data * {
 	float: left;
+	cursor:pointer;
 }
 .data img {
 	width: 20%;
@@ -622,7 +713,7 @@
 	}
  100%{
 	 margin-left:0px;
-	 background:
+	//  background:
 	}
 }
 @keyframes flipInX {
@@ -1033,4 +1124,54 @@
 	color:#fff;
 	margin-top:3px;
 }
+/* 轮播图 */
+.carouselImgs{
+	width:100%;
+	height:100%;
+}
+.carouselImgs>img{
+	width:100%;
+	height:100%;
+}
+.policy_left>img{
+	width:100%;
+	height:100%;
+}
+.userInfo{
+	width:75%;
+	text-align: center;
+	position:relative;
+	height:100%;
+}
+.userInfo>div{
+	height:100%;
+	line-height: 100%;
+}
+.userInfo>ul{
+	position:absolute;
+	top:100%;
+	left:0;
+	background:#fff;
+	z-index:9;
+}
+.userInfo>div,
+.userInfo>ul>li,
+.userInfo>ul>li>div{
+	text-align: center;
+	width:100%;
+}
+>ul.userDropDown{
+      height:auto;
+      opacity:1;
+      border: 1px solid #E6E6FA;
+      >li:first-of-type{
+        margin-top:10px;
+        >div{
+          height:50%;
+          line-height:100%;
+        }
+      }
+    }
+
+
 </style>

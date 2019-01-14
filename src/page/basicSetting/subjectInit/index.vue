@@ -197,7 +197,7 @@
                         <div>科目名称</div>
                         <div>
                             <div class="inputContainer">
-                                <input :disabled="choosedData[0].child.IsSystem?true:false" placeholder="必填" type="text" v-model="subjectInfo.KName">
+                                <input :disabled="(choosedData[0].child.IsSystem?true:false)&&(addPageShow=='update')" placeholder="必填" type="text" v-model="subjectInfo.KName">
                             </div>
                         </div>
                         <div style="clear:both"></div>
@@ -232,11 +232,11 @@
                         <div>启/停用</div>
                         <div style="border:0">
                             <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')">
-                                <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
+                                <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
                                 &nbsp;启用&nbsp;&nbsp;&nbsp;
                             </label>
                             <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')">
-                                    <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
+                                    <input v-model="subjectInfo.EnabledMark" value="" type="radio" name="enable">
                                     &nbsp;停用&nbsp;&nbsp;&nbsp;
                             </label>
                         </div>
