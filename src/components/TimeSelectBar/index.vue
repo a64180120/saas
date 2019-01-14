@@ -248,10 +248,6 @@
                         }
                         this.years=(Number(this.jiezhangYear)-Number(this.startyear)+(this.jiezhangMonth==12&&res.Record[0].JYear!=this.startyear?2:1))
                         console.log(this.years);
-                        //alert(this.years);
-                        //this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
-                        //this.year=this.sideDate.split('-')[0];
-                        //this.choosedMonth=this.checkedTime;
                     })
                     .catch(err=>console.log(err))
             },
