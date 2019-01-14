@@ -66,6 +66,7 @@ export default {
         border-radius:0 10px 0 0;
         background:#eaeaea;
         bottom:0;
+        left:0;
         z-index:99;
     }
     

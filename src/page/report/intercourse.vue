@@ -272,7 +272,6 @@
                     {params:data}
                 ).then(res=>{
                     this.loading=false;
-                    console.log(res);
                     this.interCourse=res.Record;
                 }).catch(err=>{
                     this.loading=false;
@@ -348,7 +347,6 @@
                         {params:data}
                     ).then(res=>{
                         this.loading=false;
-                        console.log(res);
                         if(res.Record.length==0){
                             this.saasMessage={
                                 message:'当前科目不存在可修改内容，请先添加',
@@ -463,16 +461,11 @@
             * index:修改的哪个数组
             * */
             newChildAdd:function(val){
-                console.log(val);
                 let type=val.target.dataset.type,index=val.target.dataset.index,value=val.target.value;
-                console.log(type+'++'+index+'==='+value);
-                console.log(this.addCountMoney);
                 if(type==0){
-                    console.log(111111111111);
                     this.changeList[index].content=value;
                 }else{
                     if(this.changeList[index].money!=''){
-                        console.log(111111111111);
                         //先计算后赋值
                         this.addCountMoney=Number(this.addCountMoney)-Number(this.changeList[index].money)+Number(value);
                         this.changeList[index].money=value;
@@ -480,10 +473,8 @@
                         this.addCountMoney+=Number(value);
                         this.changeList[index].money=value;
                     }
-                    console.log(2222222222222);
                     this.changeList[index].money=value;
                 }
-                console.log(this.addCountMoney);
             },
             /*
             *修改 input输入监听
@@ -533,13 +524,10 @@
             },
             //修改增加行
             addChangeListFix:function(index){
-                console.log(index);
-                console.log(this.changeListFix[0]);
                 let addList=JSON.stringify( this.changeListFix[0]);
                 addList=JSON.parse(addList);
                 addList.Content='';
                 addList.AccountSum='';
-                console.log(addList);
                 this.changeListFix.push(addList);
             },
 
@@ -559,7 +547,6 @@
           *
           * */
             postBalanceSheetExcel:function() {
-                console.log(this.chooseSubject);
                 let param = {'uid':this.userid,
                     'orgid':this.orgid,
                     'Year': this.date1.choosedYear};

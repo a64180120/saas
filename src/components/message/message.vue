@@ -1,5 +1,5 @@
 <template>
-    <div v-show="visible" class="saasMsgCon">
+    <div v-show="visible" class="saasMsgCon" style="z-index:2999;">
         <div class="saasMsg">
             <p class="title"><span>提示</span>
                 <i @click="close"></i>
