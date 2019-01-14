@@ -856,6 +856,8 @@
                         RoleCode: roleItem[0].Name,
                         EnabledMark: '0',
                         NickName: this.form.realName,
+                        Verify:'1',
+                        VerifyTime: new Date
                     })
                 }
 
@@ -927,6 +929,8 @@
                         RoleCode: roleItem[0].Name,
                         EnabledMark: this.form.enabledMark,
                         NickName: this.form.realName,
+                        Verify:'1',
+                        VerifyTime: new Date
                     })
                 }
 
@@ -998,6 +1002,8 @@
                         RoleCode: roleItem[0].Name,
                         EnabledMark: this.form.enabledMark,
                         NickName: this.form.realName,
+                        Verify:'1',
+                        VerifyTime: new Date
                     })
                 }
 

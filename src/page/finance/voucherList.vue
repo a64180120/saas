@@ -408,6 +408,7 @@
                             return;
                         }
                         this.voucherDataList.data.Mst=item;
+                        
                         this.voucherMaskShow('update');
                         this.voucherDataList.bool=true;
                         break;
@@ -980,7 +981,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-             
+                console.log(Vdata.Mst,this.checkedYear,this.checkedTime)
                if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                  
                    var data = {
@@ -2645,6 +2646,7 @@
     .highGradeCss .el-input--prefix .el-input__inner {
         padding-left: 24px;
         font-size:12px;
+        line-height:30px;
     }
      .fileDialog .el-dialog__header{
             background: #d3e9f9;

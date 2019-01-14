@@ -108,7 +108,8 @@ export default {
                         if(!res.CheckRes){
                             this.$message({ showClose: true,message: '当前组织未初始化,请开始初始化!', type: "error"});
                             return;
-                        }                        
+                        }
+                        console.log(res)                        
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.checkedYear=res.Record[0].JYear;
                         this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
@@ -132,7 +133,7 @@ export default {
                 this.year=year;
                 this.sideDate=year+'-'+i;
                 //this.getvoucherList('reset');
-                this.$emit("time-click",{sideDate:this.sideDate})
+                this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear})
             },
             
             //鼠标按下***************

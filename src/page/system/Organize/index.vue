@@ -19,10 +19,13 @@
                                 <li v-show="isedit" @click="save" style='margin:0 0 0px 10px;'>保存</li>
                             </a>
                             <a>
-                                <li @click="Backups" style='margin:0 0 0px 10px;'>备份</li>
+                                <li v-show="isedit" @click="freshPage" style='margin:0 0 0px 10px;'>返回</li>
                             </a>
                             <a>
-                                <li @click="Recover" style='margin:0 0 0px 10px;'>恢复</li>
+                                <li v-show="!isedit" @click="Backups" style='margin:0 0 0px 10px;'>备份</li>
+                            </a>
+                            <a>
+                                <li v-show="!isedit" @click="Recover" style='margin:0 0 0px 10px;'>恢复</li>
                             </a>
                             <!--<a>-->
                                 <!--<li  @click="testFile" style='margin:0 0 0px 10px;'>附件</li>-->
@@ -61,7 +64,7 @@
                                 </el-upload>
                             </el-form-item>
                             <el-form-item label="单位地址：" prop="Address">
-                                <div style="width: 20%;float: left">
+                                <div style="width: 20%;float: left" class="addressStyle">
                                     <el-select v-model="orgForm.Province" placeholder="" class="pic-input-area" @change="changeProvince">
                                         <el-option
                                             v-for="item in Provinces"
@@ -73,7 +76,7 @@
                                     </el-select>
                                     <span style="float: right;text-align: center">省&nbsp&nbsp&nbsp&nbsp</span>
                                 </div>
-                                <div style="width: 20%;float: left">
+                                <div style="width: 20%;float: left" class="addressStyle">
                                     <el-select v-model="orgForm.City" placeholder="" class="pic-input-area" @change="changeCity">
                                         <el-option
                                             v-for="item in Citys"
@@ -85,7 +88,7 @@
                                     </el-select>
                                     <span style="float: right">市&nbsp&nbsp&nbsp&nbsp</span>
                                 </div>
-                                <div style="width: 20%;float: left">
+                                <div style="width: 20%;float: left" class="addressStyle">
                                     <el-select v-model="orgForm.County" placeholder="" class="pic-input-area" @change="changeCounty">
                                         <el-option
                                             v-for="item in Countys"
@@ -97,7 +100,7 @@
                                     </el-select>
                                     <span style="float: right">区(县)&nbsp</span>
                                 </div>
-                                <div style="width: 20%;float: left">
+                                <div style="width: 20%;float: left" class="addressStyle">
                                     <el-select v-model="orgForm.Street" placeholder="" class="pic-input-area" @change="changeStreet">
                                         <el-option
                                             v-for="item in Streets"
@@ -118,7 +121,7 @@
                                 <el-input v-model="orgForm.TelePhone" class="pic-input"></el-input>
                             </el-form-item>
                             <el-form-item label="隶属工会：" prop="ParentName">
-                                <div style="width: 100%; height: 100%">
+                                <div style="width: 100%; height: 100%" class="addressStyle">
                                     <el-select v-model="orgForm.Parent" placeholder="" class="pic-input" @change="changeParentOrg">
                                         <el-option
                                             v-for="item in ParentLists"
@@ -618,7 +621,7 @@
                     if (res.Status == 'success') {
                         this.message={
                             message:'保存成功！',
-                            delay:4000,
+                            delay:6000,
                             visible:true
                         }
                         //this.$message.success("保存成功！");
@@ -632,7 +635,12 @@
                         let info2 = UserInfo.getUserInfoData();
                         console.log(info2);
                         if(this.routerTz){
-                            this.$router.push('/setting/subjectstart');
+                            this.message={
+                                message:'请尽快添加其他角色用户！',
+                                delay:4000,
+                                visible:true
+                            }
+                            this.$router.push('/system/account');
                         }
                         //移除TagNav
                         //this.$store.commit("tagNav/removeTagNav", route);
@@ -670,6 +678,11 @@
                         uid: this.userid,
                         orgid: this.orgid
                     }).then(res => {
+                        this.selectArea(this.orgForm.Province, 1);
+                        this.selectArea(this.orgForm.City, 2);
+                        this.selectArea(this.orgForm.County, 3);
+                        this.getAdminOrganize(this.orgForm.ParentId);
+                        this.getParentByArea(4, this.orgForm.Street);
                         this.loading = false;
                         if (res.Status === "error") {
                             this.$message({showClose: true, message: res.Msg, type: 'error'});
@@ -972,8 +985,9 @@
         right: 25px;
         top: -20px;
     }
-    .el-input--suffix .el-input__inner {
-        height: auto;
+    .addressStyle .el-input--suffix .el-input__inner {
+        line-height: 40px;
+        height: 40px;
         margin: 0;
         padding-right: 0;
         width: 100%;

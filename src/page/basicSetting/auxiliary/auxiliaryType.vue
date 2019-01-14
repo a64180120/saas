@@ -418,6 +418,7 @@
                     i{
                         position: absolute;
                         right:-23px;
+                        top:0;
                         width:25px;
                         height:25px;
                         cursor:pointer;
