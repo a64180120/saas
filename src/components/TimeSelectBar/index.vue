@@ -233,7 +233,6 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
-                        console.log(res);
                         if(res.Record.length>0){
                             if(this.startyear==res.Record[0].JYear&&res.Record[0].JAccountPeriod==0){
                                 this.jiezhangYear=res.Record[0].JYear;
