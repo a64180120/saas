@@ -10,5 +10,7 @@ export default {
     // 当前系统主题  base
     theme: '',
     // 通知框等需要自动消失的时间
-    duration: 3000
+    duration: 3000,
+    //loader提示
+    isLoading: false
 }

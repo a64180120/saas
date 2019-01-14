@@ -1,6 +1,7 @@
 <template>
     <div id="app" class="sys-app">
         <router-view></router-view>
+        <loading v-if="isLoading"></loading>
     </div>
 </template>
 
@@ -8,6 +9,8 @@
 import setTheme from "@/util/setTheme"
 import Cookie from 'js-cookie'
 import Auth from "@/util/auth"
+import { mapState } from 'vuex'
+import loading from '@/components/loading'
 
 
 export default {
@@ -18,9 +21,9 @@ export default {
         }
     },
     computed: {
-        // sessionId:function(){
-        //     return this.$store.state.user.sessionId
-        // },
+        ...mapState({
+            isLoading: state => state.isLoading
+        }),
         userid:function(){
             return this.$store.state.user.userid
         }
@@ -41,11 +44,20 @@ export default {
                }
             },
             deep: true
+        },
+        "isLoading":{
+            handler:function (val, oldVal){
+                if(val!==oldVal){
+                    console.log(val)
+                }
+            },
+            deep: true
         }
     },
-    created() {
-
+    components: {
+      loading
     },
+    created() { },
     // TODO: 全局状态加载及变更。请根据实际情况改写
     beforeMount(){
         // 首次加载/刷新时判断当前是否在登录状态
@@ -77,22 +89,22 @@ export default {
             // });
 
             //加载token信息
-            if(!Auth.getToken()){
-                console.log('获取token信息');
-                const loading = this.$loading({
-                    lock: true,
-                    text: 'Loading',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(0, 0, 0, 0.7)'
-                });
-                this.$store.dispatch('user/getToken').then((res) => {
-                    loading.close();
-                    console.log(res)
-                }).catch((error) =>{
-                    loading.close();
-                    alert('网络不通,请检查服务接口网络！.....')
-                })
-            }
+            // if(!Auth.getToken()){
+            //     console.log('获取token信息');
+            //     const loading = this.$loading({
+            //         lock: true,
+            //         text: 'Loading',
+            //         spinner: 'el-icon-loading',
+            //         background: 'rgba(0, 0, 0, 0.7)'
+            //     });
+            //     this.$store.dispatch('user/getToken').then((res) => {
+            //         loading.close();
+            //         console.log(res)
+            //     }).catch((error) =>{
+            //         loading.close();
+            //         alert('网络不通,请检查服务接口网络！.....')
+            //     })
+            // }
 
         })
         //测试可以注释这条
