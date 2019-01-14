@@ -221,7 +221,7 @@
                 pageIndex: 0, //pageIndex
                 testIndex:0,
                 totalCount: 0, //总页数
-                busy:false,    //是否正在加载过程中
+                busy:true,    //是否正在加载过程中
                 dataInfo: [],
                 dataInfoMonth: {},//月初数据
                 selectSubject:'',  //选择科目
@@ -1006,10 +1006,10 @@
         justify-content: center;
         align-items: center;
         position: fixed;
-        top: 210px;
+        top: 192px;
         width: 260px;
         z-index: 9;
-        margin-left: -1px;
+        margin-left:-1px;
     }
     .unionLists>p{
         text-align: center;

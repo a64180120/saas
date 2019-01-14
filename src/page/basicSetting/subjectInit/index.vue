@@ -4,10 +4,10 @@
             <ul>
                 <li @click="navActive(item)" :class="{active:activeNav==item.name}" v-for="(item,index) of navList" :key="index"><span>{{item.name}}</span></li>
             </ul>
-        </div> 
+        </div>
         <div class="subjectContent">
             <div>
-                <div class="searcherCon"> 
+                <div class="searcherCon">
                     <div class="searcherValue"><input @keyup.13="getSubjectQueryList()" v-model="searchVal" type="text" placeholder="科目编码/名称"></div>
                     <div  @click="getSubjectQueryList()" class="searcherBtn btn">搜索</div>
                 </div>
@@ -23,8 +23,8 @@
                                 <li @click.stop="addPage">新增</li>
                                 <li @click.stop="updateSubject">修改</li>
                                 <li @click.stop="subDelete">删除</li>
-                            </ul>    
-                        </div>    
+                            </ul>
+                        </div>
                     </li>
                     <li @click.stop="refresh" style="background:#fff;width:30px;min-width:30px;border:0;border-radius:50%;cursor:pointer"><img src="../../../assets/icon/fresh2.svg" alt=""> </li>
                 </ul>
@@ -45,9 +45,9 @@
                         <li><span v-if="item.KBalanceType==1">借</span><span v-if="item.KBalanceType==2">贷</span><span v-if="item.KBalanceType==3">借/贷</span></li>
                         <li>
                             <div class="assistCss" v-for="(aux,index) of item.AuxiliaryTypes" :key=index>
-                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                                <span>{{aux.BaseName}} &nbsp;</span>    
-                            </div>     
+                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">
+                                <span>{{aux.BaseName}} &nbsp;</span>
+                            </div>
                         </li>
                         <li>
                             <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
@@ -60,16 +60,16 @@
                             <div v-show="(!updatePage)">{{item.NCAccount==0?'':item.NCAccount}}</div>
                             <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" @blur="balanceBlur(item)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="item.NCAccount"></div>
                         </li>
-                        <li v-if="item.children.length>0" class="child">                       
+                        <li v-if="item.children.length>0" class="child">
                             <ul @click.stop="childChoose($event,item,child,index2)"  v-for="(child,index2) of item.children" :key=index2>
                                 <li style="padding:0 0 0 20px;" :title="child.KCode">{{child.KCode}}</li>
                                 <li style="padding-left:20px;" >{{child.KName}}</li>
                                 <li><span v-if="child.KBalanceType==1">借</span><span v-if="child.KBalanceType==2">贷</span><span v-if="child.KBalanceType==3">借/贷</span></li>
                                 <li>
                                     <div class="assistCss" v-for="(aux,index) of child.AuxiliaryTypes" :key=index>
-                                        <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                                        <span>{{aux.BaseName}} &nbsp;</span>    
-                                    </div>     
+                                        <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">
+                                        <span>{{aux.BaseName}} &nbsp;</span>
+                                    </div>
                                 </li>
                                 <li>
                                     <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
@@ -89,9 +89,9 @@
                                         <li><span v-if="child3.KBalanceType==1">借</span><span v-if="child3.KBalanceType==2">贷</span><span v-if="child3.KBalanceType==3">借/贷</span></li>
                                         <li>
                                             <div class="assistCss" v-for="(aux,index) of child3.AuxiliaryTypes" :key=index>
-                                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                                                <span>{{aux.BaseName}} &nbsp;</span>    
-                                            </div>     
+                                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">
+                                                <span>{{aux.BaseName}} &nbsp;</span>
+                                            </div>
                                         </li>
                                         <li>
                                             <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
@@ -111,9 +111,9 @@
                                                 <li><span v-if="child4.KBalanceType==1">借</span><span v-if="child4.KBalanceType==2">贷</span><span v-if="child4.KBalanceType==3">借/贷</span></li>
                                                 <li>
                                                     <div class="assistCss" v-for="(aux,inde) of child4.AuxiliaryTypes" :key=inde>
-                                                        <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                                                        <span>{{aux.BaseName}} &nbsp;</span>    
-                                                    </div>     
+                                                        <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">
+                                                        <span>{{aux.BaseName}} &nbsp;</span>
+                                                    </div>
                                                 </li>
                                                 <li>
                                                     <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
@@ -133,9 +133,9 @@
                                                         <li><span v-if="child5.KBalanceType==1">借</span><span v-if="child5.KBalanceType==2">贷</span><span v-if="child5.KBalanceType==3">借/贷</span></li>
                                                         <li>
                                                             <div class="assistCss" v-for="(aux,inde) of child5.AuxiliaryTypes" :key=inde>
-                                                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
-                                                                <span>{{aux.BaseName}} &nbsp;</span>    
-                                                            </div>     
+                                                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">
+                                                                <span>{{aux.BaseName}} &nbsp;</span>
+                                                            </div>
                                                         </li>
                                                         <li>
                                                             <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
@@ -148,21 +148,21 @@
                                                             <div v-show="(!updatePage)">{{child5.NCAccount==0?'':child5.NCAccount}}</div>
                                                             <div class="inputContainer" v-show="updatePage&&child5.IsLast==1"><input type="text" @blur="balanceBlur(child5)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child5.NCAccount"></div>
                                                         </li>
-                                                        
+
                                                     </ul>
-                                                </li> 
+                                                </li>
                                             </ul>
-                                        </li>       
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>
                         </li>
-                    </ul> 
+                    </ul>
                 </div>
-               
-               
+
+
             </section>
-        </div> 
+        </div>
         <div style="clear:both"></div>
         <div v-if="addPageShow" class="addPageCon">
             <div class="addPage">
@@ -172,7 +172,7 @@
                         <div>上级科目</div>
                         <div class="inputContainer">
                             &nbsp;{{subjectInfo.preSubject?subjectInfo.preSubject.KCode:''}}&nbsp;{{subjectInfo.preSubject?subjectInfo.preSubject.KName:''}}
-                            
+
                             <!-- <select :disabled="addPageShow=='update'?true:false" v-model="subjectInfo.preSubject">
                                 <option v-show="addData.PSubject.length>1" value="0">必填</option>
                                 <option :value="item" v-for="(item,index) of addData.PSubject" :key=index>{{item.KName}}</option>
@@ -183,13 +183,13 @@
                     <li style="overflow: hidden;">
                         <div>科目编码</div>
                         <div class="subCodeCss">
-                            
+
                             <span v-show="addPageShow=='add'">{{subjectInfo.preSubject?subjectInfo.preSubject.KCode:''}}</span>
                             <div class="inputContainer">
-                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'" 
+                                <input :disabled="addPageShow=='update'?true:false" :placeholder="subjectInfo.preSubject?'0'+(parseInt(subjectInfo.preSubject.children.length)+1):'01'"
                                         type="text" v-model="subjectInfo.KCode">
                             </div>
-                            
+
                         </div>
                         <div style="clear:both"></div>
                     </li>
@@ -207,7 +207,7 @@
                         <div  style="padding-left:10px;border:1px solid #ccc">
                             {{navList[subjectInfo.preSubject.KType-1].name}}
                         </div>
-                      
+
                         <div style="clear:both"></div>
                     </li>
                     <li>
@@ -241,7 +241,7 @@
                             </label>
                         </div>
                         <div style="clear:both"></div>
-                        
+
                     </li>
                     <li>
                         <div>辅助核算</div>
@@ -317,7 +317,7 @@ export default {
     }
   },
   created() {
-        
+
   },
   //加载数据
   mounted:function(){
@@ -325,7 +325,8 @@ export default {
       this.startYear=userInfo.getUserInfoData().orgInfo.StartYear;
       if(!this.startYear){
           this.startYear=(new Date).getFullYear();
-      } 
+      }
+      this.year=this.startYear;
   },
   //计算
   computed: {
@@ -342,7 +343,7 @@ export default {
           var vm=this;
           this.activeNav=item.name;
           this.dataList=vm[item.code];
-     
+
     },
     //样式初始化
     initCss(){
@@ -364,8 +365,8 @@ export default {
                             delay:4000,
                             message:res.Msg,
                             visible:true
-                        } 
-                    } 
+                        }
+                    }
                     if(!res.CheckRes){
                         this.message={
                             delay:4000,
@@ -373,17 +374,17 @@ export default {
                             visible:true
                         }
                     }
-                   
-                    
+
+
                     this.CheckRes=res.CheckRes;
                     this.startInitCss=!res.CheckRes;
-                    // console.log(res)                  
+                    // console.log(res)
                     // this.checkedTime=res.Record[0].JAccountPeriod+1;
                     if(res.CheckRes){
                         this.checkedYear=res.Record[0].JYear;
                     }
-                     
-               
+
+
                      this.getSubjectList();
                     // this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
                     // this.year=this.sideDate.split('-')[0];
@@ -395,7 +396,7 @@ export default {
                     // this.$forceUpdate();
                 },err => {
                         console.log(err);
-                       
+
                     })
                 .catch(err=>this.$message({ showClose: true,message: err, type: "error"}))
         },
@@ -403,7 +404,7 @@ export default {
     getSubjectList(){
         var data={
             orgid:this.orgid,
-            Ryear:this.year  
+            Ryear:this.year
         }
         this.asset=[];
         this.liabilities=[];
@@ -432,8 +433,8 @@ export default {
                         this.pay.push(sub);
                         break;
                     }
-                } 
-                
+                }
+
                 this.Mst=res.Mst;
                 this.dataList=this.asset;
                 this.initCss();
@@ -449,18 +450,18 @@ export default {
                         console.log(res);
                         if(res.Status=='success'){
                             this.addInfo=res;
-                          
+
                         }
                         this.$forceUpdate();
                     },err => {
                         console.log(err);
-                       
+
                     })
-                    
+
             }
         },err => {
             console.log(err);
-            
+
         })
         .catch(err=>{
            console.log(err)
@@ -498,34 +499,34 @@ export default {
         var url='Update';
         //加入末级科目到subject***
         for(var ass of this.asset){
-                subjects=vm.infi(vm,subjects,ass);      
+                subjects=vm.infi(vm,subjects,ass);
         }
         for(var lia of this.liabilities){
-            subjects=vm.infi(vm,subjects,lia);   
+            subjects=vm.infi(vm,subjects,lia);
         }
         for(var ne of this.netAsset){
-            subjects=vm.infi(vm,subjects,ne);   
+            subjects=vm.infi(vm,subjects,ne);
         }
         for(var inc of this.income){
-            subjects=vm.infi(vm,subjects,inc);   
+            subjects=vm.infi(vm,subjects,inc);
         }
         for(var p of this.pay){
-           subjects=vm.infi(vm,subjects,p);   
+           subjects=vm.infi(vm,subjects,p);
         }
-        
-        
+
+
         if(!this.Mst){
             url='Add';
             for(var s in subjects){
                 Dtls[s]={
-                    SubjectCode:subjects[s].KCode, 
+                    SubjectCode:subjects[s].KCode,
                     SubjectName:subjects[s].KName,
                     PersistentState:1
                 }
                 if(subjects[s].KBalanceType==1){
                     Dtls[s].JSum=subjects[s].NCAccount;
                     Dtls[s].DSum=0;
-                    
+
                 }else if(subjects[s].KBalanceType==2){
                     Dtls[s].DSum=subjects[s].NCAccount;
                     Dtls[s].JSum=0;
@@ -542,34 +543,34 @@ export default {
                 //         Dtls[s].DtlAccounts[i.GLS]=i.PhId;
                 //     }
                 // }
-        
+
             }
         }else{
             //修改
             for(var s in subjects){
-                
+
                 if(!subjects[s].PVoucherDel){
                     Dtls[s]={
-                        SubjectCode:subjects[s].KCode, 
+                        SubjectCode:subjects[s].KCode,
                         SubjectName:subjects[s].KName,
                         PersistentState:1
                     }
-                   
+
                 }else{
                     Dtls[s]=subjects[s].PVoucherDel;
                     Dtls[s].PersistentState=2;
-                    Dtls[s].SubjectCode=subjects[s].KCode; 
+                    Dtls[s].SubjectCode=subjects[s].KCode;
                     Dtls[s].SubjectName=subjects[s].KName;
-                    
-                }  
+
+                }
                 if(subjects[s].KBalanceType==1){
                     Dtls[s].JSum=subjects[s].NCAccount;
                     Dtls[s].DSum=0;
-                    
+
                 }else if(subjects[s].KBalanceType==2){
                     Dtls[s].DSum=subjects[s].NCAccount;
                     Dtls[s].JSum=0;
-                } 
+                }
             }
             this.Mst.Dtls=Dtls;
             this.Mst.PersistentState=2;
@@ -580,7 +581,7 @@ export default {
         for(var dt of Dtls){
             J=(parseFloat(J)+parseFloat(dt.JSum)).toFixed(2);
             D=(parseFloat(D)+parseFloat(dt.DSum)).toFixed(2);
-            
+
         }
         if(J!=D){
             var c=J-D;  //差额**
@@ -592,10 +593,10 @@ export default {
             return;
         }
         if(!this.Mst){
-            var  pDate= new Date; 
+            var  pDate= new Date;
             var year=pDate.getFullYear();
             var month=pDate.getMonth()+1;
-            var date=pDate.getDate();  
+            var date=pDate.getDate();
             var VerifyDate=year+'-'+((month<10)?('0'+month):month)+'-'+((date<10?('0'+date):date))
             var data1={
                 uid: this.uid,
@@ -658,10 +659,10 @@ export default {
                             visible:true
                         }
                     }
-                    
+
                 },err => {
                         console.log(err);
-                       
+
                     })
                 .catch(err=>{
                     loading1.close();
@@ -676,14 +677,14 @@ export default {
                     delay:4000,
                     message:res.Msg,
                     visible:true
-                } 
+                }
             }
         })
         .catch(err=>{
             loading1.close();
             console.log(err)
         })
-        
+
     },
     //反初始化
     unInit(){
@@ -707,7 +708,7 @@ export default {
             this.getChecked();
         },err => {
             console.log(err);
-            
+
         })
         .catch(err=>{
             loading1.close();
@@ -719,13 +720,13 @@ export default {
         var data={
             orgid:this.orgid,
             uid:this.uid,
-            Ryear:this.year,  
+            Ryear:this.year,
             infoData:{
                 KType:'',
                 KCode:this.searchVal,
                 KName:this.searchVal
             }
-            
+
         }
         for(var nav in this.navList){
             if(this.navList[nav].name==this.activeNav)
@@ -750,9 +751,9 @@ export default {
             }
         },err => {
             console.log(err);
-            
+
         })
-        .catch(err=>{ 
+        .catch(err=>{
             loading.close();
             this.$message(err);
         })
@@ -796,7 +797,7 @@ export default {
             }
             return;
         }
-      
+
         this.addData={};
         this.addPageShow='add';
         this.addData=this.choosedData[0].child;
@@ -814,7 +815,7 @@ export default {
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
-        
+
     },
     //修改*****
     updateSubject(){
@@ -838,7 +839,7 @@ export default {
         this.addData={};
         this.addData.PSubject=this.choosedData.parent?this.choosedData.parent:[];  //上级科目信息
          this.addData.Type=this.addInfo.Type;  //所有辅助项值
-       
+
         this.subjectInfo={
             PhId:this.choosedData[0].child.PhId,
             preSubject:this.choosedData[0].parent,
@@ -849,7 +850,7 @@ export default {
             KBalanceType:this.choosedData[0].child.KBalanceType,
             AuxiliaryTypes:[]
         }
-       
+
         if(!this.subjectInfo.preSubject){
             this.subjectInfo.preSubject=JSON.parse(JSON.stringify(this.choosedData[0].child));
             this.subjectInfo.preSubject.KCode='';
@@ -863,14 +864,14 @@ export default {
                     this.subjectInfo.AuxiliaryTypes[t]=true;
                 }
             }
-            
+
         }
     },
     //科目新增修改保存按钮
     addFinish(){
         var auxi=[];
         var vm=this;
-        for(var t in this.addData.Type){  
+        for(var t in this.addData.Type){
             if(this.subjectInfo.AuxiliaryTypes[t])
                 auxi.push(this.addData.Type[t]);
         }
@@ -879,7 +880,7 @@ export default {
         this.subjectInfo.KType=this.subjectInfo.preSubject.KType;
         this.subjectInfo.Uyear=this.subjectInfo.preSubject.Uyear;
         this.subjectInfo.OrgCode=this.orgcode;
-        this.subjectInfo.ParentId=this.subjectInfo.preSubject.PhId;      
+        this.subjectInfo.ParentId=this.subjectInfo.preSubject.PhId;
         if(this.addPageShow=="add"){
             //新增***************
             if((!this.subjectInfo.preSubject)||(!this.subjectInfo.KName)){
@@ -896,7 +897,7 @@ export default {
             }else{
                 info.KCode=this.subjectInfo.preSubject.KCode+(this.subjectInfo.preSubject.children?'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1):'01');
             }
-          
+
             // if(this.subjectInfo.preSubject.children){
             //     this.subjectInfo.KCode=parseInt(this.subjectInfo.preSubject.KCode)+'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1);
             // }else{
@@ -906,7 +907,7 @@ export default {
               uid:this.uid,
               orgid:this.orgid,
               ParentSubject:this.addData,
-              Subject: info, 
+              Subject: info,
               AuxiliaryTypeList:auxi
             }
             const loading=this.$loading();
@@ -924,14 +925,14 @@ export default {
                         message:res.Msg,
                         visible:true,
                         delay:4000
-                    } 
+                    }
                 }
                 this.addPageShow=false;
                 this.getSubjectList();
             },err => {
                 loading.close();
                 console.log(err);
-                
+
             })
             .catch(err=>{
                 loading.close();
@@ -949,7 +950,7 @@ export default {
             var data2={
               uid:this.uid,
               orgid:this.orgid,
-              Subject: this.subjectInfo, 
+              Subject: this.subjectInfo,
               AuxiliaryTypeList:auxi
             }
             const loading2=this.$loading();
@@ -971,11 +972,11 @@ export default {
                         delay:4000
                     }
                 }
-                
+
             },err => {
                 loading2.close();
                 console.log(err);
-                
+
             })
             .catch(err=>{
                 loading2.close();
@@ -1019,13 +1020,13 @@ export default {
                     message:res.Msg,
                     delay:4000,
                     visible:true
-                } 
+                }
             }
-           
+
         },err => {
             loading2.close();
             console.log(err);
-            
+
         })
         .catch(err=>{
             loading2.close();
@@ -1039,7 +1040,7 @@ export default {
     //接收年份选择****
     yearSelect(data){
         this.year=data.choosedYear;
-    
+
         this.getSubjectList();
     },
     //刷新
@@ -1087,8 +1088,8 @@ export default {
                     background: #00b7ee;
                     color:#fff;
                 }
-                >span{   
-                    position:relative;  
+                >span{
+                    position:relative;
                 }
                 &:nth-of-type(3){
                     min-height: 75px;
@@ -1203,7 +1204,7 @@ export default {
                 display: inline-block;
                 width:auto;
                 margin-right:5px;
-           
+
                 >img{
                     height:70%;
                     vertical-align: middle;
@@ -1222,7 +1223,7 @@ export default {
                 &.clickActive>li{
                     background:#aaa;
                 }
-                
+
                 >li{
                     float:left;
                     height:40px;
@@ -1272,7 +1273,7 @@ export default {
             &.clickActive>li{
                 background:#aaa;
             }
-            
+
             >li{
                 float:left;
                 height:40px;
@@ -1322,7 +1323,7 @@ export default {
             float:left;
             height:30px;
             line-height: 30px;
-            overflow: hidden;          
+            overflow: hidden;
             margin-left:10px;
             width:90px;
             text-align: center;
@@ -1361,7 +1362,7 @@ export default {
                             }
                         }
                         >li:first-of-type{
-                            position: relative;    
+                            position: relative;
                             text-align: left;
                             padding-left:10px;
                             background: #00b7ee;
@@ -1373,11 +1374,11 @@ export default {
                                 top:12px;
                                 border:5px solid transparent;
                                 border-top:5px solid #fff;
-                            }   
+                            }
                         }
                     }
                 }
-                
+
             }
             &:last-of-type{
                 margin-right:5px;
@@ -1400,7 +1401,7 @@ export default {
         text-align: center;
         line-height: 30px;
         border-radius: 0 ;
-    }   
+    }
     .addPageCon{
         width:100%;
         height:100%;
@@ -1411,7 +1412,7 @@ export default {
         font-size:16px;
         color:#666;
         background:rgba(0,0,0,0.5);
-        >.addPage{           
+        >.addPage{
             width:556px;
             height:396px;
             position:absolute;
@@ -1422,18 +1423,18 @@ export default {
             >ul{
                 padding:20px 50px 0px;
                 >li{
-                    
+
                     height:30px;
                     line-height:30px;
                     margin-bottom:10px;
-                    
+
                     .inputContainer>input{
                         border:0;
                         height:80%;
                         position:relative;
-                        
+
                     }
-                    
+
                     .subCodeCss{
                         overflow: hidden;
                         >span{
@@ -1468,10 +1469,10 @@ export default {
                         padding-right:10px;
                     }
                     >div:nth-of-type(2){
-                        float:left;        
+                        float:left;
                         width:359px;
                         border:1px solid #ccc;
-                        
+
                     }
                     &:nth-of-type(4) >div:nth-of-type(2){
                          border:0;
@@ -1479,14 +1480,14 @@ export default {
                     &:nth-of-type(5) >div:nth-of-type(2){
                          border:0;
                     }
-                    
+
                 }
                 &>li:last-of-type{
                     overflow-y: auto;
                     margin-top:10px;
                     height:40px;
                 }
-                
+
             }
         }
     }
@@ -1525,5 +1526,5 @@ export default {
         height:88%;
         box-shadow:0 0 20px 2px #ccc;
     }
-    
+
 </style>

@@ -71,6 +71,7 @@ const authToken = {
     setUserInfoData: function(data){
 
         //this.setCookies(this.userinfo,data);
+        if(data){ removeStore({ name: this.userinfo });}
         setStore({ name: this.userinfo,content: data,type: 'session' })
     },
 
@@ -90,6 +91,7 @@ const authToken = {
     // 设置菜单缓存
     setMenuStatus: function(data){
         //this.setCookies(this.menuKey,data);
+        if(data){ removeStore({ name: this.menuKey });}
         setStore({
             name: this.menuKey,
             content: data,
@@ -112,17 +114,12 @@ const authToken = {
     },
     // 设置当前账务配置信息
     setPConfigStatus: function(data){
-        setStore({
-            name: this.zwcnfig,
-            content: data,
-            type: 'session'
-        })
+        if(data){ removeStore({ name: this.zwcnfig });}
+        setStore({ name: this.zwcnfig, content: data, type:'session'})
     },
     // 移除当前账务配置信息
     removePConfigStatus: function(){
-        removeStore({
-            name: this.zwcnfig
-        })
+        removeStore({ name: this.zwcnfig })
     },
 
     /*******************webapi url************************** */
@@ -134,6 +131,7 @@ const authToken = {
     //
     setBaseUrl: function(data){
         //this.setCookies('web_baseurl',data);
+        if(data){ removeStore({ name: 'web_baseurl' });}
         setStore({ name: 'web_baseurl', content: data})
     },
     //
