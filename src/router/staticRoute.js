@@ -172,30 +172,30 @@ const staticRoute = [
         path: "/accountbooks",
         component: Layout,
         children: [
-            {
-                //科目余额
-                path: "subjectbalance",
-                component: () =>import( "../page/message"),
-                meta:{ requireAuth:true,type:'page' }
-            },
-            {
-                //总分账
-                path: "totalaccounts",
-                component: () =>import("../page/message"),
-                meta:{ requireAuth:true,type:'page' }
-            },
+            // {
+            //     //科目余额
+            //     path: "subjectbalance",
+            //     component: () =>import( "../page/message"),
+            //     meta:{ requireAuth:true,type:'page' }
+            // },
+            // {
+            //     //总分账
+            //     path: "totalaccounts",
+            //     component: () =>import("../page/message"),
+            //     meta:{ requireAuth:true,type:'page' }
+            // },
             {
                 //明细账
                 path: "detailaccount",
-                component: () =>import("../page/accountbooks/detailaccount/index"),
+                component: () =>import("../page/accountbooks/detailaccount/details"),
                 meta:{ requireAuth:true,type:'page' }
             },
-            {
+            /*{
                 //多栏账
                 path: "multiaccount",
                 component: () =>import("../page/message"),
                 meta:{ requireAuth:true,type:'page'}
-            }
+            }*/
         ]
     },
     {

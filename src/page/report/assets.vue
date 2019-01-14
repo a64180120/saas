@@ -350,23 +350,20 @@
             * 参数：Data--资产负债表数据的整个data
             * */
             postBalanceSheetExcel:function(){
-                let param = {'infoData':this.balanceData};
-                //let baseheader=httpConfig.getHeaderConfig();
                 let base=httpConfig.getAxiosBaseConfig();
-
                 //下载Excel
                 this.downloadLoading = true
 				this.$axios({
                     method:'get',
                     url:'/PVoucherMst/GetBalanceSheetExcel',
                     params:{
-                        accountPeriod:this.getParamTime(this.date1),
+                        accountPeriod:this.date1.choosedYear+'-'+this.date1.choosedMonth,
                         isContainUncheck:this.proofType,
                         orgid:this.orgid
                     }
                 }) .then(res => {
-                    /*window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
-                    this.downloadLoading = false*/
+                    window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
+                    this.downloadLoading = false;
                 }).catch(err => {
                     console.log(err)
                 })

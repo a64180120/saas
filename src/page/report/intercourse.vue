@@ -21,7 +21,7 @@
                                 <li>金额(元)</li>
                                 <li>负债类科目</li>
                                 <li>具体内容</li>
-                                <li>余额(元)</li>
+                                <li>金额(元)</li>
                             </ul>
                             <div class="formData formData_content"  ref="printFrom">
                                 <template v-for="item in interCourse">
@@ -463,16 +463,27 @@
             * index:修改的哪个数组
             * */
             newChildAdd:function(val){
+                console.log(val);
                 let type=val.target.dataset.type,index=val.target.dataset.index,value=val.target.value;
+                console.log(type+'++'+index+'==='+value);
+                console.log(this.addCountMoney);
                 if(type==0){
+                    console.log(111111111111);
                     this.changeList[index].content=value;
                 }else{
                     if(this.changeList[index].money!=''){
+                        console.log(111111111111);
                         //先计算后赋值
-                        this.addCountMoney=this.addCountMoney-this.changeList[index].money+value;
+                        this.addCountMoney=Number(this.addCountMoney)-Number(this.changeList[index].money)+Number(value);
+                        this.changeList[index].money=value;
+                    }else{
+                        this.addCountMoney+=Number(value);
+                        this.changeList[index].money=value;
                     }
+                    console.log(2222222222222);
                     this.changeList[index].money=value;
                 }
+                console.log(this.addCountMoney);
             },
             /*
             *修改 input输入监听

@@ -378,13 +378,13 @@
                         that.loading=false;
                         that.verify=false;
                         that.showCountMsg=false;
-                        this.saasMessage={
+                        that.saasMessage={
                             message:'年中调整上报成功',
                             delay:3000,
                             visible:true
                         };
                         that.getMiddleYear();
-                        that.changeBtn.disable=true
+                        that.changeBtn.disable=true;
                     }).catch(function(err){
                         that.loading=false;
                         that.changeBtn.disable=true
