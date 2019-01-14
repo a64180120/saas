@@ -401,6 +401,7 @@
         position:absolute;
         width:25px;
         left:-25px;
+        top:0;
     }
     .formDataItems{
 

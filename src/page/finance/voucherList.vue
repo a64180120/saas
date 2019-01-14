@@ -2645,6 +2645,7 @@
     .highGradeCss .el-input--prefix .el-input__inner {
         padding-left: 24px;
         font-size:12px;
+        line-height:30px;
     }
      .fileDialog .el-dialog__header{
             background: #d3e9f9;

@@ -310,6 +310,7 @@
 
 
                 for( var info of this.voucherInfo){
+                    console.log(info,info.SubjectCode||info.JSum||info.DSum||info.Abstract)
                     if(info.PhId){
                         for(var dtl of  dtls){
                             if(dtl.PhId==info.PhId){
@@ -351,7 +352,8 @@
                             }
                         }
                     }
-                    else if(info.SubjectCode){
+                    else if(info.SubjectCode||info.JSum||info.DSum||info.Abstract){
+                        
                         var newDtl={
                             Abstract:info.Abstract,
                             SubjectCode:info.SubjectCode,
@@ -1278,6 +1280,8 @@
         position:absolute;
         width:100%;
         height:100%;
+        top:0;
+        left:0;
         background:#fff;
         outline:1px solid #fff;
         padding:0 30px 0 5px;

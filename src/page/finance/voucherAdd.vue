@@ -441,6 +441,21 @@
             // },
             //保存凭证*******************
             keepVoucher(str){
+                
+                var url='Add';
+                var oldPhId=this.voucherDataList.data.Mst.PhId;
+                var Vdata=this.voucherDataList.data;
+                //判断科目金额摘要不能为空
+                for(var dtl of Vdata.Mst.Dtls){
+                    if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
+                        this.saasMessage={
+                            message:'科目/金额/摘要不能为空!',
+                            visible:true,
+                            delay:4000
+                        }
+                    }
+                    return;
+                }
                 if(!this.dataCheck()){
                     this.saasMessage={
                         visible:true,
@@ -449,9 +464,6 @@
                     }
                     return;
                 }
-                var url='Add';
-                var oldPhId=this.voucherDataList.data.Mst.PhId;
-                var Vdata=this.voucherDataList.data;
                 if(str=='gengz'){
                     this.clearPhId(Vdata.Mst);
                     Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
@@ -597,7 +609,7 @@
                                   delay:4000,
                                   message:res.Msg
                                };
-                            this.getvoucherList();
+                            // this.getvoucherList();
                         }else{
                             this.saasMessage={
                                   visible:true,

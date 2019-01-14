@@ -252,7 +252,7 @@ export default {
     return {
         searchVal:'',
         dataList:[],
-        startYear:'',  //建账日期;
+        startYear:(new Date).getFullYear(),  //建账日期;
         year:(new Date).getFullYear(), //选择的年份
         asset:[],  //资产
         liabilities:[],  //负债
@@ -554,10 +554,11 @@ export default {
             return;
         }
         if(!this.Mst){
-            // var  pDate= new Date;   
-            // var VerifyDate=pDate.getFullYear()+'-'+((pDate.getMonth()+1)<10)?('0'+((pDate.getMonth()+1))):((pDate.getMonth()+1)+'-'+(pDate.getDate()<10?('0'+pDate.getDate()):pDate.getDate()
-            // // PAccper=VerifyDate.slice(0,7);
-            // pDate=VerifyDate;
+            var  pDate= new Date; 
+            var year=pDate.getFullYear();
+            var month=pDate.getMonth()+1;
+            var date=pDate.getDate();  
+            var VerifyDate=year+'-'+((month<10)?('0'+month):month)+'-'+((date<10?('0'+date):date))
             var data1={
                 uid: this.uid,
                 orgid: this.orgid,
@@ -574,7 +575,8 @@ export default {
                         Dtls:Dtls,
                         Verify:1,
                         VerifyDate:VerifyDate,
-                        PDate:pDate,
+                        PDate:VerifyDate,
+                        PAccper:year+'-'+0
                     }
                 }
             }
@@ -588,6 +590,8 @@ export default {
                 }
             }
         }
+        console.log(data1);
+        debugger;
         const loading1=this.$loading();
         this.$axios.post('/PVoucherMst/Post'+url, data1)
         .then(res=>{
