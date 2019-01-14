@@ -396,7 +396,6 @@
             * 页面数据查询方法
             * */
             getBeginYear:function(){
-                console.log(this.jyear);
                 let year='';
                 if(this.date1.choosedYear==undefined){
                     let currentYear = new Date();
@@ -518,7 +517,7 @@
                         }
                     ).then(function (res) {
                         that.loading = false;
-                        this.saasMessage={
+                        that.saasMessage={
                             message:"年初预算上报成功!",
                             delay:3000,
                             visible:true

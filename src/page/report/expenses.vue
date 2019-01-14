@@ -16,7 +16,7 @@
                     </li>
                 </ul>
                 <ul class="flexPublic handle">
-                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="download" size="small" plain>导出</li></a>
+                    <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-down" @click="postBalanceSheetExcel" size="small" plain>导出</li></a>
                     <a><li style='margin:0 0 0px 10px;' icon="el-icon-lx-mail" @click="printContent" size="small" plain>打印</li ></a>
 
                     <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
@@ -60,10 +60,10 @@
     import { IncomList,IncomListToExcel } from '@/api/voucher/reportInfo'
     import { mapState, mapActions } from 'vuex'
     import treeTable from "@/components/tree-table/indexHeight";
+    import httpConfig from '@/util/ajaxConfig'  //自定义ajax头部配置*****
     //import treeTable from "@/components/tree-table";
     import treeSum from './totalAmount'
     import TimeSelectBar from "@/components/TimeSelectBar/index";
-    import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import saasMsg from '@/components/message/message'
     export default {
         name: "expensesRe",
@@ -127,6 +127,7 @@
         },
         mounted(){
             this.getData();
+            console.log(this.user);
         },
         watch:{
             // /*
@@ -200,23 +201,23 @@
                     // indata[2].children[0].StartSum=22
                     // indata[2].children[0].EndSum=33
 
-                    var indata_StartSum=Math.floor(0);
-                    var indata_EndSum=Math.floor(0);
+                    var indata_StartSum=Number(0);
+                    var indata_EndSum=Number(0);
                     treeSum(indata).forEach(item =>{
-                        indata_StartSum +=Math.floor(item.StartSum);
-                        indata_EndSum +=Math.floor(item.EndSum)
+                        indata_StartSum +=Number(item.StartSum);
+                        indata_EndSum +=Number(item.EndSum)
                     })
                     var outdata=data.filter((value,key,arr) => {
                         //1-资产,2-负债,3-净资产,4-收入,5-支出
                         return value.KType==="5"
                     })
 
-                    var outdata_StartSum=Math.floor(0);
-                    var outdata_EndSum=Math.floor(0);
+                    var outdata_StartSum=Number(0);
+                    var outdata_EndSum=Number(0);
                     //var listArry2=treeSum(outdata);
                     treeSum(outdata).forEach(item =>{
-                        outdata_StartSum +=Math.floor(item.StartSum);
-                        outdata_EndSum +=Math.floor(item.EndSum)
+                        outdata_StartSum +=Number(item.StartSum);
+                        outdata_EndSum +=Number(item.EndSum)
                     })
 
                     var newdata=new Array();
@@ -378,26 +379,27 @@
                 console.log(bom);
                 this.$print(bom);
             },
-            printLodop() {
-                /**
-                 * Lodop专有样式和属性有：
-                   ●代码中若包含style="page-break-after:always"或style="page-break-before:always"，该元素称为“强制分页元素”，控件会在该元素处分页。
-                   ●代码中的标签IMG如果有transcolor属性，则可以实现透明打印图片。例如属性格式为：transcolor="#FFFFFF"表示用白色作为透明底色，这里的颜色值可以是“#”加三色16进制值组合，也可以是英文颜色名。这个专有属性再配合IMG的position: absolute可以实现“先字后章”的公章打印效果。
-                   ●代码中的元素如果包含borderthin属性，如果属性值等于true,则该元素的border在合并单元格时会采用单细线模式。
-                 */
-                const me = this
-                var html=this.$refs.printFrom.innerHTML;
-                //console.log(html);
-                let LODOP = getLodop();
-                LODOP.PRINT_INIT("收入支出表");      //打印初始化
-                LODOP.SET_PRINT_PAGESIZE(3, 0, 0, "A4");  //设定纸张大小
-                LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "收入支出表");
-                LODOP.ADD_PRINT_HTM(30, "10mm", "RightMargin:10mm", "BottomMargin:10mm",html);
-                LODOP.SET_SHOW_MODE("LANDSCAPE_DEFROTATED",1);//横向时转换为正向不需要手动旋转
-                LODOP.SET_SHOW_MODE("NP_NO_RESULT", true);
-                //LODOP.PRINT();  //直接打印不进行预览
-                LODOP.PREVIEW();  //先预览再打印
+            postBalanceSheetExcel:function(){
+                let base=httpConfig.getAxiosBaseConfig();
+
+                //下载Excel
+                this.downloadLoading = true
+                this.$axios({
+                    method:'get',
+                    url:'/PVoucherMst/GetIncomAndExpenditureExcel',
+                    params:{
+                        accountPeriod:this.date1.choosedYear+'-'+this.date1.choosedMonth,
+                        isContainUncheck:this.proofType,
+                        orgid:this.orgid
+                    }
+                }) .then(res => {
+                    window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
+                    this.downloadLoading = false;
+                }).catch(err => {
+                    console.log(err)
+                })
             },
+
             //刷新
             refresh:function(){
                 this.getData();

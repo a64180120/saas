@@ -1,4 +1,6 @@
 <template>
+    <div class="timeSelect">
+        <div class="container">
         <div class="manageContent">
             <div class="reportBox">
                 <div class="unionState flexPublic">
@@ -183,6 +185,8 @@
             <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
             <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
         </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -250,7 +254,6 @@
         },
         mounted() {
             window.addEventListener('scroll', this.handleScroll, true);  // 监听（绑定）滚轮滚动事件
-            console.log(this.user);
         },
         destroyed(){
             window.addEventListener('scroll', this.handleScroll, true);  // 监听（绑定）滚轮滚动事件
@@ -1003,9 +1006,10 @@
         justify-content: center;
         align-items: center;
         position: fixed;
-        top: 192px;
+        top: 210px;
         width: 260px;
         z-index: 9;
+        margin-left: -1px;
     }
     .unionLists>p{
         text-align: center;
