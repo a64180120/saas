@@ -4,20 +4,21 @@
             <div class="Time" @click="showTogg">
                 {{showtype=='doubleTime'?'会计期':'年度'}}
             </div>
+
             <div class="Time_name">{{choosedYear}}</div>
             <!--侧边时间选择器  月-->
             <div class="vertical dragscroll"  v-bind:style="{'display':(showtype=='doubleTime'||showtype=='singleTime'?'block':'none')}" >
-                <div id="List" class="list">
-                    <template v-for="n in (jiezhangYear-startyear+ (jiezhangMonth==12?2:1))">
-                        <template v-if="n+startyear<=jiezhangYear+(jiezhangMonth==12?2:1)">
+                    <div id="List" class="list">
+                   <template v-for="y in years">
+                        <template v-if="y+startyear<=jiezhangYear+(jiezhangMonth&&jiezhangYear!=startyear==12?2:1)">
                             <div id="">
                                 <ul>
-                                    <p class="name">{{startyear+n-1}}</p>
+                                    <p class="name">{{startyear+y-1}}</p>
                                     <template v-for="m in month">
-                                        <li :date="(startyear+n-1)+'-'+m"
-                                            :class="{'Font_color':(startyear+n-1==jiezhangYear&& m>jiezhangMonth||startyear+n-1>jiezhangYear),'selectMonth':(startyear+n-1==choosedYear&&m==choosedMonth)}"
+                                        <li :date="(startyear+y-1)+'-'+m"
+                                            :class="{'Font_color':(startyear+y-1==jiezhangYear&& m>jiezhangMonth||startyear+y-1>jiezhangYear),'selectMonth':(startyear+y-1==choosedYear&&m==choosedMonth)}"
                                             @click="chosedata">{{m}}</li>
-                                        <i :class="{'colour':(startyear+n-1==jiezhangYear&& m>=jiezhangMonth||startyear+n-1>jiezhangYear)?true:(m==12?true:false)}"></i>
+                                        <i :class="{'colour':(startyear+y-1==jiezhangYear&& m>=jiezhangMonth||startyear+y-1>jiezhangYear)?true:(m==12?true:false)}"></i>
                                     </template>
                                 </ul>
                             </div>
@@ -31,20 +32,20 @@
                 <div class="list">
                     <div>
                         <ul>
-                            <template v-for="n in (jiezhangYear-startyear+ (jiezhangMonth==12?2:1))">
-                                <template v-if="n+startyear<=jiezhangYear+ (jiezhangMonth==12?2:1)">
+                            <template v-for="n in years">
+                                <template v-if="n+startyear<=jiezhangYear+ (jiezhangMonth==12&&jiezhangYear!=startyear?2:1)">
                                     <li :date="(startyear+n-1)+'-'+1"
                                         :class="{'selectMonth':(startyear+n-1==choosedYear)}"
                                         @click="chosedata"
                                         >{{startyear+n-1}}</li>
-                                    <i :class="{'colour':(startyear+n-1>=jiezhangYear)?true:false}" style="margin: 12px 25px;"></i>
+                                    <i :class="{'colour':(startyear+n-1>=jiezhangYear)?true:false}" style="margin: 12px 24px;"></i>
                                 </template>
                                 <template v-else></template>
                             </template>
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </div>
         <!--明细账样式-->
         <div v-bind:style="{'display':(showtype=='doubleTime'?'block':'none')}">
@@ -120,6 +121,7 @@
         name: "timeSelectBar",
         data(){
           return{
+              years:'',
               startyear:'',//开始年份
               //startmonth:'',//开始月份
 
@@ -148,11 +150,10 @@
                 orgid: state => state.user.orgid,
                 orgcode: state => state.user.orgcode,
                 uid:state=>state.user.userid,
-                startYear:state=>state.user
+                startYear:state=>state.user.startYear
             })
         },
         mounted(){
-            console.log(this.startYear);
                 let currentYear = new Date();
                 let currentyear=currentYear.getFullYear(currentYear);
                 let currentMonth=currentYear.getMonth()+1;
@@ -162,7 +163,7 @@
                 this.choosedYear=currentyear;
                 this.choosedMonth=currentMonth;
                 this.choosedMonthEnd=currentMonth;
-                this.startyear=this.startYear==0?currentyear:this.startYear;
+                this.startyear=(this.startYear==0?currentyear:this.startYear);
                 this.getChecked();
 
             let data={
@@ -227,20 +228,16 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
-                        console.log('=====结账日期===');
+                        console.log(this.startYear);
                         console.log(res);
                         if(res.Record.length>0){
                             this.jiezhangMonth=(res.Record[0].JAccountPeriod==0?12:res.Record[0].JAccountPeriod);//结账的月份
                             this.jiezhangYear=(res.Record[0].JAccountPeriod==0?res.Record[0].JYear-1:res.Record[0].JYear);//结账年
-                            //this.jiezhangYear=2019;
-                            console.log(this.jiezhangMonth);
-                            console.log(this.jiezhangYear);
                         }else{
                             this.jiezhangMonth=this.currentmonth;//结账的月份
                             this.jiezhangYear=this.currentyear;//结账年
                         }
-
-                        console.log(this.jiezhangYear);
+                        this.years=(this.jiezhangYear-this.startyear+(this.jiezhangMonth==12&&this.jiezhangYear!=this.startyear?2:1))
                         //this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
                         //this.year=this.sideDate.split('-')[0];
                         //this.choosedMonth=this.checkedTime;
