@@ -102,12 +102,12 @@
             </section> 
         </div>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
+        <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
   </div>
 </template>
 
 <script>
-    import saasMsg from './message'
+    
     import {mapState, mapActions} from 'vuex'
   export default {
     name: "next-month-check",
@@ -604,7 +604,7 @@
           })
       },
       components:{
-          saasMsg,
+         
       }
   }
 </script>

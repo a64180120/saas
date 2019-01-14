@@ -58,7 +58,7 @@
                         </li>
                         <li>
                             <div v-show="(!updatePage)">{{item.NCAccount==0?'':item.NCAccount}}</div>
-                            <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" v-model="item.NCAccount"></div>
+                            <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" @blur="balanceBlur(item)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="item.NCAccount"></div>
                         </li>
                         <li v-if="item.children.length>0" class="child">                       
                             <ul @click.stop="childChoose($event,item,child,index2)"  v-for="(child,index2) of item.children" :key=index2>
@@ -80,7 +80,7 @@
                                 </li>
                                 <li>
                                     <div v-show="(!updatePage)">{{child.NCAccount==0?'':child.NCAccount}}</div>
-                                    <div class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" v-model="child.NCAccount"></div>
+                                    <div class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" @blur="balanceBlur(child)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child.NCAccount"></div>
                                 </li>
                                 <li v-if="child.children.length>0" class="child">
                                     <ul @click.stop="childChoose($event,child,child3,index3)"  v-for="(child3,index3) of child.children" :key=index3>
@@ -102,7 +102,7 @@
                                         </li>
                                         <li>
                                             <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child3.NCAccount}}</div>
-                                            <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" v-model="child3.NCAccount"></div>
+                                            <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" @blur="balanceBlur(child3)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child3.NCAccount"></div>
                                         </li>
                                         <li v-if="child3.children.length>0" class="child">
                                             <ul @click.stop="childChoose($event,child3,child4,index4)"  v-for="(child4,index4) of child3.children" :key=index4>
@@ -123,10 +123,34 @@
                                                     </div> -->
                                                 </li>
                                                 <li>
-                                                    <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child4.NCAccount}}</div>
-                                                    <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" v-model="child4.NCAccount"></div>
+                                                    <div v-show="(!updatePage)">{{child4.NCAccount==0?'':child4.NCAccount}}</div>
+                                                    <div class="inputContainer" v-show="updatePage&&child4.IsLast==1"><input type="text" @blur="balanceBlur(child4)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child4.NCAccount"></div>
                                                 </li>
-                                                
+                                                <li v-if="child3.children.length>0" class="child">
+                                                    <ul @click.stop="childChoose($event,child4,child5,index5)"  v-for="(child5,index5) of child4.children" :key=index5>
+                                                        <li style="padding:0 0 0 50px;" :title="child5.KCode">{{child5.KCode}}</li>
+                                                        <li style="padding-left:50px;" >{{child5.KName}}</li>
+                                                        <li><span v-if="child5.KBalanceType==1">借</span><span v-if="child5.KBalanceType==2">贷</span><span v-if="child5.KBalanceType==3">借/贷</span></li>
+                                                        <li>
+                                                            <div class="assistCss" v-for="(aux,inde) of child5.AuxiliaryTypes" :key=inde>
+                                                                <img src="@/assets/images/finance/e43d0d92-28a3-4b66-8ef8-26681e276d6b.svg" alt="">   
+                                                                <span>{{aux.BaseName}} &nbsp;</span>    
+                                                            </div>     
+                                                        </li>
+                                                        <li>
+                                                            <div ><i  :class="{newAddStateTrue:true,newAddStateFalse:false}"></i> </div>
+                                                            <!-- <div v-show="updatePage">
+                                                                <label>启用 <input type="radio"></label>
+                                                                <label>停用 <input type="radio"></label>
+                                                            </div> -->
+                                                        </li>
+                                                        <li>
+                                                            <div v-show="(!updatePage)">{{child5.NCAccount==0?'':child5.NCAccount}}</div>
+                                                            <div class="inputContainer" v-show="updatePage&&child5.IsLast==1"><input type="text" @blur="balanceBlur(child5)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child5.NCAccount"></div>
+                                                        </li>
+                                                        
+                                                    </ul>
+                                                </li> 
                                             </ul>
                                         </li>       
                                     </ul>
@@ -171,8 +195,10 @@
                     </li>
                     <li>
                         <div>科目名称</div>
-                        <div class="inputContainer">
-                            <input :disabled="choosedData[0].child.IsSystem?true:false" placeholder="必填" type="text" v-model="subjectInfo.KName">
+                        <div>
+                            <div class="inputContainer">
+                                <input :disabled="choosedData[0].child.IsSystem?true:false" placeholder="必填" type="text" v-model="subjectInfo.KName">
+                            </div>
                         </div>
                         <div style="clear:both"></div>
                     </li>
@@ -451,6 +477,15 @@ export default {
             arr.push(obj);
         }
         return arr;
+    },
+    //输入余额框blur
+    balanceBlur(item){
+        item.NCAccount=parseFloat(item.NCAccount);
+        if(item.NCAccount){
+            item.NCAccount=item.NCAccount.toFixed(2);
+        }else{
+            item.NCAccount=0;
+        }
     },
     //初始化按钮***********
     endInit(){
@@ -772,6 +807,7 @@ export default {
             KBalanceType:this.addData.KBalanceType,
             AuxiliaryTypes:[]
         }
+
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
         }
@@ -797,8 +833,8 @@ export default {
          }
         this.addPageShow='update';
         this.addData={};
-        this.addData.PSubject=this.choosedData.parent?this.choosedData.parent:[];  
-         this.addData.Type=this.addInfo.Type;
+        this.addData.PSubject=this.choosedData.parent?this.choosedData.parent:[];  //上级科目信息
+         this.addData.Type=this.addInfo.Type;  //所有辅助项值
        
         this.subjectInfo={
             PhId:this.choosedData[0].child.PhId,
@@ -816,9 +852,15 @@ export default {
             this.subjectInfo.preSubject.KCode='';
             this.subjectInfo.preSubject.KName='';
         }
-    
+        //默认选中的辅助项
         for(var t=0;t<this.addData.Type.length;t++){
             this.subjectInfo.AuxiliaryTypes[t]=false;
+            for(var auxi of this.choosedData[0].child.AuxiliaryTypes){
+                if(auxi.PhId==this.addData.Type[t].PhId){
+                    this.subjectInfo.AuxiliaryTypes[t]=true;
+                }
+            }
+            
         }
     },
     //科目新增修改保存按钮
@@ -1384,7 +1426,7 @@ export default {
                     
                     .inputContainer>input{
                         border:0;
-                        height:28px;
+                        height:80%;
                         position:relative;
                         
                     }

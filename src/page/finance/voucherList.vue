@@ -275,12 +275,12 @@
             <div style="clear:both"></div>
         </el-dialog>
          <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
+        <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
     </div>
 </template>
 
 <script>
-    import saasMsg from './message'
+    
     import printTem from "@/page/finance/vprint/printTemPdf"
     import httpConfig from '@/util/ajaxConfig'
     import {mapState, mapActions} from 'vuex'
@@ -968,6 +968,27 @@
                    this.$message('请输入内容!')
                    return;
                }
+                //判断科目金额摘要不能为空
+                for(var dtl of Vdata.Mst.Dtls){
+                    if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
+                        this.saasMessage={
+                            message:'科目/金额/摘要不能为空!',
+                            visible:true,
+                            delay:4000
+                        }
+                        return;
+                    }
+                    
+                }
+                
+                if(!this.dataCheck()){
+                    this.saasMessage={
+                        visible:true,
+                        delay:4000,
+                        message:'借贷不平衡,请查看!'
+                    }
+                    return;
+                }
                if(Vdata.Mst.PDate){
                    if(typeof(Vdata.Mst.PDate)=='object'){
                        Vdata.Mst.Uyear=Vdata.Mst.PDate.getFullYear();
@@ -1010,7 +1031,8 @@
                             //    if(str=='print'){
                             //        this.printContent();
                             //    }
-                               this.getvoucherList(); 
+                            this.voucherMask=false;
+                            this.getvoucherList(); 
                            } else {
                                 this.saasMessage={
                                   visible:true,
@@ -1033,6 +1055,22 @@
                }else{
                    this.$message('当前月份已结账,无法修改凭证!')
                }
+            },
+            //判断借贷平衡***********
+            dataCheck(){
+                var data=this.voucherDataList.data.Mst.Dtls;
+                var Jcount=0;
+                var Dcount=0;
+                for(var dtl of data){
+                    Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
+                    Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
+                }
+                console.log(Jcount,Dcount)
+                if(Jcount==Dcount){
+                    return true;
+                }else{
+                    return false;
+                }
             },
             //复制剪切冲红******************************
             voucherMaskShow(val){
@@ -1134,7 +1172,7 @@
                     else{
                         //this.clearPhId(this.voucherDataList.data.Mst); 
                         this.keepVoucher(val);
-                        this.voucherMask=false; 
+                         
                         //this.voucherDataList.bool=false; 
                         //this.voucherDataList={bool:false,data:{Mst:'',Attachements:[]}};    
                     }    
@@ -1706,7 +1744,6 @@
             sideTime,
             voucher,
             printTem,
-            saasMsg
         }
     }
     
