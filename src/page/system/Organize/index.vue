@@ -678,11 +678,6 @@
                         uid: this.userid,
                         orgid: this.orgid
                     }).then(res => {
-                        this.selectArea(this.orgForm.Province, 1);
-                        this.selectArea(this.orgForm.City, 2);
-                        this.selectArea(this.orgForm.County, 3);
-                        this.getAdminOrganize(this.orgForm.ParentId);
-                        this.getParentByArea(4, this.orgForm.Street);
                         this.loading = false;
                         if (res.Status === "error") {
                             this.$message({showClose: true, message: res.Msg, type: 'error'});
@@ -691,6 +686,11 @@
                         this.orgForm = res;
                         this.changePhid = res.PhId;
                         this.beforeChange = JSON.stringify(res);
+                        this.selectArea(this.orgForm.Province, 1);
+                        this.selectArea(this.orgForm.City, 2);
+                        this.selectArea(this.orgForm.County, 3);
+                        this.getAdminOrganize(this.orgForm.ParentId);
+                        this.getParentByArea(4, this.orgForm.Street);
                         console.log(this.beforeChange);
                     }).catch(error => {
                         console.log(error);
