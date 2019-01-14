@@ -279,7 +279,7 @@ export default {
         searchVal:'',
         dataList:[],
         startYear:(new Date).getFullYear(),  //建账日期;
-        year:(new Date).getFullYear(), //选择的年份
+        year:'', //选择的年份
         asset:[],  //资产
         liabilities:[],  //负债
         netAsset:[],//净资产
@@ -322,7 +322,10 @@ export default {
   //加载数据
   mounted:function(){
       this.getChecked();
-      this.startYear=userInfo.getUserInfoData().orgInfo.StartYear;  
+      this.startYear=userInfo.getUserInfoData().orgInfo.StartYear;
+      if(!this.startYear){
+          this.startYear=(new Date).getFullYear();
+      } 
   },
   //计算
   computed: {
