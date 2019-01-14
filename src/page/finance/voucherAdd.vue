@@ -443,6 +443,7 @@
                 var url='Add';
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
                 var Vdata=this.voucherDataList.data;
+                console.log(Vdata.Mst)
                 //判断科目金额摘要不能为空
                 for(var dtl of Vdata.Mst.Dtls){
                     if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
@@ -451,9 +452,11 @@
                             visible:true,
                             delay:4000
                         }
+                        return;
                     }
-                    return;
+                    
                 }
+                
                 if(!this.dataCheck()){
                     this.saasMessage={
                         visible:true,
@@ -685,6 +688,7 @@
             },
             voucherData(){//接收voucher组件传值************
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
+                console.log(this.voucherDataList.data)
             },
             confirmData(data){
                 
@@ -698,6 +702,7 @@
                     Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
                     Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
                 }
+                console.log(Jcount,Dcount)
                 if(Jcount==Dcount){
                     return true;
                 }else{
@@ -1157,6 +1162,7 @@
                 if(val){
                     this.voucherData();
                     var id = this.voucherDataList.data.Mst.PhId;
+                    console.log(this.voucherDataList.data.Mst)
                     if(val=='cut'){
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={

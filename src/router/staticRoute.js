@@ -40,7 +40,7 @@ const staticRoute = [
                 path: "orgin",
                 component: () => import("../page/admin/organize/manage"),
                 //redirect: "/admin/orgin/union",
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'组织管理'}
             },
             {
                 //组织管理 -新增
@@ -64,37 +64,37 @@ const staticRoute = [
                 //角色管理
                 path: "role",
                 component: () =>import("../page/admin/role"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'角色管理'}
             },
             {
                 //用户管理
                 path: "user",
                 component: () =>import("../page/admin/user"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'用户管理'}
             },
             {
                 //菜单管理
                 path: "menu",
                 component: () =>import("../page/admin/menu"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'用户管理'}
             },
             {
                 //文章管理
                 path: "article",
                 component: () =>import( "../page/admin/article/List"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'用户管理'}
             },
             {
                 //文章管理 -新增
                 path: "article/add",
                 component: () => import("../page/admin/article/Add"),
-                meta:{ requireAuth:true,type:'button',name:'文章新增'}
+                meta:{ requireAuth:true,type:'button',name:'新闻管理'}
             },
             {
                 //图片管理
                 path: "picture",
                 component: () =>import( "../page/admin/picture"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'轮播图管理'}
             }
         ]
     },
@@ -133,37 +133,37 @@ const staticRoute = [
                 //科目设置
                 path: "subject",
                 component: () =>import( "../page/basicSetting/subjectSetting"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'科目设置'}
             },
             {
                 //科目期初
                 path: "subjectstart",
                 component: () =>import("../page/basicSetting/subjectInit"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'科目期初'}
             },
             {
                 //辅助核算
                 path: "auxiliary",
                 component: () =>import("../page/basicSetting/auxiliary/auxiliary"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'辅助核算'}
             },
             {
                 //凭证模板
                 path: "vouchertemp",
                 component: () =>import("../page/message"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'凭证模板'}
             },
             {
                 //套打格式
                 path: "print",
                 component: () =>import("../page/message"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'套打格式'}
             },
             {
                 //参数设置
                 path: "config",
                 component: () =>import("../page/basicSetting/config/index"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'参数设置'}
             }
         ]
     },
@@ -188,7 +188,7 @@ const staticRoute = [
                 //明细账
                 path: "detailaccount",
                 component: () =>import("../page/accountbooks/detailaccount/details"),
-                meta:{ requireAuth:true,type:'page' }
+                meta:{ requireAuth:true,type:'page' ,name:'明细账'}
             },
             /*{
                 //多栏账
@@ -207,19 +207,19 @@ const staticRoute = [
                 //资产负债表
                 path: "assets",
                 component: () =>import( "../page/report/assets"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'资产负债表'}
             },
             {
                 //收入支出表
                 path: "expenses",
                 component: () =>import("../page/report/expenses"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'收入支出表'}
             },
             {
                 //往来明细款项表
                 path: "intercourse",
                 component: () =>import("../page/report/intercourse"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'往来款项明细表'}
             }/*,
             {
                 //Supcan
@@ -238,13 +238,13 @@ const staticRoute = [
                 //期末结转
                 path: "end",
                 component: () =>import( "../page/checkOut/end"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'期末结转'}
             },
             {
                 //结账
                 path: "checkout",
                 component: () =>import("../page/checkOut/checkOut"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'结账'}
             }
         ]
     },
@@ -257,31 +257,31 @@ const staticRoute = [
                 //预算编制
                 path: "plan",
                 component: () =>import( "../page/budget/plan"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'预算编制'}
             },
             {
                 //预算执行
                 path: "execute",
                 component: () =>import("../page/budget/execute"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'预算执行'}
             },
             {
                 //收支预算表
                 path: "budget",
                 component: () =>import( "../page/budget/budget"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'年初申报'}
             },
             {
                 //收支调整表
                 path: "adjustbudget",
                 component: () =>import( "../page/budget/adjustbudget"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'年中调整'}
             },
             {
                 //收支决算表
                 path: "actualbudget",
                 component: () =>import( "../page/budget/actualbudget"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'决算核算'}
             },
         ]
     },
@@ -294,7 +294,7 @@ const staticRoute = [
                 //上报任务
                 path: "reporting",
                 component: () =>import( "../page/message"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'上报任务'}
             }
         ]
     },
@@ -307,13 +307,13 @@ const staticRoute = [
                 //工作账号管理
                 path: "account",
                 component: () =>import( "../page/system/user"),
-                meta:{ requireAuth:true,type:'page'}
+                meta:{ requireAuth:true,type:'page',name:'工作账号管理'}
             },
             {
                 //组织账套管理
                 path: "organization",
                 component: () =>import( "../page/system/Organize"),
-                meta:{ requireAuth:true ,type:'page'}
+                meta:{ requireAuth:true ,type:'page',name:'组织账套管理'}
             }
         ]
     },

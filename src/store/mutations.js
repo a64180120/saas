@@ -21,5 +21,11 @@ export default {
     },
     setThemeColor(state, data){
         state.theme = data
+    },
+    // 控制loading显示隐藏
+    updateLoadingStatus(state, payload) {
+        console.log(payload)
+        state.isLoading = payload.isLoading
     }
+    
 }

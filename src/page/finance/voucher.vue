@@ -307,8 +307,6 @@
                 }
                 var account;
                 var item;
-
-
                 for( var info of this.voucherInfo){
                     if(info.PhId){
                         for(var dtl of  dtls){
@@ -351,8 +349,7 @@
                             }
                         }
                     }
-                    else if(info.SubjectCode||info.JSum||info.DSum||info.Abstract){
-                        
+                    else if(info.SubjectCode||info.money.jiefang||info.money.daifang||info.Abstract){   
                         var newDtl={
                             Abstract:info.Abstract,
                             SubjectCode:info.SubjectCode,
@@ -377,6 +374,7 @@
                             }
                             newDtl.DtlAccounts[0]=dt;
                         }
+       
                         dtls.push(newDtl);
                     }
                 }
@@ -540,7 +538,7 @@
                     }
                 }
                 this.AbstractCss=data.PSource?data.PSource:'';//摘要样式******************
-                console.log(this.AbstractCss)
+                
             },
             //获取附件信息*******************
             getAttachements(PhId){                 
@@ -873,7 +871,7 @@
                         this.moneyTurn(item.money.jiefang,children1);
                     }
                 }
-                
+                console.log(this.voucherInfo)
                 this.countJie++;  //触发合计更新
                 this.countDai++;    
                 this.$forceUpdate();
