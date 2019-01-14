@@ -1,5 +1,5 @@
 <template>
-    <div class="sys-login">
+    <div class="sys-login log">
         <div class="register_head">
             <img src="../../assets/images/register/register_company_log.png">
             <div class="telPhone"><img src="../../assets/images/finance/SAAS-03.png"><span>0571-88270588</span></div>
@@ -19,7 +19,7 @@
                                     <img src="@/assets/images/register/2.png">
                                     <el-input v-model="loginForm.password" type="password"  placeholder="密码"></el-input>
                                 </el-form-item>
-                                <el-form-item v-if="isOrganize" prop="orgid">
+                                <el-form-item v-if="isOrganize" prop="orgid"><!--v-if="isOrganize"-->
                                     <img src="@/assets/images/register/3.png">
                                     <el-select v-model="loginForm.orgid" filterable placeholder="请选择组织">
                                         <el-option v-for="item in options"
@@ -69,7 +69,7 @@
                                     <el-input v-model="loginFormPhone.phoneCode" type="text"  placeholder="请输入短信验证码"></el-input>
                                 </el-form-item>
                                 <!--v-if="isOrganize" -->
-                                <el-form-item prop="orgid">
+                                <el-form-item v-if="isOrganizePhone" prop="orgid">
                                     <img src="@/assets/images/register/3.png">
                                     <el-select v-model="loginFormPhone.orgid" filterable placeholder="请选择组织">
                                         <el-option v-for="item in phoneoptions"
@@ -233,9 +233,15 @@ export default {
                         //this.loginFormPhone.orgid=JSON.parse(res.data).orgs[0].PhId;
                         this.phonePwd=resdata.user.Password;
                         this.phoneoptions=resdata.orgs;
-                       /*if(this.phoneoptions.length==1){
-                            this.submitForm('loginFormPhone');
-                        }*/
+                        if(this.phoneoptions.length==1){
+                            this.loginFormPhone.orgid=JSON.parse(res.data).orgs[0].PhId;
+                        }
+
+                       if(this.phoneoptions.length>=1){
+                            this.isOrganizePhone=true;
+                        }else{
+                           this.isOrganizePhone=false;
+                       }
                         callback();
                     }
                 }).catch(err=>{
@@ -356,7 +362,8 @@ export default {
             timertitlePwd:'发送短信',
             sysMsg: '',
             loading: false,
-            isOrganize:false,
+            isOrganize:false,//账号登录组织显示
+            isOrganizePhone:false,//手机验证码登录组织显示
             Verifycode:''
         }
     },
@@ -393,6 +400,7 @@ export default {
                 if(res){
                     if(res.Status==='error'){
                         this.$message.error(res.Msg);
+                        this.isOrganize=false;
                         return;
                     }
                     //获取组织信息，当前组织只有一个时，直接登录
@@ -403,7 +411,8 @@ export default {
                         this.options=orgData;
                         //this.submitForm('loginForm');
                     } else if(orgData.length===0){
-                            this.$message.error("当前用户组织不存在!");
+                        this.isOrganize=false;
+                        this.$message.error("当前用户组织不存在!");
                     }
                     else{
                         this.isOrganize=true;
@@ -597,8 +606,6 @@ export default {
                             orgid: this.loginForm.orgid
                         }).then(res => {
                             loading.close();
-                            console.log(res);
-                            return;
                             if(res.Status==="success"){
                                 if(res.Data.orgInfo.EnCode){
                                     this.$router.push('home') //跳转主页
@@ -941,22 +948,18 @@ export default {
     }
     .sys-login .form-group .el-input{
         background:none;
-
-    }
-    .sys-login .form-group .el-select .el-input .el-input__inner{
-        padding: 0px;
-        margin: 10px;
-        width: 360px;
-    }
-    .sys-login .form-group .el-select .el-input .el-input__inner:first-child{
         margin-left: 40px;
-        padding-left: 10px;
     }
-    .sys-login .form-group .el-input__inner{
+    .log .form-group .el-select .el-input .el-input__inner{
+        padding: 10px;
+        width: 360px !important;
         background-color: white;
         border: none;
-        margin-left: 40px;
+    }
+    .sys-login .form-group .el-input__inner{
         width: 345px;
+        background-color: white;
+        border: none;
     }
     .sys-login .form-group .el-input__suffix{
         display: none;

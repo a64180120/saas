@@ -74,7 +74,7 @@
                                 </el-form-item>
                                 <el-form-item prop="addressDetail">
                                     <img src="@/assets/images/register/dz.png" style="bottom: 35px;">
-                                    <el-select v-model="registerForm2.provincevalue" placeholder="请选择" style="margin-left: 40px"  @change="searchArea(registerForm2.provincevalue,1)">
+                                    <el-select v-model="registerForm2.provincevalue" placeholder="请选择" @change="searchArea(registerForm2.provincevalue,1)">
                                         <el-option
                                             v-for="item in province"
                                             :key="item.value"
@@ -273,7 +273,7 @@
                     ],
                     phonecode:[
                         {required:true,message:'请输入验证码',trigger:'blur'},
-                        // {required:true,validator:validCode,trigger:'blur'}
+                        {required:true,validator:validCode,trigger:'blur'}
                     ],
                 },
                 registerForm2:{
@@ -358,8 +358,6 @@
                     })
                 }
                 if(val=='sub'){
-                    console.log('===========1=========')
-
                     this.$refs.validFormS.validate((valid) => {
                         console.log('valid'+valid);
 
@@ -819,21 +817,19 @@
     }
     .sys-login .form-group .el-input{
         background:none;
-
+        margin-left: 40px;
     }
     .sys-login .form-group .el-select .el-input .el-input__inner{
-        padding: 0px;
-        margin: 10px;
+        padding: 10px;
         width: 100px;
     }
     .sys-login .form-group .el-select .el-input .el-input__inner:first-child{
-        margin-left: 0px!important;
-        padding-left: 10px!important;
+        margin-left: 0px;
+        padding-left: 10px;
     }
     .sys-login .form-group .el-input__inner{
         background-color: white;
         border: none;
-        margin-left: 40px;
         width: 345px;
     }
     .sys-login .form-group .el-input__suffix{
