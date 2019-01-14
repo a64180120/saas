@@ -403,7 +403,6 @@
             * 监听数据输入
             * */
             inputLis:function(val){
-                console.log(111111);
                 // console.log(val.target.value);
                 //val.target.value=val.target.value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g);
                 let code = val.target.attributes.code.value;//当前修改数据的code
@@ -417,7 +416,6 @@
                 }
                 // input数据转数字
                 in_value=Number(in_value);
-                console.log(in_value);
                 let code_first=this.code_first;//一级科目数据列表
                 if(!isNaN(in_value)){
                     if(code=='BNSHTZ'){
@@ -432,8 +430,6 @@
                             let len = this.budgetList[i].SubjectCode.length;
                             let codeSub = code.substring(0,len);
                             if(codeSub==this.budgetList[i].SubjectCode){
-                                console.log(i);
-
                                 let layer=val.target.attributes.layer.value;//当前修改数据时父级菜单还是子集菜单
                                 //判断是父级科目还是子级科目
                                 //如果是子级科目，则先修改数组中父级科目的值，计算之后再修改本身的值；父级科目则先计算其他值，再修改自身
