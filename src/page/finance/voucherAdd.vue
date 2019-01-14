@@ -273,14 +273,12 @@
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
                 this.voucherAdd=true;
-                console.log(this.voucherAdd)
             } 
             
         },
         mounted(){  
             this.getChecked();
             this.uInfo= userInfo.getUserInfoData().userInfo; 
-            console.log(this.uInfo)
             //this.moveNavTop();
         },
         methods:{

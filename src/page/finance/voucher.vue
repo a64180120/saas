@@ -310,7 +310,6 @@
 
 
                 for( var info of this.voucherInfo){
-                    console.log(info,info.SubjectCode||info.JSum||info.DSum||info.Abstract)
                     if(info.PhId){
                         for(var dtl of  dtls){
                             if(dtl.PhId==info.PhId){
