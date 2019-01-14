@@ -20,10 +20,10 @@
                         <label><input type="radio" name="line" v-model="formData.EnabledMark" value="1">停用</label>
                     </div>
                 </li>
-                <li>
+                <!-- <li>
                     <div @click="btnShow('update')">修改</div>
                     <div @click="btnShow('delete')">删除</div>
-                </li>
+                </li> -->
             </ul>
             <div class="formContainer">
                 <ul class="formTitle">
@@ -43,14 +43,14 @@
                             <label><input type="radio" :name="item.BaseName" v-model="item.EnabledMark" value=1>停用</label>
                         </div>
                     </li>
-                    <li><i @click.stop="deleteData(item,index)" v-show="deleteCss[index].checked"></i></li>
+                    <li><i @click.stop="deleteData(item,index)" ></i></li>
                 </ul>
 
 
             </div>
             <div class="itemBtnCon">
-                <div @click.stop="newAdd">保存</div>
-                <div @click.stop="cancle">取消</div>
+                <div class="btn" @click.stop="newAdd">保存</div>
+                <div class="btn" @click.stop="cancle">取消</div>
             </div>
         </div>
     </div>
@@ -231,20 +231,21 @@
     .newAdd{
         width:100%;
         height:100%;
-        position:absolute;
-        z-index:10;
+        position: fixed;
+        z-index:99;
         top:0;
-        background: rgba(0,0,0,0.4);
+        left:0;
+        background: rgba(0,0,0,0.5);
     }
     .newAddContent{
         background: #fff;
         overflow: hidden;
         position:absolute;
-        left:25%;
+        left:28%;
         top:20%;
         width:600px;
         .newAddTitle{
-            background: #3e8cbc;
+            background: #00b7ee;
             border-radius: 8px;
             height:40px;
             line-height: 40px;
@@ -263,7 +264,7 @@
                     position: absolute;
                     width:15px;
                     height:1px;
-                    background: #3e8cbc;
+                    background: #00b7ee;
                     top:12px;
                     left:5px;
                 }
@@ -297,7 +298,7 @@
                     }
                     &:nth-of-type(3){
                         min-width:70px;
-                        background: #4faed2;
+                        background: #00b7ee;
                         border-radius: 3px;
                         color:#fff;
                         text-align: center;
@@ -345,10 +346,10 @@
         align-items: center;
         div{
             width:70px;
-            background: #3e8cbc;
+            background: #00b7ee;
             text-align: center;
             border-radius: 3px;
-            border:2px solid #3e8cbc;
+            border:1px solid #00b7ee;
             height:30px;
             line-height: 26px;
             font-size: 14px;
@@ -357,12 +358,12 @@
             cursor: pointer;
             &:hover{
                 background:#fff;
-                color:#3e8cbc;
+                color:#00b7ee;
             }
         }
     }
     .formContainer{
-        padding:0 20px 0 10px;
+        padding:10px 20px 10px 10px;
         overflow-y: auto;
         height:200px;
         ul{
@@ -370,6 +371,7 @@
             flex-flow: row nowrap;
             justify-content: flex-start;
             align-items: center;
+            width:550px;
             &.formData{
                 margin:0;
             }
@@ -418,10 +420,11 @@
                         right:-23px;
                         width:25px;
                         height:25px;
-                        background: url("../../../assets/icon/delete.svg");
+                        cursor:pointer;
+                        background: url("../../../assets/icon/delete_fill.svg");
                         background-size:cover ;
                         &:hover{
-                            background: url("../../../assets/icon/delete_fill.svg");
+                            background: url("../../../assets/icon/delete.svg");
                             background-size:cover ;
                         }
                     }

@@ -980,8 +980,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-                console.log(Vdata.Mst,this.checkedTime,this.checkedYear,Vdata.Mst.Uyear>=this.checkedYear, Vdata.Mst.PMonth>=this.checkedTime);
-                        debugger
+             
                if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                  
                    var data = {
@@ -1080,7 +1079,7 @@
                             return;
                         }
                         
-                        if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+                        if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
@@ -1165,7 +1164,7 @@
                    return;
                }
                vm.clearPhId(Vdata.Mst)
-               if(Vdata.Mst.Uyear>=this.checkedYear&& Vdata.Mst.PMonth>=this.checkedTime) {
+               if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                    var data = {
                        uid: vm.uid,
                        orgid: vm.orgid,
@@ -1441,6 +1440,7 @@
                     orgid:this.orgid,
                     orgcode:this.orgcode,
                     uyear:this.year,
+                    makePerson:this.uname,
                     dealwithPNo:0 //重复凭证字号处理方式: 0 禁止, 1 跳过, 2 覆盖
                 }
                 const loading=this.$loading();
@@ -1479,6 +1479,7 @@
                     fileName:this.filelist[0].BUrlPath,
                     orgid:this.orgid,
                     orgcode:this.orgcode,
+                    makePerson:this.uname,
                     uyear:this.year,
                     dealwithPNo:0 //重复凭证字号处理方式: 0 禁止, 1 跳过, 2 覆盖
                 }
@@ -1505,7 +1506,14 @@
                                 IngoreMsg:[],
                                 ErrMsg:[]     
                             }
-                            this.fileSuccessMsg=res.Msg;                              
+                            this.fileSuccessMsg=res.Msg; 
+                                                         
+                        }else{
+                            this.saasMessage={
+                                message:res.Msg,
+                                delay:4000,
+                                visible:true
+                            }
                         }
                     },err => {
                         console.log(err);

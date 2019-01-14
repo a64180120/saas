@@ -33,7 +33,7 @@
 
                                 <ul>
                                     <li><span>摘要</span><span>科目代码</span><span>科目名称</span></li>  
-                                    <li  v-for="(it1,index2) of item.Dtls" :key="index2"><span>{{it1.Abstract}}</span><span>{{it1.SubjectCode}}</span><span>{{it1.SubjectName}}</span></li>
+                                    <li  v-for="(it1,index2) of item.Dtls" :key="index2"><span :title="it1.Abstract">{{it1.Abstract}}</span><span :title="it1.SubjectCode">{{it1.SubjectCode}}</span><span>{{it1.SubjectName}}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -467,7 +467,7 @@
     }
     .vouchertemp{
         background: rgba(0,0,0,0.5);
-        position: absolute;
+        position: fixed;
         z-index: 99;
         left:0;
         top:0;
@@ -519,7 +519,11 @@
                             background: #00b7ee;
                             color:#fff;
                             >div{
+                                width:65%;
                                 padding:5px;
+                                &:last-of-type{
+                                    width:35%;
+                                }
                                 >img{
                                     width:30px;
                                     height:30px;

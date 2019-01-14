@@ -415,10 +415,15 @@
             let infoData=UserInfo.getUserInfoData();
             if(infoData.orgInfo.EnCode == '' || infoData.orgInfo.EnCode == null){
                 this.routerTz = true;
+                this.message={
+                    message:'请尽快填写组织账套信息，以便更好地使用其他功能！',
+                    delay:4000,
+                    visible:true
+                }
             }else{
                 this.routerTz = false;
             }
-
+            console.log(infoData.orgInfo.EnCode);
             // this.selectArea(0, 0);
             // this.selectArea(this.orgForm.Province, 1);
             // this.selectArea(this.orgForm.City, 2);

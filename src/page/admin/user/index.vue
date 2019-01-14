@@ -1054,7 +1054,9 @@
                         OrgCode: this.qOrgCode,
                         // OrgCode:cookiesUser.orgInfo.EnCode,
                         RoleId:roles[i],
-                        RoleCode:roleItem[0].Name
+                        RoleCode:roleItem[0].Name,
+                        EnabledMark: '0',
+                        NickName: this.form.realName,
                     })
                 }
 
@@ -1124,7 +1126,9 @@
                         OrgCode: vm.qOrgCode,
                         //OrgCode:cookiesUser.orgInfo.EnCode,
                         RoleId:roles[i],
-                        RoleCode:roleItem[0].Name
+                        RoleCode:roleItem[0].Name,
+                        EnabledMark: this.form.enabledMark,
+                        NickName: this.form.realName,
                     })
                 }
 
@@ -1191,7 +1195,9 @@
                         OrgCode: vm.qOrgCode,
                         //OrgCode:cookiesUser.orgInfo.EnCode,
                         RoleId:roles[i],
-                        RoleCode:roleItem[0].Name
+                        RoleCode:roleItem[0].Name,
+                        EnabledMark: this.form.enabledMark,
+                        NickName: this.form.realName,
                     })
                 }
 
