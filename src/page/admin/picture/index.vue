@@ -21,6 +21,10 @@
                         ref="piclist"
                         action=""
                         list-type="picture-card"
+
+                        :limit="6"
+                        :on-exceed="handleExceed"
+
                         :file-list="fileList"
                         :before-upload="beforeUploadPic"
                         :http-request='uploadFileMethod'
@@ -107,6 +111,10 @@
                         console.log(err)
                         this.$message({showClose: true, message: "图片获取错误", type: "error"});
                     })
+            },
+            //超过6个轮播图不能再添加
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 6 个轮播图！`);
             },
             //保存按钮
             onSubmit() {
@@ -211,7 +219,8 @@
                         this.$message({showClose: true, message: res.Msg, type: 'error'});
                         return;
                     }
-
+                    //重新加载
+                    this.getData();
                 }).catch(error => {
                     console.log(error);
                     this.$message({showClose: true, message: '附件删除错误', type: 'error'});
