@@ -55,11 +55,11 @@
                 <el-table-column label="账号状态" width="360px">
                     <template slot-scope="scope">
                         <label style="margin-right: 60px"><input :name="scope.row.realName" type="radio" value="0" v-model="scope.row.EnabledMark"
-                                      @click="changeEnable(scope.row,0)">启用</label>
+                                      >启用</label>
                         <label style="margin-right: 60px"><input :name="scope.row.realName" type="radio" value="1" v-model="scope.row.EnabledMark"
-                                      @click="changeEnable(scope.row, 1)">临时停用</label>
+                                      >临时停用</label>
                         <label><input :name="scope.row.realName" type="radio" value="2" v-model="scope.row.EnabledMark"
-                                      @click="changeEnable(scope.row, 2)">永久停用</label>
+                                      >永久停用</label>
                         <!--<el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini"-->
                                    <!--circle></el-button>-->
                         <!--<el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>-->
