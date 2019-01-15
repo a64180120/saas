@@ -943,11 +943,16 @@
         padding: 30px 50px;
     }
     .coverContent ul li:nth-of-type(1){
-        border: 1px solid #00B8EE;
-        color: #00B8EE;
+        border: 1px solid #ccc;
+        color: #fff;
+        background-color: #ccc;
         padding: 5px 15px;
         width: 100px;
         border-radius: 3px;
+    }
+    .coverContent ul li:nth-of-type(1):hover{
+        color: #ccc;
+        background-color: #fff;
     }
     .coverContent ul li:nth-of-type(2){
         border: 1px solid #00B8EE;
@@ -956,6 +961,10 @@
         padding: 5px 15px;
         width: 100px;
         border-radius: 3px;
+    }
+    .coverContent ul li:nth-of-type(2):hover{
+        color: #00B8EE;
+        background: #fff;
     }
 
     .disableBtn{

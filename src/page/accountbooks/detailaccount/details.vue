@@ -177,7 +177,7 @@
                 </div>
                 <div class="voucherCoverInner"> </div>
             </div>
-            <div class="timeSelectBox">
+            <div class="timeSelectBox"  style='z-index:99'>
                 <time-select-bar @item-click="dateChoose"
                                 :showtype="'doubleTime'"
                 ></time-select-bar>
@@ -1007,7 +1007,7 @@
         justify-content: center;
         align-items: center;
         position: fixed;
-        top: 192px;
+        top: 210px;
         width: 260px;
         z-index: 9;
         margin-left:-1px;

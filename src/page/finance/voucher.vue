@@ -108,7 +108,7 @@
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.jiefang}" class="moneyValCon">
-                                <input type="text"  v-model="item.money.jiefang" @focus="inputFocus" @blur="inputBlur($event,item,'jiefang')" placeholder="请输入金额"
+                                <input type="text"  v-model="item.money.jiefang" @focus="inputFocus" @blur="inputBlur($event,item,'jiefang',index)" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i @click.stop="moneyCancle(item,'jiefang')" class="inputCancle">X</i>
                              </span>
@@ -126,7 +126,7 @@
                         </li>
                         <li @click="moneyInputShow(item,'daifang')" class="flexPublic money">
                             <span :class="{moneyInputShow:item.moneyInput.daifang}" class="moneyValCon">
-                                <input type="text"  v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang')" placeholder="请输入金额"
+                                <input type="text"  v-model="item.money.daifang" @blur="inputBlur($event,item,'daifang',index)" placeholder="请输入金额"
                                        onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" >
                                 <i @click.stop="moneyCancle(item,'daifang')" class="inputCancle">X</i>
                             </span>
@@ -542,30 +542,30 @@
             },
             //获取附件信息*******************
             getAttachements(PhId){                 
-                    var data={
-                        uid:this.uid,
-                        orgid:this.orgid,
-                        id:PhId
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    id:PhId
+                }
+                this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
+                .then(res=>{
+                    if(res.Status=='error'){
+                        this.saasMessage={
+                            message:res.Msg,
+                            visible:true,
+                            delay:4000
+                        }
                     }
-                    this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
-                    .then(res=>{
-                        if(res.Status=='error'){
-                            this.saasMessage={
-                                message:res.Msg,
-                                visible:true,
-                                delay:4000
-                            }
-                        }
-                        this.imglist=res.Record;
-                        
-                    },err => {
-                        console.log(err);
-                       
-                    })
-                    .catch(err=>{
-                            this.$message({ showClose: true,message: err, type: "error"});
-                        }
-                    )
+                    this.imglist=res.Record;
+                    
+                },err => {
+                    console.log(err);
+                    
+                })
+                .catch(err=>{
+                        this.$message({ showClose: true,message: err, type: "error"});
+                    }
+                )
             },
             //获取科目列表******************
             getSubject(){
@@ -715,7 +715,7 @@
                
             },
             //金额输入框失去焦点*******************
-            inputBlur($event,item,value){
+            inputBlur($event,item,value,index){
                 if(!item.SubjectCode) {
                     item.money[value]='';
                 } 

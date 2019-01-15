@@ -231,12 +231,12 @@
                     <li>
                         <div>启/停用</div>
                         <div style="border:0">
-                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')">
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')">
                                 <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
                                 &nbsp;启用&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')">
-                                    <input v-model="subjectInfo.EnabledMark" value="" type="radio" name="enable">
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')">
+                                    <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
                                     &nbsp;停用&nbsp;&nbsp;&nbsp;
                             </label>
                         </div>
