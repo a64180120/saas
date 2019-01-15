@@ -923,7 +923,7 @@
         right: -17px;
     }
     .formData_content>ul:first-child{
-        background: white;
+        background: transparent;
         margin-top: 0;
     }
     .formData>ul>li{
@@ -964,21 +964,21 @@
         padding:0 2px;
     }
     .formDataItems{
-        border-bottom:1px solid #ddd;
+        border-bottom:1px solid #ebeef5;
     }
     .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
         text-align: center;
-        line-height: 40px;
-        height:40px;
+        line-height: 48px;
+        height:48px;
         font-size: 13px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
     .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
+        border-left:1px solid #ebeef5;
     }
     .formData>ul.formDataItems>li a,.formData>ul.formDataItems>li a:link,.formData>ul.formDataItems>li a:active,.formData>ul.formDataItems>li a:visited,.formData>ul.formDataItems>li a:hover {
         color:#45c0f7;

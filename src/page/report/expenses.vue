@@ -466,7 +466,7 @@
         padding:0 2px;
     }
     .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
         text-align: center;
@@ -477,7 +477,7 @@
         text-overflow: ellipsis;
     }
     .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
+        border-left:1px solid #ebeef5;
     }
     .unionLists{
         width:20%;

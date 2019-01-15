@@ -739,7 +739,7 @@
         right: -17px;
     }
     .formData_content>ul:first-child{
-        background: white;
+        background: transparent;
         margin-top: 0;
     }
     .formData>ul>li{
@@ -752,9 +752,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    .formData>ul:hover{
-        background-color: #eee;
-    }
+
     .formData>ul>li:nth-of-type(2){
         width:20%;
     }
@@ -780,23 +778,24 @@
 
 
     .formDataItems{
-        border-bottom:1px solid #ddd;
+        border-bottom:1px solid #ebeef5;
         background-color: white;
     }
+
     .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
         text-align: left;
-        line-height: 40px;
-        height:40px;
+        line-height: 48px;
+        height:48px;
         font-size: 13px;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding-left: 15px;
+        padding:0 15px;
     }
     .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
+        border-left:1px solid #ebeef5;
     }
     .formData>ul.formDataItems>li.bolder{
         font-weight: bold;

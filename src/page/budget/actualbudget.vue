@@ -17,23 +17,9 @@
                             <a ><li style='margin:0 0 0px 20px;' @click="changeBtn.disable=true">取消</li ></a>
                             <a><li style='margin:0 0 0px 20px;' @click="saveChange">保存</li></a>
                             <a><li style='margin:0 0 0px 20px;' :class="{'disableBtn':!verify||date1.choosedYear>jyear}" @click="showCountMsg=(verify&&date1.choosedYear<=jyear)">保存并核定</li></a>
-
                         </ul>
                     </div>
-
                 </div>
-                <!--<div class="unionState flexPublic">
-                    <ul class="flexPublic">
-                    </ul>
-                    <ul class="flexPublic handle">
-                        <a><li style='margin:0 0 0px 20px;' @click="changeBtnC">{{changeBtn.title}}</li ></a>
-                        <a><li style='margin:0 0 0px 20px;' @click="showCountMsg=true">核定年末决算</li></a>
-
-                        <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel" :loading="downloadLoading">导出</li ></a>
-                        <a><li style='margin:0 0 0px 20px;' @click="printContent">打印</li ></a>
-                        <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
-                    </ul>
-                </div>-->
                 <div class="formData" id="form1">
                     <ul>
                         <li>科目编码</li>
@@ -56,8 +42,8 @@
                                 </li>
                                 <li>
                                     <div class="progressContainer" >
-                                        <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 80 ?'':dataInfo[index].zhixing+' %'}}</div>
-                                        <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<20?20:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=20?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
+                                        <div class="progress" :style="{background:dataInfo[index].zhixing<=0?'none':infoStyle[index],width:dataInfo[index].zhixing+'%'}">{{dataInfo[index].zhixing < 70 ?'':dataInfo[index].zhixing+' %'}}</div>
+                                        <div  :style="{color:infoStyle[index],width:(100-dataInfo[index].zhixing)<30?30:100-dataInfo[index].zhixing+'%',display:(100-dataInfo[index].zhixing)<=30?'none':'block'}">{{dataInfo[index].zhixing}} %</div>
                                     </div>
                                 </li>
                                 <li>
@@ -700,7 +686,7 @@
         right: -17px;
     }
     .formData_content>ul:first-child{
-        background: white;
+        background: transparent;
         margin-top: 0;
     }
     .formData>ul>li{
@@ -738,22 +724,23 @@
         background: white;
     }
     .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
-        text-align: center;
-        line-height: 40px;
-        height:40px;
+        text-align: left;
+        line-height: 48px;
+        height:48px;
         font-size: 13px;
         overflow: hidden;
         text-overflow: ellipsis;
+        padding: 0 15px;
     }
     .formData>ul.formDataItems>li.bolder{
         font-weight: bold;
     }
 
     .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
+        border-left:1px solid #ebeef5;
     }
     .unionLists{
         width:20%;
@@ -808,10 +795,6 @@
         top:10px;
         background: #fff;
     }
-    .formData>ul.formDataItems>li{
-        text-align: left;
-        padding:0 15px;
-    }
     .formData>ul.formDataItems>li.align-center{
         padding:0;
         text-indent: 40px;
@@ -832,7 +815,7 @@
         line-height: 55px;
     }
     .formData>ul.bottomForm>li:last-child{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
     }
     .progressContainer{
         display: flex;
@@ -841,7 +824,7 @@
         align-items: center;
         height:15px;
         width:100%;
-        border:1px solid #ddd;
+        border:1px solid #ebeef5;
         border-radius: 15px;
         background: #ebeef5;
         margin-top:13px;
