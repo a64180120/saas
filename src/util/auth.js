@@ -51,6 +51,7 @@ const authToken = {
     // 设置Token
     setToken: function(token){
 
+        //Cookies.remove(this.TokenKey)
         //this.setCookies(this.TokenKey,token);
         if(token){ removeStore({ name: this.TokenKey });}
         setStore({ name: this.userinfo,content: token,type: 'session' })
