@@ -5,7 +5,7 @@
                 <ul>
                     <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">基层工会组织</li>
                     <li @click="unionTab('union')" :class="{asideActive:asideActive=='union'}">机关工会组织</li>
-                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i v-if="showVerify">{{dVerifyNum}}</i>待审核基层组织</li>
+                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i v-if="showVerify" @time-click="ajaxMode">{{dVerifyNum}}</i>待审核基层组织</li>
                 </ul>
             </aside>
             <look v-if="asideActive=='look'"></look>
@@ -19,7 +19,7 @@
     import union from './union'
     import basic from './basicUnion'
     import look from './lookUnion'
-
+    import {mapState, mapActions} from 'vuex'
     export default {
         name: "manage",
         data() {
@@ -63,9 +63,10 @@
             unionTab(name) {
                 this.asideActive = name;
                 sessionStorage.setItem("asideActive", name);//**防止刷新数据清空************* */
-                this.ajaxMode();
+                this.ajaxMode('');
             },
-            ajaxMode() {
+            ajaxMode(val) {
+                console.log('222222wwwww');
                 let data = {
                     uid: "0",
                     orgid: "0",
@@ -77,6 +78,7 @@
                     .then(res => {
                         console.log(res);
                         this.dVerifyNum = res.totalRows;
+                        console.log(this.dVerifyNum);
                         if(res.totalRows == 0){
                             this.showVerify = false;
                         }else{
