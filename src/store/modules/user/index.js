@@ -53,6 +53,7 @@ const mutations = {
     //token
     setToken: (state, data) => {
         if (data) {
+            console.log(data)
             Auth.setToken(data);
             state.token = data.token;
             state.appKey = data.appKey;
@@ -91,7 +92,7 @@ const actions = {
             console.log('window.global:'+window.global.baseUrl)
             let base=httpConfig.getAxiosBaseConfig();
             let url=httpConfig.baseurl;
-
+            
             httpajax.create({
                 baseURL: base.baseURL
             }).get('/SysToken/GetToken',{
@@ -128,7 +129,7 @@ const actions = {
     },
 
     // 业务用户登录
-    loginByPhone({ commit,dispatch }, userInfo) {
+    loginByPhone({state, commit,dispatch }, userInfo) {
         return new Promise((resolve, reject) => {
 
             let base=httpConfig.getAxiosBaseConfig();
@@ -140,7 +141,7 @@ const actions = {
                 uname_login:userInfo.name,
                 orgid:userInfo.orgid,
                 password:userInfo.password,
-                sessionId:token.sessionId||''
+                sessionId:state.sessionId ||token.sessionId
             };
 
             //重新登录，清除所有缓存

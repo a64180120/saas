@@ -31,13 +31,13 @@
                                 <!--<li  @click="testFile" style='margin:0 0 0px 10px;'>附件</li>-->
                             <!--</a>-->
                             <a>
-                                <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;'></li>
+                                <li v-show="!isedit" class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;'></li>
                             </a>
                             <!--<a @click="freshPage"><li class="fresh"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>-->
                         </ul>
                     </div>
                 </el-header>
-                <el-main style="min-width: 900px; margin: 0 auto">
+                <el-main style="min-width: 900px; margin: 0 auto; max-width: 1200px">
                     <h4 class="addTitle" style="font-size: 30px;font-weight: bold">基层组织账套管理</h4>
                     <div class="container" v-if='isedit'>
                     <!--<el-dialog :title="'账套信息维护'" :visible.sync="editVisible" width="40%" style="height: 800px">-->
@@ -473,11 +473,11 @@
                 this.isedit = true;
                 this.getData();
                 this.selectArea(0, 0);
-                this.selectArea(this.orgForm.Province, 1);
-                this.selectArea(this.orgForm.City, 2);
-                this.selectArea(this.orgForm.County, 3);
-                this.getAdminOrganize(this.orgForm.ParentId);
-                this.getParentByArea(4, this.orgForm.Street);
+                // this.selectArea(this.orgForm.Province, 1);
+                // this.selectArea(this.orgForm.City, 2);
+                // this.selectArea(this.orgForm.County, 3);
+                // this.getAdminOrganize(this.orgForm.ParentId);
+                // this.getParentByArea(4, this.orgForm.Street);
             },
             //改变省后的点击事件
             changeProvince(){
@@ -529,10 +529,13 @@
             },
             //修改隶属工会的点击事件
             changeParentOrg(){
-                console.log(this.orgForm.Parent);
                 this.orgForm.ParentId = this.orgForm.Parent.PhId;
                 this.orgForm.ParentEnCode = this.orgForm.Parent.EnCode;
                 this.orgForm.ParentName = this.orgForm.Parent.OrgName;
+                console.log(this.orgForm.Parent);
+                console.log(this.orgForm.ParentEnCode);
+                console.log(this.orgForm.ParentId);
+                this.$forceUpdate();
             },
             //根据地址信息获取父级机关工会
             getParentByArea(i, area){
@@ -560,6 +563,7 @@
                         console.log(err);
                     })
             },
+            //根据组层组织中的父级Id获取相关机关组织
             getAdminOrganize(phid){
                 var data = {
                     id: phid
@@ -689,8 +693,8 @@
                         this.selectArea(this.orgForm.Province, 1);
                         this.selectArea(this.orgForm.City, 2);
                         this.selectArea(this.orgForm.County, 3);
-                        this.getAdminOrganize(this.orgForm.ParentId);
                         this.getParentByArea(4, this.orgForm.Street);
+                        this.getAdminOrganize(this.orgForm.ParentId);
                         console.log(this.beforeChange);
                     }).catch(error => {
                         console.log(error);

@@ -816,12 +816,10 @@
         padding:0;
         text-indent: 40px;
     }
-    .formData>ul.formDataItems>li.align-centers{
-        padding:0;
+    .formData>ul.formDataItems>li.align-center{
         text-indent: 30px;
     }
     .formData>ul.formDataItems>li.align-right{
-        padding-right: 10px;
         text-align: right;
     }
     .formData>ul.formDataItems>li:last-child >input{

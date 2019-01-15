@@ -791,11 +791,9 @@
     }
     .formData>ul.formDataItems>li.align-center{
         text-align: center;
-        padding:0;
     }
     .formData>ul.formDataItems>li.align-right{
         text-align: right;
-        padding-right: 15px;
     }
     .unionLists>p{
         text-align: center;

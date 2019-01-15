@@ -34,12 +34,12 @@
                     </el-form-item>
                     <el-form-item label="内容">
                         <!-- <el-input v-model="form.Content"></el-input> -->
-                        <quill-editor
+                        <!-- <quill-editor
                             v-model="form.Content"
                             ref="editorElem"
                             @blur="onEditorBlur($event)">
 
-                        </quill-editor>
+                        </quill-editor> -->
                     </el-form-item>
                 </el-form>
             </div>
