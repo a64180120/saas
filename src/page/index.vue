@@ -65,7 +65,7 @@
     			<p class="g"><a href="xwgg.html">更多</a></p>
   			</div>
 			<div class="Journalism_left">
-  				<a href="xqy.html">
+  				<a href="http://www.zjtax.gov.cn/" target="_blank">
     				<div class="img_box">
 						<img src="@/assets/img/img1.png"/>
 					</div>
@@ -112,48 +112,13 @@
   			</div>
 			<div class="Journalism_right">
     			<ul>
-      				<li v-for="(item,index) of proInfoList" :key="index">
-      					<router-link :to="item.url">
+      				<li v-for="(item,index) of proInfoList" :key="index" @click.stop="openUrl(item)">
+      					<div>
       						<i class="list-dot"></i>
         					<p class="txt">{{item.info}}</p>
         					<span class="r">{{item.date}}</span>
-        				</router-link>
+        				</div>
       				</li>
-					<!-- <li>
-					  <a href="xqy.html">
-						  <i class="glyphicon glyphicon-option-horizontal k"></i>
-						  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-						  <span class="r">2018-07-21</span> 
-					  </a>
-					</li>
-					<li>
-					  <a href="xqy.html">
-						  <i class="glyphicon glyphicon-option-horizontal k"></i>
-						  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-						  <span class="r">2018-07-21</span> 
-					  </a>
-					</li>
-					<li>
-					  <a href="xqy.html">
-						  <i class="glyphicon glyphicon-option-horizontal k"></i>
-						  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-						  <span class="r">2018-07-21</span>
-					  </a>
-					</li>
-					<li>
-					  <a href="xqy.html">
-						  <i class="glyphicon glyphicon-option-horizontal k"></i>
-						  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-						  <span class="r">2018-07-21</span> 
-					  </a>
-					</li>
-					<li>
-					  <a href="xqy.html">
-						  <i class="glyphicon glyphicon-option-horizontal k"></i>
-						  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-						  <span class="r">2018-07-21</span>
-					  </a>
-					</li> -->
     			</ul>
   			</div>
 		</div>
@@ -194,59 +159,30 @@
 				<div class="chuang">
 					
 				</div>
-				<img :src="orgWindow.imgUrl" alt="">
+				<el-carousel indicator-position="none" height="400px" arrow="never">
+					<el-carousel-item>
+						<a href="#"><img src="@/assets/img/n1.png" alt=""></a>
+					</el-carousel-item>
+					<el-carousel-item >
+						<a href="#"><img src="@/assets/img/n2.jpg" alt=""></a>
+					</el-carousel-item>
+					<el-carousel-item >
+						<a href="#"><img src="@/assets/img/n3.jpg" alt=""></a>
+					</el-carousel-item>
+					<el-carousel-item>
+						<a href="#"><img src="@/assets/img/n4.jpg" alt=""></a>
+					</el-carousel-item>
+				</el-carousel>
 			</div>
 			<div class="policy_right">
 			  <ul>
-				<li v-for="(item,index ) of newsInfo" :key="index">
-				  <router-link :to="item.url">
+				<li v-for="(item,index ) of newsInfo" :key="index" @click.stop="openUrl(item)">
+				  <div :to="item.url">
 					  <i class="list-dot"></i>
 					  <p class="txt">{{item.info}}</p>
 					  <span class="r">{{item.date}}</span>
-				  </router-link>
+				  </div>
 				</li>
-				<!-- <li>
-				  <a href="xqy.html">
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
-					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-					  <span class="r">2018-07-21</span>
-				  </a>
-				</li>
-				<li>
-				  <a href="xqy.html">
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
-					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-					  <span class="r">2018-07-21</span>
-				  </a>
-				</li>
-				<li>
-				  <a href="xqy.html">
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
-					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-					  <span class="r">2018-07-21</span>
-				  </a>
-				</li>
-				<li>
-				  <a href="xqy.html">
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
-					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-					  <span class="r">2018-07-21</span>
-				  </a>
-				</li>
-				<li>
-				  <a href="xqy.html">
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
-					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-					  <span class="r">2018-07-21</span>
-				  </a>
-				</li>
-				<li>
-				  <a href="xqy.html">
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
-					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-					  <span class="r">2018-07-21</span>
-				  </a>
-			   </li> -->
 			  </ul>
 			</div>
 			<div class="switch">
@@ -462,15 +398,19 @@
 		NavTo(str){
 			this.$router.push({path:str});
 		},
-		 ...mapActions({
+	 	...mapActions({
 			sysLogout: "user/logout"
 		}),
 		logoutClick() {
           //退出事件
-        this.sysLogout().then(() => {
-          this.$router.push("/login");
-        });
-      },
+			this.sysLogout().then(() => {
+			this.$router.push("/login");
+			});
+		},
+		//打开网址
+		openUrl(object){
+			window.open(object.url);
+		},
       //修改密码
       editPawClick(){
         this.dialog.editPaw.show=true
