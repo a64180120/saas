@@ -1467,6 +1467,7 @@
             uploadfile(item) {
                 //this.imglist.push(item);
                 //console.log(this.filelist,item);
+                this.filelist=item;
                 if(item){
                     this.ExcelValidMsg(item);    
                 }
