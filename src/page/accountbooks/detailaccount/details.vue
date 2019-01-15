@@ -182,7 +182,6 @@
                 </div>
                 <div class="voucherCoverInner"> </div>
             </div>
-
             <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
             <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
         </div>
