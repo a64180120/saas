@@ -43,10 +43,10 @@
 				<el-carousel-item v-for="item in carouselImgs.length" :key="item.index">
 					<div class="carouselImgs">
 						
-						<img src="../../static/img/t1.jpg" alt="">
-						<img src="../../static/img/t2.jpg" alt="">
-						<img src="../../static/img/t3.jpg" alt="">
-						<img src="../../static/img/t4.jpg" alt="">
+						<img src="@/assets/img/t1.jpg" alt="">
+						<img src="@/assets/img/t2.jpg" alt="">
+						<img src="@/assets/img/t3.jpg" alt="">
+						<img src="@/assets/img/t4.jpg" alt="">
 					</div>
 				</el-carousel-item>
 			</el-carousel>
@@ -112,14 +112,14 @@
   			</div>
 			<div class="Journalism_right">
     			<ul>
-      				<li>
-      					<a href="xqy.html">
-      						<i class="glyphicon glyphicon-option-horizontal k"></i>
-        					<p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-        					<span class="r">2018-07-21</span>
-        				</a>
+      				<li v-for="(item,index) of proInfoList" :key="index">
+      					<router-link :to="item.url">
+      						<i class="list-dot"></i>
+        					<p class="txt">{{item.info}}</p>
+        					<span class="r">{{item.date}}</span>
+        				</router-link>
       				</li>
-					<li>
+					<!-- <li>
 					  <a href="xqy.html">
 						  <i class="glyphicon glyphicon-option-horizontal k"></i>
 						  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
@@ -153,7 +153,7 @@
 						  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
 						  <span class="r">2018-07-21</span>
 					  </a>
-					</li>
+					</li> -->
     			</ul>
   			</div>
 		</div>
@@ -172,8 +172,8 @@
 		<div id="policy" class="policy">
 			<div class="b">
 			  <ul style="margin-left: 260px;">
-				  <li>
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
+				  <li >
+					  <i class="list-dot" :class="{dotWhite:(active=='all')}"></i>
 					  <p>全部</p>
 				  </li>
 				  <li>
@@ -198,7 +198,14 @@
 			</div>
 			<div class="policy_right">
 			  <ul>
-				<li>
+				<li v-for="(item,index ) of newsInfo" :key="index">
+				  <router-link :to="item.url">
+					  <i class="list-dot"></i>
+					  <p class="txt">{{item.info}}</p>
+					  <span class="r">{{item.date}}</span>
+				  </router-link>
+				</li>
+				<!-- <li>
 				  <a href="xqy.html">
 					  <i class="glyphicon glyphicon-option-horizontal k"></i>
 					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
@@ -239,14 +246,7 @@
 					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
 					  <span class="r">2018-07-21</span>
 				  </a>
-				</li>
-				<li>
-				  <a href="xqy.html">
-					  <i class="glyphicon glyphicon-option-horizontal k"></i>
-					  <p class="txt">陈大光于1956年出生于越南北部宁平省，拥有博士学位和教授职授职授职授职授职称</p>
-					  <span class="r">2018-07-21</span>
-				  </a>
-			   </li>
+			   </li> -->
 			  </ul>
 			</div>
 			<div class="switch">
@@ -335,6 +335,23 @@
 				</div>
 			</div>
 		</div>
+		 <!-- el-dialog 弹出修改密码页面-->
+		<el-dialog title="修改密码" :visible.sync="dialog.editPaw.show" custom-class="editPawDialog">
+			<el-form :model="editPaw" :rules="editPawRules" ref="editPaw" label-width="100px" >
+				<el-form-item label="旧密码" prop="oldPaw">
+					<el-input type="password" v-model="editPaw.oldPaw" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="新密码" prop="newPaw" id="newPaw">
+					<el-input type="password" key="inpNewPaw" v-model="editPaw.newPaw" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="确认新密码" prop="confirmNewPaw" >
+					<el-input type="password" key="inpConfirmNewPaw" v-model="editPaw.confirmNewPaw" auto-complete="off"></el-input>
+				</el-form-item>
+			</el-form>
+			<div class="textC">
+				<el-button type="primary" @click="editPawSubmit">保存</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -395,7 +412,28 @@
 		  ],
 		  orgWindow:{
 			  imgUrl:'../../static/img/n1.png'
-		  }
+		  },
+		  //页面数据
+        nav:'',
+        active:'all', //政策制度选中***
+        proInfoList:[ 
+          {info:'余杭区总工会调研崇贤工会工作',date:'2018-12-25',url:'http://www.hzgh.org/newsview60670.htm'},
+          {info:'崇贤街道人大工委联合街道总工会开展执法检查',date:'2018-11-27',url:'http://www.yhrd.gov.cn/detail.aspx?artid=8131&classid=293'},
+          {info:'崇贤街道总工会召开村(社区)联合工会工资集体协商交流会',date:'2018-03-20',url:'http://www.hzgh.org/newsview51442.htm'},
+          {info:'崇贤街道总工会召开职工医疗互助保障工作动员大会',date:'2017-11-21',url:'http://www.hzgh.org/newsview47266.htm'},
+          {info:'余杭工会信息-杭州余杭区总工会',date:'2017-09-07',url:'http://www.docin.com/p-2099512458.html '},
+          {info:'浙江杭州市余杭区总工会网上服务大厅正式开通上线”',date:'2017-09-21',url:'http://acftu.workercn.cn/28961/201709/21/170921220648933.shtml'},
+          {info:'崇贤街道总工会“十佳好职工”结果出炉，会是你支持的那个人吗',date:'2016-10-19',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167357212420899.html'},
+        ],
+        newsInfo:[
+          {info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
+          {info:'全国总工会党组召开会议传达学习习近平总书记在庆祝改革开放40周年大会上重要讲话精神',date:'2018-12-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97563'},
+          {info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+          {info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+          {info:'全国总工会权益保障部 中国劳动和社会保障科学研究院战略合作框架协议签约仪式在京举行 ',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97131'},
+          {info:'全总女职工部赴云南省调研指导工会女职工工作',date:'2018-08-23',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96879'},
+          {info:'《全国工会干部培训基础教材》（2018版）出版',date:'2018-08-30',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96918'},
+        ],
       }
     },
     computed:{
@@ -423,7 +461,63 @@
 		//跳转工会****
 		NavTo(str){
 			this.$router.push({path:str});
-		}
+		},
+		 ...mapActions({
+			sysLogout: "user/logout"
+		}),
+		logoutClick() {
+          //退出事件
+        this.sysLogout().then(() => {
+          this.$router.push("/login");
+        });
+      },
+      //修改密码
+      editPawClick(){
+        this.dialog.editPaw.show=true
+      },
+      editPawSubmit() {
+        this.$refs.editPaw.validate(valid => {
+          if (valid) {
+            if (this.editPaw.newPaw!= this.editPaw.confirmNewPaw) {
+              console.log("新密码与确认新密码不一致!");
+              this.$message.error("新密码与确认新密码不一致!");
+              return;
+            }
+
+            var oldPwd = md5(this.editPaw.oldPaw);
+            var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);
+
+            //接口要包含3个参数： uid、 oldPwd、 newPwd
+            let data={
+                uid:this.uid,
+                orgid:this.orgid,
+                OldPwd: oldPwd,
+                NewPwd: newPwd
+            };
+            this.$axios.post('/SysUser/PostUpdatePassword',data)
+              .then(res=>{
+                  if (res.Status=='success'){
+                      this.$message.success("密码修改成功!");
+                      this.dialog.editPaw.show = false;
+                      this.editPaw.oldPaw="";
+                      this.editPaw.newPaw="";
+                      this.editPaw.confirmNewPaw="";
+                      this.$router.push("/login");
+                  }
+
+                  if (res.Status=="error"){
+                      this.$message.error(res.Msg);
+                      return false;
+                  }
+              })
+              .catch(err=>console.log(err));
+
+          } else {
+            console.log("error submit!!");
+            return false;
+          }
+        });
+      }
 
       
     }
@@ -1136,30 +1230,30 @@
 .policy_left>img{
 	width:100%;
 	height:100%;
-}
-.userInfo{
-	width:75%;
-	text-align: center;
-	position:relative;
-	height:100%;
-}
-.userInfo>div{
-	height:100%;
-	line-height: 100%;
-}
-.userInfo>ul{
-	position:absolute;
-	top:100%;
-	left:0;
-	background:#fff;
-	z-index:9;
-}
-.userInfo>div,
-.userInfo>ul>li,
-.userInfo>ul>li>div{
-	text-align: center;
-	width:100%;
-}
+ }
+// .userInfo{
+// 	width:75%;
+// 	text-align: center;
+// 	position:relative;
+// 	height:100%;
+// }
+// .userInfo>div{
+// 	height:100%;
+// 	line-height: 100%;
+// }
+// .userInfo>ul{
+// 	position:absolute;
+// 	top:100%;
+// 	left:0;
+// 	background:#fff;
+// 	z-index:9;
+// }
+// .userInfo>div,
+// .userInfo>ul>li,
+// .userInfo>ul>li>div{
+// 	text-align: center;
+// 	width:100%;
+// }
 >ul.userDropDown{
       height:auto;
       opacity:1;
@@ -1172,6 +1266,80 @@
         }
       }
     }
-
-
+ .userInfo{
+    display: inline-block;
+    position:relative;
+    color:#333;
+    >div{
+      padding:0 20px 10px;
+	  height:70px;
+	  line-height:70px;
+      position:relative;
+      cursor:pointer;
+      >div{
+        position:absolute;
+        border:5px solid transparent;
+        border-top-color:#333;
+        top:30px;
+        right:0px;
+      }
+    }
+    >ul{
+      position: absolute;
+      height:0;
+      overflow: hidden;
+      top:70px;
+      right:-37px;
+      z-index: 99;
+      background: #fff;
+      transition:all 0.3s linear;
+      opacity:0;
+	  border-radius:  0 0 3px 3px;
+      >li{
+		width:135px;
+        height:45px;
+        line-height:45px;
+        text-align:center;
+        cursor:pointer;
+        padding:0 5px;
+		>div{
+			width:100%;
+			text-align: center;
+		}
+        &:hover{
+          background:#e6f8fd;
+          color:#33c6f1;
+        }
+      }
+    }
+    >ul.userDropDown{
+      height:auto;
+      opacity:1;
+    //   border: 1px solid #E6E6FA;
+      >li:first-of-type{
+		border-bottom: 1px solid #ebeef5;
+		font-weight: 600;
+		margin-bottom: 6px;
+		padding-bottom: 6px;
+        margin-top:10px;
+        >div{
+          height:50%;
+          line-height:100%;
+        }
+      }
+    }
+  
+}
+.list-dot{
+	border-radius: 50%;
+	width:6px;
+	height:6px;
+	float:left;
+	background:#333;
+	position:relative;
+	top:17px;
+}
+.dotWhite{
+	background:#fff;
+}
 </style>

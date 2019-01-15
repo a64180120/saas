@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container subjectInit">
         <div class="subjectNav">
             <ul>
                 <li @click="navActive(item)" :class="{active:activeNav==item.name}" v-for="(item,index) of navList" :key="index"><span>{{item.name}}</span></li>
@@ -262,7 +262,9 @@
             </div>
         </div>
         <message :visible.sync="message.visible" :delay="message.delay" :message='message.message'></message>
-        <time-select :showtype='"yearTime"' @item-click="yearSelect"></time-select>
+        <div class="timeCss">
+            <time-select :showtype='"yearTime"' @item-click="yearSelect"></time-select>
+        </div>
   </div>
 </template>
 
@@ -327,6 +329,7 @@ export default {
           this.startYear=(new Date).getFullYear();
       }
       this.year=this.startYear;
+      console.log(this.year)    
   },
   //计算
   computed: {
@@ -1521,10 +1524,14 @@ export default {
             float:right;
         }
     }
-    .box{
+    
+   
+</style>
+<style>
+.timeCss .box{
         top:40px;
         height:88%;
         box-shadow:0 0 20px 2px #ccc;
     }
-
 </style>
+
