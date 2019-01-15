@@ -21,10 +21,8 @@
                         ref="piclist"
                         action=""
                         list-type="picture-card"
-
                         :limit="6"
                         :on-exceed="handleExceed"
-
                         :file-list="fileList"
                         :before-upload="beforeUploadPic"
                         :http-request='uploadFileMethod'
@@ -40,11 +38,12 @@
 <script>
     import {mapState, mapActions} from 'vuex'
     import httpConfig from '@/util/ajaxConfig'
+    // import pictureUpload from "@/components/upload";
 
     //文章新增、编辑
     export default {
         name: "picture-list",
-        components: {},
+        components: { },
         data() {
             return {
                 listInfo: [],      //图片列表信息
@@ -122,9 +121,7 @@
             },
             //发布按钮
             publish(val) {
-
                 var val = this.publishData === 0 ? 1 : 0;
-
                 //发布图片
                 var newArry = this.listInfo.map(el => {
                     el.Publisher = this.username;
@@ -175,12 +172,14 @@
                 let fileObject = param.file;
                 let formData = new FormData();
                 formData.append("file", fileObject);
-                formData.append("PhId", 0);
+                // formData.append("id", '0');
+                formData.append("PhId", '0');
                 formData.append("PositionType", "top");
                 formData.append("Title", fileObject.uid);
                 formData.append("Author", this.username);
-
+                console.log(formData);
                 this.PicUpload(formData).then(res => {
+                    console.log(res);
                     if (res.Status === 'error') {
                         this.$message.error(res.Msg);
                         return
@@ -195,6 +194,8 @@
                     console.log(error);
                     this.$message({showClose: true, message: '上传附件失败', type: 'error'})
                 })
+                //重新加载
+                this.getData();
             },
             //图片移除
             handleRemove(file, fileList) {
