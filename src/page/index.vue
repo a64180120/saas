@@ -574,7 +574,7 @@
     width:136px;
     height:118px;
     background: url(../assets/img/g1.png);
-    z-index:10;
+    z-index:999;
 }
 .contact_box p {
 	font-size: 16px;
@@ -974,15 +974,7 @@
 	font-size:14px !important;
 	background:rgba(0,0,0,0.5);
 }
-.chuang{
-	position:absolute;
-    right:-9px;
-    top:-9px;
-    width:136px;
-    height:118px;
-    background: url(../assets/img/g1.png);
-    z-index:10;
-}
+
 .yindao{
 	width:100%;
 	height:100%;
