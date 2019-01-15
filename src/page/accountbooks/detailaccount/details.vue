@@ -169,6 +169,11 @@
 
 
             </div>
+            <div class="timeSelectBox" style="z-index: 998">
+                <time-select-bar @item-click="dateChoose"
+                                 :showtype="'doubleTime'"
+                ></time-select-bar>
+            </div>
             <!--凭证组件弹窗-->
             <div class="voucherCover" :style="{'display':voucherDataList.bool?'block':'none','z-index':'999'}" >
                 <div class="voucherContent">
@@ -176,11 +181,6 @@
                     <voucher :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
                 </div>
                 <div class="voucherCoverInner"> </div>
-            </div>
-            <div class="timeSelectBox">
-                <time-select-bar @item-click="dateChoose"
-                                :showtype="'doubleTime'"
-                ></time-select-bar>
             </div>
             <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
             <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
@@ -822,10 +822,6 @@
         bottom: 0px;
         width: 100%;
     }
-    .timeSelectBox{
-        z-index: 99;
-    }
-
     .voucherCover{
         position:fixed;
         top: 0;
@@ -849,6 +845,14 @@
             height: 100%;
             width: 100%;
             padding: 0 30px;
+        }
+        .timeSelectBox{
+            position: -ms-page;
+            right: -10px;
+            top: 100px;
+            bottom:-20px;
+            width: 60px;
+            z-index: 99;
         }
     }
 

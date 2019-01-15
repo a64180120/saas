@@ -75,6 +75,17 @@ a {
     width: 60px;
     z-index: 99;
 }
+/*兼容IE11样式  测试后才可确定是否可用*/
+@media screen and(-ms-high-contrast:active),(-ms-high-contrast:none){
+    .timeSelectBox{
+        position: -ms-page;
+        right: -10px;
+        top: 100px;
+        bottom:-20px;
+        width: 60px;
+        z-index: 99;
+    }
+}
 .crumbs {
     margin: 10px 0;
 }

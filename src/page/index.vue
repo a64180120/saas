@@ -353,7 +353,7 @@
 				 {url:'../../static/img/t4.jpg',index:4}
 		  ],
 		  orgWindow:{
-			  imgUrl:'../../static/img/n1.png'
+			  imgUrl:'../assets/img/n1.png'
 		  },
 		  //页面数据
         nav:'',
