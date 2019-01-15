@@ -87,9 +87,7 @@ a {
 @media screen and(-ms-high-contrast:active),(-ms-high-contrast:none){
     .timeSelectBox{
         position: -ms-page;
-        right: -10px;
-        top: 100px;
-        bottom:-20px;
+        height: 85%;
         width: 60px;
         z-index: 99;
     }
