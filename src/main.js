@@ -1,6 +1,8 @@
 
+// import promise from 'es6-promise';
+// promise.polyfill();
+//import 'es6-promise/auto'
 import '../static/serverconfig.js'
-
 import Vue from "vue"
 import App from './index'
 import ElementUI from 'element-ui'
