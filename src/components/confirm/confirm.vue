@@ -1,5 +1,5 @@
 <template>
-    <div  class="saasConfirm">
+    <div v-show="visible"  class="saasConfirm">
         <div class="saasMsg">
             <p class="title"><span>提示</span>
                 <i @click="close(false)"></i>
@@ -9,8 +9,8 @@
                 <span >{{message}}</span>
             </div>
             <div>
-                <span @click="okClose('ok')" class="btn">确定</span>
-                <span @click="noclose('no')" class="btn">取消</span>
+                <span @click="okclose()" class="btn">确定</span>
+                <span @click="noclose()" class="btn">取消</span>
             </div>    
         </div>
     </div>
@@ -31,15 +31,17 @@ export default {
   },
   methods:{
       okclose(data){
-          this.$emit('ok-click',data);
+          this.$emit('ok-click',this.type);
       },
       noclose(data){
-          this.$emit('no-click',data);
+          this.$emit('no-click',this.type);
       },
       
   },
   props:{    
       message:String,
+      type:String,
+      visible:false
   },
   computed:{
       
@@ -125,6 +127,7 @@ export default {
     height:30px;
     line-height: 30px;
     width:90px;
+    margin-right:20px;
 }
 .btn:hover{
     background: #fff;
