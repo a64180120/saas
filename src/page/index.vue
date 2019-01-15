@@ -121,7 +121,7 @@
       				<li v-for="(item,index) of proInfoList" :key="index" @click.stop="openUrl(item)">
       					<div>
       						<i class="list-dot"></i>
-        					<p class="txt">{{item.info}}</p>
+        					<p class="txt" style='cursor: pointer;'>{{item.info}}</p>
         					<span class="r">{{item.date}}</span>
         				</div>
       				</li>
@@ -185,7 +185,7 @@
 				<li v-for="(item,index ) of newsInfo" :key="index" @click.stop="openUrl(item)">
 				  <div :to="item.url">
 					  <i class="list-dot"></i>
-					  <p class="txt">{{item.info}}</p>
+					  <p class="txt" style='cursor: pointer;'>{{item.info}}</p>
 					  <span class="r">{{item.date}}</span>
 				  </div>
 				</li>
@@ -464,8 +464,6 @@
           }
         });
       }
-
-      
     }
   }
   
