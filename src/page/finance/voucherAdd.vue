@@ -712,8 +712,7 @@
                     Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
                     Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
                 }
-                console.log(Jcount,Dcount)
-                if(Jcount==Dcount){
+                if(Jcount.toFixed(2)==Dcount.toFixed(2)){
                     return true;
                 }else{
                     return false;
