@@ -598,7 +598,7 @@
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
             },
             //ajax获取科目下的辅助项***************************
-            getAssist(val){
+            getAssist(val,index){
                 var data={
                     id:val.data.PhId,
                     orgid:this.orgid,
@@ -606,19 +606,30 @@
                 const loading1=this.$loading();
                 this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
                     .then(res=>{
-                        console.log(res)
+                        loading1.close();
                         if(res.length>0){
                             this.assistList=res;
+                            for(var a in this.assistList){
+                                if(!this.assistList[a].Children.length>0){
+                                    this.saasMessage={
+                                        delay:4000,
+                                        visible:true,
+                                        message:'该科目下辅助项没有值,请先前往辅助核算页面添加!'
+                                    }  
+                                    this.voucherInfo[index].SubjectCode='';
+                                    this.voucherInfo[index].SubjectName='';
+                                    return;  
+                                }
+                                this.assistSels[a]=this.assistList[a].Children[0];
+                                
+                            }
                             this.assistItem[val.id].checked=true;
                             this.assistItemMask=true;
                             this.assistCheck=true;
-                            for(var a in this.assistList){
-                                this.assistSels[a]=this.assistList[a].Children[0];
-                            }
                         }else{
                             this.assistList=[]
                         }
-                        loading1.close();
+                      
                         this.moneyInputMask=false;
                     },err => {
                         console.log(err);
@@ -630,7 +641,7 @@
             //辅助项选择完成********************
             assistOk(bool,item,index){
                 if(bool){
-                    //item.DtlAccounts.assistItem=this.assistSels;
+                    item.DtlAccounts.assistItem=this.assistSels;
                     //console.log(this.assistSels)
                 }else{
                     item.SubjectCode='';
@@ -646,7 +657,7 @@
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
-                this.getAssist(childMsg);
+                this.getAssist(childMsg,childMsg.id);
                 this.getBalance(childMsg);
                 this.$forceUpdate();
             },
@@ -736,7 +747,7 @@
                 }
                 var nextTr=this.voucherInfo[index+1];//下一行数据
                 //下一行有摘要或者科目自动添加金额
-                if((nextTr.Abstract||nextTr.SubjectCode)&&(!nextTr.money.jiefang)&&(!nextTr.money.daifang)){ 
+                if($event.target&&(nextTr.Abstract||nextTr.SubjectCode)&&(!nextTr.money.jiefang)&&(!nextTr.money.daifang)){ 
                     
                     if(this.jiefang-this.daifang>0){  //自动添加下级金额
                         nextTr.money.daifang= (this.jiefang-this.daifang).toFixed(2);    

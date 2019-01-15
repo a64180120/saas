@@ -5,10 +5,10 @@
                 <ul>
                     <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">基层工会组织</li>
                     <li @click="unionTab('union')" :class="{asideActive:asideActive=='union'}">机关工会组织</li>
-                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i v-if="showVerify" @time-click="ajaxMode">{{dVerifyNum}}</i>待审核基层组织</li>
+                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i v-if="showVerify" >{{dVerifyNum}}</i>待审核基层组织</li>
                 </ul>
             </aside>
-            <look v-if="asideActive=='look'"></look>
+            <look v-if="asideActive=='look'" @time-click="ajaxMode"></look>
             <basic v-if="asideActive=='basic'"></basic>
             <union v-if="asideActive=='union'"></union>
         </div>

@@ -195,7 +195,12 @@
         </div>
         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
         <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
-        <saasconfirm :message="saasConfirm.message" v-show="saasConfirm.show" @confirm-click="confirmData"></saasconfirm>
+        <saasconfirm 
+            :message="saasConfirm.message"
+            v-show="saasConfirm.show" 
+            @ok-click="okConfirm"
+            @no-click="noConfirm">
+        </saasconfirm>
     </div>
 </template>
 
@@ -263,7 +268,8 @@
             },
             saasConfirm:{
                 message:'',
-                show:false
+                show:false,
+                type:''
             },
             uInfo:''
         }},
@@ -1338,8 +1344,14 @@
                    vm.$message('当前月份已结账,无法修改凭证!')
                }
             },
-            
-            
+            //confirm确认*************
+            okConfirm(){
+
+            },
+            noConfirm(){
+
+            }
+       
         },
         computed:{
             ...mapState({
