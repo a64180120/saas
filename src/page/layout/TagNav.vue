@@ -165,6 +165,6 @@ export default {
         width: 110px;
         height: 30px;
         background: #fff;
-        z-index: 10;
+        z-index: 1;
     }
 </style>
