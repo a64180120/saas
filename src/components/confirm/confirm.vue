@@ -9,8 +9,8 @@
                 <span >{{message}}</span>
             </div>
             <div>
-                <span @click="close(true)" class="btn">确定</span>
-                <span @click="close(false)" class="btn">取消</span>
+                <span @click="okClose('ok')" class="btn">确定</span>
+                <span @click="noclose('no')" class="btn">取消</span>
             </div>    
         </div>
     </div>
@@ -30,8 +30,11 @@ export default {
     //  vm.$nextTick(vm.oneTime(vm));
   },
   methods:{
-      close(bool){
-          this.$emit('confirm-click',bool);
+      okclose(data){
+          this.$emit('ok-click',data);
+      },
+      noclose(data){
+          this.$emit('no-click',data);
       },
       
   },

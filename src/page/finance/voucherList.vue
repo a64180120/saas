@@ -1321,7 +1321,7 @@
                         console.log(err);
                         
                     })
-                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
+                    .catch(err=>{this.$message({ showClose: true,message: '获取列表失败了!', type: "error"});})
             },
             //获取time组件传参********************
             getSideDate(data){
