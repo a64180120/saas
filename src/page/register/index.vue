@@ -508,7 +508,7 @@
                         if(level==0){
                             that.province=res;
                             that.city=[];
-                            hat.county=[];
+                            that.county=[];
                             that.street=[];
                             //that.registerForm2.provincevalue=res[0].label;
                             that.registerForm2.provincevalue='';
@@ -519,7 +519,7 @@
                             that.searchArea(res[0].value,1)
                         }else if(level==1){
                             that.city=res;
-                            hat.county=[];
+                            that.county=[];
                             that.street=[];
                             //that.registerForm2.cityvalue=res[0].label;
                             that.registerForm2.cityvalue='';
