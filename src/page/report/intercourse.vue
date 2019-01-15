@@ -50,14 +50,14 @@
                     <div class="coverdiv">
                         <div class="head">
                             <p>{{aocType.title}}</p>
-                            <i class="el-icon-close" @click="aocType.show=false"></i>
+                            <i class="el-icon-close" style="cursor: pointer;" @click="aocType.show=false"></i>
                         </div>
                         <div class="selectarea">
                             <el-radio label="1" v-model="checkType">资产类科目</el-radio>
                             <el-radio label="2" v-model="checkType">负债类科目</el-radio>
-                            <select v-model="chooseSubject">
+                            <select v-model="chooseSubject" style="cursor: pointer;">
                                 <template  v-for="item in subjectList">
-                                    <option :value="item">{{item.KName}}</option>
+                                    <option :value="item" >{{item.KName}}</option>
                                 </template>
                             </select>
                             <!--<el-select  v-model="chooseSubject" :value="chooseSubject.KName" placeholder="请选择"  @change="getCodeDetailData">
@@ -696,29 +696,38 @@
         font-size: 14px;
         float: right;
     }
+
     .cover .selectarea .btnArea div:first-child{
         width: 90px;
         height: 30px;
-        border: 1px solid #00B8EE;
-        color: #00B8EE;
+        border: 1px solid #ccc;
+        color: #fff;
+        background-color: #ccc;
         display: inline-block;
         line-height: 30px;
         text-align:center ;
         cursor: pointer;
-
+    }
+    .cover .selectarea .btnArea div:first-child:hover{
+        color: #ccc;
+        background-color: #fff;
     }
     .cover .selectarea .btnArea div:last-child{
         width: 90px;
         height: 30px;
         border: 1px solid #00B8EE;
-        background-color: #00B8EE;
-        color: #fff;
+        color: #FFF;
+        background: #00B8EE;
         display: inline-block;
         margin-left: 10px;
         margin-top: -5px;
         line-height: 30px;
         text-align:center ;
         cursor: pointer;
+    }
+    .cover .selectarea .btnArea div:last-child:hover{
+        color: #00B8EE;
+        background: #fff;
     }
     .formData_content{
         margin-top: 0;

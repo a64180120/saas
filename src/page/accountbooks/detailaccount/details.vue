@@ -1007,7 +1007,7 @@
         justify-content: center;
         align-items: center;
         position: fixed;
-        top: 192px;
+        top: 210px;
         width: 260px;
         z-index: 9;
         margin-left:-1px;
