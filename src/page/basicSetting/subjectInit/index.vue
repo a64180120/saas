@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container subjectInit">
         <div class="subjectNav">
             <ul>
                 <li @click="navActive(item)" :class="{active:activeNav==item.name}" v-for="(item,index) of navList" :key="index"><span>{{item.name}}</span></li>
@@ -197,7 +197,7 @@
                         <div>科目名称</div>
                         <div>
                             <div class="inputContainer">
-                                <input :disabled="choosedData[0].child.IsSystem?true:false" placeholder="必填" type="text" v-model="subjectInfo.KName">
+                                <input :disabled="(choosedData[0].child.IsSystem?true:false)&&(addPageShow=='update')" placeholder="必填" type="text" v-model="subjectInfo.KName">
                             </div>
                         </div>
                         <div style="clear:both"></div>
@@ -232,11 +232,11 @@
                         <div>启/停用</div>
                         <div style="border:0">
                             <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')">
-                                <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
+                                <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
                                 &nbsp;启用&nbsp;&nbsp;&nbsp;
                             </label>
                             <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')">
-                                    <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
+                                    <input v-model="subjectInfo.EnabledMark" value="" type="radio" name="enable">
                                     &nbsp;停用&nbsp;&nbsp;&nbsp;
                             </label>
                         </div>
@@ -262,7 +262,9 @@
             </div>
         </div>
         <message :visible.sync="message.visible" :delay="message.delay" :message='message.message'></message>
-        <time-select :showtype='"yearTime"' @item-click="yearSelect"></time-select>
+        <div class="timeCss">
+            <time-select :showtype='"yearTime"' @item-click="yearSelect"></time-select>
+        </div>
   </div>
 </template>
 
@@ -327,6 +329,7 @@ export default {
           this.startYear=(new Date).getFullYear();
       }
       this.year=this.startYear;
+      console.log(this.year)    
   },
   //计算
   computed: {
@@ -1521,10 +1524,14 @@ export default {
             float:right;
         }
     }
-    .box{
+    
+   
+</style>
+<style>
+.timeCss .box{
         top:40px;
         height:88%;
         box-shadow:0 0 20px 2px #ccc;
     }
-
 </style>
+

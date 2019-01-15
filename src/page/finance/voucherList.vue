@@ -1470,7 +1470,7 @@
                 if(item){
                     this.ExcelValidMsg(item);    
                 }
-                
+                console.log(item,this.filelist)
             },
             //校验excel文件中凭证信息***********
             ExcelValidMsg(param){
@@ -1514,6 +1514,7 @@
                     }
                     return;
                 }
+                console.log(this.filelist)
                 var data={
                     fileName:this.filelist[0].BUrlPath,
                     orgid:this.orgid,
