@@ -177,6 +177,7 @@ export default {
   }
   .eight{
       padding-right: 20px;
+      display: inline;
   }
   .processContainer{
     width: 100%;
