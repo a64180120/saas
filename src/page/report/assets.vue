@@ -175,8 +175,8 @@
                             <li></li>
                             <li></li>
                             <li class="align-center bolder">负债与净资产总计</li>
-                            <li class="align-right">{{(Number(cashOutCounts)+Number(cashCounts)) | NumFormat}}</li>
-                            <li class="align-right">{{(Number(cashOutCountsQ)+Number(cashCountsQ)) | NumFormat}}</li>
+                            <li class="align-right">{{(Number(cashOutCounts)+Number(cashCounts)).toFixed(2) | NumFormat}}</li>
+                            <li class="align-right">{{(Number(cashOutCountsQ)+Number(cashCountsQ)).toFixed(2) | NumFormat}}</li>
                         </ul>
                         <!--<ul class="formDataItems flexPublic bottomForm">
                             <li>工会主席：</li>
@@ -303,15 +303,25 @@
                        for(let j in cashIn){
                            cashInCount+=cashIn[j].StartSum;
                            cashInCountQ+=cashIn[j].EndSum;
+                           console.log(cashInCount);
+                           console.log(cashInCountQ);
+                           console.log('========cashIn=======');
                        }
                        for(let k in cashOut){
                            cashOutCount+=cashOut[k].StartSum;
                            cashOutCountQ+=cashOut[k].EndSum;
+                           console.log(cashOutCount);
+                           console.log(cashOutCountQ);
+                           console.log('========cashOut=======');
                        }
                        for(let l in cash){
                            cashCount+=cash[l].StartSum;
                            cashCountQ+=cash[l].EndSum;
+                           console.log(cashCount);
+                           console.log(cashCountQ);
+                           console.log('========cash======');
                         }
+                       console.log(res.Data);
                        balanceData=res.Data;
                        this.cashInData=cashIn;
                        this.cashOutData=cashOut;
@@ -320,17 +330,10 @@
                        this.cashInCounts=cashInCount.toFixed(2);
                        this.cashOutCounts=cashOutCount.toFixed(2);
                        this.cashCounts=cashCount.toFixed(2);
-                        console.log('====1=========');
-                        console.log(this.cashInCounts);
-                        console.log(this.cashOutCounts);
-                        console.log(this.cashCounts);
+
                         this.cashInCountsQ=cashInCountQ.toFixed(2);
                         this.cashOutCountsQ=cashOutCountQ.toFixed(2);
                         this.cashCountsQ=cashCountQ.toFixed(2);
-                        console.log('====1=========');
-                        console.log(this.cashInCountsQ);
-                        console.log(this.cashOutCountsQ);
-                        console.log(this.cashCountsQ);
 
                     })
                     .catch(err => {this.loading=false;console.log(err)})
@@ -486,7 +489,7 @@
     }
 
     .formData_content>ul:first-child{
-        background: white;
+        background: transparent;
         margin-top: 0;
     }
     .formData>ul>li{
@@ -516,21 +519,22 @@
 
 
     .formDataItems{
-        border-bottom:1px solid #ddd;
+        border-bottom:1px solid #ebeef5;
     }
     .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
-        text-align: center;
-        line-height: 40px;
-        height:40px;
+        line-height: 48px;
+        height:48px;
         font-size: 13px;
         overflow: hidden;
         text-overflow: ellipsis;
+        text-align: left;
+        padding:0 15px;
     }
     .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
+        border-left:1px solid #ebeef5;
     }
     .formData>ul.formDataItems>li:nth-of-type(5){
         width:1%;
@@ -590,10 +594,6 @@
         top:10px;
         background: #fff;
     }
-    .formData>ul.formDataItems>li{
-        text-align: left;
-        padding:0 15px;
-    }
     .formData>ul.formDataItems>li.bolder{
         font-weight: bold;
     }
@@ -610,7 +610,7 @@
          line-height: 55px;
     }
     .formData>ul.bottomForm>li:last-child{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
     }
     .selectContainer>select {
         background-color: transparent;
