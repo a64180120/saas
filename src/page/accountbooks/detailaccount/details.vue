@@ -326,7 +326,8 @@
                         visible:true
                     };
                     //this.$message.error('开始发生金额不应大于结束发生金额');
-                }else{
+                }
+                else{
                     this.showType='none';
                     this.getData(false);
                 }

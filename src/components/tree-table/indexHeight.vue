@@ -18,14 +18,21 @@
         {{scope.$index}}
       </template>
     </el-table-column>
-    <el-table-column v-else v-for="(column, index) in columns" :key="column.value" :label="column.text" :min-width="column.width":align="column.align">
+    <el-table-column v-else v-for="(column, index) in columns"
+                     :key="column.value"
+                     :label="column.text"
+                     :min-width="column.width"
+                     :align="column.align">
       <template slot-scope="scope">
-        <span v-if="index === 0" v-for="space in scope.row._level" class="ms-tree-space" :key="space"></span>
+        <span v-if="index === 0" v-for="space in scope.row._level" class="ms-tree-space " :key="space"></span>
         <span class="tree-ctrl" v-if="iconShow(index,scope.row)" @click="toggleExpanded(scope.$index)">
           <i v-if="!scope.row._expanded" class="el-icon-plus"></i>
           <i v-else class="el-icon-minus"></i>
         </span>
-        {{scope.row[column.value]}}
+
+          <div class="eight">
+              {{scope.row[column.value]}}
+          </div>
       </template>
     </el-table-column>
     <slot></slot>
@@ -167,6 +174,9 @@ export default {
     &::before {
       content: ""
     }
+  }
+  .eight{
+      padding-right: 20px;
   }
   .processContainer{
     width: 100%;

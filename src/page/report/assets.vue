@@ -105,7 +105,7 @@
                             <template v-for="index in (cashOutData.length+cashData.length+4)">
                                 <ul class="formDataItems flexPublic">
                                     <template v-if="index<=cashInData.length">
-                                        <li>{{cashInData[index-1].KCode}}</li>
+                                        <li class="align-center">{{cashInData[index-1].KCode}}</li>
                                         <li>{{cashInData[index-1].KName}}</li>
                                         <li class="align-right">{{cashInData[index-1].StartSum | NumFormat}}</li>
                                         <li class="align-right">{{cashInData[index-1].EndSum | NumFormat}}</li>
@@ -118,9 +118,9 @@
                                     </template>
                                     <li></li>
                                     <template v-if="index<=cashOutData.length">
-                                        <li>{{cashOutData[index-1].KCode}}</li>
+                                        <li class="align-center">{{cashOutData[index-1].KCode}}</li>
                                         <li>{{cashOutData[index-1].KName}}</li>
-                                        <li class="align-right">{{cashOutData[index-1].StratSum | NumFormat}}</li>
+                                        <li class="align-right">{{cashOutData[index-1].StartSum | NumFormat}}</li>
                                         <li class="align-right">{{cashOutData[index-1].EndSum | NumFormat}}</li>
                                     </template>
                                     <template v-else-if="index==cashOutData.length+1">
@@ -142,7 +142,7 @@
                                         <li></li>
                                     </template>
                                     <template v-else-if="index <= cashOutData.length+cashData.length+3">
-                                        <li>{{cashData[index-cashOutData.length-4].KCode}}</li>
+                                        <li class="align-center">{{cashData[index-cashOutData.length-4].KCode}}</li>
                                         <li>{{cashData[index-cashOutData.length-4].KName}}</li>
                                         <li class="align-right">{{cashData[index-cashOutData.length-4].StartSum | NumFormat}}</li>
                                         <li class="align-right">{{cashData[index-cashOutData.length-4].EndSum | NumFormat}}</li>
@@ -175,8 +175,8 @@
                             <li></li>
                             <li></li>
                             <li class="align-center bolder">负债与净资产总计</li>
-                            <li class="align-right">{{cashOutCounts+cashCounts | NumFormat}}</li>
-                            <li class="align-right">{{cashOutCountsQ+cashCountsQ | NumFormat}}</li>
+                            <li class="align-right">{{(Number(cashOutCounts)+Number(cashCounts)) | NumFormat}}</li>
+                            <li class="align-right">{{(Number(cashOutCountsQ)+Number(cashCountsQ)) | NumFormat}}</li>
                         </ul>
                         <!--<ul class="formDataItems flexPublic bottomForm">
                             <li>工会主席：</li>
@@ -494,25 +494,22 @@
         height:50px;
         line-height:50px;
         text-align: center;
-        width:10%;
+        width:15%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
     .formData>ul>li:nth-of-type(5){
-        width:10px;
+        width:1%;
     }
-    .formData>ul>li:nth-of-type(2),
-    .formData>ul>li:nth-of-type(7){
-        width:20%;
-    }
+
     .formData>ul:first-child>li:last-of-type{
         border-right:1px solid #d3e9f9;
     }
 
     .formData>ul>li:first-child,
     .formData>ul>li:nth-of-type(6){
-        width:9%;
+        width:5%;
         min-width: 70px;
         padding:0 2px;
     }
@@ -536,7 +533,7 @@
         border-left:1px solid #ddd;
     }
     .formData>ul.formDataItems>li:nth-of-type(5){
-        width:10px;
+        width:1%;
         padding:0
     }
 
@@ -602,7 +599,6 @@
     }
     .formData>ul.formDataItems>li.align-center{
         text-align: center;
-        padding:0;
     }
     .formData>ul.formDataItems>li.align-right{
         text-align: right;
@@ -615,13 +611,6 @@
     }
     .formData>ul.bottomForm>li:last-child{
         border-right:1px solid #ddd;
-    }
-    .formData>ul.bottomForm>li:nth-of-type(2),
-    .formData>ul.bottomForm>li:nth-of-type(4),
-    .formData>ul.bottomForm>li:nth-of-type(6),
-    .formData>ul.bottomForm>li:nth-of-type(8){
-        width:15%;
-        text-align: left;
     }
     .selectContainer>select {
         background-color: transparent;
