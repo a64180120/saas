@@ -1,7 +1,7 @@
 <template>
     <div class="manageContent">
         <div class="examineTab">
-            <div @click="examineTabFn(true)" :class="{examineTabAct:examineTab}">待审核({{dVerifyNum}})</div>
+            <div @click="examineTabFn(true)" :class="{examineTabAct:examineTab}" @LookUnion="ajaxMode">待审核({{dVerifyNum}})</div>
             <div @click="examineTabFn(false)" :class="{examineTabAct:!examineTab}">已审核({{yVerifyNum}})</div>
         </div>
         <!--******待审核********-->
@@ -176,6 +176,7 @@
 </template>
 
 <script>
+    import {mapState, mapActions} from 'vuex'
     export default {
         created() {
             this.getInfoStyle();
@@ -391,6 +392,7 @@
                             this.$message.success("审核成功");
                             this.editVisible = false;
                             this.ajaxMode();
+                            this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear});
                             //this.$router.push({path: '/'});
                         }else{
                             this.$message.error('审核失败,请重试!');
@@ -474,6 +476,7 @@
                         let dTime = new Date();
                         this.userInfo = res.Record;
                         this.dVerifyNum = res.totalRows;
+                        // this.$emit("DVerifyNum",{dVerifyNum:this.dVerifyNum})
                         for (var i = 0; i < this.userInfo.length; i++) {
                             if(this.userInfo[i].EnableTime != null && this.userInfo[i].EnableTime != ''){
                                 let sTime = new Date(this.userInfo[i].EnableTime.replace('T',' ').replace(/\-/g, "/"));

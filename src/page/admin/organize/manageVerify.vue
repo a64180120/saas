@@ -108,6 +108,7 @@
                                 this.$message.success("审核成功");
                                 this.$store.commit("tagNav/removeTagNav", this.$route);
                                 this.$router.push({path: "/admin/orgin"});
+                                this.$emit('LookUnion');
                                 //this.$router.push({path: '/'});
                             }else{
                                 this.$message.error('审核失败,请重试!');
