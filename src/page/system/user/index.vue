@@ -55,11 +55,11 @@
                 <el-table-column label="账号状态" width="360px">
                     <template slot-scope="scope">
                         <label style="margin-right: 60px"><input :name="scope.row.realName" type="radio" value="0" v-model="scope.row.EnabledMark"
-                                      >启用</label>
+                                      disabled>启用</label>
                         <label style="margin-right: 60px"><input :name="scope.row.realName" type="radio" value="1" v-model="scope.row.EnabledMark"
-                                      >临时停用</label>
+                                     disabled>临时停用</label>
                         <label><input :name="scope.row.realName" type="radio" value="2" v-model="scope.row.EnabledMark"
-                                      >永久停用</label>
+                                      disabled>永久停用</label>
                         <!--<el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini"-->
                                    <!--circle></el-button>-->
                         <!--<el-button v-else type="danger" icon="el-icon-close" size="mini" circle></el-button>-->
@@ -205,6 +205,7 @@
                 pageSize: 10, //pageSize
                 pageIndex: 1, //pageIndex
                 totalCount: 0, //总页数
+                adminJudges: false,
                 singleSelection: [], //选中行
                 select_word: "", //搜索字段
                 dialogState: "add",
@@ -591,6 +592,8 @@
                     this.dialogTitle = "编辑";
                     this.editVisible = true;
 
+                    //判断是否是系统管理员
+                    this.adminJudge(object[0]);
                     //获取移交记录
                     //this.getTransData(id);
                 } else {
@@ -621,6 +624,12 @@
                         this.messageTs();
                         return;
                     }
+                }
+                this.adminJudge(object[0]);
+                if(this.adminJudges) {
+                    this.$message.error("该用户为系统管理员，不能进行删除操作！");
+                    this.adminJudges = false;
+                    return ;
                 }
                 if (length > 0) {
                     this.$confirm("此操作将删除该数据, 是否继续?", "删除提示", {
@@ -794,11 +803,24 @@
                     this.$message({showClose: true, message: "请选中列表的其中一行", type: "warning"});
                 }
             },
+            //判断选中行是否有系统管理员权限
+            adminJudge(val){
+                let hang = val.Roles;
+                console.log(hang);
+                if(hang.length > 0){
+                    for(let i = 0; i < hang.length; i++){
+                        if(hang[i].EnCode == '004'){
+                            this.adminJudges = true;
+                        }
+                    }
+                }
+            },
             //选择行
             handleClickRow(row) {
+                this.adminJudges = false;
                 this.singleSelection = [];
                 this.singleSelection.push(row);
-                console.log(row);
+                console.log(this.singleSelection);
             },
             // 保存 新增保存
             saveEdit(formName) {
@@ -894,7 +916,11 @@
             },
             //修改
             editUser() {
-
+                //如果是系统管理员就不允许永久停用
+                if(this.form.enabledMark == '2' && this.adminJudges){
+                    this.$message.error("系统管理员不允许永久停用！");
+                    return;
+                }
                 //获取缓存 的用户 组织，角色基本信息
                 let cookiesUser = Auth.getUserInfoData();
                 var vm = this;
@@ -953,6 +979,7 @@
                     //设置状态，隐藏新增页面
                     this.dialogState = "";
                     this.editVisible = false;
+                    this.adminJudges = false;
                     //清空选中项
                     this.singleSelection = [];
                     //刷新列表
@@ -1078,6 +1105,15 @@
         background: #00B8EE;
         color: #FFFFFF;
     }
+    /*.el-button--info[data-v-397cedc7]:checked, .el-button--info[data-v-397cedc7]:focus {*/
+        /*!* background: #00B8EE; *!*/
+        /*color: #FFFFFF;*/
+    /*}*/
+    .el-icon-refresh:focus{
+        background: #FFFFFF;
+        border-color: #ffffff;
+    }
+
     .el-icon-refresh:before {
         content: "\E633";
         font-size: 20px;
