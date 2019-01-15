@@ -38,6 +38,7 @@
                     <li>停用/启用</li>
                     <li>年初余额(元)</li>
                 </ul>
+                <div class="hideScroll"></div>
                 <div class="listOver">
                     <ul @click.stop="chooseOn(item,index)" :class="{clickActive:choosedCss[index]}" class="listTitle listContent" v-for="(item,index) of dataList" :key="index">
                         <li :title="item.KCode">{{item.KCode}}</li>
@@ -58,7 +59,9 @@
                         </li>
                         <li>
                             <div v-show="(!updatePage)">{{item.NCAccount | Num}}</div>
-                            <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" @blur="balanceBlur(item)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="item.NCAccount"></div>
+                            <div  class="inputContainer" v-show="updatePage&&item.IsLast==1">
+                                <input  type="text" @blur="balanceBlur(item)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="item.NCAccount">
+                            </div>
                         </li>
                         <li v-if="item.children.length>0" class="child">
                             <ul @click.stop="childChoose($event,item,child,index2)"  v-for="(child,index2) of item.children" :key=index2>
@@ -79,8 +82,8 @@
                                     </div> -->
                                 </li>
                                 <li>
-                                    <div v-show="(!updatePage)">{{child.NCAccount | Num}}</div>
-                                    <div class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" @blur="balanceBlur(child)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child.NCAccount"></div>
+                                    <div  v-show="(!updatePage)">{{child.NCAccount | Num}}</div>
+                                    <div  class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" @blur="balanceBlur(child)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child.NCAccount"></div>
                                 </li>
                                 <li v-if="child.children.length>0" class="child">
                                     <ul @click.stop="childChoose($event,child,child3,index3)"  v-for="(child3,index3) of child.children" :key=index3>
@@ -582,14 +585,14 @@ export default {
         var J=0;
         var D=0;
         for(var dt of Dtls){
-            J=(parseFloat(J)+parseFloat(dt.JSum)).toFixed(2);
-            D=(parseFloat(D)+parseFloat(dt.DSum)).toFixed(2);
+            J=(parseFloat(J)+parseFloat(dt.JSum));
+            D=(parseFloat(D)+parseFloat(dt.DSum));
 
         }
-        if(J!=D){
+        if(J.toFixed(2)!=D.toFixed(2)){
             var c=J-D;  //差额**
             this.message={
-                message:'借贷试算平衡不通过,借贷差额为'+c+'请检查余额!',
+                message:'借贷试算平衡不通过,借贷差额为'+c.toFixed(2)+'元,请检查余额!',
                 delay:4000,
                 visible:true
             }
@@ -1079,7 +1082,7 @@ export default {
                     res=(res==0.00?'':res);
                     return res;
                 } else {
-                    res=intPartFormat + "." + floatPart + '0';
+                    res=intPartFormat + "." + floatPart ;
                     res=(res==0.00?'':res);
                     return res;
                 }
@@ -1151,6 +1154,13 @@ export default {
         .listOver{
             height:100%;
             overflow-y: scroll;
+            ul>li:nth-of-type(6){
+                >div{
+                    text-align: right;
+                    padding: 0 8px;
+                }
+                
+            }
         }
     }
     .listContainer >ul.listTitle:first-of-type{
@@ -1160,9 +1170,14 @@ export default {
         position:absolute;
         top:0;
         margin-right:5px;
-        // >li{
-        //     border-right:1px solid #fff;
-        // }
+        overflow-y: scroll;
+        >li{
+            border-right:1px solid #fff;
+            &:last-of-type{
+                border-right:1px solid #d3e9f9;
+            }
+        }
+        
     }
     .listContainer ul.listTitle{
         height:auto;
@@ -1553,7 +1568,14 @@ export default {
             float:right;
         }
     }
-    
+    .hideScroll{
+        position: absolute;
+        top:0;
+        right:0;
+        width: 16px;
+        height:100%;  
+        background: #fff;      
+    }
    
 </style>
 <style>

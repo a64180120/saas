@@ -98,13 +98,14 @@
 
         </div>
         <section  class="listContainer">
+            <div style="width:5%;left:0;top:0;position:absolute;height:40px;line-height:40px;border-right:1px solid #fff;background:#d3e9f9;text-align:center">序号</div>
             <ul class="listTitle">
-                <li>序号</li>
                 <li>摘要</li>
                 <li>科目</li>
                 <li>借方金额(元)</li>
                 <li>贷方金额(元)</li>
             </ul>
+            <div class="hideScroll"></div>
             <div class="listOver">
                 <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
                     <li @dblclick="voucherDel(item)">
@@ -2225,18 +2226,23 @@
         }
     }
     .listContainer>ul.listTitle{
-        // >li{
-        //     border-right:1px solid #fff;
-        // }
+        >li{
+            border-right:1px solid #fff;
+            &:last-of-type{
+                border-right:1px solid #d3e9f9;
+            }
+        }
     }
     .listContainer ul.listTitle{
         height:40px;
-        width:100%;
+        width:95%;
         background: #d3e9f9 ;
         color:#333;
         position:absolute;
         top:0;
-        margin-right:5px;
+        left:0;
+        overflow-y: scroll;
+        margin-left:5%;
     }
     .listContainer ul.listTitle li{
         float:left;
@@ -2245,20 +2251,21 @@
         line-height: 40px;
     }
     .listContainer ul.listTitle li:first-of-type{
-        width:5%;
+        width:32%;
     }
     .listContainer ul.listTitle li:nth-of-type(2){
-        width:31%;
+        width:28%;
     }
     .listContainer ul.listTitle li:nth-of-type(3){
-        width:26%;
+        width:20%;
     }
     .listContainer ul.listTitle li:nth-of-type(4){
-        width:19%;
+        width:20%;
+    
     }
-    .listContainer ul.listTitle li:nth-of-type(5){
-        width:19%;
-    }
+    // .listContainer ul.listTitle li:nth-of-type(5){
+    //     width:20%;
+    // }
     ul.listContent{
         border:1px solid #bbb;
         margin-bottom: 20px;
@@ -2697,7 +2704,15 @@
             }
         }
 
-    }   
+    }  
+     .hideScroll{
+        position: absolute;
+        top:0;
+        right:0;
+        width: 16px;
+        height:100%;  
+        background: #fff;      
+    } 
     
 </style>
 <style>

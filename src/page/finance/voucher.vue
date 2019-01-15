@@ -498,7 +498,7 @@
                        
                     })
                     .catch(err=>{
-                        this.$message({ showClose: true,message: 'err', type: "error"});loading1.close();
+                        this.$message({ showClose: true,message: '获取列表失败了!', type: "error"});loading1.close();
                     })
             },
             //获取父组件传参*********************************
@@ -606,6 +606,7 @@
                 const loading1=this.$loading();
                 this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
                     .then(res=>{
+                        console.log(res)
                         if(res.length>0){
                             this.assistList=res;
                             this.assistItem[val.id].checked=true;
@@ -629,8 +630,8 @@
             //辅助项选择完成********************
             assistOk(bool,item,index){
                 if(bool){
-                    item.DtlAccounts.assistItem=this.assistSels;
-                    console.log(this.assistSels)
+                    //item.DtlAccounts.assistItem=this.assistSels;
+                    //console.log(this.assistSels)
                 }else{
                     item.SubjectCode='';
                     item.SubjectName='';
@@ -725,6 +726,7 @@
                 }else{
                     input=$event;
                 }
+                
                 if(!this.countJie||!this.countDai){  //数据监听不好判断数组,为了触发合计尝试加了countJIe中间值尝试******后续研究
                     this.countJie=0;
                     this.countDai=0;
@@ -732,6 +734,23 @@
                     this.countJie++;
                     this.countDai++;
                 }
+                var nextTr=this.voucherInfo[index+1];//下一行数据
+                //下一行有摘要或者科目自动添加金额
+                if((nextTr.Abstract||nextTr.SubjectCode)&&(!nextTr.money.jiefang)&&(!nextTr.money.daifang)){ 
+                    
+                    if(this.jiefang-this.daifang>0){  //自动添加下级金额
+                        nextTr.money.daifang= (this.jiefang-this.daifang).toFixed(2);    
+                        var children1=  input.parentNode.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[4].children ;       
+                        this.moneyTurn(nextTr.money.daifang,children1);
+                    }else if(this.jiefang-this.daifang<0){
+                        nextTr.money.jiefang= ((this.jiefang-this.daifang)*-1).toFixed(2);
+                        var children1=  input.parentNode.parentNode.parentNode.parentNode.nextElementSibling.children[0].children[3].children;
+                        this.moneyTurn(nextTr.money.jiefang,children1);
+                    }
+                    
+                }
+                
+                //************* */
                 if(item.money[value]){
                     item.money[value]=parseFloat(item.money[value]);    
                 }   
@@ -751,6 +770,13 @@
                     item.money.jiefang='';
                     children = input.parentNode.parentNode.previousElementSibling.children;
                     this.moneyTurn(0,children);
+                }
+                if(!this.countJie||!this.countDai){  //数据监听不好判断数组,为了触发合计尝试加了countJIe中间值尝试******后续研究
+                    this.countJie=0;
+                    this.countDai=0;
+                }else{
+                    this.countJie++;
+                    this.countDai++;
                 }
             },
             initMoneyCss(){  //金额输入框样式初始化***************
@@ -794,6 +820,7 @@
                     // if(num.length==0&&float[0]==='0'&&float[1]!=='0'){
                     //     float[0]="¥";
                     // }
+                    
                     children[11].innerHTML = float[1];
                     children[10].innerHTML = float[0];
                     if(num.length>0){
@@ -863,7 +890,6 @@
                     item.Abstract=this.defaultData.Abstract; //摘要为空自动添加上一个摘要
                 }
                 
-                console.log(this.jiefang,this.daifang);
                 if(!this.countJie||!this.countDai){  //数据监听不好判断数组,为了触发合计尝试加了countJIe中间值尝试******后续研究
                     this.countJie=0;
                     this.countDai=0;
@@ -873,17 +899,17 @@
                 }
                 var children1;
                 if(!item.SubjectCode){
-                    if(this.jiefang-this.daifang>0){  //自动添加本级金额
-                        item.money.daifang= this.jiefang-this.daifang;
+                    if(this.jiefang-this.daifang>0){  //自动添加本行金额
+                        item.money.daifang= (this.jiefang-this.daifang).toFixed(2);
                         children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.nextElementSibling.children;
                         this.moneyTurn(item.money.daifang,children1);
                     }else if(this.jiefang-this.daifang<0){
-                        item.money.jiefang= (this.jiefang-this.daifang)*-1;
+                        item.money.jiefang= ((this.jiefang-this.daifang)*-1).toFixed(2);
                         children1=  $event.currentTarget.parentNode.parentNode.nextElementSibling.nextElementSibling.children;  
                         this.moneyTurn(item.money.jiefang,children1);
                     }
                 }
-                console.log(this.voucherInfo)
+                
                 this.countJie++;  //触发合计更新
                 this.countDai++;    
                 this.$forceUpdate();
