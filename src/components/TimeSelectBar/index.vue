@@ -233,7 +233,6 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
-                        console.log(res);
                         if(res.Record.length>0){
                             if(this.startyear==res.Record[0].JYear&&res.Record[0].JAccountPeriod==0){
                                 this.jiezhangYear=res.Record[0].JYear;
@@ -249,10 +248,6 @@
                         }
                         this.years=(Number(this.jiezhangYear)-Number(this.startyear)+(this.jiezhangMonth==12&&res.Record[0].JYear!=this.startyear?2:1))
                         console.log(this.years);
-                        //alert(this.years);
-                        //this.sideDate=this.nowTime.getFullYear()+'-'+this.checkedTime;
-                        //this.year=this.sideDate.split('-')[0];
-                        //this.choosedMonth=this.checkedTime;
                     })
                     .catch(err=>console.log(err))
             },
