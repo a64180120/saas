@@ -57,7 +57,7 @@
                             </div> -->
                         </li>
                         <li>
-                            <div v-show="(!updatePage)">{{item.NCAccount==0?'':item.NCAccount}}</div>
+                            <div v-show="(!updatePage)">{{item.NCAccount | Num}}</div>
                             <div class="inputContainer" v-show="updatePage&&item.IsLast==1"><input type="text" @blur="balanceBlur(item)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="item.NCAccount"></div>
                         </li>
                         <li v-if="item.children.length>0" class="child">
@@ -79,7 +79,7 @@
                                     </div> -->
                                 </li>
                                 <li>
-                                    <div v-show="(!updatePage)">{{child.NCAccount==0?'':child.NCAccount}}</div>
+                                    <div v-show="(!updatePage)">{{child.NCAccount | Num}}</div>
                                     <div class="inputContainer" v-show="updatePage&&child.IsLast==1"><input type="text" @blur="balanceBlur(child)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child.NCAccount"></div>
                                 </li>
                                 <li v-if="child.children.length>0" class="child">
@@ -101,7 +101,7 @@
                                             </div> -->
                                         </li>
                                         <li>
-                                            <div v-show="(!updatePage)">{{child3.NCAccount==0?'':child3.NCAccount}}</div>
+                                            <div v-show="(!updatePage)">{{child3.NCAccount | Num}}</div>
                                             <div class="inputContainer" v-show="updatePage&&child3.IsLast==1"><input type="text" @blur="balanceBlur(child3)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child3.NCAccount"></div>
                                         </li>
                                         <li v-if="child3.children.length>0" class="child">
@@ -123,7 +123,7 @@
                                                     </div> -->
                                                 </li>
                                                 <li>
-                                                    <div v-show="(!updatePage)">{{child4.NCAccount==0?'':child4.NCAccount}}</div>
+                                                    <div v-show="(!updatePage)">{{child4.NCAccount | Num}}</div>
                                                     <div class="inputContainer" v-show="updatePage&&child4.IsLast==1"><input type="text" @blur="balanceBlur(child4)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child4.NCAccount"></div>
                                                 </li>
                                                 <li v-if="child3.children.length>0" class="child">
@@ -145,7 +145,7 @@
                                                             </div> -->
                                                         </li>
                                                         <li>
-                                                            <div v-show="(!updatePage)">{{child5.NCAccount==0?'':child5.NCAccount}}</div>
+                                                            <div v-show="(!updatePage)">{{child5.NCAccount | Num}}</div>
                                                             <div class="inputContainer" v-show="updatePage&&child5.IsLast==1"><input type="text" @blur="balanceBlur(child5)" onkeyup="this.value=this.value.replace(/e/g,'')" onafterpaste="this.value=this.value.replace(/e/g,'')" v-model="child5.NCAccount"></div>
                                                         </li>
 
@@ -632,8 +632,6 @@ export default {
                 }
             }
         }
-        console.log(data1);
-        debugger;
         const loading1=this.$loading();
         this.$axios.post('/PVoucherMst/Post'+url, data1)
         .then(res=>{
@@ -1062,6 +1060,37 @@ export default {
   },
   components:{
       timeSelect,
+  },
+  filters:{
+      Num(value) {
+            if(!value||(value==0)) return '';                    
+            /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
+            var intPart =  Number(value)|0; //获取整数部分
+            var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); //将整数部分逢三一断
+            var floatPart = ".00"; //预定义小数部分
+            var value2Array = value.toString().split(".");
+            //=2表示数据有小数位
+            var res;
+            if(value2Array.length == 2) {
+                floatPart = value2Array[1].toString(); //拿到小数部分
+
+                if(floatPart.length == 1) { //补0,实际上用不着
+                    res=intPartFormat + "." + floatPart + '0';
+                    res=(res==0.00?'':res);
+                    return res;
+                } else {
+                    res=intPartFormat + "." + floatPart + '0';
+                    res=(res==0.00?'':res);
+                    return res;
+                }
+
+            } else {
+                    res=intPartFormat + floatPart;
+                    res=(res==0.00?'':res);
+                    return res;
+            }
+
+        }
   }
 
 }

@@ -13,7 +13,7 @@
                 </ul>
             </div>
             <ul class="handle">
-                <li @click.prevent.stop="addVoucher('fresh')" style='float:right;margin:0 0 0 10px;cursor:pointer;font-size:27px;width:30px !important;background:none;color:#00b7ee;border:0' class="el-icon-refresh" ></li>
+                <li @click.stop="addVoucher('fresh')" style='float:right;margin:0 0 0 10px;cursor:pointer;font-size:27px;width:30px !important;background:none;color:#00b7ee;border:0' class="el-icon-refresh" ></li>
                 <a style="position:relative;display:block;width:80px;height:30px;margin-left:10px">
                     <li class="more" style="width:80px">
                         <ul >
@@ -423,7 +423,7 @@
                             Attachements:[]
                         }
                         this.superSearchVal.keyword='';
-                        this.resetVoucher();
+                        //this.resetVoucher();
                         this.getChecked();
                         this.voucherAdd=false;               
                         break;
@@ -499,10 +499,10 @@
                        url = 'Update';
                    }
                    
-                //    const loading1=this.$loading();
+                    const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
-                        //    loading1.close();
+                            loading1.close();
                            if (res.Status == 'success') {
                                this.saasMessage={
                                   visible:true,
@@ -532,12 +532,12 @@
                        },
                        err => {
                         console.log(err);
-                       
+                            loading1.close();
                         } 
                        )
                        .catch(err =>{
                            this.$message(err);
-                        //    loading1.close();
+                            loading1.close();
                        } )
                }else if(url=='update'){
                    this.$message('当前月份已结账,无法修改凭证!')
@@ -621,7 +621,7 @@
                     },
                     err => {
                         console.log(err);
-                       
+                           loading.close();
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading.close();})
             },
@@ -661,7 +661,7 @@
                         loading.close();
                     },err => {
                         console.log(err);
-                       
+                            loading.close();
                     })
                     .catch(err=>{loading.close();this.$message({ showClose: true,message: err, type: "error"});})
             },
@@ -670,19 +670,29 @@
                 const loading=this.$loading();
                 this.$axios.post('PVoucherMst/PostDelete',data)
                     .then(res=>{
+                        loading.close();
                         if(res.Status=='success'){
-                             this.saasMessage={
+                            if(this.voucherMask=='cut'){
+                                this.saasMessage={
                                   visible:true,
                                   delay:4000,
-                                  message:res.Msg
-                               };
+                                  message:'剪切成功!'
+                               }
+                               this.voucherMask=false;
+                               return;
+                            }
+                            this.saasMessage={
+                                visible:true,
+                                delay:4000,
+                                message:res.Msg
+                            };
                         }else{
                             this.$message({ showClose: true,message: res.Msg, type: "error"});
                         }
-                        loading.close();
+                        
                     },err => {
                         console.log(err);
-                       
+                        loading.close();
                     })
                     .catch(err=>{loading.close();this.$message({ showClose: true,message: err, type: "error"});})
             },
@@ -755,7 +765,7 @@
                         loading2.close();                          
                     },err => {
                         console.log(err);
-                       
+                           loading2.close();
                     })
                     .catch(err=>{
                         this.$message({ showClose: true,message: err, type: "error"});loading2.close();
@@ -791,19 +801,19 @@
                         this.checkVal=this.checkedTime;
                         this.unCheckVal=this.checkedTime>1?this.checkedTime-1:1;
                         this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                        this.voucherDataList.bool=true;           
-                        this.$forceUpdate(); 
-                        
+                        this.resetVoucher();         
+                        this.$forceUpdate();         
                     },
                     err => {
                         console.log(err);
-                       
+                           loading.close();
                     })
                     .catch(error=>{this.$message({ showClose: true,message: error, type: "error"});loading.close();})
             },
             //前后快速翻页定位凭证****************
             getvoucher(str){
                 if(str=='pre'){
+                    console.log(this.count)
                     if(this.count>0){
                         this.count--;
                         this.voucherDataList.data={
@@ -991,7 +1001,7 @@
                     },
                     err => {
                         console.log(err);
-                       
+                           loading1.close();
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
             },
@@ -1055,7 +1065,7 @@
                         },
                         err => {
                             console.log(err);
-                       
+                                loading5.close();
                          })
                         .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
                 }else{
@@ -1245,7 +1255,7 @@
                                 },
                                 err => {
                                     console.log(err);
-                                
+                                        loading.close();
                                 })
                                 .catch(err=>{
                                     this.$message({ showClose: true,message: err, type: "error"});
@@ -1314,7 +1324,7 @@
                                   delay:4000,
                                   message:res.Msg
                                };
-                               vm.voucherMask=false;
+                               
                                vm.delete(data1);
                            } else {
                                vm.$message('保存失败,请重试!')
@@ -1322,7 +1332,7 @@
                        },
                        err => {
                         console.log(err);
-                       
+                        loading.close();    
                         }) 
                        .catch(err =>{loading.close();console.log(err);} )
                }else{
