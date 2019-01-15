@@ -1,5 +1,5 @@
-<template style="background: #f2f2f2;">
-	<div class="home" >
+<template >
+	<div class="home" style="background:#f4f4f4;" >
 		<div class="Top_navigation">
   			<div class="logo_box">
 				<img src="@/assets/images/logo2.png" />
@@ -39,17 +39,19 @@
 		
 		<div class="decorate"></div>
 		<div class="Broadcast_box" style="animation-delay:0.5s;">
-			<el-carousel height="629px">
-				<el-carousel-item v-for="item in carouselImgs.length" :key="item.index">
-					<div class="carouselImgs">
-						
-						<img src="@/assets/img/t1.jpg" alt="">
-						<img src="@/assets/img/t2.jpg" alt="">
-						<img src="@/assets/img/t3.jpg" alt="">
-						<img src="@/assets/img/t4.jpg" alt="">
-					</div>
-				</el-carousel-item>
-			</el-carousel>
+			<div style="width: 1178px;margin-left: 11px; margin-top:4px; position: relative;" >
+				<img src="@/assets/img/t1.jpg" style="position: absolute;width: 100%;height: 552px;">
+				<el-carousel height="552px" >
+					<el-carousel-item v-for="item in carouselImgs.length" :key="item.index">
+						<div class="carouselImgs">
+							<img src="@/assets/img/t1.jpg" alt="">
+							<img src="@/assets/img/t2.jpg" alt="">
+							<img src="@/assets/img/t3.jpg" alt="">
+							<img src="@/assets/img/t4.jpg" alt="">
+						</div>
+					</el-carousel-item>
+				</el-carousel>
+			</div>
 		</div>
 		<div class="Central_navigation" >
   			<div @click.stop="NavTo('/home')" class="Finance"> <img src="@/assets/img/cai.png" />
@@ -255,9 +257,9 @@
 						<p>|</p>
 						<h1>运营范围</h1>
 					</div>
-					<div class="zi" style="margin-top: -2px;">
+					<div class="zi" style="margin-top: -2px;margin-left:87px;">
 						<h1>关于新中大科技</h1>
-					  <h1 style="margin-left: 25px;">关于政云数据</h1>
+					  <h1 style="margin-left:43px;">关于政云数据</h1>
 					</div>
 				</div>
 				<div style=" width:566px; height:220px; float:right;">
