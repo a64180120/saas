@@ -316,13 +316,22 @@
                        this.cashInData=cashIn;
                        this.cashOutData=cashOut;
                        this.cashData=cash;
-                       console.log(this.cashData);
-                       this.cashInCounts=cashInCount;
-                       this.cashOutCounts=cashOutCount;
-                       this.cashCounts=cashCount;
-                        this.cashInCountsQ=cashInCountQ;
-                        this.cashOutCountsQ=cashOutCountQ;
-                        this.cashCountsQ=cashCountQ;
+
+                       this.cashInCounts=cashInCount.toFixed(2);
+                       this.cashOutCounts=cashOutCount.toFixed(2);
+                       this.cashCounts=cashCount.toFixed(2);
+                        console.log('====1=========');
+                        console.log(this.cashInCounts);
+                        console.log(this.cashOutCounts);
+                        console.log(this.cashCounts);
+                        this.cashInCountsQ=cashInCountQ.toFixed(2);
+                        this.cashOutCountsQ=cashOutCountQ.toFixed(2);
+                        this.cashCountsQ=cashCountQ.toFixed(2);
+                        console.log('====1=========');
+                        console.log(this.cashInCountsQ);
+                        console.log(this.cashOutCountsQ);
+                        console.log(this.cashCountsQ);
+
                     })
                     .catch(err => {this.loading=false;console.log(err)})
             },
