@@ -30,7 +30,7 @@
                     </ul>
                     <ul class="formDataItems flexPublic" v-for="(item,index) of userInfo" :key="index">
                         <li>
-                            <span>{{index+1}}</span>                           
+                            <span>{{index+1}}</span>
                         </li>
                         <li>
                             <span >{{item.BaseCode}}</span>
@@ -48,7 +48,7 @@
                         </li>
                         <li v-show="updatePage" class="addIconCon">
                             <span @click="handleContent(true,index)" class="addIcon"></span>
-                            <span @click="handleContent(false,index)" class="deleteIcon"></span>    
+                            <span @click="handleContent(false,index)" class="deleteIcon"></span>
                         </li>
                     </ul>
                 </div>
@@ -112,13 +112,13 @@
                         if(this.updatePage){
                             this.saveInfo();
                         }
-                        
+
                         break;
                     case 'update':
                         if(!this.updatePage){
                             this.updatePage=true;
                         }
-                        
+
                         break;
                     case 'type':
                         this.handleNav='type';
@@ -138,7 +138,7 @@
             //添加删除行信息********************************
             handleContent(bool,index){
                 if(bool){
-                    this.userInfo.push(this.initInfo());                   
+                    this.userInfo.push(this.initInfo());
                 }else{
                     if(this.userInfo[index].PhId){
                         this.userInfo[index].DeleteMark=1;
@@ -180,7 +180,7 @@
                         if(!this.navTab.id){
                             this.navActive=this.navTab[0];
                         }
-                        
+
                     })
                     .catch(err=>{
                         console.log(err)
@@ -225,10 +225,10 @@
                         }
                         this.userInfo=res.List;
                         this.deleteList=[];
-                        this.updatePage=false; 
-                        this.getData(); 
+                        this.updatePage=false;
+                        this.getData();
                     }
-                      
+
                 })
                 .catch(err=>{
                     loading.close();
@@ -245,7 +245,7 @@
                 this.navActive=item;
                 //加载数据
                 this.getData('');
-                
+
             },
              /**
              * 获取辅助项信息
@@ -275,7 +275,7 @@
                             }
                         }
                         this.userInfo=res.list;
-                        
+
 
                     })
                     .catch(err=>{
@@ -317,7 +317,7 @@
             //                     return
             //                 }
             //                 this.getData('');
-            //                 this.$message.success('删除成功!');  
+            //                 this.$message.success('删除成功!');
             //             })
             //             .catch(err=>{
             //                 console.log(err)
@@ -326,7 +326,7 @@
             //     }).catch((err) => {
             //         console.log(err)
             //         //取消不弹提示**********
-            //         //this.$message({ showClose: true,message: "删除错误1", type: "error"});      
+            //         //this.$message({ showClose: true,message: "删除错误1", type: "error"});
             //     });
             // }
         },
@@ -379,7 +379,7 @@
     }
     .formData>ul>li:nth-of-type(3){
         width:45%;
-        
+
     }
     .formData>ul>li:nth-of-type(4){
         width:15%;
@@ -412,8 +412,8 @@
         border-left:0;
         border-bottom:0;
         text-align: center;
-        line-height: 40px;
-        height:40px;
+        line-height: 48px;
+        height:48px;
         font-size: 13px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -431,7 +431,7 @@
     }
      .formData>ul.formDataItems>li>div>label{
          margin-right:10px;
-         
+
      }
       .formData>ul.formDataItems>li>div>label>input{
           margin-left:10px;
@@ -514,7 +514,7 @@
         background: url("../../../assets/icon/delete.svg");
         background-size:cover;
     }
-   
+
         .handle>a>li.freshImg{
             background: none;
             border:0;
@@ -534,6 +534,6 @@
             border:1px solid #ccc;
             color:#fff;
         }
-    
+
 
 </style>

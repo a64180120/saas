@@ -106,6 +106,7 @@ const actions = {
             }).then(res => {
                 if (res.status === 200) {
                     var response=JSON.parse(res.data);
+                    console.log(response)
                     var object = {
                         token: response.Token,
                         appKey: response.AppKey,

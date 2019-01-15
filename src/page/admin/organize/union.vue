@@ -1,6 +1,6 @@
 <template>
     <div class="manageContent">
-        <div class="unionState" style="height: 50px;">
+        <div class="unionState" style="height: 60px;">
             <ul class="flexPublic" style="float: left">
                 <li class="flexPublic">
                     <div>地区:</div>
@@ -68,7 +68,7 @@
         <div class="formData">
             <ul>
                 <li>序号</li>
-                <li>用户名</li>
+                <li>用户号</li>
                 <li>组织编码</li>
                 <li>组织名称</li>
                 <li>创建日期</li>

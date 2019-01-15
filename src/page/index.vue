@@ -40,15 +40,19 @@
 		<div class="decorate"></div>
 		<div class="Broadcast_box" style="animation-delay:0.5s;">
 			<div style="width: 1178px;margin-left: 11px; margin-top:4px; position: relative;" >
-				<img src="@/assets/img/t1.jpg" style="position: absolute;width: 100%;height: 552px;">
+				<!-- <img src="@/assets/img/t1.jpg" style="position: absolute;width: 100%;height: 552px;"> -->
 				<el-carousel height="552px" >
-					<el-carousel-item v-for="item in carouselImgs.length" :key="item.index">
-						<div class="carouselImgs">
-							<img src="@/assets/img/t1.jpg" alt="">
-							<img src="@/assets/img/t2.jpg" alt="">
-							<img src="@/assets/img/t3.jpg" alt="">
-							<img src="@/assets/img/t4.jpg" alt="">
-						</div>
+					<el-carousel-item>
+						<img src="@/assets/img/t1.jpg">
+					</el-carousel-item>
+					<el-carousel-item>
+						<img src="@/assets/img/t2.jpg">
+					</el-carousel-item>
+					<el-carousel-item>
+						<img src="@/assets/img/t3.jpg">
+					</el-carousel-item>
+					<el-carousel-item>
+						<img src="@/assets/img/t4.jpg">
 					</el-carousel-item>
 				</el-carousel>
 			</div>
@@ -117,7 +121,7 @@
       				<li v-for="(item,index) of proInfoList" :key="index" @click.stop="openUrl(item)">
       					<div>
       						<i class="list-dot"></i>
-        					<p class="txt">{{item.info}}</p>
+        					<p class="txt" style='cursor: pointer;'>{{item.info}}</p>
         					<span class="r">{{item.date}}</span>
         				</div>
       				</li>
@@ -181,7 +185,7 @@
 				<li v-for="(item,index ) of newsInfo" :key="index" @click.stop="openUrl(item)">
 				  <div :to="item.url">
 					  <i class="list-dot"></i>
-					  <p class="txt">{{item.info}}</p>
+					  <p class="txt" style='cursor: pointer;'>{{item.info}}</p>
 					  <span class="r">{{item.date}}</span>
 				  </div>
 				</li>
@@ -460,8 +464,6 @@
           }
         });
       }
-
-      
     }
   }
   

@@ -5,7 +5,7 @@
                 <ul>
                     <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">基层工会组织</li>
                     <li @click="unionTab('union')" :class="{asideActive:asideActive=='union'}">机关工会组织</li>
-                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i>{{dVerifyNum}}</i>待审核基层组织</li>
+                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i v-if="showVerify">{{dVerifyNum}}</i>待审核基层组织</li>
                 </ul>
             </aside>
             <look v-if="asideActive=='look'"></look>
@@ -26,6 +26,7 @@
             return {
                 asideActive: 'basic',
                 dVerifyNum : "",
+                showVerify : true,
                 pickerOptions1: {
                     disabledDate(time) {
                         return time.getTime() > Date.now();
@@ -76,6 +77,11 @@
                     .then(res => {
                         console.log(res);
                         this.dVerifyNum = res.totalRows;
+                        if(res.totalRows == 0){
+                            this.showVerify = false;
+                        }else{
+                            this.showVerify = true;
+                        }
                     })
                     .catch(err => {
                         console.log(err)

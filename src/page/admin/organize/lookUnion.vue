@@ -390,6 +390,7 @@
                         if (res.Status == 'success') {
                             this.$message.success("审核成功");
                             this.editVisible = false;
+                            this.ajaxMode();
                             //this.$router.push({path: '/'});
                         }else{
                             this.$message.error('审核失败,请重试!');

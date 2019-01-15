@@ -720,7 +720,7 @@
         right: -17px;
     }
     .formData_content>ul:first-child{
-        background: white;
+        background: transparent;
         margin-top: 0;
     }
     .formData>ul>li{
@@ -751,22 +751,23 @@
         background: white;
     }
     .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
-        text-align: center;
-        line-height: 40px;
-        height:40px;
+        text-align: left;
+        line-height: 48px;
+        height:48px;
         font-size: 13px;
         overflow: hidden;
         text-overflow: ellipsis;
+        padding: 0 15px;
     }
     .formData>ul.formDataItems>li.bolder{
        font-weight: bold;
     }
 
     .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
+        border-left:1px solid #ebeef5;
     }
     .unionLists{
         width:20%;
@@ -821,10 +822,6 @@
         top:10px;
         background: #fff;
     }
-    .formData>ul.formDataItems>li{
-        text-align: left;
-        padding:0 15px;
-    }
     .formData>ul.formDataItems>li.align-center{
         padding:0;
         text-indent: 40px;
@@ -845,7 +842,7 @@
         line-height: 55px;
     }
     .formData>ul.bottomForm>li:last-child{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
     }
     input{
         border: none;

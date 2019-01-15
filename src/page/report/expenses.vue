@@ -243,6 +243,11 @@
                         KName:'本期合计支出',
                         StartSum:this.changeNum(outdata_StartSum),
                         EndSum:this.changeNum(outdata_EndSum)
+                    }],[{
+                        KCode:'三、本期结余',
+                        KName:'',
+                        StartSum:this.changeNum(indata_StartSum-outdata_StartSum),
+                        EndSum:this.changeNum(indata_EndSum-outdata_EndSum)
                     }])
 
                 }).catch(error =>{
@@ -461,7 +466,7 @@
         padding:0 2px;
     }
     .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
+        border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
         text-align: center;
@@ -472,7 +477,7 @@
         text-overflow: ellipsis;
     }
     .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
+        border-left:1px solid #ebeef5;
     }
     .unionLists{
         width:20%;

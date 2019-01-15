@@ -397,7 +397,6 @@
         height: 25px;
         background:#FFF;
         left: 0;
-        z-index: 100;
         text-align:center;
         color:#04a9f4;
         line-height:25px;
