@@ -77,7 +77,7 @@
                         </div>
                         <ul id="Month"  style="border-left: 1px solid #eee;">
                             <template v-for="n in 12">
-                                <li :class="{'uncatchMont':n>jiezhangMonth&&choosedYear==jiezhangYear||choosedYear>jiezhangYear,'selectMonth':n==choosedMonth}"
+                                <li :class="{'uncatchMont':n>jiezhangMonth&&choosedYear==jiezhangYear||choosedYear>jiezhangYear,'selectMonth':n==choosedMonthEnd}"
                                     @click="(n>=choosedMonth)?chosedataS(n,2):''"
                                 >{{n}}月</li>
                             </template>
@@ -215,7 +215,6 @@
                         this.choosedMonthEnd = this.choosedMonthEnd>=n?this.choosedMonthEnd:n;
                 }else{
                         this.choosedMonthEnd = n;
-
                 }
                 let data={
                     'choosedYear':this.choosedYear,
