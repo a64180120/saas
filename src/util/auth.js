@@ -44,18 +44,22 @@ const authToken = {
     // 获取Token
     getToken: function() {
 
-        return this.getCookies(this.TokenKey)
+        //return this.getCookies(this.TokenKey)
+        return  getStore({ name: this.TokenKey,type: 'session' })
     },
 
     // 设置Token
     setToken: function(token){
 
-        this.setCookies(this.TokenKey,token);
+        //this.setCookies(this.TokenKey,token);
+        if(token){ removeStore({ name: this.TokenKey });}
+        setStore({ name: this.userinfo,content: token,type: 'session' })
     },
 
     // 移除Token
     removeToken: function(){
-        Cookies.remove(this.TokenKey)
+        //Cookies.remove(this.TokenKey)
+        removeStore({ name: this.TokenKey })
     },
 
      /*******************UserInfo************************** */

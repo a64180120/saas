@@ -55,12 +55,14 @@
 </template>
 
 <script>
+    import userInfo from '@/util/auth'
     import tempVou from './tempVou'
     import {mapState, mapActions} from 'vuex'
     export default {
         name: "voucher-list",
         mounted(){
             this.getvoucherList();
+            this.uInfo= userInfo.getUserInfoData().userInfo; 
         },
         data(){
             return {
@@ -71,7 +73,7 @@
                 pagesize:100,
                 pageindex:0,
                 tempCss:'list',
-                
+                uInfo:''
             }
         },
         methods:{
@@ -131,6 +133,8 @@
                     return;
                 }
                 this.voucherDataList.data.Mst.TemName=this.TemName;
+                this.voucherDataList.data.Mst.UseCount=this.uInfo.Account;
+                this.voucherDataList.data.Mst.Userid=this.uid;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,

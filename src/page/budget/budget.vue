@@ -239,6 +239,7 @@
                     message:'', //消息主体内容**************
                     delay:0
                 },
+                jyear:''
             }
         },
         components: {TimeSelectBar,
@@ -249,15 +250,33 @@
                 userid: state => state.user.userid,
                 orgid: state => state.user.orgid,
                 OrgIds:state => state.user.OrgIds,
-                orgcode:state => state.user.orgcode,
-                jyear:Auth =>Auth.Pconfig.jyear
+                orgcode:state => state.user.orgcode
             }),
 
         },
         mounted(){
             this.getBeginYear();
+            this.getChecked();
         },
         methods:{
+            /*获取结账年*/
+            getChecked(){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    queryfilter:{"OrgId*num*eq*1":this.orgid}
+                }
+                this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
+                    .then(res=>{
+                        if(res.Record.length>0){
+                            this.jyear=res.Record[0].JYear;
+                        }else{
+                            let currentYear = new Date();
+                            this.jyear=currentYear.getFullYear();
+                        }
+                    })
+                    .catch(err=>console.log(err))
+            },
             /*
             *上报
             *
@@ -426,6 +445,7 @@
                     //循环遍历，得到一级子目录一级对应的预算数
                     //计算上年决算数对应的本年合计收入，以及本年支出合计
                     // 得到  本年收入合计,本年支出合计，本年结余，上年结余，收回投资，本年投资，本年提取后备金，期末滚存结余  对应数组用于计算
+                    console.log(res.Record[0]);
                     if( res.Record[0].VerifyStart==1){
                         this.verify=false;
                         this.verifyTime=res.Record[0].VerifyStart_time;

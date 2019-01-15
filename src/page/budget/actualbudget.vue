@@ -266,6 +266,7 @@
                     message:'', //消息主体内容**************
                     delay:0
                 },
+                jyear:''
             }
         },
         components: {TimeSelectBar,saasMsg},
@@ -273,14 +274,32 @@
             ...mapState({
                 userid: state => state.user.userid,
                 orgid: state => state.user.orgid,
-                OrgIds:state => state.user.OrgIds,
-                jyear:Auth =>Auth.Pconfig.jyear
+                OrgIds:state => state.user.OrgIds
             }),
         },
         mounted(){
             this.getEndYear();
+            this.getChecked();
         },
         methods:{
+            /*获取结账年*/
+            getChecked(){
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    queryfilter:{"OrgId*num*eq*1":this.orgid}
+                }
+                this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
+                    .then(res=>{
+                        if(res.Record.length>0){
+                            this.jyear=res.Record[0].JYear;
+                        }else{
+                            let currentYear = new Date();
+                            this.jyear=currentYear.getFullYear();
+                        }
+                    })
+                    .catch(err=>console.log(err))
+            },
             /*
            *核定
            *
