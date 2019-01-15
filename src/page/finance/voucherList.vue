@@ -586,7 +586,10 @@
                     console.log(this.superSearchVal.date1,this.year,(this.month>9?this.month:('0'+this.month)))
                     this.superSearchVal.keyword='';                                       
                 }else{
-                    this.highGradeCss = bool; 
+                    this.highGradeCss = bool;
+                    if(!this.superSearchVal.assistItemList.type){
+                        this.getAssist();
+                    } 
                 }   
                 
             },
@@ -669,34 +672,43 @@
                         }
                     },err => {
                         console.log(err);
-                       
+                           loading.close();
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
             //删除***********************
             delete(data){ 
-
+                console.log()
                  const loading=this.$loading();
                 this.$axios.post('PVoucherMst/PostDelete',data)
                     .then(res=>{
                         loading.close();      
                         if(res.Status=='success'){
-                             this.saasMessage={
+                            this.getvoucherList(); 
+                            if(this.voucherMask=='cut'){
+                                this.saasMessage={
                                   visible:true,
-                                  delay:3000,
-                                  message:'删除成功!'
-                               };
+                                  delay:4000,
+                                  message:'剪切成功!'
+                               }
+                               this.voucherMask=false;
+                            }else{
+                                this.saasMessage={
+                                    visible:true,
+                                    delay:4000,
+                                    message:res.Msg
+                                };
+                            }     
                         }else{
                              this.saasMessage={
                                   visible:true,
-                                  delay:3000,
+                                  delay:4000,
                                   message:res.Msg
                                };
-                        }
-                        this.getvoucherList(); 
+                        } 
                     },err => {
                         console.log(err);
-                       
+                           loading.close();
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
             },
@@ -1042,7 +1054,7 @@
                            }   
                        },err => {
                         console.log(err);
-                       
+                           loading.close();
                     })
                        .catch(err =>{
                            this.saasMessage={
@@ -1140,7 +1152,13 @@
                                             vm.voucherDataList.data.Mst.PSource='更正';
                                             for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
                                                 if(dtl.SubjectCode){
-                                                    dtl.Abstract=dtl.Abstract.replace("注销",'更正错账')
+                                                    dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                                    dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                                    if(dtl.DtlAccounts){
+                                                        dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                                        dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                                    }   
                                                 }                                            
                                             }
                                             vm.voucherMask='gengz'; 
@@ -1158,7 +1176,7 @@
                                     loading.close();
                                 },err => {
                                     console.log(err);
-                                
+                                    loading.close();
                                 })
                                 .catch(err=>{
                                     this.$message({ showClose: true,message: err, type: "error"});
@@ -1220,14 +1238,14 @@
                                   delay:3000,
                                   message:res.Msg
                                };
-                               vm.voucherMask=false;
+                               
                                vm.delete(data1);
                            } else {
                                vm.$message('保存失败,请重试!')
                            }
                        },err => {
                         console.log(err);
-                       
+                           loading.close();
                         })
                        
                        .catch(err =>{console.log(err);loading.close()} )
@@ -1300,7 +1318,7 @@
 
                     },err => {
                         console.log(err);
-                       
+                        
                     })
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
             },
@@ -1355,7 +1373,7 @@
                             loading5.close();
                         },err => {
                         console.log(err);
-                       
+                        loading5.close();
                     })
                         .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
                 }else{
@@ -1375,16 +1393,17 @@
                 const loading=this.$loading();
                 this.$axios.get('/PVoucherAuxiliaryType/GetAuxiliaryQueryList',{params:data})
                     .then(res=>{
+                         loading.close();
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
                             return
                         }
                         this.assistItemList.kemu=res.list;
                         this.superSearchVal.show=true;
-                        loading.close();
+                       
                     },err => {
                         console.log(err);
-                       
+                        loading.close();
                     })
                     .catch(err=>{
                         loading.close();
@@ -1411,7 +1430,7 @@
                         //this.assistItemList.kemu=res.list;
                     },err => {
                         console.log(err);
-                       
+                        loading.close();
                     })
                     .catch(err=>{
                         this.$message({ showClose: true,message: err, type: "error"});loading.close();
@@ -1498,7 +1517,7 @@
                     }
                 },err => {
                         console.log(err);
-                       
+                       loading.close(); 
                  })
                 .catch(err=>{
                     loading.close();
@@ -1558,7 +1577,7 @@
                         }
                     },err => {
                         console.log(err);
-                       
+                        loading.close();
                     })
                     .catch(err=>{
                         loading.close();

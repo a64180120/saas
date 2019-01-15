@@ -84,7 +84,7 @@
                                                     :key="index">{{assist.BaseName?('.'+assist.BaseName):''}}</span>
                                         </div>
                                     </li>
-                                    <li v-show="item.SubjectCode"><span v-if="item.balance">余额:</span><span v-if="item.balance">{{item.balance}}</span></li>
+                                    <li v-show="item.SubjectCode"><span v-if="item.balance">余额:</span><span v-if="item.balance">{{item.balance | NumFormat }}</span></li>
                                     <li v-show="kemuSel[index].checked" class="kemuCancle" @click.stop="kemuCancle($event,index,item)"><i></i></li>
                                 </ul>
                             </div>
@@ -547,33 +547,44 @@
                         orgid:this.orgid,
                         id:PhId
                     }
-                    const loading=this.$loading();
                     this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
                     .then(res=>{
-                        
+                        if(res.Status=='error'){
+                            this.saasMessage={
+                                message:res.Msg,
+                                visible:true,
+                                delay:4000
+                            }
+                        }
                         this.imglist=res.Record;
-                        loading.close();
+                        
                     },err => {
                         console.log(err);
                        
                     })
                     .catch(err=>{
-                            this.$message({ showClose: true,message: err, type: "error"});loading.close();
+                            this.$message({ showClose: true,message: err, type: "error"});
                         }
                     )
             },
             //获取科目列表******************
             getSubject(){
-                const loading1=this.$loading();
+                
                 var data={
                     orgid:this.orgid,
                     Ryear:(new Date).getFullYear()
                 }
                 this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
                     .then(res=>{
-
+                        if(res.Status=='error'){
+                            this.saasMessage={
+                                delay:4000,
+                                message:res.Msg,
+                                visible:true
+                            }
+                        }
                         this.subjectlist=res;
-                        loading1.close();
+                        
                         for(var i in this.voucherInfo){
                             this.itemlists[i]={
                                 id:i,
@@ -584,7 +595,7 @@
                         console.log(err);
                        
                     })
-                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading1.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
             },
             //ajax获取科目下的辅助项***************************
             getAssist(val){
@@ -659,10 +670,8 @@
                         if(res.Record.length==0){
                             this.voucherInfo[Msg.id].balance=0
                         }else{
-                             this.voucherInfo[Msg.id].balance=(res.Record[0].j_sum-res.Record[0].d_sum).toFixed(2);
-                        }
-                        if(this.voucherInfo[Msg.id].balance==0){
-                            this.voucherInfo[Msg.id].balance='0';
+                             this.voucherInfo[Msg.id].balance=res.Record[0].balance==0?'0':res.Record[0].balance;
+
                         }
                         this.$forceUpdate();
                         loading5.close();
@@ -850,7 +859,10 @@
                     add.checked=false;
                 }
                 this.addIcon[index].checked=true;
-                item.Abstract=this.defaultData.Abstract; //自动添加上一个摘要
+                if(!item.Abstract){
+                    item.Abstract=this.defaultData.Abstract; //摘要为空自动添加上一个摘要
+                }
+                
                 console.log(this.jiefang,this.daifang);
                 if(!this.countJie||!this.countDai){  //数据监听不好判断数组,为了触发合计尝试加了countJIe中间值尝试******后续研究
                     this.countJie=0;
