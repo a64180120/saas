@@ -195,7 +195,13 @@
         </div>
         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
         <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
-        <saasconfirm :message="saasConfirm.message" v-show="saasConfirm.show" @confirm-click="confirmData"></saasconfirm>
+        <!-- <saasconfirm 
+            :type="saasConfirm.type"
+            :message="saasConfirm.message"
+            v-show="saasConfirm.visible" 
+            @ok-click="okConfirm"
+            @no-click="noConfirm">
+        </saasconfirm> -->
     </div>
 </template>
 
@@ -262,8 +268,9 @@
                 delay:0
             },
             saasConfirm:{
-                message:'',
-                show:false
+                message:'确定删除记录!',
+                visible:true,
+                type:'666'
             },
             uInfo:''
         }},
@@ -443,7 +450,7 @@
                 var url='Add';
                 var oldPhId=this.voucherDataList.data.Mst.PhId;
                 var Vdata=this.voucherDataList.data;
-                console.log(Vdata.Mst)
+          
                 //判断科目金额摘要不能为空
                 for(var dtl of Vdata.Mst.Dtls){
                     if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
@@ -498,7 +505,7 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                   
+                  
                     const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
@@ -712,6 +719,7 @@
                     Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
                     Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
                 }
+                console.log(Jcount.toFixed(2),Dcount.toFixed(2))
                 if(Jcount.toFixed(2)==Dcount.toFixed(2)){
                     return true;
                 }else{
@@ -899,7 +907,8 @@
                             vm.pageindex=res.index;
                             vm.voucherDataList.data={
                                 Mst:vm.newAddList[vm.count]
-                            };  
+                            };
+                            console.log( vm.voucherDataList.data)  
                             vm.resetVoucher();                          
                         }
                     },
@@ -1338,8 +1347,15 @@
                    vm.$message('当前月份已结账,无法修改凭证!')
                }
             },
-            
-            
+            //confirm确认*************
+            okConfirm(data){
+                console.log(data);
+                this.saasConfirm.visible=false;
+            },
+            noConfirm(data){
+
+            }
+       
         },
         computed:{
             ...mapState({

@@ -81,7 +81,7 @@
                                         <div >
                                            <span>{{item.SubjectCode}} &nbsp;{{item.SubjectName}}</span> 
                                             <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
-                                                    :key="index">{{assist.BaseName?('.'+assist.BaseName):''}}</span>
+                                                    :key="index">{{assist.AuxiliaryName?('.'+assist.AuxiliaryName):''}}{{assist.BaseName?('.'+assist.BaseName):''}}</span>
                                         </div>
                                     </li>
                                     <li v-show="item.SubjectCode"><span v-if="item.balance">余额:</span><span v-if="item.balance">{{item.balance | NumFormat }}</span></li>
@@ -307,9 +307,13 @@
                 }
                 var account;
                 var item;
+               
+                
                 for( var info of this.voucherInfo){
+ 
                     if(info.PhId){
                         for(var dtl of  dtls){
+               
                             if(dtl.PhId==info.PhId){
                                 dtl.SubjectCode=info.SubjectCode;
                                 dtl.SubjectName=info.SubjectName;
@@ -317,6 +321,7 @@
                                 dtl.JSum=info.money.jiefang;
                                 dtl.DSum=info.money.daifang;
                                 dtl.PersistentState=2;
+                          
                                 if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
                                     dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                     dtl.DtlAccounts[0].DSum=info.money.daifang;
@@ -325,13 +330,16 @@
                                     dtl.DtlAccounts[0].Abstract=info.Abstract;
                                     item = info.DtlAccounts.assistItem;
                                     account=dtl.DtlAccounts[0];
-                                    for(var i of item){
-                                        account[i.GLS]=i.PhId;
+                            
+                                    for(var it22 of item){
+                                        account[it22.GLS]=it22.PhId?it22.PhId:it22.PhidAuxiliary;
                                     }
+                                    
+                                    
                                     dtl.DtlAccounts[0].PersistentState=2;
                                 }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
                                     dtl.DtlAccounts[0].PersistentState=3;
-                                }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                }else if((!dtl.DtlAccounts)&&info.DtlAccounts.assistItem.length>0){
                                     dtl.DtlAccounts=[{
                                     }];
                                     dtl.DtlAccounts[0].JSum=info.money.jiefang;
@@ -343,11 +351,13 @@
                                     item = info.DtlAccounts.assistItem;
                                     account=dtl.DtlAccounts[0];
                                     for(var i of item){
-                                        account[i.GLS]=i.PhId;
+                                        account[i.GLS]=i.PhId?i.PhId:i.PhidAuxiliary;
+                                     
                                     }
                                 }
                             }
                         }
+                        
                     }
                     else if(info.SubjectCode||info.money.jiefang||info.money.daifang||info.Abstract){   
                         var newDtl={
@@ -368,16 +378,23 @@
                                 DSum:info.money.daifang,
                                 PersistentState:1
                             }
+
                             item = info.DtlAccounts.assistItem;
                             for(var i of item){
-                                dt[i.GLS]=i.PhId;
+                                dt[i.GLS]=i.PhId?i.PhId:i.PhidAuxiliary;
+                                console.log(i)
                             }
+                            
                             newDtl.DtlAccounts[0]=dt;
                         }
        
                         dtls.push(newDtl);
+                        
                     }
                 }
+                
+        
+                
                 this.fatherData.Dtls=dtls;
                 for(var del of this.deleteDtls){
                     if(del.PhId){
@@ -419,6 +436,8 @@
                     }
                 }
                 this.Attachements=this.imglist; 
+              
+              
                 return {
                     Mst:this.fatherData,
                     Attachements: this.Attachements
@@ -527,10 +546,12 @@
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
+                   
                     if(dtls[i].DtlAccounts&&dtls[i].DtlAccounts[0].NameValueDtls){
                         this.voucherInfo[i].DtlAccounts.assistItem=dtls[i].DtlAccounts[0].NameValueDtls;
                     }
                 }
+               
                 if(this.voucherInfo.length<5){
                     var leng=5-this.voucherInfo.length;
                     for(var k=0;k<leng;k++){
@@ -598,7 +619,7 @@
                     .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
             },
             //ajax获取科目下的辅助项***************************
-            getAssist(val){
+            getAssist(val,index){
                 var data={
                     id:val.data.PhId,
                     orgid:this.orgid,
@@ -606,19 +627,30 @@
                 const loading1=this.$loading();
                 this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
                     .then(res=>{
-                        console.log(res)
+                        loading1.close();
                         if(res.length>0){
                             this.assistList=res;
+                            for(var a in this.assistList){
+                                if(!this.assistList[a].Children.length>0){
+                                    this.saasMessage={
+                                        delay:4000,
+                                        visible:true,
+                                        message:'该科目下辅助项没有值,请先前往辅助核算页面添加!'
+                                    }  
+                                    this.voucherInfo[index].SubjectCode='';
+                                    this.voucherInfo[index].SubjectName='';
+                                    return;  
+                                }
+                                this.assistSels[a]=this.assistList[a].Children[0];
+                                
+                            }
                             this.assistItem[val.id].checked=true;
                             this.assistItemMask=true;
                             this.assistCheck=true;
-                            for(var a in this.assistList){
-                                this.assistSels[a]=this.assistList[a].Children[0];
-                            }
                         }else{
                             this.assistList=[]
                         }
-                        loading1.close();
+                        
                         this.moneyInputMask=false;
                     },err => {
                         console.log(err);
@@ -630,12 +662,13 @@
             //辅助项选择完成********************
             assistOk(bool,item,index){
                 if(bool){
-                    //item.DtlAccounts.assistItem=this.assistSels;
+                    item.DtlAccounts.assistItem=this.assistSels;
                     //console.log(this.assistSels)
                 }else{
                     item.SubjectCode='';
                     item.SubjectName='';
                 }
+               
                 this.assistItemMask=false;
                 this.assistCheck=false;
                 this.moneyInputHide();
@@ -646,7 +679,7 @@
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
                 this.voucherInfo[childMsg.id].DtlAccounts.assistItem=[];
-                this.getAssist(childMsg);
+                this.getAssist(childMsg,childMsg.id);
                 this.getBalance(childMsg);
                 this.$forceUpdate();
             },
@@ -736,7 +769,7 @@
                 }
                 var nextTr=this.voucherInfo[index+1];//下一行数据
                 //下一行有摘要或者科目自动添加金额
-                if((nextTr.Abstract||nextTr.SubjectCode)&&(!nextTr.money.jiefang)&&(!nextTr.money.daifang)){ 
+                if($event.target&&(nextTr.Abstract||nextTr.SubjectCode)&&(!nextTr.money.jiefang)&&(!nextTr.money.daifang)){ 
                     
                     if(this.jiefang-this.daifang>0){  //自动添加下级金额
                         nextTr.money.daifang= (this.jiefang-this.daifang).toFixed(2);    
