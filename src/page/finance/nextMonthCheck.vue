@@ -613,7 +613,7 @@
     .nextMonthCheck{
         background: rgba(0,0,0,0.5);
         position: fixed;
-        z-index: 99;
+        z-index: 999;
         left:0;
         top:0;
         width:100%;
@@ -840,7 +840,8 @@
         align-items: center;
         justify-content: center;
         position:absolute;
-            
+         top:0;
+        left:0;    
     }
     ul.listContent>li> ul.listIndex>li:first-of-type{
             border:0;

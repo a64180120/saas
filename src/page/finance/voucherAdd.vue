@@ -243,8 +243,9 @@
             unCheckVal:'',
             checkedTime:'',//下一个结账月*******
             checkedYear:'',//已经结账的年份
-            pagesize:10,
+            pagesize:100,
             pageindex:0,
+            ascOrDesc:'ASC',
             totalRows:'',
             voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},//凭证数据***
             oldVoucherData:'',   //凭证传参时的中间值JSON
@@ -425,14 +426,16 @@
                         this.keepVoucher('print');
                         break;
                     case 'fresh':   //刷新
+                        this.newAddList=[];
                          this.voucherDataList.data={
                             Mst:'',
                             Attachements:[]
                         }
                         this.superSearchVal.keyword='';
                         //this.resetVoucher();
-                        this.getChecked();
-                        this.voucherAdd=false;               
+                        //this.getChecked();
+                        this.voucherAdd=false;
+                        this.resetVoucher();               
                         break;
                 }
             },
@@ -448,7 +451,6 @@
             keepVoucher(str){
                 
                 var url='Add';
-                var oldPhId=this.voucherDataList.data.Mst.PhId;
                 var Vdata=this.voucherDataList.data;
           
                 //判断科目金额摘要不能为空
@@ -505,12 +507,17 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                  
+                    this.voucherAdd=true;
                     const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                             loading1.close();
                            if (res.Status == 'success') {
+                               if(url=='Add'){
+                                   this.ascOrDesc='DESC';
+                                    this.getvoucherList(); 
+                               }
+                               
                                this.saasMessage={
                                   visible:true,
                                   delay:4000,
@@ -523,17 +530,19 @@
                                         },
                                         Attachements:[]
                                     }
+                                    this.voucherAdd=false;
                                     this.resetVoucher();
                                 }
                                if(str=='print'){
                                    this.printContent();
-                               }   
-                                this.voucherMask=false;
-                                if(oldPhId){
-                                    this.getVoucherData(oldPhId);
-                                }  
+                               }
+                                  
                            } else {
-                               this.$message(res.Msg)
+                               this.saasMessage={
+                                  visible:true,
+                                  delay:4000,
+                                  message:res.Msg
+                               }
                            }
                            
                        },
@@ -543,8 +552,12 @@
                         } 
                        )
                        .catch(err =>{
-                           this.$message(err);
                             loading1.close();
+                            this.saasMessage={
+                                  visible:true,
+                                  delay:4000,
+                                  message:'出错了!'
+                               };
                        } )
                }else if(url=='update'){
                    this.$message('当前月份已结账,无法修改凭证!')
@@ -679,6 +692,8 @@
                     .then(res=>{
                         loading.close();
                         if(res.Status=='success'){
+                            this.ascOrDesc=='DESC';
+                            this.getvoucherList();
                             if(this.voucherMask=='cut'){
                                 this.saasMessage={
                                   visible:true,
@@ -719,7 +734,7 @@
                     Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
                     Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
                 }
-                console.log(Jcount.toFixed(2),Dcount.toFixed(2))
+                
                 if(Jcount.toFixed(2)==Dcount.toFixed(2)){
                     return true;
                 }else{
@@ -871,7 +886,7 @@
                 vm.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         loading1.close();
-                        console.log(res);
+                        
                          if(res.Status=='success'){        
                             vm.$message(res.Msg);
                             vm.voucherDataList.data={
@@ -887,7 +902,7 @@
                                 delay:0
                             }
                         }
-                         else{               
+                        else{               
                             if(val=='searcher'&&res.Record.length>1){
                                vm.$store.commit("tagNav/upexcludeArr", ['voucherList']);
                                  vm.$router.push({path:'/finance/voucherList',query:{voucherList:res.Record}})   
@@ -901,14 +916,21 @@
                                 return;
                             }     
                             vm.newAddList=res.Record;
-                            vm.count=(val=='pre')?this.newAddList.length-1:0;
+                            var  oldCount=vm.count;
+                            vm.count=(val=='pre')?vm.newAddList.length-1:0;
+                            if(vm.ascOrDesc=='DESC'){
+                                vm.count=vm.newAddList.length-1;
+                            }
+                            if(val=='update'){
+                                vm.count=oldCount;
+                            }
                             vm.totalRows=res.totalRows;
                             vm.pagesize=res.size;
                             vm.pageindex=res.index;
                             vm.voucherDataList.data={
                                 Mst:vm.newAddList[vm.count]
                             };
-                            console.log( vm.voucherDataList.data)  
+                             
                             vm.resetVoucher();                          
                         }
                     },
@@ -926,7 +948,8 @@
                 this.year=year;
                 this.sideDate=year+'-'+i;
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                this.getvoucherList('reset');
+                this.ascOrDesc='ASC';
+                this.getvoucherList();
                 this.voucherAdd=true;
             },
             //鼠标按下***************
@@ -1000,7 +1023,7 @@
                             this.saasMessage={
                                   visible:true,
                                   delay:4000,
-                                  message:res.Msg
+                                  message:str=='check'?'结账成功!':'反结账成功!'
                                };
                             this.getChecked();
                         }else{
@@ -1036,7 +1059,8 @@
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                this.getvoucherList('reset');
+                this.ascOrDesc='ASC';
+                this.getvoucherList();
                 this.voucherAdd=true;
             },
             //凭证重排月份选择******************
@@ -1099,14 +1123,21 @@
                 var vm=this;
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
-                if(Mst.WriteOff_PhIds.length>0){
-                    if(confirm("该凭证已经冲红,需要重新冲红吗?")){
-                        
-                    }else{
-                        this.voucherMaskShow(false);
-                        return;
+                if(item.WriteOff_PhIds.length>0){
+                    this.saasMessage={
+                        message:'该凭证已经冲红,无法冲红!',
+                        delay:4000,
+                        visible:true
                     }
-                }
+                    this.voucherMaskShow(false);
+                    return;
+                    // if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                    //     return;
+                    // }else{
+                    //     this.voucherMaskShow(false);
+                    //     return;
+                    // }
+                }   
                 var year;
                 var month;
                 var date1;
@@ -1331,8 +1362,7 @@
                                   visible:true,
                                   delay:4000,
                                   message:res.Msg
-                               };
-                               
+                               };  
                                vm.delete(data1);
                            } else {
                                vm.$message('保存失败,请重试!')
@@ -1920,8 +1950,8 @@
     }
     .codeResetContainer{
         background: rgba(0,0,0,0.5);
-        position: absolute;
-        z-index: 99;
+        position: fixed;
+        z-index: 999;
         left:0;
         top:0;
         width:100%;

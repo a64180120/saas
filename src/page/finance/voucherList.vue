@@ -36,7 +36,7 @@
                 <div class="inputContainer"><input v-model="sum2" type="text"></div>
             </div>
             <div class="searcherCon">
-                <div @click.stop="highGradeToggle(true)">高级</div>
+                <div @click.stop="highGradeToggle(!highGradeCss)">高级</div>
                 <div  @click="getvoucherList('search')" class="searcherBtn">搜索</div>
                 <div class="searcherValue"><input @keyup.13="getvoucherList('search')" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
                 
@@ -75,22 +75,20 @@
                         <li>
                             <div>凭证日期</div>
                             <div >
-                                <div class="block">
-                                    <el-date-picker type="date" v-model="superSearchVal.date1" placeholder="日期">
-                                    </el-date-picker>
-                                </div>
-                                <span>至</span>
-                                <div class="block">
-                                    <el-date-picker type="date" v-model="superSearchVal.date2" placeholder="日期">
-                                    </el-date-picker>
-                                </div>
+                                <el-date-picker
+                                    v-model="timeValue"
+                                    type="daterange"
+                                    range-separator="至"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期">
+                                </el-date-picker>
                             </div>
                         </li>
                     </ul>
                     <div>
                         <div>
                             <div class="btn" @click.stop="highGradeToggle('reset')">重置</div>
-                            <div class="btn" @click.stop="getvoucherList">搜索</div>
+                            <div class="btn" @click.stop="getvoucherList('highSearch')">搜索</div>
                         </div>    
                     </div>
                 </div>
@@ -136,8 +134,8 @@
                             </li>
                             <li>
                                 <div>合计:{{'sum' | sum(item.Dtls)}}</div>
-                                <div>{{'jie'|sum(item.Dtls)}}</div>
-                                <div>{{'dai'|sum(item.Dtls)}}</div>
+                                <div>{{'jie'| sum(item.Dtls)}}</div>
+                                <div>{{'dai'| sum(item.Dtls)}}</div>
                             </li>
                         </ul>
                     </li>
@@ -326,36 +324,41 @@
                     sum2:'',
                     date1:'',
                     date2:'',
+                    PDate1:'',
+                    PDate2:'',
                     keyword:'',
                     placeholder:'选择辅助项',
                     nodatatext:'',
                     show:true
                 },
-                pickerOptions: {   //eldate时间选择参数
-                    disabledDate(time) {
-                        return time.getTime() > Date.now();
-                    },
+                pickerOptions2: {
                     shortcuts: [{
-                        text: '今天',
+                        text: '最近一周',
                         onClick(picker) {
-                            picker.$emit('pick', new Date());
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', [start, end]);
                         }
                     }, {
-                        text: '昨天',
+                        text: '最近一个月',
                         onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() - 3600 * 1000 * 24);
-                            picker.$emit('pick', date);
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', [start, end]);
                         }
                     }, {
-                        text: '一周前',
+                        text: '最近三个月',
                         onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', date);
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                        picker.$emit('pick', [start, end]);
                         }
                     }]
                 },
+                timeValue: '',
                 voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
                 voucherList:[],
                 highGradeCss:false,
@@ -582,15 +585,25 @@
                     this.assistItemList={id:0,kemu:[]};                                
                     this.superSearchVal.sum1='';
                     this.superSearchVal.sum2='';
-                    this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                    this.superSearchVal.date2=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                    console.log(this.superSearchVal.date1,this.year,(this.month>9?this.month:('0'+this.month)))
+                    this.superSearchVal.PDate1=this.year+'-'+(this.month>9?this.month:('0'+this.month))+'-01';
+                    this.superSearchVal.PDate2=this.year+'-'+(this.month>9?this.month:('0'+this.month))+'-01';
+                    this.timeValue=[this.superSearchVal.PDate1,this.superSearchVal.PDate2];
                     this.superSearchVal.keyword='';                                       
-                }else{
+                }else if(bool){
                     this.highGradeCss = bool;
                     if(!this.superSearchVal.assistItemList.type){
                         this.getAssist();
                     } 
+                }else{
+                    this.highGradeCss = bool;
+                    this.superSearchValPhId=0;                
+                    this.assistItemList={id:0,kemu:[]};                                
+                    this.superSearchVal.sum1='';
+                    this.superSearchVal.sum2='';
+                    this.superSearchVal.PDate1=this.year+'-'+(this.month>9?this.month:('0'+this.month))+'-01';
+                    this.superSearchVal.PDate2=this.year+'-'+(this.month>9?this.month:('0'+this.month))+'-01';
+                    this.timeValue=[this.superSearchVal.PDate1,this.superSearchVal.PDate2];
+                    this.superSearchVal.keyword='';         
                 }   
                 
             },
@@ -1015,8 +1028,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
-               debugger;
-                console.log(Vdata.Mst,this.checkedYear,this.checkedTime)
+        
                if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                  
                    var data = {
@@ -1080,7 +1092,7 @@
                     Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
                 }
                 console.log(Jcount,Dcount)
-                if(Jcount==Dcount){
+                if(Jcount.toFixed(2)==Dcount.toFixed(2)){
                     return true;
                 }else{
                     return false;
@@ -1290,6 +1302,26 @@
                     itemValuePhid:this.superSearchVal.assistItem.PhId,
                     queryfilter:{"PAccper*str*ge*1":this.superSearchVal.date1.replace('-',''),"PAccper*str*le*1":this.superSearchVal.date2.replace('-','')}
                 }
+                if(str=='highSearch'){
+                    data.export2excel='';
+                    if(typeof(this.timeValue[0])=='object'){
+                        var month;
+                        var date;
+                        for(var t in this.timeValue){
+                            month=this.timeValue[t].getMonth()+1;
+                            date=this.timeValue[t].getDate();
+                            this.timeValue[t]=this.timeValue[t].getFullYear()+'-'+(month<10?('0'+month):month)+'-'+(date<10?('0'+date):date);
+
+                        }
+                    }
+                    console.log(this.timeValue)
+                    this.superSearchVal.PDate1=this.timeValue[0].slice(0,10);
+                    this.superSearchVal.PDate2=this.timeValue[1].slice(0,10);
+                    data.queryfilter={
+                        "PDate*date*ge*1":this.superSearchVal.PDate1,
+                        "PDate*date*le*1":this.superSearchVal.PDate2,
+                    }
+                }
                 if(str=='search'){
                     data.sum1=this.sum1,
                     data.sum2=this.sum2,
@@ -1301,7 +1333,7 @@
                         if(res.Status=='success'){
                             this.saasMessage={
                                 message:res.Msg,
-                                delay:3000,
+                                delay:4000,
                                 visible:true
                             };
                             return;
@@ -1331,7 +1363,9 @@
                 this.sideDate=data.sideDate;
                 this.year=this.sideDate.split('-')[0];
                 this.month=this.sideDate.split('-')[1];
-                this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
+                this.superSearchVal.date2=this.superSearchVal.date1=this.superSearchVal.PDate2=this.superSearchVal.PDate1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
+                this.timeValue=[this.superSearchVal.PDate2+'-01',this.superSearchVal.PDate1+'-01'];
+                console.log(this.timeValue)
                 if(this.routerQuery){
                     this.routerQuery=false;
                 }
@@ -1737,6 +1771,7 @@
             
             //数字转换******************
             NUmTurn(value){
+                
                 if(!value) return '';
                 /*原来用的是Number(value).toFixed(0)，这样取整时有问题，例如0.51取整之后为1，感谢Nils指正*/
                 var intPart =  Number(value)|0; //获取整数部分
@@ -1848,6 +1883,7 @@
                 input,select{
                     background: #fff;
                 }
+                
                 background: #eee;
                 padding: 5px 10px ;
                 li{
@@ -1882,7 +1918,7 @@
                         
 
                     }
-                    &:nth-of-type(4)>div:last-of-type,
+                   
                     &:nth-of-type(3)>div:last-of-type{
                         >div{
                             width:45%;
@@ -1895,6 +1931,18 @@
                             width:10%;
                             text-align: center;
                         }
+                    }
+                    &:nth-of-type(4)>div:last-of-type{
+                        width:78%;
+                        >div{
+                            width:100%;
+                            height:32px;
+                            padding-top:0;
+                            padding-bottom:0;
+                            margin:0;
+                            
+                        }
+                        
                     }
                 }
             }
@@ -1939,6 +1987,7 @@
         .voucherNav>ul{
             margin-bottom: 10px;
             position:relative;
+            padding-right:16px;
             z-index:2;
             >a:nth-of-type(2):hover{
                 opacity:1;
@@ -1983,6 +2032,7 @@
         .voucherSelect{
             height:30px;
             position: relative;
+            padding-right:16px;
             >div{
                 float:left;
                 width:25%;
@@ -2033,7 +2083,7 @@
     .codeResetContainer{
         background: rgba(0,0,0,0.5);
         position: fixed;
-        z-index: 99;
+        z-index: 999;
         left:0;
         top:0;
         width:100%;
@@ -2294,7 +2344,8 @@
         height:100%;
         width:5%;
         font-size: 18px;
-       
+        top:0;
+        left:0;
         position:absolute;
             
     }

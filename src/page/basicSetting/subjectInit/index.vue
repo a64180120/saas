@@ -2,7 +2,7 @@
   <div class="container subjectInit">
         <div class="subjectNav">
             <ul>
-                <li @click="navActive(item)" :class="{active:activeNav==item.name}" v-for="(item,index) of navList" :key="index"><span>{{item.name}}</span></li>
+                <li @click="navActive(item)" :class="{active:activeNav==item.code}" v-for="(item,index) of navList" :key="index"><span>{{item.name}}</span></li>
             </ul>
         </div>
         <div class="subjectContent">
@@ -26,7 +26,7 @@
                             </ul>
                         </div>
                     </li>
-                    <li @click.stop="refresh" style="background:#fff;width:30px;min-width:30px;border:0;border-radius:50%;cursor:pointer"><img src="../../../assets/icon/fresh2.svg" alt=""> </li>
+                    <li @click.stop="fresh" style="width:30px;font-size:27px;color:#00b7ee;cursor:pointer;" class="el-icon-refresh" ></li>
                 </ul>
             </div>
             <section  class="listContainer">
@@ -263,6 +263,7 @@
                     <div style="clear:both"></div>
                 </div>
             </div>
+            <div></div>
         </div>
         <message :visible.sync="message.visible" :delay="message.delay" :message='message.message'></message>
         <div class="timeCss">
@@ -308,7 +309,7 @@ export default {
             {code:'asset',name:'资产类'},{code:'liabilities',name:'负债类'},{code:'netAsset',name:'净资产类'},{code:'income',name:'收入类'},{code:'pay',name:'支出类'}
         ],
         checkedYear:'', //年份
-        activeNav:'资产类',  //激活的类别
+        activeNav:'asset',  //激活的类别
 
         updatePage:false,  //是否编辑状态
         CheckRes:'',  //是否初始化
@@ -347,9 +348,8 @@ export default {
       //导航切换**************
     navActive(item){
           var vm=this;
-          this.activeNav=item.name;
-          this.dataList=vm[item.code];
-
+          this.activeNav=item.code;
+          this.dataList=vm[this.activeNav];
     },
     //样式初始化
     initCss(){
@@ -380,8 +380,6 @@ export default {
                             visible:true
                         }
                     }
-
-
                     this.CheckRes=res.CheckRes;
                     this.startInitCss=!res.CheckRes;
                     // console.log(res)
@@ -389,8 +387,6 @@ export default {
                     if(res.CheckRes){
                         this.checkedYear=res.Record[0].JYear;
                     }
-
-
                      this.getSubjectList();
                     // this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
                     // this.year=this.sideDate.split('-')[0];
@@ -408,6 +404,7 @@ export default {
         },
     //获取页面数据*********************
     getSubjectList(){
+        var vm=this;
         var data={
             orgid:this.orgid,
             Ryear:this.year
@@ -442,7 +439,8 @@ export default {
                 }
 
                 this.Mst=res.Mst;
-                this.dataList=this.asset;
+                
+                this.dataList=vm[vm.activeNav];
                 this.initCss();
                 var data1={
                     orgid:this.orgid,
@@ -1048,7 +1046,7 @@ export default {
         this.getSubjectList();
     },
     //刷新
-    refresh(){
+    fresh(){
         this.searchVal='';
         this.choosedData=[];
         for(var ch in this.choosedCss){
@@ -1450,21 +1448,27 @@ export default {
         border-radius: 0 ;
     }
     .addPageCon{
-        width:100%;
-        height:100%;
         position:fixed;
         left:0;
         top:0;
-        z-index:99;
+        right:0;
+        bottom:0;
+        z-index:999;
         font-size:16px;
+        text-align: center;
         color:#666;
         background:rgba(0,0,0,0.5);
+        >div:last-of-type{
+            display: inline-block;
+            height:100%;
+            width:0px;
+            vertical-align: middle;
+        }
         >.addPage{
             width:556px;
             height:396px;
-            position:absolute;
-            left:35%;
-            top:120px;
+            display: inline-block;
+            vertical-align: middle;
             background:#fff;
             padding:5px 10px;
             >ul{

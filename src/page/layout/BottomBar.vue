@@ -1,16 +1,16 @@
 <template>
-    <div style="border:5px solid #fff">
-        <div class="navtitle navCss" @click="Navingclick()" :class="{NavShow:barshow,NavHide:!barshow}">
-            <div></div>
-            <el-button type="success" round size="small"  >功能导航</el-button>
-        </div>
+    <div style="border:5px solid #fff;    box-shadow: 0 0 8px 2px #aaa;">
+        
         <div class="sys-footer" :class="{NavShow:barshow,NavHide:!barshow}" >
             <transition name="move" mode="out-in" appear>
                 <nav-bar   :isCollapse="collapsevule"></nav-bar>
             </transition>
             <div class="bottomBorder"></div> 
         </div>
-        
+        <div class="navtitle navCss" @click="Navingclick()" :class="{NavShow:barshow,NavHide:!barshow}">
+            <div></div>
+            <el-button type="success" round size="small"  >功能导航</el-button>
+        </div>
     </div>
     
 </template>
@@ -56,7 +56,7 @@ export default {
     height: 50px;
     left: -290px;    
     //border-bottom: 1px solid #00B8EE;
-    z-index: 99;
+    z-index: 9;
     bottom: 0px;
     
     .bottomBorder{
@@ -99,7 +99,7 @@ export default {
     height: 60px;
     overflow: hidden;
     left:0;
-    z-index: 999;
+    z-index: 9;
     bottom: 10px;
     text-align: right;
     transition: all 0.5s linear;
@@ -108,9 +108,9 @@ export default {
         position:absolute;
         background: url('../../assets/images/dh.png');
         background-size:cover;
-        width:50px;
+        width:43px;
         height:80%;
-        top:5px ;
+        top:13px ;
         left:-50px;
         color:#333;
         opacity:0;

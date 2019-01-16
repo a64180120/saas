@@ -1,5 +1,5 @@
 <template>
-    <div v-show="visible" class="saasMsgCon" style="z-index:2999;">
+    <div v-show="visible" class="saasMsgCon" style="z-index:9999">
         <div class="saasMsg">
             <p class="title"><span>提示</span>
                 <i @click="close"></i>
@@ -45,7 +45,11 @@ export default {
       }
   },
   props:{
-      delay:Number,
+      delay:{
+          type:Number,
+          default:4000
+          
+        },
       message:String,
       visible:{type:Boolean}
   },
@@ -72,17 +76,27 @@ export default {
     position:fixed;
     left:0;
     top:0;
-    width:100%;
-    height:100%;
-    z-index:2999;
+    right: 0;
+    bottom:0;
+    z-index:9999;
     background:rgba(0,0,0,0.5);
     box-shadow: 0 0 10px 2px #d3e9f9;
+    text-align:center;
+    &:after{
+        content:"";
+        display: inline-block;
+        height:100%;
+        width:0px;
+        vertical-align: middle;
+    }
     >.saasMsg{
         width: 370px;
         height: 220px;
-        position:absolute;
-        top:200px;
-        left:40%;
+        // position:absolute;
+        // top:200px;
+        // left:40%;
+        display: inline-block;
+        vertical-align:middle;
         background: #fff;
         border:1px solid #ccc;
         font-size:14px;

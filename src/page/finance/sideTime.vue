@@ -63,6 +63,9 @@
                 </div>
 
             </div>
+               <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+            <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
+
         </div>
         
 </template>
@@ -92,7 +95,11 @@ export default {
             monthsSelCss:'kuaiji',
             mouseDown:false,
             mouseStartY:'',
-            yearSelCss:false
+            yearSelCss:false,
+            saasMessage:{
+                visible:false,
+                message:''
+            }
         }
     },
     methods:{
@@ -108,8 +115,7 @@ export default {
                         if(!res.CheckRes){
                             this.$message({ showClose: true,message: '当前组织未初始化,请开始初始化!', type: "error"});
                             return;
-                        }
-                        console.log(res)                        
+                        }                      
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.checkedYear=res.Record[0].JYear;
                         this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
@@ -205,7 +211,10 @@ export default {
                     .then(res=>{
                         loading1.close();
                         if(res.Status=='success'){
-                            this.$message('结账成功!');
+                            this.saasMessage={
+                                message:str=='check'?'结账成功!':'反结账成功!',
+                                visible:true
+                            }
                             this.getChecked();
                         }else{
                             this.$message(res.Msg);
