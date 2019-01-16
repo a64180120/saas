@@ -1,7 +1,7 @@
 <template>
     <div class="manageContent">
         <div class="examineTab">
-            <div @click="examineTabFn(true)" :class="{examineTabAct:examineTab}" @LookUnion="ajaxMode">待审核({{dVerifyNum}})</div>
+            <div @click="examineTabFn(true)" :class="{examineTabAct:examineTab}">待审核({{dVerifyNum}})</div>
             <div @click="examineTabFn(false)" :class="{examineTabAct:!examineTab}">已审核({{yVerifyNum}})</div>
         </div>
         <!--******待审核********-->
@@ -31,7 +31,7 @@
                 <!--<router-link to="/organize/add">-->
                     <!--<li>审核</li>-->
                 <!--</router-link>-->
-                <a @click.prevent="routerTo('/admin/orgin/ver')">
+                <a @click.prevent="routerTo('/admin/orgin/ver')" >
                     <li>审核</li>
                 </a>
                 <a @click="verifyMany">
@@ -392,7 +392,7 @@
                             this.$message.success("审核成功");
                             this.editVisible = false;
                             this.ajaxMode();
-                            this.$emit("time-click",{sideDate:this.sideDate,checkedTime:this.checkedTime,checkedYear:this.checkedYear});
+                            this.$emit("time-click");
                             //this.$router.push({path: '/'});
                         }else{
                             this.$message.error('审核失败,请重试!');

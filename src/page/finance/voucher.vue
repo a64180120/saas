@@ -81,7 +81,7 @@
                                         <div >
                                            <span>{{item.SubjectCode}} &nbsp;{{item.SubjectName}}</span> 
                                             <span v-show="item.DtlAccounts.assistItem"  v-for="(assist,index) of item.DtlAccounts.assistItem" 
-                                                    :key="index">{{assist.BaseName?('.'+assist.BaseName):''}}</span>
+                                                    :key="index">{{assist.AuxiliaryName?('.'+assist.AuxiliaryName):''}}{{assist.BaseName?('.'+assist.BaseName):''}}</span>
                                         </div>
                                     </li>
                                     <li v-show="item.SubjectCode"><span v-if="item.balance">余额:</span><span v-if="item.balance">{{item.balance | NumFormat }}</span></li>
@@ -307,9 +307,13 @@
                 }
                 var account;
                 var item;
+               
+                
                 for( var info of this.voucherInfo){
+ 
                     if(info.PhId){
                         for(var dtl of  dtls){
+               
                             if(dtl.PhId==info.PhId){
                                 dtl.SubjectCode=info.SubjectCode;
                                 dtl.SubjectName=info.SubjectName;
@@ -317,6 +321,7 @@
                                 dtl.JSum=info.money.jiefang;
                                 dtl.DSum=info.money.daifang;
                                 dtl.PersistentState=2;
+                          
                                 if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
                                     dtl.DtlAccounts[0].JSum=info.money.jiefang;
                                     dtl.DtlAccounts[0].DSum=info.money.daifang;
@@ -325,13 +330,16 @@
                                     dtl.DtlAccounts[0].Abstract=info.Abstract;
                                     item = info.DtlAccounts.assistItem;
                                     account=dtl.DtlAccounts[0];
-                                    for(var i of item){
-                                        account[i.GLS]=i.PhId;
+                            
+                                    for(var it22 of item){
+                                        account[it22.GLS]=it22.PhId?it22.PhId:it22.PhidAuxiliary;
                                     }
+                                    
+                                    
                                     dtl.DtlAccounts[0].PersistentState=2;
                                 }else if(dtl.DtlAccounts&&info.DtlAccounts.assistItem.length<=0){
                                     dtl.DtlAccounts[0].PersistentState=3;
-                                }else if(!dtl.DtlAccounts&&info.DtlAccounts.assistItem.length>0){
+                                }else if((!dtl.DtlAccounts)&&info.DtlAccounts.assistItem.length>0){
                                     dtl.DtlAccounts=[{
                                     }];
                                     dtl.DtlAccounts[0].JSum=info.money.jiefang;
@@ -343,11 +351,13 @@
                                     item = info.DtlAccounts.assistItem;
                                     account=dtl.DtlAccounts[0];
                                     for(var i of item){
-                                        account[i.GLS]=i.PhId;
+                                        account[i.GLS]=i.PhId?i.PhId:i.PhidAuxiliary;
+                                     
                                     }
                                 }
                             }
                         }
+                        
                     }
                     else if(info.SubjectCode||info.money.jiefang||info.money.daifang||info.Abstract){   
                         var newDtl={
@@ -368,16 +378,23 @@
                                 DSum:info.money.daifang,
                                 PersistentState:1
                             }
+
                             item = info.DtlAccounts.assistItem;
                             for(var i of item){
-                                dt[i.GLS]=i.PhId;
+                                dt[i.GLS]=i.PhId?i.PhId:i.PhidAuxiliary;
+                                console.log(i)
                             }
+                            
                             newDtl.DtlAccounts[0]=dt;
                         }
        
                         dtls.push(newDtl);
+                        
                     }
                 }
+                
+        
+                
                 this.fatherData.Dtls=dtls;
                 for(var del of this.deleteDtls){
                     if(del.PhId){
@@ -419,6 +436,8 @@
                     }
                 }
                 this.Attachements=this.imglist; 
+              
+              
                 return {
                     Mst:this.fatherData,
                     Attachements: this.Attachements
@@ -527,10 +546,12 @@
                     this.voucherInfo[i].Abstract=dtls[i].Abstract;
                     this.voucherInfo[i].money.jiefang=dtls[i].JSum==0?'':dtls[i].JSum;
                     this.voucherInfo[i].money.daifang=dtls[i].DSum==0?'':dtls[i].DSum;
+                   
                     if(dtls[i].DtlAccounts&&dtls[i].DtlAccounts[0].NameValueDtls){
                         this.voucherInfo[i].DtlAccounts.assistItem=dtls[i].DtlAccounts[0].NameValueDtls;
                     }
                 }
+               
                 if(this.voucherInfo.length<5){
                     var leng=5-this.voucherInfo.length;
                     for(var k=0;k<leng;k++){
@@ -629,7 +650,7 @@
                         }else{
                             this.assistList=[]
                         }
-                      
+                        
                         this.moneyInputMask=false;
                     },err => {
                         console.log(err);
@@ -647,6 +668,7 @@
                     item.SubjectCode='';
                     item.SubjectName='';
                 }
+               
                 this.assistItemMask=false;
                 this.assistCheck=false;
                 this.moneyInputHide();

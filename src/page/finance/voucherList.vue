@@ -1015,6 +1015,7 @@
                    this.$message('请输入凭证会计期!')
                    return;
                }
+               debugger;
                 console.log(Vdata.Mst,this.checkedYear,this.checkedTime)
                if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                  
