@@ -9,7 +9,7 @@
         </div>
         <div class="addFormContainer">
             <h6 class="addTitle" v-model="titleName" v-show="showFlam">基层组织账套管理</h6>
-            <h6 class="addTitle" v-show="showFlam2">机关组织账套管理</h6>
+            <h6 class="addTitle" v-show="!showFlam">机关组织账套管理</h6>
             <ul class="addFormItems ul-flexChild">
                 <li>
                     <div class="addFormItemTitle">
@@ -361,6 +361,9 @@ import qs from 'qs';
                 }else{
                     this.showFlam2 = true;
                 }
+            }else{
+                this.$store.commit("tagNav/upexcludeArr", []);
+                this.showFlam = this.$route.query.showFlam;
             }
             console.log(this.showFlam);
         },

@@ -13,6 +13,9 @@
                     <a @click.prevent="handlePage('publish')"><li>发布</li></a>
                     <a @click.prevent="handlePage('nopublish')"><li>取消发布</li></a>
                     <a @click.prevent="handlePage('type')"><li>分类管理</li></a>
+                    <a>
+                        <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;'></li>
+                    </a>
                 </ul>
             </div>
             <div class="auxiliary manageContent">
@@ -149,7 +152,11 @@
                         this.$message({ showClose: true,message: "新闻列表获取错误", type: "error"});
                     })
             },
-
+            //刷新当前页面
+            freshPage(){
+                alert("1");
+                this.getData('');
+            },
             //切换分类触发方法
             navTabTurn(item){
                 this.navActive=item;
@@ -337,6 +344,11 @@
 </script>
 
 <style scoped>
+    .el-icon-refresh:before {
+        content: "\E633";
+        font-size: 20px;
+        color: #00B8EE;
+    }
     .container{
         height:90%;
         overflow-y: auto;

@@ -144,9 +144,12 @@
                     }
 
                     this.publishData = val;
-                    this.$message.success("成功！");
-
-
+                    if(this.publishData === 0){
+                        this.$message.success("取消发布成功！");
+                    }
+                    if(this.publishData === 1){
+                        this.$message.success("发布成功！");
+                    }
                 }).catch(error => {
                     console.log(error);
                     this.$message({showClose: true, message: '附件删除错误', type: 'error'});
