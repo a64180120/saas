@@ -35,17 +35,11 @@
                         <el-input v-model="form.Title"></el-input>
                     </el-form-item>
                     <el-form-item label="内容">
-<<<<<<< .mine
                         <!-- <quill-editor
-
-=======
-                         <el-input v-model="form.Content"></el-input>
-                         <quill-editor
->>>>>>> .theirs
                             v-model="form.Content"
                             ref="editorElem"
                             @blur="onEditorBlur($event)">
-                        </quill-editor>
+                        </quill-editor> -->
                         <tinymce-editor
                             ref="editor"
                             v-model="form.Content"
@@ -68,11 +62,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="信息来源">
-<<<<<<< .mine
-                        <el-input v-model="form.Name" style="width: 200px;"></el-input>
-=======
                         <el-input v-model="form.Name" placeholder="不超过10个汉字！" style="width: 40%"></el-input>
->>>>>>> .theirs
                     </el-form-item>
                     <el-form-item label="制度级别" prop="LevelType">
                         <el-select v-model="form.LevelType" placeholder="" style="width: 40%">
