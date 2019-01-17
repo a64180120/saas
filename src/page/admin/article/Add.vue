@@ -1,5 +1,5 @@
 <template>
-    <div class="sys-page">
+    <div class="sys-page Article_add">
         <div class="container">
             <div class="handle-box">
                 <el-row>
@@ -23,6 +23,7 @@
                         </el-button>
                     </el-col>
                 </el-row>
+
             </div>
             <div class="form" style="float: left;width: 60%;margin-top: 30px;">
                 <el-form
@@ -34,11 +35,17 @@
                         <el-input v-model="form.Title"></el-input>
                     </el-form-item>
                     <el-form-item label="内容">
+<<<<<<< .mine
                         <!-- <quill-editor
+
+=======
+                         <el-input v-model="form.Content"></el-input>
+                         <quill-editor
+>>>>>>> .theirs
                             v-model="form.Content"
                             ref="editorElem"
                             @blur="onEditorBlur($event)">
-                        </quill-editor> -->
+                        </quill-editor>
                         <tinymce-editor
                             ref="editor"
                             v-model="form.Content"
@@ -55,16 +62,20 @@
                     :rules="rules"
                     label-width="80px">
                     <el-form-item label="信息类别" prop="PhIdType">
-                        <el-select v-model="form.PhIdType" placeholder="请选择信息类别">
+                        <el-select v-model="form.PhIdType" placeholder="" style="width: 40%">
                             <el-option v-for="item in articleType" :key="item.PhId" :label="item.Name"
-                                       :value="item.PhId"></el-option>
+                                       :value="item.PhId" style="height: 100%"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="信息来源">
+<<<<<<< .mine
                         <el-input v-model="form.Name" style="width: 200px;"></el-input>
+=======
+                        <el-input v-model="form.Name" placeholder="不超过10个汉字！" style="width: 40%"></el-input>
+>>>>>>> .theirs
                     </el-form-item>
                     <el-form-item label="制度级别" prop="LevelType">
-                        <el-select v-model="form.LevelType" placeholder="请选择制度级别">
+                        <el-select v-model="form.LevelType" placeholder="" style="width: 40%">
                             <el-option v-for="item in LevelData" :key="item.value" :label="item.name"
                                        :value="item.value"></el-option>
                         </el-select>
@@ -394,5 +405,19 @@
         height: 80px;
         line-height: 80px;
         text-align: center;
+    }
+    .Article_add .container {
+        padding: 20px 20px 20px 20px;
+        margin-bottom: 50px;
+        background: #fff;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px 2px #d3e9f9;
+        height: 100%;
+    }
+    .Article_add .el-input--suffix .el-input__inner {
+        margin: 0;
+        padding-right: 0;
+        height: 100%;
     }
 </style>
