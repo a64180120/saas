@@ -95,6 +95,12 @@ const staticRoute = [
                 path: "picture",
                 component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page',name:'轮播图管理'}
+            },
+            {
+                //文章管理 -预览
+                path: "article/detail",
+                component: () => import("../page/admin/article/Detail"),
+                meta:{ requireAuth:true,type:'button',name:'信息预览'}
             }
         ]
     },
