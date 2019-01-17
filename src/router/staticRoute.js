@@ -76,25 +76,31 @@ const staticRoute = [
                 //菜单管理
                 path: "menu",
                 component: () =>import("../page/admin/menu"),
-                meta:{ requireAuth:true ,type:'page',name:'用户管理'}
+                meta:{ requireAuth:true ,type:'page',name:'菜单管理'}
             },
             {
                 //文章管理
                 path: "article",
                 component: () =>import( "../page/admin/article/List"),
-                meta:{ requireAuth:true ,type:'page',name:'用户管理'}
+                meta:{ requireAuth:true ,type:'page',name:'信息管理'}
             },
             {
                 //文章管理 -新增
                 path: "article/add",
                 component: () => import("../page/admin/article/Add"),
-                meta:{ requireAuth:true,type:'button',name:'新闻管理'}
+                meta:{ requireAuth:true,type:'button',name:'信息编辑'}
             },
             {
                 //图片管理
                 path: "picture",
                 component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page',name:'轮播图管理'}
+            },
+            {
+                //文章管理 -预览
+                path: "article/detail",
+                component: () => import("../page/admin/article/Detail"),
+                meta:{ requireAuth:true,type:'button',name:'信息预览'}
             }
         ]
     },

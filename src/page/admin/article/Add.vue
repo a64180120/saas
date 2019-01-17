@@ -1,5 +1,5 @@
 <template>
-    <div class="sys-page">
+    <div class="sys-page Article_add">
         <div class="container">
             <div class="handle-box">
                 <el-row>
@@ -23,23 +23,29 @@
                         </el-button>
                     </el-col>
                 </el-row>
+
             </div>
             <div class="form" style="float: left;width: 60%;margin-top: 30px;">
                 <el-form
                     ref="form"
                     :model="form"
+                    :rules="rules"
                     label-width="80px">
-                    <el-form-item label="标题">
+                    <el-form-item label="标题" prop="Title">
                         <el-input v-model="form.Title"></el-input>
                     </el-form-item>
                     <el-form-item label="内容">
-                        <!-- <el-input v-model="form.Content"></el-input> -->
                         <!-- <quill-editor
                             v-model="form.Content"
                             ref="editorElem"
                             @blur="onEditorBlur($event)">
-
                         </quill-editor> -->
+                        <tinymce-editor
+                            ref="editor"
+                            v-model="form.Content"
+                            :initvalue="form.Content"
+                            @onClick='tinymceClick'>
+                        </tinymce-editor>
                     </el-form-item>
                 </el-form>
             </div>
@@ -47,18 +53,19 @@
                 <el-form
                     ref="form2"
                     :model="form"
+                    :rules="rules"
                     label-width="80px">
-                    <el-form-item label="信息类别">
-                        <el-select v-model="form.PhIdType" placeholder="请选择信息类别">
+                    <el-form-item label="信息类别" prop="PhIdType">
+                        <el-select v-model="form.PhIdType" placeholder="" style="width: 40%">
                             <el-option v-for="item in articleType" :key="item.PhId" :label="item.Name"
-                                       :value="item.PhId"></el-option>
+                                       :value="item.PhId" style="height: 100%"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="信息来源">
-                        <el-input v-model="form.Name"></el-input>
+                        <el-input v-model="form.Name" placeholder="不超过10个汉字！" style="width: 40%"></el-input>
                     </el-form-item>
-                    <el-form-item label="制度级别">
-                        <el-select v-model="form.LevelType" placeholder="请选择制度级别">
+                    <el-form-item label="制度级别" prop="LevelType">
+                        <el-select v-model="form.LevelType" placeholder="" style="width: 40%">
                             <el-option v-for="item in LevelData" :key="item.value" :label="item.name"
                                        :value="item.value"></el-option>
                         </el-select>
@@ -92,11 +99,12 @@
 <script>
     import {mapState, mapActions} from 'vuex'
     import httpConfig from '@/util/ajaxConfig'
+    import tinymceEditor from '@/components/tinymce/tinymce-editor.vue'
 
     //文章新增、编辑
     export default {
         name: "Article_add",
-        components: {},
+        components: { tinymceEditor },
         data() {
             return {
                 type: '',
@@ -114,6 +122,17 @@
                     AttachmentSize: '',     //图片大小
                     Attachment: []   //附件
                 },
+                rules: {
+                    Title: [
+                        { required: true, message: '请输入标题', trigger: 'blur' }
+                    ],
+                    PhIdType: [
+                        { required: true, message: '请选择信息类别', trigger: 'change' }
+                    ],
+                    LevelType: [
+                        { required: true, message: '请选择制度级别', trigger: 'change' }
+                    ]
+                },
                 LevelData: [
                     {name: '国家', value: 1},
                     {name: '省级', value: 2},
@@ -127,7 +146,7 @@
         },
         //加载数据
         mounted: function () {
-            this.init();
+            this.initMethod();
         },
         //计算
         computed: {
@@ -145,7 +164,7 @@
                 uploadFile: 'uploadFile/Newsupload'
             }),
             //数据初始化
-            init() {
+            initMethod() {
                 this.type = this.$route.query.type;
                 this.phid = this.$route.query.phid;
                 if (this.type === 'add') {
@@ -154,11 +173,6 @@
                     //获取编辑数据
                     this.getNewsData(this.phid);
                 }
-            },
-            //富文本框初始化
-            onEditorBlur: function (e) {
-                console.log('editor change!', e);
-                console.log(e.container.innerHTML);//一大推东西，你也可以输出e，看看里面的结构
             },
             //获取文章类别数据
             getTypeData() {
@@ -195,29 +209,36 @@
                     })
                     .catch(err => {
                         console.log(err)
-                        this.$message({showClose: true, message: "辅助项获取错误", type: "error"});
+                        this.$message({showClose: true, message: "文章获取错误", type: "error"});
                     })
             },
             /**
              * 预览按钮事件
              */
             preview() {
-
+                this.$router.push({path: '/admin/article/detail', query: { phid:this.form.PhId }});
             },
             /**
              * 保存事件
              */
             onSubmit() {
 
+                this.$refs['form'].validate((valid) => {
+                    if (valid) {
+                        this.$refs['form2'].validate((valid2) => {
+                            if(valid2){
+                                if (this.type === 'add') {
+                                    //新增保存
+                                    this.AddSave();
 
-                if (this.type === 'add') {
-                    //新增保存
-                    this.AddSave();
-
-                } else if (this.type === 'edit') {
-                    //编辑保存
-                    this.UpdateSave();
-                }
+                                } else if (this.type === 'edit') {
+                                    //编辑保存
+                                    this.UpdateSave();
+                                }
+                            }
+                        });
+                    }
+                });
             },
             //新增
             async AddSave() {
@@ -253,9 +274,9 @@
                     }
                     this.$message.success("新增成功!");
                 })
-                    .catch(err => {
-                        console.log(err)
-                    })
+                .catch(err => {
+                    console.log(err)
+                })
             },
             //编辑
             async UpdateSave() {
@@ -331,6 +352,9 @@
                     console.log(error);
                     this.$message({showClose: true, message: '上传附件失败', type: 'error'})
                 })
+            },
+            tinymceClick(e,tinymceObj){
+                console.log(e);
             }
         }
     }
@@ -371,5 +395,19 @@
         height: 80px;
         line-height: 80px;
         text-align: center;
+    }
+    .Article_add .container {
+        padding: 20px 20px 20px 20px;
+        margin-bottom: 50px;
+        background: #fff;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px 2px #d3e9f9;
+        height: 100%;
+    }
+    .Article_add .el-input--suffix .el-input__inner {
+        margin: 0;
+        padding-right: 0;
+        height: 100%;
     }
 </style>

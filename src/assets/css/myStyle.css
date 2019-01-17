@@ -7,17 +7,6 @@
 .el-input__icon{
     line-height:30px;
 }
-*{padding:0; margin:0;box-sizing: border-box;font-family: myFont,PingFang SC,Arial, Helvetica, sans-serif,SimSun,NSimSun !important}
-/* @font-face {
-    font-family: 'myFont';
-    src: url('./font/pingfang.ttf');
-    font-weight: normal;
-    font-style:normal;
-} */
-
-ul{
-    list-style: none;
-}
 .flexPublic>i,
 .flexPublic>li,
 .flexPublic>ul,
