@@ -9,7 +9,7 @@
                 <li>
                     <div>类别名称</div>
                     <div class="inputContainer">
-                        <input type="text" v-model="formData.BaseName">
+                        <input type="text" v-model="formData.Name">
                     </div>
                     <div @click="fastCreate">立即创建</div>
                 </li>
@@ -37,13 +37,10 @@
                     <li>{{item.Code}}</li>
                     <li>{{item.Name}}</li>
                     <li>
-                        <i v-show="!updateCss[index].checked"
-                           :class="{newAddStateTrue:item.EnabledMark==0,newAddStateFalse:item.EnabledMark==1}"></i>
+                        <i v-show="!updateCss[index].checked" :class="{newAddStateTrue:item.EnabledMark==0,newAddStateFalse:item.EnabledMark==1}"></i>
                         <div v-show="updateCss[index].checked">
-                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark"
-                                          @change="radioChange(item,index)" value=0>启用</label>
-                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark"
-                                          @change="radioChange(item,index)" value=1>停用</label>
+                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark" @change="radioChange(item,index)" value=0>启用</label>
+                            <label><input type="radio" :name="item.Name" v-model="item.EnabledMark" @change="radioChange(item,index)" value=1>停用</label>
                         </div>
                     </li>
                     <li><i @click.stop="deleteData(item,index)" v-show="deleteCss[index].checked"></i></li>
@@ -76,10 +73,9 @@
         },
         data() {
             return {
-                formData: {Code: '', Name: '', EnabledMark: 0},
+                formData: { Code: '', Name: '', EnabledMark: 0 },
                 dataList: [],
                 deleteList: [],
-                updateList: [],
                 updateCss: [],
                 deleteCss: []
             }
@@ -119,19 +115,14 @@
             //新增保存
             newAdd() {
 
-                for (var del of this.deleteList) {
-                    let index = this.updateList.findIndex(v => v.PhId === del.PhId);
-                    if (index != -1) {
-                        this.updateList.splice(index, 1, del);
-                    } else {
-                        this.updateList.push(del);
-                    }
+                for(var del of this.deleteList){
+                    this.dataList.push(del);
                 }
 
                 let data = {
                     uid: this.uid,
                     orgid: this.orgid,
-                    infoData: this.updateList
+                    infoData: this.dataList
                 };
 
                 var vm = this;
@@ -157,28 +148,36 @@
             },
             //立即创建
             fastCreate() {
-
                 //名称不能为空
-                if (this.formData.BaseName === '') {
+                if (this.formData.Name === '') {
                     this.$message.warning("请填写类别名称！");
                     return;
                 }
+                if (this.dataList.some(v => v.Name === this.formData.Name)){
+                    this.$message.warning("类别名称重复！");
+                    return;  
+                }
+                
+                var length=this.dataList.length;
+
+                var lastCode= length==0?'0000' :this.dataList[length-1].Code;
 
                 var addData = {
                     PersistentState: 1,
                     PhId: 0,
                     ParentId: 0,
                     Category: '',
-                    Code: this.formData.Code,
+                    Code: dealAddString(lastCode),
                     Name: this.formData.Name,
-                    SortCode: this.dataList.length,
+                    SortCode: length+1||1,
                     Description: '',
                     EnabledMark: this.formData.EnabledMark
                 };
 
 
-                this.updateList.push(addData);
+                this.dataList.push(addData);
 
+                //清除状态
                 this.$nextTick(() => {
                     this.formData.Code = '';
                     this.formData.Name = '';
@@ -199,30 +198,35 @@
                 this.initCss();
                 this.btnShow('delete');
             },
-            radioChange(item, index) {
-                //数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
-                item.PersistentState = 2
-                if (this.updateList.some(v => v.PhId === item.PhId)) return
-
-                this.updateList.push(item);
-
-                console.log(this.updateList);
-            },
             initCss() {
                 for (var i in this.dataList) {
                     this.updateCss[i] = {checked: false}
                     this.deleteCss[i] = {checked: false}
                 }
             },
+            radioChange(item, index) {
+                //数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
+
+                //if (this.dataList.some(v => v.PhId === item.PhId)) return
+                if(item.PersistentState==1)
+                {
+                    this.dataList.splice(index,1,item);
+                }else{
+
+                    item.PersistentState = 2
+                    this.dataList.splice(index,1,item);
+                }
+
+            },
             //按钮事件
             btnShow(val) {
-                if (val == 'delete') {
-                    for (var del of this.deleteCss) {
-                        del.checked = !del.checked;
+                if(val=='delete'){
+                    for(var del of this.deleteCss){
+                        del.checked=!del.checked;
                     }
-                } else if (val == 'update') {
-                    for (var up of this.updateCss) {
-                        up.checked = !up.checked;
+                }else if(val=='update'){
+                    for(var up of this.updateCss){
+                        up.checked=!up.checked;
                     }
                 }
                 this.$forceUpdate();

@@ -552,7 +552,7 @@
                 this.dialogState = "add";
                 this.dialogTitle = "新增";
                 this.editVisible = true;
-
+                this.form={enabledMark: "0",};
                 this.$nextTick(() => {
                     this.$refs['forms'].resetFields();
                 })
