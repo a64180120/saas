@@ -22,26 +22,52 @@
                     <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                 </ul>
             </div>
-            <div class="formData" ref="printFrom">
-                <tree-table
-                    :isindex="false"
-                    :data="inMoney"
-                    :expand-all="expandAll"
-                    node-key="KCode"
-                    :columns="columns"
-                    :header-cell-style="{background:'#d3e9f9',color:'#000','text-align':'center'}"
-                    v-loading="loading"
-                    highlight-current-row
-                    :extraheight='extraheight'
-                    border>
-                </tree-table>
-                <!--<ul>
-                    <li v-for="item in columns">{{item.text}}</li>
-                </ul>
-                <ul v-for="">
+                <div class="formData" >
+                    <ul>
+                        <li>编码</li>
+                        <li>名称</li>
+                        <li>本月数(元)</li>
+                        <li>本年累计数(元)</li>
+                    </ul>
+                    <div class="formData formData_content" ref="printFrom">
+                        <template v-for="item in inMoney">
+                            <ul  class="formDataItems flexPublic">
+                                <li  :class="{bolder:item.flag}" style="text-indent: 20px">{{item.KCode}}</li>
+                                <li :class="{bolder:item.flag,'align-center':item.flag}"  style="text-indent: 50px">{{item.KName}}</li>
+                                <li class="align-right">{{item.StartSum}}</li>
+                                <li class="align-right">{{item.EndSum}}</li>
+                            </ul>
+                            <template v-if="item.children.length>0">
+                                <ul  class="formDataItems flexPublic" v-for="n in item.children">
+                                    <li :class="{bolder:item.flag}" style="text-indent: 35px">{{n.KCode}}</li>
+                                    <li :class="{bolder:item.flag,'align-center':item.flag}"  style="text-indent: 50px">{{n.KName}}</li>
+                                    <li class="align-right">{{n.StartSum}}</li>
+                                    <li class="align-right">{{n.EndSum}}</li>
+                                </ul>
+                            </template>
+                        </template>
 
-                </ul>-->
-            </div>
+
+
+                    </div>
+                </div>
+
+
+
+                <!--<div class="formData" ref="printFrom">
+                    <tree-table
+                        :isindex="false"
+                        :data="inMoney"
+                        :expand-all="expandAll"
+                        node-key="KCode"
+                        :columns="columns"
+                        :header-cell-style="{background:'#d3e9f9',color:'#000','text-align':'center'}"
+                        v-loading="loading"
+                        highlight-current-row
+                        :extraheight='extraheight'
+                        border>
+                    </tree-table>
+                </div>-->
             </div>
             <div class="timeSelectBox">
                 <time-select-bar @item-click="dateChoose" :showtype="'singleTime'"></time-select-bar>
@@ -227,29 +253,39 @@
                         KCode:'一、收入',
                         KName:'',
                         StartSum:'',
-                        EndSum:''
+                        EndSum:'',
+                        children:{},
+                        flag:true
                     }],indata,[{
                         KCode:'',
                         KName:'本期合计收入',
                         StartSum:this.changeNum(indata_StartSum),
-                        EndSum:this.changeNum(indata_EndSum)
+                        EndSum:this.changeNum(indata_EndSum),
+                        children:{},
+                        flag:true
                     }],[{
                         KCode:'二、支出',
                         KName:'',
                         StartSum:'',
-                        EndSum:''
+                        EndSum:'',
+                        children:{},
+                        flag:true
                     }],outdata,[{
                         KCode:'',
                         KName:'本期合计支出',
                         StartSum:this.changeNum(outdata_StartSum),
-                        EndSum:this.changeNum(outdata_EndSum)
+                        EndSum:this.changeNum(outdata_EndSum),
+                        children:{},
+                        flag:true
                     }],[{
                         KCode:'三、本期结余',
                         KName:'',
                         StartSum:this.changeNum(indata_StartSum-outdata_StartSum),
-                        EndSum:this.changeNum(indata_EndSum-outdata_EndSum)
+                        EndSum:this.changeNum(indata_EndSum-outdata_EndSum),
+                        children:{},
+                        flag:true
                     }])
-
+                    console.log(this.inMoney);
                 }).catch(error =>{
                     console.log(error);
                     this.loading = false;
@@ -429,19 +465,21 @@
             height: inherit !important;
         }
     }
-   /* .reportBox{
-        margin-right: 60px;
-    }
-    .timeSelectBox{
-        position: fixed;
-        right: 0;
-        top: 110px;
-        bottom:0;
-        width: 60px;
-        z-index: 2;
-    }*/
     .unionState>ul>li{
         width:100%;
+    }
+    .formData_content{
+        position: absolute;
+        overflow-y: scroll;
+        bottom: -50px;
+        top: 80px;
+        left: 0;
+        right: -17px;
+    }
+
+    .formData_content>ul:first-child{
+        background: transparent;
+        margin-top: 0;
     }
     .formData>ul>li{
         border-right:1px solid #fff;
@@ -452,6 +490,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        padding: 0 15px;
     }
     .formData>ul>li:nth-of-type(2){
         width:20%;
@@ -469,7 +508,7 @@
         border-right:1px solid #ebeef5;
         border-left:0;
         border-bottom:0;
-        text-align: center;
+        text-align: left;
         line-height: 40px;
         height:40px;
         font-size: 13px;
@@ -479,80 +518,22 @@
     .formData>ul.formDataItems>li:first-child{
         border-left:1px solid #ebeef5;
     }
-    .unionLists{
-        width:20%;
-        align-self: flex-start;
-        margin-right: 10px;
-        margin-top: 10px;
-    }
-    .unionLists~.formData{
-        width:80%;
-        align-self: flex-start;
-    }
-    .unionLists>p{
-        text-align: center;
-        background: #83c350;
-        height:50px;
-        line-height: 50px;
-        color:#fff;
-        font-size: 15px;
-        margin-bottom: 5px;
-
-    }
-    .unionListsContent ul{
-        padding-left: 15px;
-        position: relative;
-    }
-    .unionListsContent ul:before{
-        content:"";
-        height:100%;
-        width:1px;
-        border-left:1px dotted #aaa;
-        position: absolute;
-        left:7.5px;
-    }
-    .unionListsContent ul>li{
-        position: relative;
-        cursor: pointer;
-    }
-    .unionListsContent ul>li:before{
-        content:"";
-        position: absolute;
-        width:7.5px;
-        left:-7.5px;
-        top:9px;
-        border-top: 1px dotted #aaa;
-    }
-    .unionListsContent ul>li:last-child:after{
-        content:"";
-        height:100%;
-        width:7.5px;
-        position: absolute;
-        left:-7.5px;
-        top:10px;
-        background: #fff;
-    }
     .formData>ul.formDataItems>li:first-of-type{
         text-align: left;
     }
-    .manageContent>.formData>ul.formDataItems>li:first-of-type{
-        width:50%;
-        padding-left: 10px;
+
+    .formData>ul.formDataItems>li.bolder{
+        font-weight: bold;
     }
-    .manageContent>.formData>ul.formDataList>li{
-        padding-left: 15px;
-        width:25%;
+    .formData>ul.formDataItems>li.align-center{
+        text-indent: 0px !important;
+        text-align: center;
     }
-    .manageContent>.formData>ul.formDataList>li:first-of-type{
-        width:25%;
+    .formData>ul.formDataItems>li.align-right{
+        text-align: right;
     }
-    .align-center{
-        text-align: center!important;
-    }.selectContainer>select {
+    .selectContainer>select {
          background-color: transparent;
          line-height: 30px;
      }
-   .bolder{
-       font-weight: bold;
-   }
 </style>

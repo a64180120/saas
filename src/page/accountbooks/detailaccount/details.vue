@@ -93,6 +93,7 @@
                                 class="filter-tree"
                                 :data="subjectLists"
                                 :props="defaultProps"
+                                :highlight-current="true"
                                 node-key="PhId"
                                 :filter-node-method="filterNode"
                                 @node-click="handleNodeClick"
@@ -220,12 +221,14 @@
                 pageSize: 25, //pageSize
                 pageIndex: 0, //pageIndex
                 testIndex:0,
+                searchYear:'',
                 totalCount: 0, //总页数
                 busy:true,    //是否正在加载过程中
                 dataInfo: [],
                 dataInfoMonth: {},//月初数据
                 selectSubject:'',  //选择科目
                 date1:{choosedYear:'',
+                    choosedYearEnd:'',
                        choosedMonth:'',
                        choosedMonthEnd:''},
                 inputCode:'',//搜索框输入项目编码
@@ -358,6 +361,7 @@
             dateChoose:function(val){
                 let time=val;
                 this.date1=time;
+                this.searchYear=time.choosedYear;
                 this.getData(false);
             },
             //手动刷新voucher组件**************************
@@ -420,7 +424,6 @@
                     //清除分页查询页面增长，避免数据查询出错
                     this.pageIndex=0;
                 }
-
                 let year='';
                 let Pmonth='';
                 if(this.date1.choosedYear==''){
@@ -428,13 +431,21 @@
                     let currentyear=currentYear.getFullYear(currentYear);
                     let currentMonth=currentYear.getMonth()+1;
                     this.date1.choosedYear=currentyear;
+                    this.date1.choosedYearEnd=currentyear;
                     this.date1.choosedMonth=currentMonth;
                     this.date1.choosedMonthEnd=currentMonth;
-                    year=currentyear;
+                    this.searchYear=this.date1.choosedYear;
+                    year=this.searchYear;
                     Pmonth=currentMonth+','+currentMonth;
                 }else{
-                    year=this.date1.choosedYear;
-                    Pmonth=this.date1.choosedMonth+','+this.date1.choosedMonthEnd;
+                    year=this.searchYear;
+                    if(year==this.date1.choosedYear&&year!=this.date1.choosedYearEnd){
+                        Pmonth=this.date1.choosedMonth+','+12;
+                    }else if(year>this.date1.choosedYear&&year<this.date1.choosedYearEnd){
+                        Pmonth=1+','+12;
+                    }else{
+                        Pmonth=1+','+this.date1.choosedMonthEnd;
+                    }
                 }
                 var data = {
                     uid: this.uid,
@@ -474,12 +485,16 @@
                         this.totalCount=res.totalRows;
                         this.pageIndex++;  //滚动之后加载第二页
                         if(flag){//如果flag为true则表示分页
-                            if(res.Record.length<this.pageSize){
+                            if(res.Record.length<this.pageSize&&year==this.date1.choosedYearEnd){
                                 for(var i in res.Record){
                                     this.dataInfo.push(res.Record[i]);  //concat数组串联进行合并
                                 }
                                 this.busy=true;//禁用滚动加载
                             }else{
+                                if(res.Record.length<this.pageSize&&year<this.date1.choosedYearEnd){
+                                    this.searchYear++;
+                                    this.pageIndex=0;
+                                }
                                 for(var i in res.Record){
                                     this.dataInfo.push(res.Record[i]);  //concat数组串联进行合并
                                 }
@@ -519,9 +534,11 @@
                     let currentyear=currentYear.getFullYear(currentYear);
                     let currentMonth=currentYear.getMonth()+1;
                     this.date1.choosedYear=currentyear;
+                    this.date1.choosedYearEnd=currentyear;
                     this.date1.choosedMonth=currentMonth;
                     this.date1.choosedMonthEnd=currentMonth;
-                    year=currentyear;
+                    this.searchYear=currentyear;
+                    year=this.searchYear;
                     Pmonth=currentMonth+','+currentMonth;
                     if(currentMonth==1){
                         return
@@ -616,6 +633,11 @@
                         this.selectItem=res[0];
                         this.selectSubject=res[0];
                         this.inputCode=res[0].KCode;
+
+                        this.$nextTick(()=>{
+                            this.$refs.subjectTree.setCurrentKey(this.subjectLists[0].PhId);
+                        })
+
                         //加载第一个科目的明细
                         this.getData(false);
                         this.KBalanceType=res[0].KBalanceType
@@ -679,17 +701,6 @@
                 }
 
             },
-            // unionListOpen($event) {
-            //     var e = $event.target;
-            //     if (e.className == "moreList") {
-            //         e.className = "moreList moreListOpen";
-            //         e.nextElementSibling.style.display = 'none';
-            //     }
-            //     else if (e.className == "moreList moreListOpen") {
-            //         e.className = "moreList"
-            //         e.nextElementSibling.style.display = 'block';
-            //     }
-            // },
             //科目过滤
             filterNode(value, data) {
                 if (!value) return true;
@@ -810,7 +821,8 @@
         //刷新
             refresh:function(){
                 this.getData(false);
-            }
+            },
+
         }
     }
 </script>
@@ -895,18 +907,6 @@
     .searcherValue {
         border-radius: 15px 0 0 15px;
     }
-    /*.reportBox{
-        margin-right: 60px;
-        height: 100%;
-    }
-    .timeSelectBox{
-        position: fixed;
-        right: 0;
-        top: 110px;
-        bottom:0;
-        width: 60px;
-        z-index: 99;
-    }*/
     .unionState>ul>li{
         width:100%;
     }
@@ -1104,9 +1104,12 @@
         z-index: 99;
         background-color: #fff;
         width: 339px;
-        height: 250px;
+        height: 230px;
         box-shadow: 0 0 6px 2px #c9ccce;
         border-radius: 10px 10px;
+    }
+    .searchPanel input:focus{
+        box-shadow:0 0 3px .1px #00B8EE;
     }
     .searchPanel .flexPublic{
         padding: 5px 10px;
@@ -1116,9 +1119,10 @@
         height: 29px;
         background-color: #00b7ee;
         color: #fff;
+        border-radius: 10px 10px 0 0;
     }
     .searchPanel .searchPanel_title div:nth-of-type(2){
-        padding: 5px;
+        padding: 3px;
         border-radius: 15px;
         background: white;
         font-size: 15px;
@@ -1140,8 +1144,9 @@
         padding-left: 5px;
     }
     .searchPanel .searchPanel_bottom{
-        height: 86px;
+        height: 65px;
         border-top: 1px solid #dddfe4;
+        padding: 0 40px;
     }
     .searchPanel .searchPanel_btn{
         width: 135px;
@@ -1154,9 +1159,33 @@
     }
 
     .searchPanel .greybtn{
-        background-color: #aaa;
+        border: 1px solid #ccc;
+        color: #fff;
+        background-color: #ccc;
+        padding: 0px 15px;
+        width: 100px;
+        border-radius: 3px;
     }
-   .searchPanel .bluebtn{
-        background-color: #00b7ee;
+    .searchPanel .greybtn:hover{
+        color: #ccc;
+        background-color: #fff;
     }
+    .searchPanel .bluebtn{
+        border: 1px solid #00B8EE;
+        color: #FFF;
+        background: #00B8EE;
+        padding: 0px 15px;
+        width: 100px;
+        border-radius: 3px;
+    }
+    .searchPanel .bluebtn:hover{
+        color: #00B8EE;
+        background: #fff;
+    }
+</style>
+<style>
+   .timeSelect .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+       color: #00b8ee;
+    }
+
 </style>

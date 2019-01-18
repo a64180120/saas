@@ -295,6 +295,7 @@ ul{
 }
 .popper{
     top: 235px !important;
+    left: 749px !important;
 }
 .sys-header .collapse-btn{
     background: #fff;

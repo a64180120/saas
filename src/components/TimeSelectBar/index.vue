@@ -57,7 +57,7 @@
                             <p style="display:none;"></p>
                             <span style="width:13px;display:none;">-</span>
                             <p>{{choosedYear}}</p>
-                            <i class="el-icon-plus" @click="((choosedYear<(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))?choosedYear++:choosedYear=(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))"></i>
+                            <i class="el-icon-plus" @click="((choosedYear<choosedYearEnd)?choosedYear++:choosedYear=choosedYearEnd)"></i>
                         </div>
                         <ul>
                             <template v-for="n in 12">
@@ -69,15 +69,15 @@
                     </div>
                     <div id="box" class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
                         <div id="Current_year1" class="Current_year" >
-                            <i class="el-icon-minus" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
+                            <i class="el-icon-minus" @click="((choosedYearEnd>choosedYear)?choosedYearEnd--:choosedYearEnd=choosedYear)"></i>
                             <p style="display:none;"></p>
                             <span style="width:13px;display:none;">-</span>
-                            <p>{{choosedYear}}</p>
-                            <i class="el-icon-plus" @click="((choosedYear<(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))?choosedYear++:choosedYear=(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))"></i>
+                            <p>{{choosedYearEnd}}</p>
+                            <i class="el-icon-plus" @click="((choosedYearEnd<(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))?choosedYearEnd++:choosedYearEnd=(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))"></i>
                         </div>
                         <ul id="Month"  style="border-left: 1px solid #eee;">
                             <template v-for="n in 12">
-                                <li :class="{'uncatchMont':n>jiezhangMonth&&choosedYear==jiezhangYear||choosedYear>jiezhangYear,'selectMonth':n==choosedMonthEnd}"
+                                <li :class="{'uncatchMont':n>jiezhangMonth&&choosedYearEnd==jiezhangYear||choosedYearEnd>jiezhangYear||choosedYear==choosedYearEnd&&choosedMonth>n,'selectMonth':n==choosedMonthEnd}"
                                     @click="(n>=choosedMonth)?chosedataS(n,2):''"
                                 >{{n}}月</li>
                             </template>
@@ -134,6 +134,9 @@
               currentmonth:'',//当前月
 
               choosedYear:'',//选择的年份
+              choosedYearEnd:'',//选择的结束年份
+
+
               choosedMonth:'',//选择的开始月份
               choosedMonthEnd:'',//选择的结束月份
 
@@ -166,6 +169,7 @@
                 // this.currentmonth=currentMonth;
                 this.currentmonth=currentMonth;
                 this.choosedYear=currentyear;
+                this.choosedYearEnd=currentyear;
                 this.choosedMonth=currentMonth;
                 this.choosedMonthEnd=currentMonth;
                 this.startyear=(this.startYear==0?currentyear:this.startYear);
@@ -173,6 +177,7 @@
 
             let data={
                 'choosedYear':this.jiezhangYear,
+                'choosedYearEnd':this.jiezhangYear,
                 'choosedMonth':this.jiezhangMonth,
                 'choosedMonthEnd':this.jiezhangMonth
             }
@@ -218,9 +223,11 @@
                 }
                 let data={
                     'choosedYear':this.choosedYear,
+                    'choosedYearEnd':this.choosedYearEnd,
                     'choosedMonth':this.choosedMonth,
                     'choosedMonthEnd':this.choosedMonthEnd
                 }
+                console.log(data);
                 this.$emit('item-click',data)
             },
 //获取当前结账的最新月份************
@@ -232,6 +239,8 @@
                 }
                 this.$axios.get('/PBusinessConfig/GetPBusinessConfigList',{params:data})
                     .then(res=>{
+                        // res.Record[0].JYear=2030;
+                        // res.Record[0].JAccountPeriod==0;
                         if(res.Record.length>0){
                             if(this.startyear==res.Record[0].JYear&&res.Record[0].JAccountPeriod==0){
                                 this.jiezhangYear=res.Record[0].JYear;
@@ -400,6 +409,8 @@
         text-align:center;
         color:#04a9f4;
         line-height:25px;
+        z-index: 1;
+        box-shadow: 0px 1px 10px 0.1px #d3e9f9;
     }
     .name{
         width: 40px !important;
