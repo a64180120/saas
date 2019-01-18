@@ -50,7 +50,7 @@ export default {
         language_url: '/static/tinymce/zh_CN.js',
         language: 'zh_CN',
         skin_url: '/static/tinymce/skins/lightgray',
-        height: 300,
+        height: 320,
         plugins: this.plugins,
         toolbar: this.toolbar,
         branding: false,

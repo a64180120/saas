@@ -9,41 +9,37 @@
                                    @click="cancel">取消
                         </el-button>
                         <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10"
-                                   style="float: right"
+                                   style="float: right" v-show="form.Publish===0"
                                    @click="publish">发布
                         </el-button>
                         <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10"
-                                   style="float: right"
+                                   style="float: right" v-show="form.Publish===0"
                                    @click="onSubmit">保存
                         </el-button>
 
                         <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10"
-                                   style="float: right"
+                                   style="float: right" v-show="type==='edit'"
                                    @click="preview">预览
                         </el-button>
                     </el-col>
                 </el-row>
 
             </div>
-            <div class="form" style="float: left;width: 60%;margin-top: 30px;">
+            <div class="form" style="float: left;width: 60%;margin-top: 30px;padding-left: 10px;">
                 <el-form
                     ref="form"
                     :model="form"
                     :rules="rules"
                     label-width="80px">
                     <el-form-item label="标题" prop="Title">
-                        <el-input v-model="form.Title"></el-input>
+                        <el-input v-model="form.Title" placeholder="不超过30个汉字！"></el-input>
                     </el-form-item>
                     <el-form-item label="内容">
-                        <!-- <quill-editor
-                            v-model="form.Content"
-                            ref="editorElem"
-                            @blur="onEditorBlur($event)">
-                        </quill-editor> -->
                         <tinymce-editor
                             ref="editor"
                             v-model="form.Content"
                             :initvalue="form.Content"
+                            :disabled='false'
                             @onClick='tinymceClick'>
                         </tinymce-editor>
                     </el-form-item>
@@ -58,7 +54,7 @@
                     <el-form-item label="信息类别" prop="PhIdType">
                         <el-select v-model="form.PhIdType" placeholder="" style="width: 40%">
                             <el-option v-for="item in articleType" :key="item.PhId" :label="item.Name"
-                                       :value="item.PhId" style="height: 100%"></el-option>
+                                       :value="item.PhId"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="信息来源">
@@ -71,7 +67,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="是否置顶">
-                        <el-switch v-model="form.Ontop"></el-switch>
+                        <el-switch active-value="1" inactive-value="0" v-model="form.Ontop"></el-switch>
                     </el-form-item>
                     <el-form-item label="封面图片">
                         <!-- <el-input v-model="form.Picpath"></el-input> -->
@@ -88,7 +84,20 @@
                         </el-upload>
                     </el-form-item>
                     <el-form-item label="附件上传">
-
+                        <el-upload
+                            multiple
+                            :limit="5"
+                            ref="attachmentList"
+                            class="upload-demo"
+                            action=""
+                            :on-remove="attachmentRemove"
+                            :before-upload="beforeuploadAttach"
+                            :on-change="fileChangeAttach"
+                            :file-list="fileList"
+                            :auto-upload="false">
+                            <el-button size="small" type="primary">点击上传</el-button>
+                            <div slot="tip" class="el-upload__tip">上传文件不超过2M</div>
+                        </el-upload>
                     </el-form-item>
                 </el-form>
             </div>
@@ -116,12 +125,15 @@
                     Content: '',     //文本
                     Name: '',        //信息来源
                     LevelType: '',    //制度级别
-                    Ontop: 0,        //是否置顶
+                    Ontop: "0",        //是否置顶
                     Picpath: '',     //封面图片
+                    Publish:0,
                     AttachmentName: '',     //图片原始名称
-                    AttachmentSize: '',     //图片大小
-                    Attachment: []   //附件
+                    AttachmentSize: 0,     //图片大小
                 },
+                Attachment: [],   //附件
+                files:[],//要上传的文件对象
+                fileList:[], //upload显示附件数据
                 rules: {
                     Title: [
                         { required: true, message: '请输入标题', trigger: 'blur' }
@@ -161,7 +173,9 @@
         },
         methods: {
             ...mapActions({
-                uploadFile: 'uploadFile/Newsupload'
+                uploadFile: 'uploadFile/Newsupload',
+                AddSysNews: 'uploadFile/AddSysNews',
+                UpdateSysNews: 'uploadFile/UpdateSysNews'
             }),
             //数据初始化
             initMethod() {
@@ -192,20 +206,35 @@
                 })
             },
             getNewsData(phid) {
-                let data = {
-                    id: phid,
-                    uid: this.userid,
-                    orgid: this.orgid
-                };
+                // let data = {
+                //     id: phid,
+                //     uid: this.userid,
+                //     orgid: this.orgid
+                // };
 
-                this.$axios.get('/SysNews/GetSysNews', {params: data})
+                //根据新闻id查询新闻信息和附件信息
+                this.$axios.get('/SysNews/GetNewsAndAttachmentByNid', {params: {phid:phid }})
                     .then(res => {
 
                         if (res.Status === 'error') {
                             this.$message.error(res.Msg);
                             return
                         }
-                        this.form = res;
+                        console.log(res);
+                        var NewsModel=res.NewsModel;
+                        var AttachmentModels=res.AttachmentModels;
+
+                        NewsModel.Ontop=String(NewsModel.Ontop)
+                        this.form = NewsModel;
+                        this.Attachment=AttachmentModels;
+                        
+                        for (const attach of AttachmentModels){
+                            this.fileList.push({
+                                name:attach.BName,
+                                url:this.picUrl+attach.BUrlPath,
+                                PhId:attach.PhId
+                            })
+                        }
                     })
                     .catch(err => {
                         console.log(err)
@@ -216,7 +245,7 @@
              * 预览按钮事件
              */
             preview() {
-                this.$router.push({path: '/admin/article/detail', query: { phid:this.form.PhId }});
+                this.$router.push({path: '/admin/article/preview', query: { phid:this.form.PhId }});
             },
             /**
              * 保存事件
@@ -246,43 +275,132 @@
                  * 数据状态 PersistentState: Added = 1, Modified = 2, Deleted = 3
                  * 新增文章
                  *  */
-                var newsinfo = {
-                    PhId: this.form.PhId,
-                    PersistentState: 1,
-                    PhIdType: this.form.PhIdType,
-                    Title: this.form.Title,
-                    Content: this.form.Content,
-                    Ontop: this.form.Ontop,
-                    Name: this.form.Name,
-                    Author: this.username,
-                    Picpath: this.form.Picpath,
-                    AttachmentName: this.form.AttachmentName,
-                    AttachmentSize: this.form.AttachmentSize,
-                    LevelType: this.form.LevelType,
-                };
+                // var newsinfo = {
+                //     PhId: this.form.PhId,
+                //     PersistentState: 1,
+                //     PhIdType: this.form.PhIdType,
+                //     Title: this.form.Title,
+                //     Content: this.form.Content,
+                //     Ontop: this.form.Ontop,
+                //     Name: this.form.Name,
+                //     Author: this.username,
+                //     Picpath: this.form.Picpath,
+                //     AttachmentName: this.form.AttachmentName,
+                //     AttachmentSize: this.form.AttachmentSize,
+                //     LevelType: this.form.LevelType,
+                // };
 
-                this.$axios.post('/SysNews/PostAdd', {
-                    uid: this.userid,
-                    orgid: this.orgid,
-                    infoData: newsinfo
 
-                }).then(res => {
-                    console.log(res)
+                // this.$axios.post('/SysNews/PostAdd', {
+                //     uid: this.userid,
+                //     orgid: this.orgid,
+                //     infoData: newsinfo
+
+                // }).then(res => {
+                //     console.log(res)
+                //     if (res.Status === 'error') {
+                //         this.$message.error(res.Msg);
+                //         return
+                //     }
+                //     this.$message.success("新增成功!");
+                // })
+                // .catch(err => {
+                //     console.log(err)
+                // })
+
+                //创建 formData 对象
+                // PersistentState: Added = 1, Modified = 2, Deleted = 3
+                let formData = new FormData();
+                formData.append("PhId", this.form.PhId);
+                formData.append("PhIdType", this.form.PhIdType);
+                formData.append("Title", this.form.Title);
+                formData.append("Content", this.form.Content);
+                formData.append("Ontop", Number(this.form.Ontop));
+                formData.append("Name", this.form.Name);
+                formData.append("Author", this.username);
+                formData.append("Picpath", this.form.Picpath);
+                formData.append("AttachmentName", this.form.AttachmentName);
+                formData.append("AttachmentSize", this.form.AttachmentSize);
+                formData.append("LevelType", this.form.LevelType);
+                
+                //新增附件的添加
+                for (const file of this.files) {
+                    formData.append("file", file);
+                }
+                
+                this.AddSysNews(formData).then(res => {
                     if (res.Status === 'error') {
                         this.$message.error(res.Msg);
                         return
                     }
                     this.$message.success("新增成功!");
-                })
-                .catch(err => {
-                    console.log(err)
+
+                    console.log(res)
+
+                    this.type = 'edit';
+                    this.getNewsData(res.KeyCodes[0]);
+
+                }).catch(error => {
+                    console.log(error);
+                    this.$message({showClose: true, message: '文章新增失败', type: 'error'})
                 })
             },
             //编辑
             async UpdateSave() {
                 var updateNews = this.form;
+                let formData = new FormData();
+                //循环Form数据
+                for (var item in updateNews){
+                    if(updateNews[item]!==null && item!=='PersistentState'){
+                        console.log(item+":"+updateNews[item])
+                        formData.append(item, updateNews[item]);
+                    }
+                }
+                //新增附件的添加
+                for (const file of this.files) {
+                    formData.append("file", file);
+                }
 
-                this.$axios.post('/SysNews/PostUpdate', {
+
+                this.UpdateSysNews(formData).then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.$message.success("修改成功!");
+                    
+                    this.getNewsData(this.form.PhId);
+
+                }).catch(error => {
+                    console.log(error);
+                    this.$message({showClose: true, message: '文章修改失败', type: 'error'})
+                })
+
+                // this.$axios.post('/SysNews/PostUpdate', {
+                //     uid: this.userid,
+                //     orgid: this.orgid,
+                //     infoData: updateNews
+                // }).then(res => {
+                //     console.log(res)
+                //     if (res.Status === 'error') {
+                //         this.$message.error(res.Msg);
+                //         return
+                //     }
+                //     this.$message.success("修改成功!");
+                // })
+                // .catch(err => {
+                //         console.log(err)
+                // })
+            },
+            /**
+             * 发布事件
+             */
+            publish() {
+                var updateNews = this.form;
+                updateNews.Publish=1
+                updateNews.Publisher=this.username;
+
+                this.$axios.post('/SysNews/PostPutSysNews', {
                     uid: this.userid,
                     orgid: this.orgid,
                     infoData: updateNews
@@ -292,17 +410,11 @@
                         this.$message.error(res.Msg);
                         return
                     }
-                    this.$message.success("修改成功!");
+                    this.$message.success("发布成功!");
                 })
-                    .catch(err => {
+                .catch(err => {
                         console.log(err)
-                    })
-            },
-            /**
-             * 发布事件
-             */
-            publish() {
-
+                })
             },
             /**
              * 取消事件
@@ -355,6 +467,35 @@
             },
             tinymceClick(e,tinymceObj){
                 console.log(e);
+            },
+            //删除附件
+            attachmentRemove(file, fileList){
+
+                this.$axios.post('/SysNews/PostAttachmentDelete', {
+                    uid: this.userid,
+                    orgid: this.orgid,
+                    id: file.PhId
+
+                }).then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.$message.success("删除成功!");
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            },
+            beforeuploadAttach(file){
+                const isLt2M = file.size / 1024 / 1024 < 1;
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 1MB!');
+                    return false
+                }
+            },
+            fileChangeAttach(file){
+                this.files.push(file.raw);//上传文件变化时将文件对象push进files数组
             }
         }
     }
@@ -365,7 +506,7 @@
         margin-bottom: 20px;
     }
 </style>
-<style>
+<style >
     .avatar-uploader {
         right: 25px;
         top: -20px;
@@ -408,6 +549,12 @@
     .Article_add .el-input--suffix .el-input__inner {
         margin: 0;
         padding-right: 0;
-        height: 100%;
+        /* height: 100%; */
     }
+    .upload-demo .el-upload--text{       
+        width: 100px;
+        height: 40px;
+        border: 0px;       
+    }
+
 </style>

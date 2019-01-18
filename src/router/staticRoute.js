@@ -98,8 +98,8 @@ const staticRoute = [
             },
             {
                 //文章管理 -预览
-                path: "article/detail",
-                component: () => import("../page/admin/article/Detail"),
+                path: "article/preview",
+                component: () => import("../page/admin/article/Preview"),
                 meta:{ requireAuth:true,type:'button',name:'信息预览'}
             }
         ]
