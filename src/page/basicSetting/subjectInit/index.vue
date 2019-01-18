@@ -216,15 +216,15 @@
                     <li>
                         <div>余额方向</div>
                         <div>
-                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==1&&addPageShow=='update')">
+                            <label v-show="(subjectInfo.KBalanceType==1&&addPageShow)">
                                 <input v-model="subjectInfo.KBalanceType" value="1" type="radio" name="balance">
                                 &nbsp;借方&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==2&&addPageShow=='update')">
+                            <label v-show="(subjectInfo.KBalanceType==2&&addPageShow)">
                                 <input v-model="subjectInfo.KBalanceType" value="2"  type="radio" name="balance">
                                 &nbsp;贷方&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label v-show="(addPageShow=='add')||(subjectInfo.KBalanceType==3&&addPageShow=='update')">
+                            <label v-show="(subjectInfo.KBalanceType==3&&addPageShow)">
                                 <input v-model="subjectInfo.KBalanceType" value="3"  type="radio" name="balance">
                                 &nbsp;借/贷&nbsp;&nbsp;&nbsp;
                             </label>
@@ -234,13 +234,13 @@
                     <li>
                         <div>启/停用</div>
                         <div style="border:0">
-                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')">
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==0&&addPageShow=='update')||(subjectInfo.IsSystem==0&&addPageShow=='update')">
                                 <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
                                 &nbsp;启用&nbsp;&nbsp;&nbsp;
                             </label>
-                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')">
-                                    <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
-                                    &nbsp;停用&nbsp;&nbsp;&nbsp;
+                            <label v-show="(addPageShow=='add')||(subjectInfo.EnabledMark==1&&addPageShow=='update')||(subjectInfo.IsSystem==0&&addPageShow=='update')">
+                                <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
+                                &nbsp;停用&nbsp;&nbsp;&nbsp;
                             </label>
                         </div>
                         <div style="clear:both"></div>
@@ -448,7 +448,7 @@ export default {
                     Ryear:this.year
                 }
                 const loading2=this.$loading();
-                this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})
+                this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})   //获取所有科目,和辅助项
                 .then(res=>{
                         loading2.close();
                         console.log(res);
@@ -843,6 +843,7 @@ export default {
          this.addData.Type=this.addInfo.Type;  //所有辅助项值
 
         this.subjectInfo={
+            IsSystem:this.choosedData[0].child.IsSystem,
             PhId:this.choosedData[0].child.PhId,
             preSubject:this.choosedData[0].parent,
             KName:this.choosedData[0].child.KName,
@@ -868,6 +869,7 @@ export default {
             }
 
         }
+      
     },
     //科目新增修改保存按钮
     addFinish(){
@@ -1049,6 +1051,7 @@ export default {
     fresh(){
         this.searchVal='';
         this.choosedData=[];
+        this.updatePage=false;
         for(var ch in this.choosedCss){
             this.choosedCss[ch]='';
         }
@@ -1523,7 +1526,7 @@ export default {
                         float:left;
                         width:359px;
                         border:1px solid #ccc;
-
+                        text-align:left;
                     }
                     &:nth-of-type(4) >div:nth-of-type(2){
                          border:0;

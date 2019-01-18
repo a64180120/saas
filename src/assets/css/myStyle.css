@@ -320,6 +320,10 @@ ul{
   .el-submenu__icon-arrow{
       color:rgb(117, 74, 74) !important;
   }
+
+ /* 清除ie输入框的叉号 */
+  input[type=text]::-ms-clear{display: none;} 
+
   /*设置按钮样式--王冠冠*/
     .el-button--info:hover, .el-button--info:focus {
         /*background: #a6a9ad;*/

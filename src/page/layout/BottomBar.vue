@@ -51,8 +51,8 @@ export default {
     position: absolute;   
     border-color: #ccc;
     background: transparent;
-    width:100%;
-    min-width:1660px;
+    width:1300px;
+    min-width:920px;
     height: 50px;
     left: -290px;    
     //border-bottom: 1px solid #00B8EE;
@@ -231,7 +231,7 @@ export default {
         .el-menu-item{
             height:45px;
             line-height:45px;
-            width:10%;
+            width:180px;
             background:url("../../assets/images/nav1.png") 100% 0 no-repeat;         
             color:#fff;
             background-size:cover;
@@ -239,44 +239,58 @@ export default {
             padding-right:50px;
             transition:all 1s; 
             &:nth-of-type(1){
-                transform:translate(350px);
+                //transform:translate(350px);
+                float:left;
+               // left:340px;
                 position:relative;
                 z-index:6;
-            }
+            }   
             &:nth-of-type(2){
-                transform:translate(290px);
+                //transform:translate(290px);
+                 float:left;
+               //  left:275px;
                 position:relative;
                 z-index:5;
 
             }
              &:nth-of-type(3){
-                transform:translate(230px);
+                //transform:translate(230px);
+                 float:left;
+                // left:210px;
                 position:relative;
                 z-index:4;
             }
             &:nth-of-type(4){
-                transform:translate(170px);
+                //transform:translate(170px);
+                left:145px;
+                // float:left;
                 position:relative;
                 z-index:3;
             }
             &:nth-of-type(5){
-                transform:translate(110px);
+                //transform:translate(110px);
+                 float:left;
+                // left:80px;
                 position:relative;
                 z-index:2;
             }
             &:nth-of-type(6){
-                transform:translate(50px);
+                //transform:translate(50px);
+                 float:left;
+                 //left:15px;
                 position:relative;
                 z-index:1;
             }
             &:nth-of-type(7){
-                transform:translate(-10px);
+                //transform:translate(-10px);
+                 float:left;
+                 //left:-60px;
                 position:relative;
                 z-index:0;
             }
         }
         .el-submenu{
-             transition:all 1s; 
+            transition:all 1s; 
             height:45px;
             line-height:45px;
             text-align:right;
@@ -284,45 +298,59 @@ export default {
             background:url("../../assets/images/nav1.png") 100% 0 no-repeat;   
             background-size:cover;        
             color:#fff; 
-            width:10%; 
+            width:180px;
             &:hover{
                 .el-submenu__title {
                     background:none;
                 }       
             }  
             &:nth-of-type(1){
-                transform:translate(350px);
+                //transform:translate(350px);
+                float:left;
+               // left:340px;
                 position:relative;
                 z-index:6;
             }   
             &:nth-of-type(2){
-                transform:translate(290px);
+                //transform:translate(290px);
+                 float:left;
+                 //left:275px;
                 position:relative;
                 z-index:5;
 
             }
              &:nth-of-type(3){
-                transform:translate(230px);
+                //transform:translate(230px);
+                 float:left;
+                 //left:210px;
                 position:relative;
                 z-index:4;
             }
             &:nth-of-type(4){
-                transform:translate(170px);
+                //transform:translate(170px);
+                //left:145px;
+                 float:left;
                 position:relative;
                 z-index:3;
             }
             &:nth-of-type(5){
-                transform:translate(110px);
+                //transform:translate(110px);
+                 float:left;
+                 //left:80px;
                 position:relative;
                 z-index:2;
             }
             &:nth-of-type(6){
-                transform:translate(50px);
+                //transform:translate(50px);
+                 float:left;
+                 //left:15px;
                 position:relative;
                 z-index:1;
             }
             &:nth-of-type(7){
-                transform:translate(-10px);
+                //transform:translate(-10px);
+                 float:left;
+                 //left:-60px;
                 position:relative;
                 z-index:0;
             }
@@ -343,57 +371,62 @@ export default {
     .side-nav.top > .el-menu > {
        
        .el-menu-item{
-           left:0;
+           
             &:nth-of-type(1){
-                
+                left:340px;
             }
             &:nth-of-type(2){
-              
+                left:275px;
                 transition-delay:0.03s
             }
              &:nth-of-type(3){
-              
+                left:210px;
                 transition-delay:0.06s
             }
             &:nth-of-type(4){
-              
+                left:145px;
                 transition-delay:0.09s 
             }
             &:nth-of-type(5){
-             
+                left:80px;
                 transition-delay:0.12s 
             }
             &:nth-of-type(6){
-              
+                left:15px;
                 transition-delay:0.15s
             }
             &:nth-of-type(7){ 
+                left:-50px;
                 transition-delay:0.18s
             }
         }
         .el-submenu{
-           left:0;
+           
+            &:nth-of-type(1){
+                left:340px;
+            }
             &:nth-of-type(2){
-              
+                left:275px;
                 transition-delay:0.03s
             }
              &:nth-of-type(3){
-              
+                left:210px;
                 transition-delay:0.06s
             }
             &:nth-of-type(4){
-              
+                left:145px;
                 transition-delay:0.09s 
             }
             &:nth-of-type(5){
-             
+                left:80px;
                 transition-delay:0.12s 
             }
             &:nth-of-type(6){
-              
+                left:15px;
                 transition-delay:0.15s
             }
             &:nth-of-type(7){ 
+                left:-50px;
                 transition-delay:0.18s
             }
            

@@ -35,6 +35,10 @@
                 <span>至:&nbsp;</span>
                 <div class="inputContainer"><input v-model="sum2" type="text"></div>
             </div>
+            <div>
+                <el-checkbox  v-model="listAll">全选</el-checkbox>
+                <el-checkbox v-model="listCancle">取消选中</el-checkbox>
+            </div>
             <div class="searcherCon">
                 <div @click.stop="highGradeToggle(!highGradeCss)">高级</div>
                 <div  @click="getvoucherList('search')" class="searcherBtn">搜索</div>
@@ -57,7 +61,7 @@
                                         <option :value="item.PhId" v-for="(item,index) of superSearchVal.assistItemList.type" :key="index">{{item.BaseName}}</option>
                                     </select>
                                 </div>
-                                <div class="searchSelectCon">
+                                <div @click.stop="superSearchVal.show=!superSearchVal.show" class="searchSelectCon">
                                     <span>{{superSearchVal.assistItem.BaseName}}</span>
                                     <searchSelect v-if="superSearchVal.show" :itemlists="assistItemList" :placeholder="superSearchVal.placeholder"
                                           :nodatatext="superSearchVal.nodatatext" @item-click="itemClick"></searchSelect>
@@ -105,7 +109,7 @@
             </ul>
             <div class="hideScroll"></div>
             <div class="listOver">
-                <ul  @click="choose(item)" :class="{choosed:item.PhId==chooseItem.PhId}" class="listContent" v-for="(item,index) of voucherList" :key="index">
+                <ul  @click="choose(item,index)" :class="{choosed:item.checked}" class="listContent" v-for="(item,index) of voucherList" :key="index">
                     <li @dblclick="voucherDel(item)">
                         <ul class="listIndex"><li><span>{{index+1}}</span></li></ul>
                         <ul>
@@ -295,7 +299,8 @@
                 this.routerQuery=true;
                 this.$store.commit("tagNav/upexcludeArr", []);
                 this.voucherList= this.$route.query.voucherList;
-            }else{
+            }else if(this.$route.query.reset){
+                this.$store.commit("tagNav/upexcludeArr", []);
                 // if(!this.sideDate){
                 //     this.getChecked();
                 // }
@@ -383,6 +388,8 @@
                     message:'', //消息主体内容**************
                     delay:0
                 },
+                listAll:false,  //列表全选
+                listCancle:true, //列表取消选中
                 printCss:false ,   //凭证打印显示***********
                 printData:[],//打印数据
                 tableData:[]   //打印的表格数据
@@ -403,6 +410,14 @@
                             };
                             return;
                         }
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         if(item.Verify){
                             this.saasMessage={
                                 visible:true,
@@ -417,13 +432,21 @@
                         this.voucherDataList.bool=true;
                         break;
                     case 'audit'://审核**********  
-                    console.log(item,item.Verify)
                         if(!item.PhId){
                             this.saasMessage={
                                 message:"请先选择凭证!",
                                 delay:3000,
                                 visible:true
                             };
+                            return;
+                        }
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                          
                             return;
                         }
                         if(item.Verify){
@@ -445,6 +468,14 @@
                             };
                             return;
                         }
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         if(!item.Verify){
                             this.saasMessage={
                                 message:"该凭证还未审核,请先审核!",
@@ -462,6 +493,14 @@
                                 delay:3000,
                                 visible:true
                             };
+                            return;
+                        }
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
                             return;
                         }
                         if(item.Verify){
@@ -513,6 +552,14 @@
                             };
                             return;
                         }
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         this.voucherDataList.data.Mst=item;
                         this.voucherMaskShow('cut');
                         this.voucherDataList.bool=true;
@@ -525,6 +572,14 @@
                                 delay:3000,
                                 visible:true
                             };
+                            return;
+                        }
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
                             return;
                         }
                         if(item.WriteOff_PhIds.length>0){
@@ -623,14 +678,16 @@
 
                 this.$router.push({path:'/home',query:{list:item}});
             },
-            //凭证选择**********************
-            choose(item){
-                console.log(item)
-                if(this.chooseItem.PhId==item.PhId){
-                   this.chooseItem=''; 
-                }else{
-                    this.chooseItem=item;
-                }
+            //凭证选择  单选**********************
+            // choose(item){
+            //     if(this.chooseItem.PhId==item.PhId){
+            //        this.chooseItem=''; 
+            //     }else{
+            //         this.chooseItem=item;
+            //     }
+            // },
+            choose(item,index){
+
             },
              //审核*****************
             audit(bool,PhId){
@@ -1347,7 +1404,8 @@
                             this.$message('无法找到该凭证!')
                         } else{
                             this.voucherList= res.Record;
-                            this.chooseItem='';
+                            this.listInit(this.voucherList);
+                            //this.chooseItem='';
                         }
 
                     },err => {
@@ -1355,6 +1413,12 @@
                         
                     })
                     .catch(err=>{this.$message({ showClose: true,message: '获取列表失败了!', type: "error"});})
+            },
+            //初始化列表选中样式*********
+            listInit(item){
+                for(var it of item){
+                    it.checked=false;
+                }
             },
             //获取time组件传参********************
             getSideDate(data){
@@ -1645,9 +1709,27 @@
                     this.superSearchVal.assistItem='';
                 }else{
                     this.superSearchVal.show=false;
-                this.getData(val);
+                     this.superSearchVal.assistItem=''
+                    this.getData(val);
                 }
                 
+            },
+            listAll(bool){
+                if(bool){
+                    this.listCancle=false;
+                }else{
+                    this.listCancle=true;
+                }
+               
+            },
+            listCancle(bool){
+                
+                if(bool){
+                    this.listAll=false;
+                }else{
+                    this.listAll=true;
+                }
+               
             }
         },
         filters:{
@@ -2035,7 +2117,7 @@
             padding-right:16px;
             >div{
                 float:left;
-                width:25%;
+                
                 min-width: 280px; 
                 line-height: 30px;           
                 >span,>div{
@@ -2047,12 +2129,21 @@
                 }
             }
             >div:nth-of-type(2){
+                float:left;
+                width: 180px;
+                min-width: 180px;
+                text-align: center;
+                >label:nth-of-type(2){
+                    margin-left:20px;
+                }
+            }
+            >div:last-of-type{
                 float:right;
-                margin-left:100px;
-                width:25%;
+           
+                min-width:295px;
             }
             >div.searcherCon{
-                width:50%;
+          
               
                 >div{
                     float:right;
@@ -2072,9 +2163,9 @@
                     &:nth-of-type(2){
                         width:40px;
                     }
-                    &:nth-of-type(3){
-                        min-width: 300px;
-                    }
+                    // &:nth-of-type(3){
+                    //     //min-width: 300px;
+                    // }
                 }
             }
         }
@@ -2266,14 +2357,14 @@
         z-index: -1;
     }
     .listContainer{
-        height:85%;    
+        height:90%;    
         margin-top:10px;
         position:relative;
         padding-top:40px;
         padding-bottom: 20px;
         .listOver{
             height:100%;
-            overflow-y: auto;
+            overflow-y: scroll;
         }
     }
     .listContainer>ul.listTitle{

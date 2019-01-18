@@ -89,7 +89,7 @@
                 this.$axios.get('PVoucherTemplateMst/GetVoucherTemplateList',{params:data})
                     .then(res=>{
                         this.voucherList=res.Record;
-                        console.log(this.voucherList)
+                        
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
                         }

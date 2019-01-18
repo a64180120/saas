@@ -183,6 +183,7 @@ export default {
             yearsTrue(str,val){
                if(str=='check'||str=='uncheck'){
                     this.checkOut(str,val);
+                    this.yearSelCss=false;
                }else{
                     this.yearSelCss=false;
                }

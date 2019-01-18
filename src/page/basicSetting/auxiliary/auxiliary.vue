@@ -10,8 +10,7 @@
                     <a @click.prevent="handlePage('save')"><li :class="{updateActive:!updatePage}">保存</li></a>
                     <a @click.prevent="handlePage('update')"><li :class="{updateActive:updatePage}">编辑</li></a>
                     <a @click.prevent="handlePage('type')"><li>分类管理</li></a>
-                    <a @click.prevent="handlePage('fresh')" ><li style="background:#fff;width:30px;min-width:30px;border-radius:50%;" class="freshImg"><img src="@/assets/icon/fresh2.svg" alt=""> </li></a>
-
+                    <a @click.prevent="handlePage('fresh')" ><li style='font-size:27px;color:#00b7ee;background:none;border:0' class="el-icon-refresh" ></li></a>
                 </ul>
             </div>
             <div class="auxiliary manageContent">
@@ -366,7 +365,7 @@
         height:auto;
     }
     .unionState{
-        padding:0 10px;
+        padding:0 20px 0 10px;
     }
     .formData>ul>li{
         border-right:1px solid #fff;

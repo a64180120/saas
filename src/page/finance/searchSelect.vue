@@ -12,7 +12,7 @@
           <span class="list-item-text">{{item.KCode}} &nbsp;{{item.KName}}</span>
         </li>
       </ul>
-      <div class="tip__nodata" v-show="inputFocus"><router-link to="/setting/subjectstart">{{nodatatext}}</router-link></div>
+      <div @click.stop="addSubject" class="tip__nodata" v-show="inputFocus">{{nodatatext}}</div>
     </div>
 </template>
 
@@ -60,7 +60,9 @@
       }
     },
     methods:{
-
+      addSubject(){
+        this.$emit('add-subject');
+      },
       appClick:function(data){
         this.searchValue=data;
         this.$emit('item-click',{data:this.searchValue,id:this.id});
@@ -170,5 +172,6 @@
     background: #ddd;
     height:30px;
     line-height: 30px;
+    cursor:pointer;
   }
 </style>
