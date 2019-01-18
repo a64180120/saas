@@ -1,5 +1,5 @@
 <template>
-    <div class="manageAdd">
+    <div class="manageAdd manage-update">
         <div class="choose">
             <ul class="flexPublic">
                 <li @click="addFinished(true)">保存</li>
@@ -19,6 +19,24 @@
                     <div class="inputContainer"><input  @blur="unionInput(true)" type="text" v-model="OrgName" placeholder="必填">
                     </div>
                     <!--<div v-show="unionCss.name">请输入工会名称</div>-->
+                </li>
+                <li v-show="!showFlam">
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>工会层级</span>
+                    </div>
+                    <div class="inputContainer" style="height: 100%">
+                        <el-select v-model="Layers" placeholder="请选择" style="height: 100%" @change="changeLayer">
+                            <el-option
+                                v-for="item in layerList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                                {{item.label}}
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <!--<div v-show="unionCss.name">请输入工会编码</div>-->
                 </li>
                 <li>
                     <div class="addFormItemTitle">
@@ -102,7 +120,7 @@
                 <li>
                     <div class="addFormItemTitle"></div>
                     <div class="inputContainer" >
-                        <input style="width: 100%; margin: 0px" class="addressDetail " type="text" v-model="Address" placeholder="请输入详细地址">
+                        <input style="width: 100%; margin: 0px" class="addressDetail " type="text" v-model="Address" placeholder="必填，请输入详细地址">
                     </div>
                 </li>
                 <li>
@@ -245,6 +263,7 @@
                 PhId: '',
                 file: '1',
                 OrgName: '',
+                Layers:'',
                 EnCode:'',
                 EnterpriseCode: '',
                 Address: '',
@@ -274,6 +293,7 @@
                 Street:"",
                 Integrity:'',
                 NgRecordVer:'',
+                UserAccount:'',
                 FinanceAccount:'',
                 BankName:'',
                 BankAccount:'',
@@ -282,6 +302,19 @@
                 CityValue:[],
                 CountyValue:[],
                 StreetValue:[],
+                layerList: [{
+                    value: '1',
+                    label: '省级'
+                }, {
+                    value:'2',
+                    label: '市级'
+                }, {
+                    value: '3',
+                    label: '区级'
+                }, {
+                    value: '4',
+                    label: '街道'
+                }],
                 AccountSystemValues: [{id: '0', name: '工会会计制度2009版'}, {id: '1', name: '工会会计制度2008版'}],
                 phoneHeadValues: [{id: '0', name: '手机号'}, {id: '1', name: '0571'}, {id: '2', name: '010'}, {
                     id: '3',
@@ -425,12 +458,18 @@
                     }
                 }
             },
+            //改变机关工会层级
+            changeLayer(){
+                //this.selectArea()
+            },
+            //改变隶属工会
             changeParentOrg(){
                 console.log(this.Parent);
                 this.ParentId = this.Parent.PhId;
                 this.ParentName = this.Parent.OrgName;
                 this.ParentCode = this.Parent.EnCode;
             },
+            //改变省级地址
             changeProvince(){
                 console.log(this.Province);
                 this.StreetValue = [];
@@ -438,25 +477,33 @@
                 this.CityValue = [];
                 this.selectArea(this.Province, 1);
             },
+            //改变市级地址
             changeCity(){
                 this.StreetValue = [];
                 this.CountyValue = [];
                 this.selectArea(this.City, 2);
                 if(!this.showFlam){
-                    this.getParentByArea(1, this.Province);
+                    if(this.Layers == '2'){
+                        this.getParentByArea(1, this.Province);
+                    }
                 }
             },
+            //改变区级地址
             changeCounty(){
                 this.StreetValue = [];
                 this.selectArea(this.County, 3);
                 if(!this.showFlam){
-                    this.getParentByArea(2, this.City);
+                    if(this.Layers == '3'){
+                        this.getParentByArea(2, this.City);
+                    }
                 }
             },
             //改变街道后的点击事件
             changeStreet(){
                 if(!this.showFlam){
-                    this.getParentByArea(3, this.County);
+                    if(this.Layers == '4'){
+                        this.getParentByArea(3, this.County);
+                    }
                 }else{
                     this.getParentByArea(4, this.Street);
                 }
@@ -581,15 +628,16 @@
                             'ChairmanAttachment': this.ChairmanAttachment,
                             'FinanceAccount': this.FinanceAccount,
                             'BankName': this.BankName,
+                            'UserAccount': this.UserAccount,
                             'BankAccount': this.BankAccount,
                             'InvitationCode': this.InvitationCode,
                             'NgRecordVer': this.NgRecordVer
                         };
                         if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != '' && this.OrgName!=''
-                            && this.EnterpriseCode !='' && this.Chairman !='' && this.EnCode != ''
+                            && this.EnterpriseCode !='' && this.Chairman !='' && this.EnCode != ''&& this.Address !=''
                             && this.ParentId != '' && this.Director !=''&& this.Province!=null && this.City !=null && this.County!= null
                             && this.Street != null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
-                            && this.EnCode != null && this.ParentId != null && this.Director !=null){
+                            && this.EnCode != null && this.Address !=null && this.ParentId != null && this.Director !=null){
                             if(this.EnterpriseAttachment != null && this.EnterpriseAttachment != ''){
                                 this.Integrity = parseInt(this.Integrity) + 5;
                             }
@@ -610,13 +658,13 @@
                                     console.log(res);
                                     if (res.Status == 'success') {
                                         this.$message.success("修改成功");
-                                        //this.$router.push({path: '/'});
+                                        this.$store.commit("tagNav/upexcludeArr", ['basicUnion']);
+                                        this.$store.commit("tagNav/removeTagNav", this.$route);
+                                        this.$router.push({path: "/admin/orgin"});
                                     }else{
                                         this.$message.error('修改失败,请重试!');
                                     }
                                 })
-                            this.$store.commit("tagNav/removeTagNav", this.$route);
-                            this.$router.push({path: "/admin/orgin"});
                         }else{
                             this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
@@ -643,14 +691,17 @@
                             'ParentEnCode': this.ParentCode,
                             'Director': this.Director,
                             'Verify': this.Verify,
+                            'Layers': this.Layers,
+                            'UserAccount': this.UserAccount,
                             'EnterpriseAttachment': this.EnterpriseAttachment,
                             'ChairmanAttachment': this.ChairmanAttachment,
                             'NgRecordVer': this.NgRecordVer
                         };
-                        if(this.Province!=''&& this.OrgName!='' && this.EnterpriseCode !='' && this.Chairman !=''
-                             && this.Director !='' && this.EnCode !=''
-                            && this.Province!=null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
-                            && this.Director !=null && this.EnCode !=null){
+                        if(this.Province!=''&& this.City !=''&& this.County!='' && this.Street != ''&& this.OrgName!='' && this.EnterpriseCode !='' && this.Chairman !=''
+                             && this.Director !='' && this.EnCode !=''&& this.Address !=''
+                            && this.Province!=null && this.City !=null && this.County!= null
+                            && this.Street != null && this.OrgName!=null  && this.EnterpriseCode !=null && this.Chairman !=null
+                            && this.Director !=null && this.EnCode !=null && this.Address !=null){
                             var data = {
                                 uid: "0",
                                 orgid: "0",
@@ -661,13 +712,18 @@
                                     console.log(res);
                                     if (res.Status == 'success') {
                                         this.$message.success("修改成功");
-                                        //this.$router.push({path: '/'});
+                                        this.$store.commit("tagNav/removeTagNav", this.$route);
+                                        // this.$store.commit("tagNav/upexcludeArr", ['union']);
+                                        this.$router.push({path: "/admin/orgin"});
                                     }else{
-                                        this.$message.error('修改失败,请重试!');
+                                        if(res.Status =='error'){
+                                            this.$message.error(res.Msg);
+                                        }else{
+                                            this.$message.error('修改失败,请重试!');
+                                        }
                                     }
                                 })
-                            this.$store.commit("tagNav/removeTagNav", this.$route);
-                            this.$router.push({path: "/admin/orgin"});
+
                         }else{
                             this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
@@ -728,6 +784,7 @@
                             this.BankAccount= res.BankAccount,
                             this.Verify = res.Verify;
                             this.Integrity = res.Integrity;
+                            this.UserAccount = res.UserAccount;
                             this.InvitationCode = res.InvitationCode;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
@@ -761,25 +818,40 @@
                             this.County = res.County;
                             this.Street = res.Street;
                             this.NgRecordVer = res.NgRecordVer;
+                            this.UserAccount = res.UserAccount;
+                            this.Layers = String(res.Layers);
+                            // if(res.Layers <= 4 && res.Layers >= 1) {
+                            //     this.layerList[res.Layers -1]
+                            // }
                             this.Verify = res.Verify;
                             console.log(this.County);
                             this.selectArea(this.Province, 1);
                             this.selectArea(this.City, 2);
                             this.selectArea(this.County, 3);
-                            if(res.Street != null && res.Street != ""){
-                                this.getParentByArea(3, res.County);
-                            }else{
-                                if(res.County != null && res.County != ""){
-                                    this.getParentByArea(2, res.City);
-                                }else{
-                                    if(res.City != null && res.City != ""){
-                                        this.getParentByArea(1, res.Province);
-                                    }
-                                }
+                            if(res.Layers == '2'){
+                                this.getParentByArea(1, res.Province);
                             }
+                            if(res.Layers == '3'){
+                                this.getParentByArea(2, res.City);
+                            }
+                            if(res.Layers == '4'){
+                                this.getParentByArea(3, res.County);
+                            }
+                            // if(res.Street != null && res.Street != ""){
+                            //     this.getParentByArea(3, res.County);
+                            // }else{
+                            //     if(res.County != null && res.County != ""){
+                            //         this.getParentByArea(2, res.City);
+                            //     }else{
+                            //         if(res.City != null && res.City != ""){
+                            //             this.getParentByArea(1, res.Province);
+                            //         }
+                            //     }
+                            // }
                             if(res.ParentId != "0"){
                                 this.getAdminOrganize(res.ParentId);
                             }
+                            this.$forceUpdate();
                         })
                 }
             }
@@ -903,6 +975,11 @@
 
 </style>
 <style>
+    .manage-update .el-input--suffix .el-input__inner {
+        margin: 0;
+        padding-right: 0;
+        height: 100%;
+    }
     .avatar-uploader{
         position: absolute;
         z-index: 1;

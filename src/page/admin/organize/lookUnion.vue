@@ -67,7 +67,7 @@
                 <li class="flexPublic">
                     <div class="progressContainer">
                         <div class="progress" :style="{background:infoStyle[index],width:item.Integrity+'%'}" style="background-color: #ffffff">
-                            {{item.Integrity < 80 ?'':item.Integrity+' %'}}
+                            {{item.Integrity <= 80 ?'':item.Integrity+' %'}}
                         </div>
                         <div
                             :style="{color:infoStyle[index],width:(100-item.Integrity)<20?20:100-item.Integrity+'%',display:(100-item.Integrity)<20?'none':'block'}">
