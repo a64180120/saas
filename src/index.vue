@@ -108,7 +108,7 @@ export default {
 
         })
         //测试可以注释这条
-        this.getloginState();
+        //this.getloginState();
     },
     methods: {
         //循环判断，当前用户的登录状态

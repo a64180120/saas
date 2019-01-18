@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <!--辅助项类型页面-->
+            <!--类型页面-->
             <article-type datalists="" @type-click="addTypeFinish" v-if="handleNav=='type'"></article-type>
         </div>
     </div>

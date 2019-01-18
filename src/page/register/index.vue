@@ -60,7 +60,7 @@
                                         <router-link to="/index"><button class="selfBtn whiteBtn">取消</button></router-link>
                                     </template>
                                     <template v-else>
-                                        <div class="selfBtn blueBtn" @click="codeRegister">完成</div>
+                                        <div class="selfBtn blueBtn" @click="codeRegister">下一步</div>
                                     </template>
 
                                 </div>
@@ -468,8 +468,9 @@
                                 this.$message(JSON.parse(res.data).Msg);
                                 this.registerForm1.code='';
                             }else{
-                                this.$message('验证成功!');
-                                this.$router.push({ path: "/login"})
+                                alert('暂时禁用 ，后面接口完善后再开启');
+                                /*this.$message('验证成功!');
+                                this.$router.push({ path: "/login"})*/
                             }
                         }).catch(err=>{
                             console.log(err);

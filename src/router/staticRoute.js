@@ -95,6 +95,12 @@ const staticRoute = [
                 path: "picture",
                 component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page',name:'轮播图管理'}
+            },
+            {
+                //文章管理 -预览
+                path: "article/detail",
+                component: () => import("../page/admin/article/Detail"),
+                meta:{ requireAuth:true,type:'button',name:'信息预览'}
             }
         ]
     },
@@ -189,6 +195,17 @@ const staticRoute = [
                 path: "detailaccount",
                 component: () =>import("../page/accountbooks/detailaccount/details"),
                 meta:{ requireAuth:true,type:'page' ,name:'明细账'}
+            },{
+                //科目余额
+                path: "balance",
+                component: () =>import("../page/accountbooks/subjectbalance/balance"),
+                meta:{ requireAuth:true,type:'page' ,name:'科目余额'}
+            },
+            {
+                //总分类账
+                path: "classify",
+                component: () =>import("../page/accountbooks/classify/classify"),
+                meta:{ requireAuth:true,type:'page' ,name:'总分类账'}
             },
             /*{
                 //多栏账
