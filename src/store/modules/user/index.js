@@ -92,7 +92,7 @@ const actions = {
             console.log('window.global:'+window.global.baseUrl)
             let base=httpConfig.getAxiosBaseConfig();
             let url=httpConfig.baseurl;
-            
+
             httpajax.create({
                 baseURL: base.baseURL
             }).get('/SysToken/GetToken',{
@@ -174,7 +174,7 @@ const actions = {
                 }else{
                     resolve(response);
                 }
-               
+
             }).catch(error =>{
                 console.log(error)
                 reject(error)

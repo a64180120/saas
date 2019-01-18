@@ -195,6 +195,17 @@ const staticRoute = [
                 path: "detailaccount",
                 component: () =>import("../page/accountbooks/detailaccount/details"),
                 meta:{ requireAuth:true,type:'page' ,name:'明细账'}
+            },{
+                //科目余额
+                path: "balance",
+                component: () =>import("../page/accountbooks/subjectbalance/balance"),
+                meta:{ requireAuth:true,type:'page' ,name:'科目余额'}
+            },
+            {
+                //总分类账
+                path: "classify",
+                component: () =>import("../page/accountbooks/classify/classify"),
+                meta:{ requireAuth:true,type:'page' ,name:'总分类账'}
             },
             /*{
                 //多栏账

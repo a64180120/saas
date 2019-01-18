@@ -79,11 +79,11 @@
                     v-for="(item,index) of userInfo" :key="index">
                     <ul class="formDataItem flexPublic">
                         <li>{{index+1+(pageIndex-1)*pageSize}}</li>
-                        <li>{{item.PhId}}</li>
+                        <li>{{item.UserAccount}}</li>
                         <li>{{item.EnCode}}</li>
                         <li>{{item.OrgName}}</li>
                         <li>{{item.ParentName}}</li>
-                        <li>{{item.NgInsertDt.replace('T',' ')}}</li>
+                        <li>{{item.JBuildDate}}</li>
                         <li>{{item.Chairman}}</li>
                         <li>{{item.Director}}</li>
                         <li class="stateControl flexPublic">
@@ -132,6 +132,7 @@
     import md5 from 'js-md5'
 
     export default {
+        name: "basicUnion",
         data() {
             return {
                 date1: '',
@@ -307,7 +308,7 @@
             },
             routerTo(url) {
                 if(url == '/admin/orgin/add'){
-                    this.$store.commit("tagNav/upexcludeArr", ['manage-add']);
+                    this.$store.commit("tagNav/upexcludeArr", []);
                     this.$router.push({path: url, query: {showFlam:true}});
                     this.ajaxMode();
                 }else{
@@ -315,6 +316,7 @@
                         this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
                         return;
                     }else{
+                        this.$store.commit("tagNav/upexcludeArr", []);
                         this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:true}});
                         this.ajaxMode();
                         this.PhIdList = '';
@@ -340,7 +342,8 @@
 
                 this.$axios.get('/SysOrganize/GetSysOrganizeList', {params: data})
                     .then(res => {
-                        console.log(1)
+                        console.log(1);
+                        console.log(res);
                         this.userInfo = res.Record;
                         loading1.close();
                         for (var i = 0; i < this.userInfo.length; i++) {
@@ -350,6 +353,11 @@
                             }
                             if(this.userInfo[i].ServiceEndTime == null){
                                 this.userInfo[i].ServiceEndTime ='';
+                            }
+                            if(this.userInfo[i].JBuildDate == null || this.userInfo[i].JBuildDate == ''){
+                                this.userInfo[i].JBuildDate = '';
+                            }else{
+                                this.userInfo[i].JBuildDate =this.userInfo[i].JBuildDate.replace('T',' ');
                             }
                         }
                         this.pageIndex = res.index + 1;
@@ -368,7 +376,7 @@
             }
         },
         created() {
-
+            this.$store.commit("tagNav/upexcludeArr", []);
         },
         mounted() {
             this.selectUnionName();
