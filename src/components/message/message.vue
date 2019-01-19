@@ -95,6 +95,7 @@ export default {
         // position:absolute;
         // top:200px;
         // left:40%;
+        text-align: left;
         display: inline-block;
         vertical-align:middle;
         background: #fff;
@@ -114,7 +115,7 @@ export default {
                 justify-content: flex-end;
             }
             >.imgCon{
-                width:55px;
+                width:60px;
                 height:55px;
                 margin-right:15px;
                 >img{

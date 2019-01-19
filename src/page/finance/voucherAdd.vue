@@ -195,15 +195,19 @@
             </div>
         </div>
         
-        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
-        <!-- <saasconfirm 
-            :type="saasConfirm.type"
-            :message="saasConfirm.message"
-            v-show="saasConfirm.visible" 
-            @ok-click="okConfirm"
-            @no-click="noConfirm">
-        </saasconfirm> -->
+        <!-- 弹窗*****message:信息******delay:延迟毫秒  默认4000 -->
+        <message 
+            :message="saasMessage.message" 
+            :delay="saasMessage.delay"   
+            :visible.sync="saasMessage.visible" >
+        </message>
+        <saasconfirm 
+            :type="confirm.type"
+            :message="confirm.message"
+            v-show="confirm.visible" 
+            @ok-click="confirmOk"
+            @no-click="confirmNo">
+        </saasconfirm>
 
         
     </div>
@@ -272,10 +276,10 @@
                 message:'', //消息主体内容**************
                 delay:0
             },
-            saasConfirm:{
-                message:'确定删除记录!',
-                visible:true,
-                type:'666'
+            confirm:{
+                message:'',
+                visible:false,
+                type:''
             },
             uInfo:''
         }},
@@ -439,7 +443,6 @@
                         if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
                             this.saasMessage={
                                 visible:true,
-                                delay:3000,
                                 message:'该月已结账,无法修改!'
                             }
                             return;
@@ -461,24 +464,31 @@
                             }
                             return;
                         }
-                         if(confirm('确定删除记录!')){
-                            var data1={
-                                uid:this.uid,
-                                orgid:this.orgid,
-                                id:this.voucherDataList.data.Mst.PhId
-                            }
-                            this.delete(data1);
-                            this.voucherDataList.data={
-                                Mst:{},
-                                Attachements:[]
-                            }
-                            this.resetVoucher();
-                         }
+                        this.confirm={
+                            message:'此操作将永久删除凭证,是否继续?',
+                            type:'delete',
+                            visible:true
+                        }
+                        // if(confirm('确定删除记录!')){
+                        //     var data1={
+                        //         uid:this.uid,
+                        //         orgid:this.orgid,
+                        //         id:this.voucherDataList.data.Mst.PhId
+                        //     }
+                        //     this.delete(data1);
+                        //     this.voucherDataList.data={
+                        //         Mst:{},
+                        //         Attachements:[]
+                        //     }
+                        //     this.resetVoucher();
+                        //  }
                        
                         break;
                     case 'reset':
-                        if(confirm('凭证号重排过程中不允许取消、暂停操作。确定重排？')){
-                            this.resetShow=true;
+                        this.confirm={
+                            message:'凭证号重排过程中不允许取消、暂停操作。确定重排？',
+                            visible:true,
+                            type:'reset'
                         }
                         break;
                     case 'print':
@@ -499,6 +509,51 @@
                         break;
                 }
             },
+            //confirm确认框方法*******
+            confirmOk(type){
+                this.confirm.visible=false;
+                switch (type){
+                    case 'delete':
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            id:this.voucherDataList.data.Mst.PhId
+                        }
+                        this.delete(data1);
+                        break;
+                    case 'reset':
+                        this.resetShow=true;
+                        break;
+                    case 'gengz':
+                        var vm = this;       
+                        vm.voucherAdd=false;
+                        vm.voucherDataList.data.Mst.PSource='更正';
+                        for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                            if(dtl.Abstract){
+                                dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                if(dtl.DtlAccounts){
+                                    dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                    dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                }   
+                            }                                            
+                        }
+                        
+                        vm.voucherMask='gengz';
+                         this.resetVoucher();
+                        break;
+                }
+            },
+            confirmNo(type){
+                this.confirm.visible=false;
+                switch(type){
+                    case 'gengz':
+                        this.getvoucherList();
+                        break;
+                }
+               
+            },
             // //导航栏位置上移************
             // moveNavTop(){
             //    var footer= document.getElementsByClassName("sys-footer")[0];
@@ -512,7 +567,8 @@
                 
                 var url='Add';
                 var Vdata=this.voucherDataList.data;
-          
+                  console.log(Vdata)
+                  debugger
                 //判断科目金额摘要不能为空
                 for(var dtl of Vdata.Mst.Dtls){
                     if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
@@ -524,19 +580,19 @@
                         return;
                     }
                     
-                }
-                
+                }  
                 if(!this.dataCheck()){
                     this.saasMessage={
                         visible:true,
                         delay:4000,
                         message:'借贷不平衡,请查看!'
                     }
+                    this.getvoucherList('update');
                     return;
                 }
                 if(str=='gengz'){
                     this.clearPhId(Vdata.Mst);
-                    Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
+                    // Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
                 }
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
@@ -554,7 +610,10 @@
                        Vdata.Mst.PMonth=Vdata.Mst.PDate.substring(5,7);
                    }
                }else{
-                   this.$message('请输入凭证会计期!')
+                   this.message={
+                       message:'请输入凭证会计期!',
+                       visible:true
+                   }
                    return;
                }
                if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
@@ -951,8 +1010,8 @@
             },
             //前后快速翻页定位凭证****************
             getvoucher(str){
+                console.log(this.count)
                 if(str=='pre'){
-                    console.log(this.count)
                     if(this.count>0){
                         this.count--;
                         this.voucherDataList.data={
@@ -1044,6 +1103,7 @@
                             vm.totalRows=res.totalRows;
                             vm.pagesize=res.size;
                             vm.pageindex=res.index;
+
                             vm.voucherDataList.data={
                                 Mst:vm.newAddList[vm.count]
                             };
@@ -1240,7 +1300,7 @@
                 var vm=this;
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
-                if(item.WriteOff_PhIds.length>0){
+                if(Mst.WriteOff_PhIds.length>0){
                     this.saasMessage={
                         message:'该凭证已经冲红,无法冲红!',
                         delay:4000,
@@ -1271,8 +1331,6 @@
                         dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
                     }
                 }
-               
-                this.clearPhId(this.voucherDataList.data.Mst); 
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 this.voucherDataList.data.Mst.PSource='冲红'
                 this.resetVoucher();        
@@ -1324,7 +1382,7 @@
             },
             keepChoose(val){
                 var vm=this;
-                console.log(val);
+                console.log(val,this.voucherDataList.data);
                 if(val){
                     this.voucherData();
                     var id = this.voucherDataList.data.Mst.PhId;
@@ -1345,7 +1403,7 @@
                 
                         this.cut(vm,data1);
                     }else if(val=='chongh'){  //冲红
-                        var Vdata=this.voucherDataList.data;
+                         var Vdata=JSON.parse(JSON.stringify(this.voucherDataList.data));
                         if(Vdata.Mst.Dtls.length<=0){
                             this.$message('请输入内容!')
                             return;
@@ -1365,53 +1423,67 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
+                        
+                        this.clearPhId(Vdata.Mst); 
                         if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
                                 orgcode: this.orgcode,
-                                infoData: this.voucherDataList.data
+                                infoData: Vdata
                             }
                             var oldPhId=this.voucherDataList.data.Mst.PhidTransaction;
                             var oldData=this.voucherDataList.data.Mst;
                             const loading=this.$loading();
                             //this.voucherMask=false; 
-                            this.voucherDataList.bool=false; 
+
+                             debugger
                             this.$axios.post('/PVoucherMst/PostAdd', data)
                                 .then(res => {
-                                    if (res.Status == 'success') {
-                                        if(confirm('保存成功，是否生成【更正凭证】？')){
-                                            this.voucherMask=true;
-                                            vm.voucherDataList.bool=true; 
-                                            vm.voucherDataList.data.Mst=oldData
-                                            vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
-                                            vm.voucherDataList.data.Mst.PSource='更正';
-                                            for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
-                                                if(dtl.SubjectCode){
-                                                    dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
-                                                    dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
-                                                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
-                                                    if(dtl.DtlAccounts){
-                                                        dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
-                                                        dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
-                                                    }   
-                                                }                                                   
-                                            }
-                                            vm.voucherMask='gengz';
-                                            this.voucherAdd=false; 
-                                        }else{
-                                            vm.voucherMask=false;
-                                            this.voucherAdd=true;
-                                            vm.getVoucherData(oldPhId);     
-                                        }
-                                    } else {
-                                        this.$message({ showClose: true,message: res.MSg, type: "error"});
-                                    }
                                     loading.close();
-                                },
-                                err => {
+                                    console.log(this.voucherDataList.data)
+                             debugger
+
+                                    if (res.Status == 'success') {
+                                        vm.voucherMask=false;
+                                        vm.voucherAdd=true;
+                                        this.confirm={
+                                            visible:true,
+                                            message:'保存成功，是否生成【更正凭证】？',
+                                            type:'gengz'
+                                    }
+                                        
+                                        // if(confirm('保存成功，是否生成【更正凭证】？')){
+                                        //     vm.voucherDataList.bool=true; 
+                                        //     vm.voucherDataList.data.Mst=oldData
+                                        //     vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
+                                        //     vm.voucherDataList.data.Mst.PSource='更正';
+                                        //     for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                                        //         if(dtl.SubjectCode){
+                                        //             dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                        //             dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                        //             dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                        //             if(dtl.DtlAccounts){
+                                        //                 dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                        //                 dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                        //             }   
+                                        //         }                                            
+                                        //     }
+                                        //     vm.voucherMask='gengz'; 
+                                        // }else{
+                                        //     vm.voucherMask=false;
+                                        //     vm.getvoucherList();     
+                                        // }
+                                    } else {
+                                         this.saasMessage={
+                                            visible:true,
+                                            message:res.Msg
+                                        };
+                                    }
+                                   
+                                },err => {
                                     console.log(err);
-                                        loading.close();
+                                    loading.close();
                                 })
                                 .catch(err=>{
                                     this.$message({ showClose: true,message: err, type: "error"});

@@ -26,7 +26,7 @@
                 <a class="btn" @click.prevent="handle('delete')"><li >删除</li></a>
                 <a class="btn" @click.prevent="handle('update')"><li >修改</li></a>
                 <router-link class="btn" to="/home"><li >新增</li></router-link>          
-            </ul>
+            </ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
         </div>
         <div class="voucherSelect">
             <div>
@@ -37,20 +37,26 @@
             </div>
             <div>
                 <el-checkbox  v-model="listAll">全选</el-checkbox>
-                <el-checkbox v-model="listCancle">取消选中</el-checkbox>
+                <!-- <el-checkbox v-model="listCancle">取消全选</el-checkbox> -->
             </div>
             <div class="searcherCon">
                 <div @click.stop="highGradeToggle(!highGradeCss)">高级</div>
                 <div  @click="getvoucherList('search')" class="searcherBtn">搜索</div>
                 <div class="searcherValue"><input @keyup.13="getvoucherList('search')" v-model="searchVal" type="text" placeholder="科目/摘要/凭证号"></div>
                 
-                
+                <!-- 高级搜索 -->
                 <div v-if="highGradeCss" class="highGradeCss">
                     <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
                     <ul>
                         <li>
                             <div>科目编码</div>
-                            <div class="inputContainer"><input type="text" placeholder="科目/凭证号/摘要" v-model="superSearchVal.keyword"></div>
+                            <div @click.stop="subjectSearchShow" >
+                                <div >
+                                    <span>{{superSearchVal.keyword}}</span>
+                                    <sub-list @subadd-click="subjectData" v-if="subjectListShow" :placeholder='"搜索科目"' :itemlists="subjectList"></sub-list>
+
+                                </div>
+                            </div>
                         </li>
                         <li>
                             <div>辅助核算</div>
@@ -277,13 +283,24 @@
             </div> 
             <div style="clear:both"></div>
         </el-dialog>
-         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
+         <!-- 弹窗*****message:信息******delay:延迟毫秒默认4000毫秒 -->
         <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
+        <!-- btn1默认确定,btn2默认取消 -->
+        <saasconfirm  
+            :message="confirm.message" 
+            :btn1="confirm.btn1" 
+            :btn2="confirm.btn2" 
+            :type="confirm.type"
+            :visible.sync="confirm.visible"
+            @ok-click="confirmOk"
+            @no-click="confirmNo" >
+            
+        </saasconfirm>
     </div>
 </template>
 
 <script>
-    
+    import subList from './addSublist'
     import printTem from "@/page/finance/vprint/printTemPdf"
     import httpConfig from '@/util/ajaxConfig'
     import {mapState, mapActions} from 'vuex'
@@ -299,6 +316,7 @@
                 this.routerQuery=true;
                 this.$store.commit("tagNav/upexcludeArr", []);
                 this.voucherList= this.$route.query.voucherList;
+                this.listInit(this.voucherList);
             }else if(this.$route.query.reset){
                 this.$store.commit("tagNav/upexcludeArr", []);
                 // if(!this.sideDate){
@@ -312,7 +330,7 @@
             return {               
                 sum1:'',
                 sum2:'',
-                chooseItem:'',
+                chooseItem:[],
                 nowTime:new Date,
                 checkedTime:'',   //结账月****
                 checkedYear:'',   //结账年*****
@@ -321,6 +339,8 @@
                 year:'',     //月
                 searchVal:'', //一般搜索值
                 superSearchValPhId:"0",   //高级搜索
+                subjectList:[],//科目列表
+                subjectListShow:false,
                 assistItemList:{id:0,kemu:[]},
                 superSearchVal:{
                     assistItemList:{type:'',list:''},
@@ -388,6 +408,12 @@
                     message:'', //消息主体内容**************
                     delay:0
                 },
+                confirm:{
+                    message:'',
+                    btn1:'',
+                    btn2:'',
+                    visible:false
+                },
                 listAll:false,  //列表全选
                 listCancle:true, //列表取消选中
                 printCss:false ,   //凭证打印显示***********
@@ -398,19 +424,18 @@
         methods:{
             //操作导航******************
             handle(str){
-                var chooseItem=JSON.stringify(this.chooseItem);
-                var item=JSON.parse(chooseItem);    
+                var item =JSON.parse(JSON.stringify(this.chooseItem));    
                 switch(str){
                     case 'update'://修改**********
-                        if(!item.PhId){
+                        if(item.length!=1){
                             this.saasMessage={
-                                message:"请先选择凭证!",
+                                message:"请选择且只选择一个凭证!",
                                 delay:3000,
                                 visible:true
                             };
                             return;
                         }
-                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                        if(!(item[0].PMonth>=this.checkedTime&&item[0].Uyear>=this.checkedYear)){
                             this.saasMessage={
                                 visible:true,
                                 delay:3000,
@@ -418,7 +443,7 @@
                             }
                             return;
                         }
-                        if(item.Verify){
+                        if(item[0].Verify){
                             this.saasMessage={
                                 visible:true,
                                 delay:3000,
@@ -426,133 +451,145 @@
                             }
                             return;
                         }
-                        this.voucherDataList.data.Mst=item;
+                        this.voucherDataList.data.Mst=item[0];
                         
                         this.voucherMaskShow('update');
                         this.voucherDataList.bool=true;
                         break;
                     case 'audit'://审核**********  
-                        if(!item.PhId){
+                        if(item.length<=0){
                             this.saasMessage={
-                                message:"请先选择凭证!",
+                                message:"请至少选择一个凭证!",
                                 delay:3000,
                                 visible:true
                             };
                             return;
                         }
-                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
-                            this.saasMessage={
-                                visible:true,
-                                delay:3000,
-                                message:'该月已结账,无法修改!'
+                        for(var au of item){
+                            if(!(au.PMonth>=this.checkedTime&&au.Uyear>=this.checkedYear)){
+                                this.saasMessage={
+                                    visible:true,
+                                    
+                                    message:'存在已结账凭证,无法审核!'
+                                }
+                                return;
                             }
-                          
-                            return;
+                            if(au.Verify){
+                                this.confirm={
+                                    btn1:'继续',
+                                    btn2:'取消',
+                                    message:'存在已审核凭证,是否继续!',
+                                    type:'audit',
+                                    visible:true
+                                }
+                                return;
+                            }
                         }
-                        if(item.Verify){
-                             this.saasMessage={
-                                message:"该凭证已审核!",
-                                delay:3000,
-                                visible:true
-                            };
-                            return;
+                        var PhIds=[];
+                        for(var id of item){
+                            PhIds.push(id.PhId);
                         }
-                        this.audit(true,item.PhId);
-                        break;
+                        this.audit(true,PhIds);
+                        break;                      
                     case 'unaudit'://反审核************
-                        if(!item.PhId){
+                        if(item.length<=0){
                             this.saasMessage={
-                                message:"请先选择凭证!",
+                                message:"请至少选择一个凭证!",
                                 delay:3000,
                                 visible:true
                             };
                             return;
                         }
-                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
-                            this.saasMessage={
-                                visible:true,
-                                delay:3000,
-                                message:'该月已结账,无法修改!'
+                        for(var au of item){
+                            if(!(au.PMonth>=this.checkedTime&&au.Uyear>=this.checkedYear)){
+                                this.saasMessage={
+                                    visible:true, 
+                                    message:'存在已结账凭证,无法反审核!'
+                                }
+                                return;
                             }
-                            return;
+                            if(!au.Verify){
+                                this.confirm={
+                                    btn1:'继续',
+                                    btn2:'取消',
+                                    message:'存在未审核凭证,是否继续!',
+                                    type:'unaudit',
+                                    visible:true
+                                }
+                                return;
+                            }
                         }
-                        if(!item.Verify){
-                            this.saasMessage={
-                                message:"该凭证还未审核,请先审核!",
-                                delay:3000,
-                                visible:true
-                            };
-                            return;
+                        var PhIds=[];
+                        for(var id of item){
+                            PhIds.push(id.PhId);
                         }
-                        this.audit(false,item.PhId);
+                        this.audit(false,PhIds);
                         break;
                     case 'delete' :
-                        if(!item.PhId){
-                           this.saasMessage={
-                                message:"请先选择凭证!",
-                                delay:3000,
+                        if(item.length<=0){
+                            this.saasMessage={
+                                message:"请至少选择一个凭证!",
                                 visible:true
                             };
                             return;
                         }
-                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
-                            this.saasMessage={
-                                visible:true,
-                                delay:3000,
-                                message:'该月已结账,无法修改!'
+                        for(var au of item){
+                            if(!(au.PMonth>=this.checkedTime&&au.Uyear>=this.checkedYear)){
+                                this.saasMessage={
+                                    visible:true,
+                                    message:'存在已结账凭证,无法删除!'
+                                }
+                                return;
                             }
-                            return;
+                            if(au.Verify){
+                                this.saasMessage={
+                                    visible:true,
+                                    message:'存在已审核凭证,无法删除!'
+                                }
+                                return;
+                            }
                         }
-                        if(item.Verify){
-                            this.saasMessage={
-                                visible:true,
-                                delay:3000,
-                                message:'该凭证已审核,无法修改!'
-                            }
-                            return;
-                        }
-                        if(confirm('确定删除记录!')){
-                            var data1={
-                                uid:this.uid,
-                                orgid:this.orgid,
-                                id:item.PhId
-                            }
-                            this.delete(data1);
+                        this.confirm={
+                            visible:true,
+                            message:'此操作将永久删除凭证,是否继续!',
+                            type:'delete'
                         }
                         break;
                     case 'reset':
-                        if(confirm('凭证号重排过程中不允许取消、暂停操作。确定重排？')){
-                            this.resetShow=true;
+                        this.confirm={
+                            message:'凭证号重排过程中不允许取消、暂停操作。确定重排？',
+                            type:'reset',
+                            visible:true
                         }
                         break;
                     case 'print': 
                         this.printVoucher(); 
                         break;
                     case 'copy':  
-                        if(!item.PhId){
+                        if(item.length!=1){
                             this.saasMessage={
-                                message:"请先选择凭证!",
+                                message:"请选择且只选择一个凭证!",
                                 delay:3000,
                                 visible:true
                             };
                             return;
                         }
-                        this.voucherDataList.data.Mst=item;
+                        this.voucherDataList.data.Mst=item[0];
                         this.clearPhId(this.voucherDataList.data.Mst);
                         this.voucherMaskShow('copy');
                         this.voucherDataList.bool=true;
                    
                         break;
                     case 'cut':   //剪切**************
-                        if(!item.PhId){
+                        if(item.length!=1){
                             this.saasMessage={
-                                message:"请先选择凭证!",
+                                message:"请选择且只选择一个凭证!",
                                 delay:3000,
                                 visible:true
                             };
                             return;
                         }
-                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                        if(!(item[0].PMonth>=this.checkedTime&&item[0].Uyear>=this.checkedYear)){
                             this.saasMessage={
                                 visible:true,
                                 delay:3000,
@@ -560,21 +597,28 @@
                             }
                             return;
                         }
-                        this.voucherDataList.data.Mst=item;
+                        if(item[0].Verify){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该凭证已审核,无法修改!'
+                            }
+                            return;
+                        }
+                        this.voucherDataList.data.Mst=item[0];
                         this.voucherMaskShow('cut');
-                        this.voucherDataList.bool=true;
-                    
+                        this.voucherDataList.bool=true;        
                         break;
                     case 'chongh':  //冲红**************
-                        if(!item.PhId){
+                        if(item.length!=1){
                             this.saasMessage={
-                                message:"请先选择凭证!",
+                                message:"请选择且只选择一个凭证!",
                                 delay:3000,
                                 visible:true
                             };
                             return;
                         }
-                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                        if(!(item[0].PMonth>=this.checkedTime&&item[0].Uyear>=this.checkedYear)){
                             this.saasMessage={
                                 visible:true,
                                 delay:3000,
@@ -582,7 +626,15 @@
                             }
                             return;
                         }
-                        if(item.WriteOff_PhIds.length>0){
+                        if(item[0].Verify){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该凭证已审核,无法修改!'
+                            }
+                            return;
+                        }
+                        if(item[0].WriteOff_PhIds.length>0){
                             this.saasMessage={
                                 message:'该凭证已经冲红,无法冲红!',
                                 delay:4000,
@@ -596,7 +648,7 @@
                             //     return;
                             // }
                         }   
-                        this.voucherDataList.data.Mst=item;
+                        this.voucherDataList.data.Mst=item[0];
                         this.chongh();
                         this.voucherMaskShow('chongh');
                         this.voucherDataList.bool=true;    
@@ -613,7 +665,6 @@
                         this.sum1='';
                         this.sum2='';
                         this.searchVal='';
-                        console.log(this.superSearchValPhId)
                         this.superSearchVal={
                             assistItemList:{type:'',list:''},
                             assistItem:'',
@@ -633,6 +684,73 @@
                         break;
                 }
             },
+            //确认框btn1方法**********
+            confirmOk(type){
+                this.confirm.visible=false;
+                var item =JSON.parse(JSON.stringify(this.chooseItem));
+                switch(type){
+                    case 'audit':
+                        var PhIds=[];
+                        for(var id of item){
+                            PhIds.push(id.PhId);
+                        }
+                        this.audit(true,PhIds);
+                        break;
+                    case 'unaudit':
+                        var PhIds=[];
+                        for(var id of item){
+                            PhIds.push(id.PhId);
+                        }
+                        this.audit(false,PhIds);
+                        break;
+                    case 'reset':
+                        this.resetShow=true;
+                        break;
+                    case 'delete':
+                        var PhIds=[];
+                        for(var id of item){
+                            PhIds.push(id.PhId);
+                        }
+                        var data={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            infoData:PhIds
+                        }
+                         
+                        this.delete(data);
+                        break;
+                    case 'gengZ':
+                        var vm = this;
+                        vm.voucherMask='gengz';
+                        vm.voucherDataList.bool=true; 
+                        console.log(vm.voucherDataList)
+                        vm.voucherDataList.data.Mst.PSource='更正';
+                        for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                            if(dtl.Abstract){
+                                dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                if(dtl.DtlAccounts){
+                                    dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                    dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                }   
+                            }                                            
+                        }
+                        
+                          
+                        break;
+                }
+            },
+             //确认框btn2方法**********
+            confirmNo(type){
+                this.confirm.visible=false;
+                switch(type){
+                    case 'gengZ':
+                        this.voucherMask=false;
+                        this.getvoucherList();     
+                        break;
+                }
+            },
             //高级搜索显示隐藏****************
             highGradeToggle(bool) {   
                 if(bool=='reset'){
@@ -646,9 +764,13 @@
                     this.superSearchVal.keyword='';                                       
                 }else if(bool){
                     this.highGradeCss = bool;
+                    this.subjectListShow=false;
                     if(!this.superSearchVal.assistItemList.type){
                         this.getAssist();
                     } 
+                    if(this.subjectList.length<=0){
+                        this.getSubjectList();
+                    }
                 }else{
                     this.highGradeCss = bool;
                     this.superSearchValPhId=0;                
@@ -661,6 +783,38 @@
                     this.superSearchVal.keyword='';         
                 }   
                 
+            },
+            //
+            subjectSearchShow(){
+                this.subjectListShow=!this.subjectListShow;
+            },
+            //获取高级搜索的科目列表
+            getSubjectList(){
+                var data={
+                    orgid:this.orgid,
+                    Ryear:(new Date).getFullYear()
+                }
+                this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
+                    .then(res=>{
+                        if(res.Status=='error'){
+                            this.saasMessage={
+                                delay:4000,
+                                message:res.Msg,
+                                visible:true
+                            }
+                        }
+                        this.subjectList=res;
+                    },err => {
+                        console.log(err);
+                       
+                    })
+                    .catch(err=>{this.$message({ showClose: true,message: '获取科目列表出错了!', type: "error"});})
+            },
+            //科目选择传值
+            subjectData(data){
+                this.subjectListShow=false;
+                this.superSearchVal.keyword=data.data.KName;
+             
             },
              //会计期年份上下切换******
             nextYear(bool){
@@ -686,22 +840,30 @@
             //         this.chooseItem=item;
             //     }
             // },
-            choose(item,index){
 
-            },
-             //审核*****************
-            audit(bool,PhId){
-                var chooseItem=JSON.stringify(this.chooseItem);
-                var item=JSON.parse(chooseItem);              
-                if(!item.PhId){
-                    this.$message("请先选择凭证!");
-                    return;
+            //多选*************
+            choose(item,index){
+                if(item.checked){
+                    item.checked=false;
+                    this.chooseItem.forEach((val,i,arr)=>{
+                        if(val.PhId==item.PhId){
+                            arr.splice(i,1);
+                        }
+                    });
+                    this.$forceUpdate();
+                }else{
+                    item.checked=true;                    
+                    this.chooseItem.push(item);
+                    this.$forceUpdate();
                 }
+            },
+             //[反]审核*****************
+            audit(bool,PhId){              
                 var data={
                     orgid:this.orgid,
                     uid:this.uid,
                     uname:this.uname,
-                    infoData:[PhId]
+                    infoData:PhId
                 }
                 var url='PVoucherMst/PostAudit';
                 if(!bool){
@@ -715,13 +877,11 @@
                             if(bool){ 
                                 this.saasMessage={
                                   visible:true,
-                                  delay:3000,
                                   message:'审核成功!'
                                };
                             }else{
                                  this.saasMessage={
                                   visible:true,
-                                  delay:3000,
                                   message:'反审核成功!'
                                };
                             }
@@ -730,13 +890,11 @@
                             if(bool){
                                  this.saasMessage={
                                   visible:true,
-                                  delay:3000,
                                   message:'审核失败!'
                                };
                             }else{
                                  this.saasMessage={
                                   visible:true,
-                                  delay:3000,
                                   message:'反审核成功!'
                                };
                             }
@@ -745,13 +903,12 @@
                         console.log(err);
                            loading.close();
                     })
-                    .catch(err=>{this.$message({ showClose: true,message: err, type: "error"}),loading.close();})
+                    .catch(err=>{this.$message({ showClose: true,message: '审核出错了!', type: "error"}),loading.close();})
             },
             //删除***********************
             delete(data){ 
-                console.log()
-                 const loading=this.$loading();
-                this.$axios.post('PVoucherMst/PostDelete',data)
+                const loading=this.$loading();
+                this.$axios.post('PVoucherMst/PostDeleteBatch',data)
                     .then(res=>{
                         loading.close();      
                         if(res.Status=='success'){
@@ -876,15 +1033,20 @@
                 };
             },
             //获取打印凭证数据***************
-            printVoucher(data) {
+            printVoucher() {
+                if(this.chooseItem.length<=0){
+                    this.saasMessage={
+                        message:'请选择要打印的凭证!',
+                        visible:true,
+                    }
+                    return;
+                }
                 var vm=this;
                 this.printData=[];
                 this.printCss=true;
                 var data=document.getElementsByClassName('printCon')[0].children[2].children[0].children[0];
-                 console.log(data)
                 data.className='sys-page printDataCss';
-                var list=JSON.parse(JSON.stringify(this.voucherList));
-                console.log(list,this.printCss)
+                var list=JSON.parse(JSON.stringify(this.chooseItem));
                 //拼凑数据供打印使用,凭证头，尾信息
                 for(var vou of list){
                     this.printData.push(vm.printDataTurn(vm,vou));  
@@ -956,12 +1118,6 @@
                 }
                 
             },
-            printclick(data){
-                console.log(data)
-                var data=document.getElementsByClassName('printCon')[0]
-                console.log(this.$refs.print,data);
-                this.$print(data)
-            },
              //冲红***********************
             chongh(){
                 var vm=this;
@@ -988,7 +1144,6 @@
                 year=Mst.PDate.slice(0,4);
                 month=Mst.PDate.slice(5,7);
                 date1=Mst.PDate.slice(8,10);
-                console.log(Mst)
                 for(var dtl of Mst.Dtls){
                     dtl.Abstract=`注销${year}年${month}月${date1}号${Mst.PNo}号凭证`;                    
                     dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
@@ -998,8 +1153,7 @@
                         dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
                     }
                 }
-                console.log(Mst)
-                this.clearPhId(this.voucherDataList.data.Mst); 
+                
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 this.voucherDataList.data.Mst.PSource='冲红'
                 //this.resetVoucher();        
@@ -1045,7 +1199,7 @@
                 var Vdata=this.voucherDataList.data; 
                 if(str=='gengz'){
                     this.clearPhId(Vdata.Mst);
-                    Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
+                    //Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
                 }
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
@@ -1148,7 +1302,7 @@
                     Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
                     Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
                 }
-                console.log(Jcount,Dcount)
+                console.log(Jcount,Dcount,data)
                 if(Jcount.toFixed(2)==Dcount.toFixed(2)){
                     return true;
                 }else{
@@ -1180,7 +1334,7 @@
                         }
                         this.cut(vm,data1);
                     }else if(val=='chongh'){
-                        var Vdata=this.voucherDataList.data;
+                         var Vdata=JSON.parse(JSON.stringify(this.voucherDataList.data));
                         if(Vdata.Mst.Dtls.length<=0){
                             this.$message('请输入内容!')
                             return;
@@ -1201,42 +1355,52 @@
                             return;
                         }
                         
+                        this.clearPhId(Vdata.Mst); 
                         if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
                                 orgcode: this.orgcode,
-                                infoData: this.voucherDataList.data
+                                infoData: Vdata
                             }
                             var oldPhId=this.voucherDataList.data.Mst.PhidTransaction;
                             var oldData=this.voucherDataList.data.Mst;
                             const loading=this.$loading();
                             //this.voucherMask=false; 
-                            this.voucherDataList.bool=false; 
+                           // this.voucherDataList.bool=false; 
+                     
                             this.$axios.post('/PVoucherMst/PostAdd', data)
                                 .then(res => {
+                                     loading.close();
                                     if (res.Status == 'success') {
-                                        if(confirm('保存成功，是否生成【更正凭证】？')){
-                                            vm.voucherDataList.bool=true; 
-                                            vm.voucherDataList.data.Mst=oldData
-                                            vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
-                                            vm.voucherDataList.data.Mst.PSource='更正';
-                                            for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
-                                                if(dtl.SubjectCode){
-                                                    dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
-                                                    dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
-                                                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
-                                                    if(dtl.DtlAccounts){
-                                                        dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
-                                                        dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
-                                                    }   
-                                                }                                            
-                                            }
-                                            vm.voucherMask='gengz'; 
-                                        }else{
-                                            vm.voucherMask=false;
-                                            vm.getvoucherList();     
+                                        vm.voucherMask=false;
+                                        this.confirm={
+                                            visible:true,
+                                            message:'保存成功，是否生成【更正凭证】？',
+                                            type:'gengZ'
                                         }
+                                    
+                                        // if(confirm('保存成功，是否生成【更正凭证】？')){
+                                        //     vm.voucherDataList.bool=true; 
+                                        //     vm.voucherDataList.data.Mst=oldData
+                                        //     vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
+                                        //     vm.voucherDataList.data.Mst.PSource='更正';
+                                        //     for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                                        //         if(dtl.SubjectCode){
+                                        //             dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                        //             dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                        //             dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                        //             if(dtl.DtlAccounts){
+                                        //                 dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                        //                 dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                        //             }   
+                                        //         }                                            
+                                        //     }
+                                        //     vm.voucherMask='gengz'; 
+                                        // }else{
+                                        //     vm.voucherMask=false;
+                                        //     vm.getvoucherList();     
+                                        // }
                                     } else {
                                          this.saasMessage={
                                             visible:true,
@@ -1244,7 +1408,7 @@
                                             message:res.Msg
                                         };
                                     }
-                                    loading.close();
+                                   
                                 },err => {
                                     console.log(err);
                                     loading.close();
@@ -1267,7 +1431,6 @@
                     }    
                 }else{
                     this.voucherMask=false;
-                    this.chooseItem=''; 
                 }                   
             },
             //剪切*****************
@@ -1404,9 +1567,11 @@
                             this.$message('无法找到该凭证!')
                         } else{
                             this.voucherList= res.Record;
-                            this.listInit(this.voucherList);
-                            //this.chooseItem='';
+                            
                         }
+                        this.listInit(this.voucherList);
+                        this.listAll=false;
+                        this.chooseItem=[];
 
                     },err => {
                         console.log(err);
@@ -1715,22 +1880,20 @@
                 
             },
             listAll(bool){
-                if(bool){
-                    this.listCancle=false;
-                }else{
-                    this.listCancle=true;
+                //this.listCancle=!bool;
+                for(var vou of this.voucherList){
+                        vou.checked=bool;
                 }
-               
+                this.chooseItem=bool?this.voucherList:[];
+                this.$forceUpdate();
             },
-            listCancle(bool){
-                
-                if(bool){
-                    this.listAll=false;
-                }else{
-                    this.listAll=true;
-                }
-               
-            }
+            // listCancle(bool){
+            //     this.listAll=!bool;
+            //     for(var vou of this.voucherList){
+            //             vou.checked=!bool;
+            //     }
+            //     this.chooseItem=[];
+            // }
         },
         filters:{
             sum(val,dtl){
@@ -1884,6 +2047,7 @@
             sideTime,
             voucher,
             printTem,
+            subList
         }
     }
     
@@ -1969,9 +2133,30 @@
                 background: #eee;
                 padding: 5px 10px ;
                 li{
+
                     height:30px;
                    
                     margin-bottom: 5px;
+                    &:first-of-type{
+                        >div:nth-of-type(2){
+                            height:100%;
+                            position:relative;
+                            background:#fff;
+                           
+                            >div{
+                                border:1px solid #dcdfe6;
+                                position:relative;
+                                width:100%;
+                                height:100%;
+                                >span{
+                                    padding-left:10px;
+                                }
+                                 >div{
+                                    top:100%;
+                                }
+                            }
+                        }
+                    }
                     >div{
                         float:left;
                         padding:0 5px;
