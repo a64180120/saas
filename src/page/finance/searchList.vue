@@ -1,5 +1,5 @@
 <template>
-<!--17-->
+<!--17下拉快捷搜索框-->
     <div @click.stop="0" class="vue-dropdown default-theme" v-show-extend="show">
       <div class="search-module clearfix" v-show="itemlists.kemu.length">
         <input  class="search-text" v-model="searchValue"
@@ -70,7 +70,7 @@
       search:function(e){
         let vm = this,searchvalue = e.currentTarget.value;
         if(!searchvalue){
-          vm.datalist=[];
+          vm.datalist = vm.itemlist.concat();
         }else{
           vm.datalist = vm.itemlist.filter(function(item,index,arr){
             return item.KCode.indexOf(searchvalue) != -1||item.KName.indexOf(searchvalue) != -1;
@@ -92,6 +92,8 @@
 <style lang="scss" scoped>
   .vue-dropdown.default-theme {
     position: absolute;
+    top:0;
+    left:0;
     display: none;
     width: 100%;
     height:auto !important;

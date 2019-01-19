@@ -12,7 +12,7 @@
           <span class="list-item-text">{{item.KCode}} &nbsp;{{item.KName}}</span>
         </li>
       </ul>
-      <div class="tip__nodata" v-show="inputFocus"><router-link to="/setting/subjectstart">{{nodatatext}}</router-link></div>
+      <div @click.stop="addSubject" class="tip__nodata" v-show="inputFocus">{{nodatatext}}</div>
     </div>
 </template>
 
@@ -60,7 +60,9 @@
       }
     },
     methods:{
-
+      addSubject(){
+        this.$emit('add-subject');
+      },
       appClick:function(data){
         this.searchValue=data;
         this.$emit('item-click',{data:this.searchValue,id:this.id});
@@ -69,7 +71,8 @@
       search:function(e){
         let vm = this,searchvalue = e.currentTarget.value;
         if(!searchvalue){
-          vm.datalist=[];
+          //vm.datalist=[];
+          vm.datalist = vm.itemlist.concat();
         }else{
           vm.datalist = vm.itemlist.filter(function(item,index,arr){
             return item.KCode.indexOf(searchvalue) != -1||item.KName.indexOf(searchvalue) != -1;
@@ -92,6 +95,8 @@
   
   .vueDropdown.defaultTheme {
     position: absolute;
+    left:0;
+    top:0;
     z-index:99;
     display: none;
     width: 100%;
@@ -170,5 +175,6 @@
     background: #ddd;
     height:30px;
     line-height: 30px;
+    cursor:pointer;
   }
 </style>
