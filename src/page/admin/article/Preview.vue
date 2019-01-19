@@ -1,6 +1,19 @@
 <template>
     <section id="article-preview">
         <div class="article-preview-wrap">
+            <div class="article-header">
+                <div class="handle-box">
+                    <el-row>
+                        <el-col :span="24">
+                            <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10"
+                                    style="float: right;margin-left: 10px"
+                                    @click="cancel">关闭预览
+                            </el-button>
+                        </el-col>
+                    </el-row>
+
+                </div>
+            </div>
             <div class="article-warp" v-if="article.PhId">
                 <div class="article-message">
                     <p class="article-title">
@@ -82,6 +95,13 @@ export default {
                     console.log(err)
                     this.$message({showClose: true, message: "文章获取错误", type: "error"});
                 })
+        },
+        cancel(){
+            var phid = this.$route.query.phid;
+            //关闭移除当前的TagNav
+            this.$store.commit("tagNav/removeTagNav", this.$route);
+            //跳转列表的首页
+            this.$router.push({path: "/admin/article/add",query: { type:'edit',phid:phid }});
         }
   }
 };
@@ -91,7 +111,6 @@ export default {
 
 #article-preview{
   position: relative;
-  padding-top: 52px;
   > p{
     position: fixed;
     width: 100%;
@@ -103,16 +122,19 @@ export default {
     box-shadow: 1px 1px 10px 1px rgba(38, 42, 48, .1);
     z-index: 1000;
   }
+  .article-header{
+      height: 60px;
+  }
   .article-preview-wrap{
     position: relative;
     max-width: 1000px;
     margin: 0 auto;
     width: 100%;
-    padding: 30px 10px;
+    padding: 0px 0px 30px;
     .article-warp{
         position: relative;
         animation: show .8s;
-        padding: 30px;
+        padding: 10px 30px;
         width: 100%;
         background-color: #fff;
         box-shadow: 0px 0px 5px 0px rgba(38, 42, 48, .1);

@@ -308,7 +308,7 @@
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
-                    id:this.selectedItem.PhId
+                    infoData:this.selectedItem
                 }
 
                 this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
@@ -316,7 +316,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$axios.post('/SysNews/PostDelete',data)
+                    this.$axios.post('/SysNews/PostDeleteSysNews',data)
                         .then(res=>{
                             if(res.Status==='error'){
                                 this.$message.error(res.Msg);
