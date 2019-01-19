@@ -3,16 +3,42 @@
         <div class="container">
             <div class="unionState flexPublic">
                 <div class="flexPublic">
-                    <div class="searcherValue"><input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="标题"></div>
-                    <div @click="unionSearch" class="searcherBtn btn" style="width: 60px">搜索</div>
+                    <div>
+                        发布状态：
+                    </div>
+                    <div>
+                        <el-select v-model="publishState" style="width: 100px;">
+                            <el-option label="全部" value=""></el-option>
+                            <el-option label="已发布" value="1"></el-option>
+                            <el-option label="未发布" value="0"></el-option>
+                        </el-select>
+                    </div>
+                    <div style="margin-left: 10px;">
+                        创建时间：
+                    </div>
+                    <div>
+                        <el-date-picker
+                            v-model="creatTime"
+                            type="date"
+                            size='small'
+                            placeholder="选择日期" style="width: 180px;">
+                        </el-date-picker>
+                    </div>
                 </div>
                 <ul class="flexPublic handle">
+                    <div class="searcherValue">
+                        <input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="标题">
+                    </div>
+                    <div @click="unionSearch" class="searcherBtn btn" style="width: 60px">搜索</div>
                     <a @click.prevent="handlePage('add')"><li>新增</li></a>
                     <a @click.prevent="handlePage('edit')"><li>修改</li></a>
                     <a @click.prevent="handlePage('delete')"><li>删除</li></a>
                     <a @click.prevent="handlePage('publish')"><li>发布</li></a>
                     <a @click.prevent="handlePage('nopublish')"><li>取消发布</li></a>
                     <a @click.prevent="handlePage('type')"><li>分类管理</li></a>
+                    <a>
+                        <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;'></li>
+                    </a>
                 </ul>
             </div>
             <div class="auxiliary manageContent">
@@ -23,34 +49,59 @@
                     </ul>
                 </div>
                 <div class="formData listContent">
-                    <ul>
-                        <li>序号</li>
-                        <li>标题</li>
-                        <li>创建人</li>
-                        <li>创建时间</li>
-                        <li>发布状态</li>
-                        <li>发布人</li>
-                        <li>发布时间</li>
-                    </ul>
-                    <ul class="formDataItems flexPublic" :class="{listInfoCss:listInfoCssList[index].checked}" @click="chooseOn(index,item)" v-for="(item,index) of listInfo" :key="index">
-                        <li>{{index+1}}</li>
-                        <li>{{item.Title}}</li>
-                        <li>{{item.Author}}</li>
-                        <li>{{item.NgInsertDt}}</li>
-                        <li><i :class="{newAddStateTrue:item.Publish,newAddStateFalse:!item.Publish}"></i></li>
-                        <li>{{item.Publisher}}</li>
-                        <li>{{item.PublishTime}}</li>
-                    </ul>
-                    <div v-if="listInfo.length==0" class="NoDataflex">
-                         当前页没有数据
-                    </div>
+                    <el-table
+                        ref="newsTable"
+                        :data="listInfo"
+                        border
+                        :header-cell-style="getRowClassNews"
+                        @row-click="clickRowNews"
+                        highlight-current-row
+                        style="width: 100%">
+                        <el-table-column
+                            type="index"
+                            label="序号"
+                            width="50">
+                        </el-table-column>
+                        <el-table-column
+                            prop="Title"
+                            label="标题">
+                        </el-table-column>
+                        <el-table-column
+                            prop="Author"
+                            label="创建人"
+                            width="100">
+                        </el-table-column>
+                        <el-table-column
+                            prop="NgInsertDt"
+                            label="创建时间"
+                            width="180">
+                        </el-table-column>
+                         <el-table-column
+                            prop="Publish"
+                            label="发布状态"
+                            width="120">
+                            <template slot-scope="scope">
+                                <i :class="{ newAddStateTrue:scope.row.Publish,newAddStateFalse:!scope.row.Publish }"></i>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="Publisher"
+                            label="发布人"
+                            width="120">
+                        </el-table-column>
+                        <el-table-column
+                            prop="PublishTime"
+                            label="发布时间"
+                            width="180">
+                        </el-table-column>
+                    </el-table>
                     <ul>
                         <li>
                         <el-pagination
                             @size-change="handleSizeChange"
                             @current-change="handleCurrentChange"
                             :current-page="pageIndex"
-                            :page-sizes="[20, 40, 60, 80]"
+                            :page-sizes="[10, 20, 40, 80]"
                             :page-size="pageSize"
                             layout="total, sizes, prev, pager, next, jumper"
                             :total="total">
@@ -60,7 +111,7 @@
                 </div>
             </div>
 
-            <!--辅助项类型页面-->
+            <!--类型页面-->
             <article-type datalists="" @type-click="addTypeFinish" v-if="handleNav=='type'"></article-type>
         </div>
     </div>
@@ -75,13 +126,15 @@
         data(){
             return {
                 unionSearchValue:'',
+                publishState:'',
+                creatTime:'',
                 selectedItem:'',
                 listInfoCssList:[],
                 listInfo:[],      //列表信息
                 handleNav:'',    //类型 add update
                 navActive:'',
                 navTab:[],
-                pageSize: 20, //pageSize
+                pageSize: 10, //pageSize
                 pageIndex: 1, //pageIndex
                 total:0
             }
@@ -131,6 +184,8 @@
                             return
                         }
 
+                        console.log(res)
+
                         this.listInfo=res.List;
                         this.navTab=res.Type;
                         this.total=Number(res.Total);
@@ -149,20 +204,15 @@
                         this.$message({ showClose: true,message: "新闻列表获取错误", type: "error"});
                     })
             },
-
+            //刷新当前页面
+            freshPage(){
+                this.getData('');
+            },
             //切换分类触发方法
             navTabTurn(item){
                 this.navActive=item;
                 //加载数据
                 this.getData('');
-
-            },
-            //列表选择内容
-            chooseOn(index,item){
-                this.listInfoCssList.map((value) => {return value.checked=false})
-                this.listInfoCssList[index].checked=true;
-                this.$forceUpdate();
-                this.selectedItem=item;
             },
             /**
              * pageSize 改变时会触发
@@ -330,6 +380,19 @@
                     this.getTypeData();
                 }
             },
+            // 给表单的表头添加背景颜色
+            getRowClassNews({row, column, rowIndex, columnIndex}){
+                if (rowIndex === 0) {
+                    return 'background: #d3e9f9;border-right:1px solid #fff;text-align: center;color: #000;'
+                } else {
+                    return ''
+                }
+
+            },
+            //el-table 被点击时会触发该事件
+            clickRowNews(row){
+                this.selectedItem=row;
+            }
         }
 
     }
@@ -337,6 +400,11 @@
 </script>
 
 <style scoped>
+    .el-icon-refresh:before {
+        content: "\E633";
+        font-size: 20px;
+        color: #00B8EE;
+    }
     .container{
         height:90%;
         overflow-y: auto;
@@ -347,66 +415,6 @@
     }
     .unionState{
         padding:0 10px;
-    }
-    .formData>ul>li{
-        border-right:1px solid #fff;
-        height:40px;
-        line-height:40px;
-        text-align: center;
-    }
-    .formData>ul>li:nth-of-type(2){
-        width:30%
-    }
-    .formData>ul>li:nth-of-type(3){
-        width:10%;
-    }
-    .formData>ul>li:nth-of-type(4){
-        width:10%;
-    }
-    .formData>ul>li:nth-of-type(5){
-        width:10%;
-    }
-    .formData>ul>li:nth-of-type(6){
-        width:10%;
-    }
-    .formData>ul:first-child>li:last-of-type{
-        width:10%;
-    }
-
-    .formData>ul>li:first-child{
-        width:10%;
-        min-width: 31px;
-        padding:0 2px;
-    }
-
-    .formData>ul.formDataItems:hover{
-        background: #ddd;
-    }
-    .formDataItems{
-
-        border-bottom:1px solid #ddd;
-    }
-    .formData>ul.formDataItems>li{
-        border-right:1px solid #ddd;
-        border-left:0;
-        border-bottom:0;
-        text-align: center;
-        line-height: 40px;
-        height:40px;
-        font-size: 13px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        position: relative;
-    }
-    .formData>ul.formDataItems>li>i.newAddStateTrue:after{
-        top:5px;
-    }
-    .formData>ul.formDataItems>li>.newAddStateFalse:before,
-    .formData>ul.formDataItems>li>.newAddStateFalse:after{
-        top:20px;
-    }
-    .formData>ul.formDataItems>li:first-child{
-        border-left:1px solid #ddd;
     }
     .auxiliary{
         display: flex;
@@ -464,3 +472,15 @@
     }
 
 </style>
+<style>
+    .el-table--striped .el-table__body tr.el-table__row--striped.current-row td, 
+    .el-table__body tr.current-row>td {
+        background-color: #ddd;
+    }
+
+    .el-table--enable-row-hover .el-table__body tr:hover>td{
+	    background-color: #ddd;
+    }
+</style>
+
+

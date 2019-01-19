@@ -1,5 +1,5 @@
 <template>
-    <div class="manageAdd">
+    <div class="manageAdd manage-add">
         <div class="choose">
             <ul class="flexPublic">
                 <li @click="addFinished(true)">保存</li>
@@ -9,7 +9,7 @@
         </div>
         <div class="addFormContainer">
             <h6 class="addTitle" v-model="titleName" v-show="showFlam">基层组织账套管理</h6>
-            <h6 class="addTitle" v-show="showFlam2">机关组织账套管理</h6>
+            <h6 class="addTitle" v-show="!showFlam">机关组织账套管理</h6>
             <ul class="addFormItems ul-flexChild">
                 <li>
                     <div class="addFormItemTitle">
@@ -19,6 +19,23 @@
                     <div class="inputContainer"><input @blur="unionInput(true)" type="text" placeholder="必填"
                                                        v-model="OrgName"></div>
                     <!--<div v-show="unionCss.name">请输入工会名称</div>-->
+                </li>
+                <li v-show="!showFlam">
+                    <div class="addFormItemTitle">
+                        <span style="position: relative;left: 5px;color: #d8281d">*</span>
+                        <span>工会层级</span>
+                    </div>
+                    <div class="inputContainer" style="height: 100%">
+                        <el-select v-model="Layers" placeholder="请选择" style="height: 100%">
+                            <el-option
+                                v-for="item in layerList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <!--<div v-show="unionCss.name">请输入工会编码</div>-->
                 </li>
                 <li>
                     <div class="addFormItemTitle">
@@ -254,6 +271,7 @@ import qs from 'qs';
                 file: '1',
                 OrgName: '',
                 EnCode: '',
+                Layers: '1',
                 EnterpriseCode: '',
                 showFlam2:'',
                 EnterpriseAttachment:'',
@@ -290,6 +308,19 @@ import qs from 'qs';
                 CityValue:[],
                 CountyValue:[],
                 StreetValue:[],
+                layerList: [{
+                    value: '1',
+                    label: '省级'
+                }, {
+                    value: '2',
+                    label: '市级'
+                }, {
+                    value: '3',
+                    label: '区级'
+                }, {
+                    value: '4',
+                    label: '街道'
+                }],
                 imglist:[
                     // {
                     //     PhId:0,
@@ -361,6 +392,9 @@ import qs from 'qs';
                 }else{
                     this.showFlam2 = true;
                 }
+            }else{
+                this.$store.commit("tagNav/upexcludeArr", []);
+                this.showFlam = this.$route.query.showFlam;
             }
             console.log(this.showFlam);
         },
@@ -512,7 +546,9 @@ import qs from 'qs';
                 this.CountyValue = [];
                 this.selectArea(this.City, 2);
                 if(!this.showFlam){
-                    this.getParentByArea(1, this.Province);
+                    if(this.Layers == '2'){
+                        this.getParentByArea(1, this.Province);
+                    }
                 }
             },
             //改变区后的点击事件
@@ -520,13 +556,17 @@ import qs from 'qs';
                 this.StreetValue = [];
                 this.selectArea(this.County, 3);
                 if(!this.showFlam){
-                    this.getParentByArea(2, this.City);
+                    if(this.Layers == '3'){
+                        this.getParentByArea(2, this.City);
+                    }
                 }
             },
             //改变街道后的点击事件
             changeStreet(){
                 if(!this.showFlam){
-                    this.getParentByArea(3, this.County);
+                    if(this.Layers == '4'){
+                        this.getParentByArea(3, this.County);
+                    }
                 }else{
                     this.getParentByArea(4, this.Street);
                 }
@@ -648,13 +688,14 @@ import qs from 'qs';
                                 .then(res => {
                                     if (res.Status == 'success') {
                                         this.$message.success("新增成功");
-                                        // this.$router.push({path: '/'});
+                                        this.$store.commit("tagNav/upexcludeArr", ['basicUnion']);
+                                        //this.$store.commit("tagNav/removeTagNav", this.$route);
+                                        this.$router.push({path: "/admin/orgin"});
                                     }else{
                                         this.$message.error('新增失败,请重试!');
                                     }
                                 })
-                            this.$store.commit("tagNav/removeTagNav", this.$route);
-                            this.$router.push({path: "/admin/orgin"});
+
                         }else{
                             this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
@@ -672,6 +713,7 @@ import qs from 'qs';
                             //'phoneHead': this.phoneHead,
                             //'MobilePhone': this.MobilePhone,
                             'Telephone': this.Telephone,
+                            'Layers': this.Layers,
                             'Chairman': this.Chairman,
                             'ServiceStartTime': this.ServiceStartTime,
                             'ServiceEndTime': this.ServiceEndTime,
@@ -695,13 +737,15 @@ import qs from 'qs';
                                 .then(res => {
                                     if (res.Status == 'success') {
                                         this.$message.success("新增成功");
-                                        // this.$router.push({path: '/'});
+                                        this.$store.commit("tagNav/upexcludeArr", ['union']);
+                                        //this.$store.commit("tagNav/removeTagNav", this.$route);
+                                        this.$router.push({path: "/admin/orgin"});
+
                                     }else{
                                         this.$message.error('新增失败,请重试!');
                                     }
                                 })
-                            this.$store.commit("tagNav/removeTagNav", this.$route);
-                            this.$router.push({path: "/admin/orgin"});
+
                         }else{
                             this.$message.error('请将带星号的必填信息填写完整再保存,请重试!');
                         }
@@ -886,6 +930,11 @@ import qs from 'qs';
 
 </style>
 <style>
+    .manage-add .el-input--suffix .el-input__inner {
+        margin: 0;
+        padding-right: 0;
+        height: 100%;
+    }
     .avatar-uploader{
         position: absolute;
         z-index: 1;

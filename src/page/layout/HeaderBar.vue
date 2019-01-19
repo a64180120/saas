@@ -9,7 +9,7 @@
         </div>
         <slot name="topnav"></slot>
         <div class="header-right">
-            
+
             <div class="header-user-con">
                 <!-- 全屏显示 -->
                 <!-- <div class="btn-fullscreen" @click="handleFullScreen">

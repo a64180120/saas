@@ -121,6 +121,41 @@ const actions = {
             });
         });
     },
+    //新增文章信息
+    AddSysNews({ commit }, data) {
+        return new Promise((resolve, reject) => {
+            let baseheader=httpConfig.getHeaderConfig();
+            let base=httpConfig.getAxiosBaseConfig();
+
+            let config_header = { "Content-Type": "multipart/form-data" };
+            var new_header = Object.assign({},config_header, baseheader);
+            axios.create(base).post('/SysNews/PostAddSysNews', data, { headers:new_header }).then(res => {
+                var response=JSON.parse(res.data);
+                resolve(response);
+
+        　　}).catch((error) =>{
+                //错误
+                reject(error);
+            });
+        });
+    },
+    //修改文章信息
+    UpdateSysNews({ commit }, data) {
+        return new Promise((resolve, reject) => {
+            let baseheader=httpConfig.getHeaderConfig();
+            let base=httpConfig.getAxiosBaseConfig();
+
+            let config_header = { "Content-Type": "multipart/form-data" };
+            var new_header = Object.assign({},config_header, baseheader);
+            axios.create(base).post('/SysNews/PostUpdateSysNews', data, { headers:new_header }).then(res => {
+                var response=JSON.parse(res.data);
+                resolve(response);
+        　　}).catch((error) =>{
+                //错误
+                reject(error);
+            });
+        });
+    },
 };
 
 export default {
