@@ -31,6 +31,14 @@ const staticRoute = [
         ]
     },
     {
+        path:'/news/view',
+        component: () => import("../page/admin/article/Preview")
+    },
+    {
+        path:'/news/list',
+        component: () => import("../page/admin/article/ListView")
+    },
+    {
         //系统管理
         path: "/admin",
         component: Layout,
