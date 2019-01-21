@@ -14,19 +14,27 @@
 
                 </div>
             </div>
-            <div class="article-warp" v-if="article.PhId">
-                <div class="article-message">
-                    <p class="article-title">
-                        {{ article.Title }}
-                    </p>
-                    <div class="article-info">
-                        <span class="info">
-                            <i class="iconfont icon-calendar"></i>
-                            <span class="info-item">发表于 {{ article.PublishTime}} | {{ article.Publisher }}</span>
-                        </span>
+            <div v-if="article.PhId">
+                <div class="article-warp">
+                    <div class="article-message">
+                        <p class="article-title">
+                            {{ article.Title }}
+                        </p>
+                        <div class="article-info">
+                            <span class="info">
+                                <i class="iconfont icon-calendar"></i>
+                                <span class="info-item">发表于 {{ article.PublishTime}} | {{ article.Publisher }}</span>
+                            </span>
+                        </div>
                     </div>
+                    <art-preview :contents="article.Content" />
                 </div>
-                <art-preview :contents="article.Content" />
+                <div class="attachement">
+                    <p>附件</p>
+                    <ul class="attlist">
+                        <li @click.stop="AttachmentDownLoad(item)" v-for="(item,index) of AttachmentList" :key="index">{{item.BName}}</li>
+                    </ul>
+                </div>
             </div>
             <no-data v-if="!article.PhId" text="没有找到该文章~"/>
         </div>
@@ -56,7 +64,8 @@ export default {
             AttachmentSize: '',     //图片大小
             Publisher: '',   //发布人
             PublishTime:''
-        }
+        },
+        AttachmentList: [],   //附件
     };
   },
   created() {
@@ -73,7 +82,8 @@ export default {
       ...mapState({
           userid: state => state.user.userid,
           orgid: state => state.user.orgid
-      })
+      }),
+      
   },
   methods: {
         getData(phid) {
@@ -83,17 +93,18 @@ export default {
                 orgid: this.orgid
             };
 
-            this.$axios.get('/SysNews/GetSysNews', {params: data})
+            this.$axios.get('/SysNews/GetNewsAndAttachmentByNid', {params: {phid:phid}})
                 .then(res => {
                     if (res.Status === 'error') {
                         this.$message.error(res.Msg);
                         return
                     }
-                    this.article = res;
+                    this.article = res.NewsModel;
+                    this.AttachmentList=res.AttachmentModels;
                 })
                 .catch(err => {
                     console.log(err)
-                    this.$message({showClose: true, message: "文章获取错误", type: "error"});
+                    this.$message({showClose: true, message: "新闻获取错误", type: "error"});
                 })
         },
         cancel(){
@@ -102,6 +113,10 @@ export default {
             this.$store.commit("tagNav/removeTagNav", this.$route);
             //跳转列表的首页
             this.$router.push({path: "/admin/article/add",query: { type:'edit',phid:phid }});
+        },
+        //下载附件
+        AttachmentDownLoad(item){
+            console.log(item);
         }
   }
 };
@@ -182,7 +197,26 @@ export default {
             }
          }
     }
-
+    .attachement{
+        margin-top: 50px;
+        > p{
+            color: #79CA63;
+            text-align: left;
+            text-decoration: none;
+            font-family: Arial,Arial;
+            font-size: 14.0pt;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 0px;
+        }
+        .attlist{
+            margin-top: 20px;
+            > li{
+                cursor: pointer;
+                line-height: 30px;
+            }
+        }
+    }
   }
 }
 </style>
