@@ -9,17 +9,17 @@
             </div>
             <div class="voucherList">
                 <ul>
-                    <li @click.stop="tempHandle('add')">
-                        <div>模板</div>
+                    <li v-if="temptype=='normal'" :class="{addModel:temptype=='normal'}" @click.stop="tempHandle('add')">
+                        <div>新增模板</div>
                         <div></div>
                     </li>
                     <li v-for="(item,index) of voucherList" :key="index">
                         <div class="flexPublic">
                             <div><img src="@/assets/icon/0a7856c2-a547-424e-940f-1039697ec329.svg" alt=""><span :title="item.TemName">{{item.TemName}}</span></div>
-                            <div>
-                                <img @click.stop="finish(item)" title="使用模板" src="@/assets/icon/eye.svg" alt="">
-                                <img @click.stop="tempHandle('update',item)" title="编辑" src="@/assets/icon/update.svg" alt="">
-                                <img @click.stop="tempHandle('delete',item)" title="删除" src="@/assets/icon/delete.svg" alt="">
+                            <div  :class="{jieModel:temptype=='jie'}">
+                                <img @click.stop="finish(item)" title="使用模板"  src="@/assets/icon/eye.svg" alt="">
+                                <img v-if="temptype=='normal'" @click.stop="tempHandle('update',item)" title="编辑" src="@/assets/icon/update.svg" alt="">
+                                <img v-if="temptype=='normal'" @click.stop="tempHandle('delete',item)" title="删除" src="@/assets/icon/delete.svg" alt="">
                             </div>
                         </div>
                         <div class="tempContentCon">
@@ -63,11 +63,16 @@
         mounted(){
             this.getvoucherList();
             this.uInfo= userInfo.getUserInfoData().userInfo; 
+            console.log(this.temptype)
+        },
+        props:{
+            temptype:String,//模板类型
         },
         data(){
             return {
                 searchVal:'',
                 TemName:'',
+                
                 voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},
                 voucherList:[],
                 pagesize:100,
@@ -89,7 +94,7 @@
                 this.$axios.get('PVoucherTemplateMst/GetVoucherTemplateList',{params:data})
                     .then(res=>{
                         this.voucherList=res.Record;
-                        console.log(this.voucherList)
+                        
                         if(this.voucherList.length<=0){
                             this.$message('暂无新凭证');
                         }
@@ -527,6 +532,9 @@
                                 padding:5px;
                                 &:last-of-type{
                                     width:35%;
+                                    &.jieModel{
+                                        width:13%;
+                                    }
                                 }
                                 >img{
                                     width:30px;
@@ -555,7 +563,7 @@
                             height:143px;
                             border:2px solid #00b7e4;
                         }
-                        &:first-of-type{
+                        &.addModel:first-of-type{
                             cursor:pointer;
                             >div:first-of-type{
                                 background: #00b7ee;
@@ -677,5 +685,5 @@
 
         }
     }
-
+    
 </style>

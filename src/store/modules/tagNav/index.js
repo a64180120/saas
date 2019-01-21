@@ -9,7 +9,7 @@ const state = {
     // 缓存的页面
     cachedPageName: [],
     //不缓存页面：
-    excludeName:['home']
+    excludeName:['home','Article_add']
 }
 
 const mutations = {
@@ -18,6 +18,7 @@ const mutations = {
         state.openedPageList.push({
             name: data.name,
             path: data.path,
+            fullPath:data.fullPath,
             title: data.title || 'no-name'
         });
         

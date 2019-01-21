@@ -68,7 +68,7 @@
 		<div id="Journalism" class="Journalism">
 			<div class="biao">
   				<img src="@/assets/img/b1-1.png" style="width:100%; margin-top:12px;" />
-    			<p class="g"><a href="xwgg.html">更多</a></p>
+    			<p class="g" style="cursor: pointer;"  @click.stop="openNewsList('291190117000002')">更多</p>
   			</div>
 			<div class="Journalism_left">
   				<a href="http://www.zjtax.gov.cn/" target="_blank">
@@ -121,8 +121,8 @@
       				<li v-for="(item,index) of proInfoList" :key="index" @click.stop="openUrl(item)">
       					<div>
       						<i class="list-dot"></i>
-        					<p class="txt" style='cursor: pointer;'>{{item.info}}</p>
-        					<span class="r">{{item.date}}</span>
+        					<p class="txt" style='cursor: pointer;'>{{item.Title}}</p>
+        					<span class="r">{{item.PublishTime | formatDate('yyyy-MM-dd')}}</span>
         				</div>
       				</li>
     			</ul>
@@ -183,10 +183,10 @@
 			<div class="policy_right">
 			  <ul>
 				<li v-for="(item,index ) of newsInfo" :key="index" @click.stop="openUrl(item)">
-				  <div :to="item.url">
+				  <div>
 					  <i class="list-dot"></i>
-					  <p class="txt" style='cursor: pointer;'>{{item.info}}</p>
-					  <span class="r">{{item.date}}</span>
+					  <p class="txt" style='cursor: pointer;'>{{item.Title}}</p>
+					  <span class="r">{{item.PublishTime | formatDate('yyyy-MM-dd')}}</span>
 				  </div>
 				</li>
 			  </ul>
@@ -194,7 +194,7 @@
 			<div class="switch">
 				  <img src="@/assets/img/j1.png" style="margin-left: 402px;margin-top: 14px;" />
 				  <p style="margin-left: 8px;">换一批</p>
-				  <p style="margin-left: 8px;">更多</p>
+				  <p style="margin-left: 8px;cursor: pointer;" @click.stop="openNewsList('291190117000001')">更多</p>
 			</div>
   		</div>
 		<div id="bottom_box" class="bottom_box">
@@ -226,8 +226,7 @@
 					</li>
 					<li>
 						<img  src="@/assets/img/d6.png" />
-						<p style="line-height: normal;margin-left: 28px;margin-top: -27px;">杭州市拱墅区祥园路88号中国
-		（杭州）智慧信息产业园N座6F</p>
+						<p style="line-height: normal;margin-left: 28px;margin-top: -27px;">杭州市拱墅区祥园路88号中国（杭州）智慧信息产业园N座6F</p>
 					</li>
 				</ul>
 			</div>
@@ -305,6 +304,7 @@
   import md5 from 'js-md5'
   import desHelper from "@/util/desHelper"
 
+
   export default {
     name: "home",
     data(){
@@ -357,25 +357,12 @@
 		},
 		  //页面数据
         nav:'',
-        active:'city', //政策制度选中***
-        proInfoList:[ 
-          {info:'余杭区总工会调研崇贤工会工作',date:'2018-12-25',url:'http://www.hzgh.org/newsview60670.htm'},
-          {info:'崇贤街道人大工委联合街道总工会开展执法检查',date:'2018-11-27',url:'http://www.yhrd.gov.cn/detail.aspx?artid=8131&classid=293'},
-          {info:'崇贤街道总工会召开村(社区)联合工会工资集体协商交流会',date:'2018-03-20',url:'http://www.hzgh.org/newsview51442.htm'},
-          {info:'崇贤街道总工会召开职工医疗互助保障工作动员大会',date:'2017-11-21',url:'http://www.hzgh.org/newsview47266.htm'},
-          {info:'余杭工会信息-杭州余杭区总工会',date:'2017-09-07',url:'http://www.docin.com/p-2099512458.html '},
-          {info:'浙江杭州市余杭区总工会网上服务大厅正式开通上线”',date:'2017-09-21',url:'http://acftu.workercn.cn/28961/201709/21/170921220648933.shtml'},
-          {info:'崇贤街道总工会“十佳好职工”结果出炉，会是你支持的那个人吗',date:'2016-10-19',url:'https://www.zjftu.org/page/zj_zgh/zj_xwzx/zj_xwzx_jcdt/2018-12-21/29167357212420899.html'},
-        ],
-        newsInfo:[
-          {info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
-          {info:'全国总工会党组召开会议传达学习习近平总书记在庆祝改革开放40周年大会上重要讲话精神',date:'2018-12-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97563'},
-          {info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
-          {info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
-          {info:'全国总工会权益保障部 中国劳动和社会保障科学研究院战略合作框架协议签约仪式在京举行 ',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97131'},
-          {info:'全总女职工部赴云南省调研指导工会女职工工作',date:'2018-08-23',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96879'},
-          {info:'《全国工会干部培训基础教材》（2018版）出版',date:'2018-08-30',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96918'},
-        ],
+        active:'all', //政策制度选中***
+        proInfoList:[],
+        newsInfo:[],
+		pageSize: 7, //pageSize
+		pageIndex: 1, //pageIndex
+		total:0
       }
     },
     computed:{
@@ -398,15 +385,63 @@
     },
     mounted(){
 		console.log(this.carouselImgs)
+
+		this.getnewsInfo()
+		this.getproInfoList()
     },
     methods:{
+		...mapActions({
+			sysLogout: "user/logout",
+			GetNewsList: "news/GetNewsList",
+		}),
 		//跳转工会****
 		NavTo(str){
 			this.$router.push({path:str});
 		},
-	 	...mapActions({
-			sysLogout: "user/logout"
-		}),
+		//获取政策制度信息
+		getnewsInfo(){
+			var parames={
+				value:291190117000001,
+				pageindex:this.pageIndex-1,
+				pagesize:this.pageSize,
+			};
+
+			this.GetNewsList(parames).then(res => {
+				if (res.Status === 'error') {
+					this.$message.error(res.Msg);
+					return
+				}
+
+				this.newsInfo=res.List;
+				this.total=Number(res.Total);
+
+			}).catch(error => {
+				console.log(error);
+				this.$message({showClose: true, message: '新闻获取失败', type: 'error'})
+			})
+
+		},
+		//获取行业动态信息
+		getproInfoList(){
+			var parames={
+				value:291190117000002,
+				pageindex:0,
+				pagesize:6,
+			};
+
+			this.GetNewsList(parames).then(res => {
+				if (res.Status === 'error') {
+					this.$message.error(res.Msg);
+					return
+				}
+
+				this.proInfoList=res.List;
+
+			}).catch(error => {
+				console.log(error);
+				this.$message({showClose: true, message: '新闻获取失败', type: 'error'})
+			})
+		},
 		logoutClick() {
           //退出事件
 			this.sysLogout().then(() => {
@@ -415,110 +450,116 @@
 		},
 		//打开网址
 		openUrl(object){
-			window.open(object.url);
+			//window.open(object.url);
+			this.$router.push({path: '/news/view', query: { phid:object.PhId }});
+		},
+		//新闻 更多页面
+		openNewsList(typeid){
+			this.$router.push({path: '/news/list', query: { typePhid:typeid }});
 		},
 		typeclick(object){
-        //alert(object);
-        this.active=object;
+        	//alert(object);
+        	this.active=object;
 
-        let countryInfo=[
-          {info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
-          {info:'全国总工会党组召开会议传达学习习近平总书记在庆祝改革开放40周年大会上重要讲话精神',date:'2018-12-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97563'},
-          {info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
-          {info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
-          {info:'全国总工会权益保障部 中国劳动和社会保障科学研究院战略合作框架协议签约仪式在京举行 ',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97131'},
-          {info:'全总女职工部赴云南省调研指导工会女职工工作',date:'2018-08-23',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96879'},
-          {info:'《全国工会干部培训基础教材》（2018版）出版',date:'2018-08-30',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96918'},
-        ];
+			let countryInfo=[
+			{info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
+			{info:'全国总工会党组召开会议传达学习习近平总书记在庆祝改革开放40周年大会上重要讲话精神',date:'2018-12-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97563'},
+			{info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+			{info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+			{info:'全国总工会权益保障部 中国劳动和社会保障科学研究院战略合作框架协议签约仪式在京举行 ',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97131'},
+			{info:'全总女职工部赴云南省调研指导工会女职工工作',date:'2018-08-23',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96879'},
+			{info:'《全国工会干部培训基础教材》（2018版）出版',date:'2018-08-30',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96918'},
+			];
 
-        let provinceInfo=[
-          {info:'关于评选推荐全国模范职工之家、全国模范职工小家、全国优秀工会工作者和全国优秀工会积极分子、全国优秀工会之友的通知 ',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-05-08/9581253785651033.html'},
-          {info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
-          {info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
-          {info:'中华全国总工会办公厅关于印发《基层工会经费收支管理办法》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877049644557550.html'},
-          {info:'浙江省财政厅 浙江省总工会关于提前下达2018年度职工帮扶专项资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2017-12-05/13752942087233041.html'},
-          {info:'关于印发《浙江省总工会本级基本建设项目管理办法（试行）》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200524602960515.html'},
-          {info:'关于下拨“尊法守法·携手筑梦”服务农民工法治宣传行动专项补助资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200612334907516.html'},
-        ];
+			let provinceInfo=[
+			{info:'关于评选推荐全国模范职工之家、全国模范职工小家、全国优秀工会工作者和全国优秀工会积极分子、全国优秀工会之友的通知 ',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-05-08/9581253785651033.html'},
+			{info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
+			{info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
+			{info:'中华全国总工会办公厅关于印发《基层工会经费收支管理办法》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877049644557550.html'},
+			{info:'浙江省财政厅 浙江省总工会关于提前下达2018年度职工帮扶专项资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2017-12-05/13752942087233041.html'},
+			{info:'关于印发《浙江省总工会本级基本建设项目管理办法（试行）》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200524602960515.html'},
+			{info:'关于下拨“尊法守法·携手筑梦”服务农民工法治宣传行动专项补助资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200612334907516.html'},
+			];
 
-        let cityInfo=[
-          {info:'机关工会工作暂行条例',date:'2018-05-02',url:'http://www.hzgh.org/newsview33982.htm'},
-          {info:'浙江省总工会关于加强和规范基层工会经费收支管理的实施细则',date:'2018-05-02',url:'http://www.hzgh.org/newsview33654.htm'},
-          {info:'关于印发《杭州市总工会内部审计工作办法》的通知 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview33916.htm'},
-          {info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
-          {info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
-          {info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
-          {info:'国务院办公厅关于深入贯彻工会法支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10849.htm'},
-          {info:'国务院印发《关于做好当前和今后一个时期促进就业工作的若干意见》',date:'2018-05-02',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97478'},
-        ];
+			let cityInfo=[
+			{info:'机关工会工作暂行条例',date:'2018-05-02',url:'http://www.hzgh.org/newsview33982.htm'},
+			{info:'浙江省总工会关于加强和规范基层工会经费收支管理的实施细则',date:'2018-05-02',url:'http://www.hzgh.org/newsview33654.htm'},
+			{info:'关于印发《杭州市总工会内部审计工作办法》的通知 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview33916.htm'},
+			{info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
+			{info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
+			{info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
+			{info:'国务院办公厅关于深入贯彻工会法支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10849.htm'},
+			{info:'国务院印发《关于做好当前和今后一个时期促进就业工作的若干意见》',date:'2018-05-02',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97478'},
+			];
 
-        let allInfo=[
-          {info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
-          {info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
-          {info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
-          {info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
-          {info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
-          {info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
-          {info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
-        ]
+			let allInfo=[
+			{info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+			{info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+			{info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
+			{info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
+			{info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
+			{info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
+			{info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
+			]
 
-        if(object==='country') {
-          this.newsInfo=countryInfo;
-        }else if(object==='province'){
-          this.newsInfo=provinceInfo;
-        }else if(object==='city'){
-          this.newsInfo=cityInfo;
-        }else if(object==='all'){
-          this.newsInfo=allInfo;
-        }
-      },
-      //修改密码
-      editPawClick(){
-        this.dialog.editPaw.show=true
-      },
-      editPawSubmit() {
-        this.$refs.editPaw.validate(valid => {
-          if (valid) {
-            if (this.editPaw.newPaw!= this.editPaw.confirmNewPaw) {
-              console.log("新密码与确认新密码不一致!");
-              this.$message.error("新密码与确认新密码不一致!");
-              return;
-            }
+			if(object==='country') {
+			this.newsInfo=countryInfo;
+			}else if(object==='province'){
+			this.newsInfo=provinceInfo;
+			}else if(object==='city'){
+			this.newsInfo=cityInfo;
+			}else if(object==='all'){
+			this.newsInfo=allInfo;
+			}
+      	},
+      	//修改密码
+      	editPawClick(){
+			this.dialog.editPaw.show=true
+		},
+		//修改密码提交
+      	editPawSubmit() {
+			this.$refs.editPaw.validate(valid => {
+			if (valid) {
+				if (this.editPaw.newPaw!= this.editPaw.confirmNewPaw) {
+				console.log("新密码与确认新密码不一致!");
+				this.$message.error("新密码与确认新密码不一致!");
+				return;
+				}
 
-            var oldPwd = md5(this.editPaw.oldPaw);
-            var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);
+				var oldPwd = md5(this.editPaw.oldPaw);
+				var newPwd = desHelper.Encrypt(this.editPaw.newPaw,oldPwd);
 
-            //接口要包含3个参数： uid、 oldPwd、 newPwd
-            let data={
-                uid:this.uid,
-                orgid:this.orgid,
-                OldPwd: oldPwd,
-                NewPwd: newPwd
-            };
-            this.$axios.post('/SysUser/PostUpdatePassword',data)
-              .then(res=>{
-                  if (res.Status=='success'){
-                      this.$message.success("密码修改成功!");
-                      this.dialog.editPaw.show = false;
-                      this.editPaw.oldPaw="";
-                      this.editPaw.newPaw="";
-                      this.editPaw.confirmNewPaw="";
-                      this.$router.push("/login");
-                  }
+				//接口要包含3个参数： uid、 oldPwd、 newPwd
+				let data={
+					uid:this.uid,
+					orgid:this.orgid,
+					OldPwd: oldPwd,
+					NewPwd: newPwd
+				};
+				this.$axios.post('/SysUser/PostUpdatePassword',data)
+				.then(res=>{
+					if (res.Status=='success'){
+						this.$message.success("密码修改成功!");
+						this.dialog.editPaw.show = false;
+						this.editPaw.oldPaw="";
+						this.editPaw.newPaw="";
+						this.editPaw.confirmNewPaw="";
+						this.$router.push("/login");
+					}
 
-                  if (res.Status=="error"){
-                      this.$message.error(res.Msg);
-                      return false;
-                  }
-              })
-              .catch(err=>console.log(err));
+					if (res.Status=="error"){
+						this.$message.error(res.Msg);
+						return false;
+					}
+				})
+				.catch(err=>console.log(err));
 
-          } else {
-            console.log("error submit!!");
-            return false;
-          }
-        });
-      }
+			} else {
+				console.log("error submit!!");
+				return false;
+			}
+			});
+      	}
     }
   }
   

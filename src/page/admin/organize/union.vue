@@ -76,7 +76,7 @@
             <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}"
                 @click="chooseOn(index,item.PhId)" v-for="(item,index) of userInfo" :key="index">
                 <li>{{index+1+(pageIndex-1)*pageSize}}</li>
-                <li>{{item.PhId}}</li>
+                <li>{{item.UserAccount}}</li>
                 <li>{{item.EnCode}}</li>
                 <li>{{item.OrgName}}</li>
                 <li>{{item.NgInsertDt.replace('T',' ')}}</li>
@@ -114,7 +114,9 @@
 </template>
 
 <script>
+
     export default {
+        name: "union",
         data() {
             return {
                 date1: '',
@@ -363,14 +365,14 @@
             },
             routerTo(url) {
                 if(url == '/admin/orgin/add'){
-                    this.$store.commit("tagNav/upexcludeArr", ['manage-add']);
+                    this.$store.commit("tagNav/upexcludeArr", []);
                     this.$router.push({path: url, query: {showFlam:false}});
                 }else{
                     if(this.PhIdList.length == 0){
                         this.$message({ showClose: true,message: "请选中列表的其中一行", type: "warning"});
                         return;
                     }else{
-                        this.$store.commit("tagNav/upexcludeArr", ['manage-update']);
+                        this.$store.commit("tagNav/upexcludeArr", ['manage-add']);
                         this.$router.push({path: url, query: {PhId: this.PhIdList, showFlam:false}});
                         this.ajaxMode();
                         this.PhIdList = '';
@@ -413,6 +415,9 @@
             }
         },
         created() {
+            this.$store.commit("tagNav/upexcludeArr", []);
+            console.log("2222222");
+            this.ajaxMode();
         },
         mounted() {
             this.ajaxMode();

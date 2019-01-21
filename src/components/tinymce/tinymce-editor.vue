@@ -1,6 +1,8 @@
 <template>
   <div class="tinymce-editor">
-    <editor v-model="myValue"
+    <editor
+      id='tinymce'
+      v-model="myValue"
       :init="init"
       :disabled="disabled"
       @onClick="onClick">
@@ -50,7 +52,7 @@ export default {
         language_url: '/static/tinymce/zh_CN.js',
         language: 'zh_CN',
         skin_url: '/static/tinymce/skins/lightgray',
-        height: 300,
+        height: 320,
         plugins: this.plugins,
         toolbar: this.toolbar,
         branding: false,
@@ -67,6 +69,15 @@ export default {
   },
   mounted() {
     tinymce.init({})
+  },
+  activated: function(){
+    console.log(activated);
+    //tinymce.init({})
+  },
+  destroyed:function(){
+    //tinymce.destroy()
+    console.log(destroyed);
+    //tinymce.remove("#tinymce");
   },
   methods: {
     //添加相关的事件，可用的事件参照文档=> https://github.com/tinymce/tinymce-vue => All available events

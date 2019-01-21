@@ -11,6 +11,7 @@ import '@/assets/css/icon/iconfont.css'
 import '@/assets/css/myStyle.css'//自定义样式*************************
 import store from './store'
 import filter from './filter'
+import directive from './directive'
 import axios from './util/ajax'
 import router from './router'
 import i18n from './util/i18n'
@@ -23,6 +24,9 @@ import getPdf from './plugins/PDF/getPdf'
 //import httpajax from "axios";
 //import Auth from "./util/auth";
 //import $ from 'jquery'
+// import VueHighlightJS from 'vue-highlight.js'
+// import 'highlight.js/styles/atom-one-dark.css'
+// Vue.use(VueHighlightJS)
 
 import '../static/css/icon.css';  //阿里的图标样式
 import saasMessage from "@/components/message"
@@ -56,5 +60,6 @@ new Vue({
     router,
     store,
     filter,
+    directive,
     render: h => h(App)
 }).$mount('#app')

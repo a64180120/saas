@@ -40,41 +40,26 @@
                 <div style="float: left; width: 16%; height: 100%;border: 1px solid #eaeaea;">
                     <div  class="block" style="margin-bottom:10px;background-color: #00B8EE;height: 50px;">
                         <!--<span class="demonstration">请选择要查看的组织所在区域</span>-->
-                        <el-cascader
-                            placeholder="选择组织所在区域"
-                            :options="options"
-                            :clearable="true"
-                            class="wggcascader"
-                            @active-item-change="handleItemChange"
-                            @change ="changeArea"
-                            @visibleChange="visOnChange"
-                            change-on-select
-                            style="position: relative;top: 9px;width: 90%;left:5%"
-                            size="small"
-                        ></el-cascader>
+                        <el-input v-model="areaAddressName" placeholder="请先选择地区" clearable @focus="getAreaAddress"
+                                  style="text-align: center; width: 90%;align-content: center; left: 5%; top:15%;height: 80%" class="handle-input mr10">
+                        </el-input>
+                        <!--<el-cascader-->
+                            <!--placeholder="选择组织所在区域"-->
+                            <!--:options="options"-->
+                            <!--:clearable="true"-->
+                            <!--class="wggcascader"-->
+                            <!--@active-item-change="handleItemChange"-->
+                            <!--@change ="changeArea"-->
+                            <!--@visibleChange="visOnChange"-->
+                            <!--change-on-select-->
+                            <!--style="position: relative;top: 9px;width: 90%;left:5%"-->
+                            <!--size="small"-->
+                        <!--&gt;</el-cascader>-->
                     </div>
-                    <!--<div style="height: 40px;">-->
-                        <!--<el-button style="height: 25px;width: 20%; margin-left: 10px; text-align: center; float: left; overflow: hidden" @click="oneClick">-->
-                            <!--{{areaOne}}-->
-                        <!--</el-button>-->
-                        <!--<el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="twoClick">{{areaTwo}}</el-button>-->
-                        <!--<el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="threeClick">{{areaThree}}</el-button>-->
-                        <!--<el-button style="height: 25px;width: 20%;overflow: hidden; text-align: center" @click="fourClick">{{areaFour}}</el-button>-->
-                    <!--</div>-->
                     <div align="center">
                         工会组织列表
                     </div>
                     <div>
-                        <!--<el-tree-->
-                            <!--:data="data2"-->
-                            <!--ref="tree"-->
-                            <!--show-checkbox-->
-                            <!--node-key="OrgId"-->
-                            <!--check-strictly="true"-->
-                            <!--default-expand-all-->
-                            <!--:default-checked-keys="CheckedList"-->
-                            <!--:render-content="renderContent">-->
-                        <!--</el-tree>-->
                         <el-tree
                             :data="data2"
                             :props="defaultProps"
@@ -167,6 +152,52 @@
                 <el-button @click="editVisible = false">取 消</el-button>
             </span>
         </el-dialog>
+
+        <!--地址选择器-->
+        <el-dialog :title="'地址选择'" :visible.sync="addressVisible" width="40%" :close="dialogClose">
+            <template>
+                <el-select v-model="Province" placeholder="" style="width: 20%" @change="changeProvince">
+                    <el-option
+                        v-for="item in ProvinceList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item">
+                    </el-option>
+                </el-select>
+                <span>省</span>
+                <el-select v-model="City" placeholder="" style="width: 20%" @change="changeCity">
+                    <el-option
+                        v-for="item in CityList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item">
+                    </el-option>
+                </el-select>
+                <span>市</span>
+                <el-select v-model="County" placeholder="" style="width: 20%" @change="changeCounty">
+                    <el-option
+                        v-for="item in CountyList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item">
+                    </el-option>
+                </el-select>
+                <span>区</span>
+                <el-select v-model="Street" placeholder="" style="width: 20%" @change="changeStreet">
+                    <el-option
+                        v-for="item in StreetList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item">
+                    </el-option>
+                </el-select>
+                <span>街道</span>
+            </template>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="areaDefine">确 定</el-button>
+                <el-button @click="addressVisible = false">取 消</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -187,6 +218,18 @@
                 }
             }
             return {
+                areaAddress:'',
+                areaAddressName:'',
+                areaLayers:'',
+                Province:'',
+                ProvinceList:[],
+                City:'',
+                CityList:[],
+                County:'',
+                CountyList:[],
+                Street:'',
+                StreetList:[],
+                addressVisible:false,
                 areaOne:'',
                 areaTwo:'',
                 areaThree:'',
@@ -250,7 +293,6 @@
         mounted: function () {
             this.getData('');
             //this.getAreaData();
-            //this.getOrgtree();
             this.getNodes();
         },
         //计算
@@ -293,6 +335,76 @@
                     console.log(error);
                     this.$message({ showClose: true, message: '移交记录获取错误', type: 'error'});
                 });
+            },
+            //用于交互，弹出地址选择页面
+            getAreaAddress(){
+                this.addressVisible = true;
+                this.selectArea(0,0);
+            },
+            //查询地区
+            selectArea(Area,i){
+                var data = {
+                    uid: "0",
+                    orgid: "0",
+                    id: Area
+                }
+                this.$axios.get('/SysArea/GetAreaList', {params: data})
+                    .then(res => {
+                        console.log(res);
+                        if(i == 0){
+                            this.ProvinceList = res;
+                        }else if(i == 1){
+                            this.CityList = res;
+                        }else if(i == 2){
+                            this.CountyList = res;
+                        }else if(i == 3){
+                            this.StreetList = res;
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
+            changeProvince(){
+                this.City = '';
+                this.County = '';
+                this.Street = '';
+                this.CityList =[];
+                this.CountyList = [];
+                this.StreetList = [];
+                this.selectArea(this.Province.value, 1);
+                this.areaAddressName = this.Province.label;
+                this.areaAddress = this.Province.value;
+                this.areaLayers = '1';
+                console.log(this.Province);
+            },
+            changeCity(){
+                this.County = '';
+                this.Street = '';
+                this.CountyList = [];
+                this.StreetList = [];
+                this.selectArea(this.City.value, 2);
+                this.areaAddress = this.City.value;
+                this.areaLayers = '2';
+                console.log(this.areaAddress)
+                this.areaAddressName =this.Province.label+ "/"+ this.City.label;
+            },
+            changeCounty(){
+                this.Street = '';
+                this.StreetList = [];
+                this.selectArea(this.County.value, 3);
+                this.areaAddress = this.County.value;
+                this.areaLayers = '3';
+                this.areaAddressName = this.Province.label+ "/"+ this.City.label+ '/'+ this.County.label;
+            },
+            changeStreet(){
+                this.areaAddress = this.Street.value;
+                this.areaLayers = '4';
+                this.areaAddressName = this.Province.label+ "/"+ this.City.label+ '/'+ this.County.label+ '/'+ this.Street.label;
+            },
+            areaDefine(){
+                this.getOrgtree(this.areaLayers, this.areaAddress);
+                this.addressVisible = false;
             },
             getNodes (val) {
                 //this.aresId = val;
@@ -394,31 +506,31 @@
                     console.log(error);
                 })
             },
-            oneClick(){
-                if(this.aresId.length > 1){
-                    let areaValues = this.aresId.splice(0, this.aresId.length);
-                    this.changeArea(areaValues);
-                }
-            },
-            twoClick(){
-                if(this.aresId.length > 1){
-                    let areaValues = this.aresId.splice(1, this.aresId.length-1);
-                    this.changeArea(areaValues);
-                }
-                console.log()
-            },
-            threeClick(){
-                if(this.aresId.length > 2){
-                    let areaValues = this.aresId.splice(2, this.aresId.length-2);
-                    this.changeArea(areaValues);
-                }
-            },
-            fourClick(){
-                this.changeArea(this.aresId);
-            },
+            // oneClick(){
+            //     if(this.aresId.length > 1){
+            //         let areaValues = this.aresId.splice(0, this.aresId.length);
+            //         this.changeArea(areaValues);
+            //     }
+            // },
+            // twoClick(){
+            //     if(this.aresId.length > 1){
+            //         let areaValues = this.aresId.splice(1, this.aresId.length-1);
+            //         this.changeArea(areaValues);
+            //     }
+            //     console.log()
+            // },
+            // threeClick(){
+            //     if(this.aresId.length > 2){
+            //         let areaValues = this.aresId.splice(2, this.aresId.length-2);
+            //         this.changeArea(areaValues);
+            //     }
+            // },
+            // fourClick(){
+            //     this.changeArea(this.aresId);
+            // },
             handleItemChange (val) {
                 this.getNodes(val);
-                this.getOrgtree(val);
+                //this.getOrgtree(val);
             },
             visOnChange(val){
                 alert("aaa");
@@ -428,59 +540,37 @@
                     alert("bbb");
                 }
             },
-            changeArea(val){
-                this.data2 = [];
-                this.tableData = [];
-                let j = 0;
-                this.getNodes(val);
-                let area = JSON.parse(JSON.stringify(this.aresId));
-                if(val.length == 4){
-                    this.getOrgtree(this.aresId);
-                }else{
-                    if(area.length == val.length){
-                        for(let i = 0; i< val.length; i++){
-                            if(area[i] == val[i]){
-                                j++;
-                            }
-                        }
-                    }
-                    console.log(area);
-                    if(j == val.length){
-                        this.getOrgtree(this.aresId);
-                    }
-                }
-                // for(let k = 0; k < val.length;k++){
-                //     if(k == 0){
-                //         this.areaOne = val[k];
-                //         this.areaTwo='';
-                //         this.areaThree ='';
-                //         this.areaFour ='';
-                //     }if(k == 1){
-                //         this.areaTwo=val[k];
-                //         this.areaThree ='';
-                //         this.areaFour ='';
-                //     }if(k== 2){
-                //         this.areaThree =val[k];
-                //         this.areaFour ='';
-                //     }
-                //     if(k == 3) {
-                //         this.areaFour = val[k];
-                //     }
-                // }
-                this.aresId = val;
-                let l = val.length;
-                l=-l *160;
-                // console.log(l);
-                //document.getElementById('.wggcascader .el-cascader-menu').style.left= "-160px";
-                // console.log(document.getElementsByClassName('el-cascader-menu')[0].style);
-                // if(val.length != 4){
-                //     document.getElementsByClassName('el-cascader-menu')[0].style.marginLeft= l+"px";
-                // }
-                // document.getElementsByClassName('el-cascader-menus')[0].style.marginTop= "50px";
-            },
-            // changeAreaForOrg(val){
-            //     console.log(this.aresId);
-            //     this.getOrgtree(this.aresId);
+            // changeArea(val){
+            //     this.data2 = [];
+            //     this.tableData = [];
+            //     let j = 0;
+            //     this.getNodes(val);
+            //     let area = JSON.parse(JSON.stringify(this.aresId));
+            //     if(val.length == 4){
+            //         this.getOrgtree(this.aresId);
+            //     }else{
+            //         if(area.length == val.length){
+            //             for(let i = 0; i< val.length; i++){
+            //                 if(area[i] == val[i]){
+            //                     j++;
+            //                 }
+            //             }
+            //         }
+            //         console.log(area);
+            //         if(j == val.length){
+            //             this.getOrgtree(this.aresId);
+            //         }
+            //     }
+            //     this.aresId = val;
+            //     let l = val.length;
+            //     l=-l *160;
+            //     // console.log(l);
+            //     //document.getElementById('.wggcascader .el-cascader-menu').style.left= "-160px";
+            //     // console.log(document.getElementsByClassName('el-cascader-menu')[0].style);
+            //     // if(val.length != 4){
+            //     //     document.getElementsByClassName('el-cascader-menu')[0].style.marginLeft= l+"px";
+            //     // }
+            //     // document.getElementsByClassName('el-cascader-menus')[0].style.marginTop= "50px";
             // },
             //获取角色数据
             async getRoleData(){
@@ -521,26 +611,23 @@
                 console.log(key);
             },
             //获取组织树
-            getOrgtree(array){
-                console.log(array);
-                if(array.length > 0){
-                    this.$axios.get("/SysAdminOrganize/GetAllOrgForUser", {
-                        params: {
-                            rank: array.length,
-                            areaCode: array[array.length - 1]
-                        }
-                    }).then(
-                        res => {
-                            console.log(res);
-                            this.data2 = res;
+            getOrgtree(i, area){
+                this.$axios.get("/SysAdminOrganize/GetAllOrgForUser", {
+                    params: {
+                        rank: i,
+                        areaCode: area
+                    }
+                }).then(
+                    res => {
+                        console.log(res);
+                        this.data2 = res;
 
-                            console.log(this.data2);
-                        },
-                        error => {
-                            console.log(error);
-                        }
-                    );
-                }
+                        console.log(this.data2);
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                );
                 // this.$axios.get("/SysOrganize/GetOrgListForUser", {
                 //     params: {
                 //         PageIndex: this.pageIndex - 1,
@@ -1320,6 +1407,11 @@
     }
 </style>
 <style>
+    .block .el-input--suffix .el-input__inner {
+        margin: 0;
+        padding-right: 0;
+        height: 80%;
+    }
     .wggcascader .el-cascader-menu{
         display: inline-block;
         vertical-align: top;
