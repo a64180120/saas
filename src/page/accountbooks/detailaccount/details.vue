@@ -101,7 +101,92 @@
                             </el-tree>
                         </div>
                     </div>
-                    <div class="formData" @mousedown="loadMore" >
+
+                    <div class="formData" >
+                        <div class="tbHeader">
+                            <table>
+                                <colgroup>
+                                    <col width="10%"/>
+                                    <col width="15%"/>
+                                    <col width="24%"/>
+                                    <col width="18%"/>
+                                    <col width="18%"/>
+                                    <col width="5%"/>
+                                    <col width="10%"/>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <td>凭证日期</td>
+                                    <td>凭证字号</td>
+                                    <td>摘要</td>
+                                    <td>借方金额(元)</td>
+                                    <td>贷方金额(元)</td>
+                                    <td>方向</td>
+                                    <td>余额（元）</td>
+                                </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                        <div class="tbBody formData_content" id="ts"  @mousedown="loadMore">
+                            <table  ref="printFrom">
+                                <colgroup>
+                                    <col width="10%"/>
+                                    <col width="15%"/>
+                                    <col width="24%"/>
+                                    <col width="18%"/>
+                                    <col width="18%"/>
+                                    <col width="5%"/>
+                                    <col width="10%"/>
+                                </colgroup>
+                                <tbody>
+                                <tr v-if="dataInfoMonth.Pdate!=undefined">
+                                    <td>{{dataInfoMonth.Pdate.slice(0,10).split(' ')[0]}}</td>
+                                    <td></td>
+                                    <td :class="{bolder:true,'center':true}">{{date1.choosedMonth==1?'年初余额':dataInfoMonth.Abstract}}</td>
+                                    <td class="right">{{dataInfoMonth.JSum| NumFormat}}</td>
+                                    <td class="right" :title="dataInfoMonth.DSum">{{dataInfoMonth.DSum| NumFormat}}</td>
+                                    <td>{{JD[dataInfoMonth.DType]}}</td>
+                                    <td class="right">
+                                        {{ KBalanceType=='1' ? (Number(dataInfoMonth.JSum)-Number(dataInfoMonth.DSum)) : (Number(dataInfoMonth.DSum)-Number(dataInfoMonth.JSum))  | NumFormat}}
+                                    </td>
+                                </tr>
+                                <template v-for="item of dataInfo">
+                                    <tr v-if="item.Abstract=='科目初始化'" :key="item.uid">
+                                        <td>{{item.Pdate.slice(0,10).split(' ')[0]}}</td>
+                                        <td></td>
+                                        <td class="bolder center">年初余额</td>
+                                        <td class="right">{{item.JSum |NumFormat}}</td>
+                                        <td class="right">{{item.DSum |NumFormat}}</td>
+                                        <td>{{JD[item.DType]}}</td>
+                                        <td class="right">
+                                            {{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}
+                                        </td>
+                                    </tr>
+                                    <tr v-else>
+                                        <td>{{item.Abstract=='本月合计'||item.Abstract=='本年累计'?item.Pdate.split('-')[0]+'-'+item.Pdate.split('-')[1]:item.Pdate.slice(0,10).split(' ')[0]}}</td>
+                                        <td class="center" style=""><a @click="showvoucher" :data-title="item.PhIdMst">{{item.Pno!='本月合计'&&item.Pno!='本年累计'?'记-'+item.Pno:''}}</a></td>
+                                        <td :class="{bolder:item.Abstract=='本月合计'||item.Abstract=='本年累计','align-center':true}">{{item.Abstract}}</td>
+
+                                        <td class="right">{{item.JSum |NumFormat}}</td>
+                                        <td class="right">{{item.DSum |NumFormat}}</td>
+                                        <td>{{JD[item.DType]}}</td>
+                                        <template v-if="item.Pno!='本月合计'&&item.Pno!='本年累计'">
+                                            <td></td>
+                                        </template>
+                                        <template v-else>
+                                            <td class="right">{{ KBalanceType=='1' ? (Number(item.JSum)-Number(item.DSum)) : (Number(item.DSum)-Number(item.JSum))  | NumFormat}}</td>
+                                        </template>
+                                    </tr>
+                                </template>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <!--<div class="formData" @mousedown="loadMore" >
                         <ul>
                             <li>凭证日期</li>
                             <li>凭证字号</li>
@@ -155,17 +240,17 @@
                                 ...加载中
                             </div>
                         </div>
-                        <!--
+                        &lt;!&ndash;
                             v-infinite-scroll:
                             infinite-scroll-distance 指定滚动条距离底部多高时触发v-infinite-scroll指向的方法
                             infinite-scroll-disabled 等于true时代表正在执行加载，这时禁用滚动触发
                             infinite-scroll-listen-for-event 当vue实例触发事件时立即再次检查
                             infinite-scroll-throttle-delay 两次检查之间的时间间隔(默认值= 200)
-                          -->
-                        <!--<div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"  infinite-scroll-distance="10">
+                          &ndash;&gt;
+                        &lt;!&ndash;<div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"  infinite-scroll-distance="10">
                             <template v-if="!busy">.....加载中</template>
-                        </div>-->
-                    </div>
+                        </div>&ndash;&gt;
+                    </div>-->
                 </div>
 
 
@@ -218,7 +303,7 @@
                 },
                 zwTime:'', //账期 开始时间 结束时间  [ "2018-12-07", "2019-01-11" ]
                 auxiliary:0,  //显示辅助项
-                pageSize: 25, //pageSize
+                pageSize: 15, //pageSize
                 pageIndex: 0, //pageIndex
                 testIndex:0,
                 searchYear:'',
@@ -801,6 +886,14 @@
             },
             // 打印
             printContent(e){
+                //获取打印表格的表头
+                let dm = this.$refs.printFrom.parentNode.parentNode.firstChild.firstChild.childNodes[2].cloneNode(true);
+                let cop = this.$refs.printFrom.cloneNode(true);
+                cop.insertBefore(dm,cop.childNodes[2]);
+                this.$print(cop) // 使用
+            },
+            // 打印
+           /* printContent(e){
                 // let subOutputRankPrint = this.$refs.printFrom;
                 // console.log(subOutputRankPrint.innerHTML);
                 // let newContent =subOutputRankPrint.innerHTML;
@@ -815,9 +908,18 @@
                 dm.classList.add('first_child');
                 let cop = this.$refs.printFrom.cloneNode(true);
                 cop.insertBefore(dm,cop.firstChild);
+
+                let childList=cop.childNodes;
+
+                let len=13;
+                let level=Math.ceil(childList.length/len);
+                for(var i=1; i<level ; i++){
+                    childList[i*len].setAttribute('style','page-break-after:always');
+                    childList[i*len+1].setAttribute('style','border-top:1px solid #ebeef5;margin-top:20px');
+                }
                 cop.classList.remove('formData_content');
                 this.$print(cop) // 使用
-            },
+            },*/
         //刷新
             refresh:function(){
                 this.getData(false);

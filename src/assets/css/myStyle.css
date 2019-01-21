@@ -354,3 +354,51 @@
     border-radius: 5px;
     box-shadow: 0 0 1px 1px  #00b7ee;
 }
+/* 表格样式，仿eltable */
+.tbHeader{
+    width: 100%;
+    text-align: center;
+}
+.tbBody{
+    position: absolute;
+    bottom: 0;
+    top: 90px;
+    right: -17px;
+    left: 0;
+    overflow-y: scroll;
+}
+.tbBody table{
+    width: 100%;
+}
+.tbHeader table{
+    height: 100%;
+    width: 100%;
+}
+thead td{
+    border:1px solid white;
+    text-align:center ;
+    height: 48px;
+    line-height: 48px;
+    background: #d3e9f9;
+    color: #000;
+}
+
+tbody td{
+    height: 48px;
+    line-height: 48px;
+    background: transparent;
+    color: #000;
+    border: 1px solid #ebeef5;
+    padding:0 10px;
+}
+table .right{
+    text-align: right;
+}
+table .left{
+    text-align: left;
+}
+
+tbody tr:hover{
+    background-color: #fafafa;
+    transition: background-color .25s ease;
+}

@@ -208,6 +208,7 @@
 
                 let data={
                     'choosedYear':this.choosedYear,
+                    'choosedYearEnd':this.choosedYear,
                     'choosedMonth':this.choosedMonth,
                     'choosedMonthEnd':this.choosedMonth
                 }
