@@ -49,7 +49,7 @@
                     <div><span>高级查询</span><i @click.stop="highGradeToggle(false)" class="cancle"></i></div>
                     <ul>
                         <li>
-                            <div>科目编码</div>
+                            <div>科目名称</div>
                             <div @click.stop="subjectSearchShow" >
                                 <div >
                                     <span>{{superSearchVal.keyword}}</span>

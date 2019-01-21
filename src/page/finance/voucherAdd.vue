@@ -36,7 +36,7 @@
                     <li class="mode" style="width:60px;">
                         <div >模板</div>
                         <div @click.prevent.stop="addVoucher('modelList')" >普通类</div>
-                        <div @click.prevent.stop="addVoucher('modelList')" >结转类</div>
+                        <div @click.prevent.stop="addVoucher('jieModel')" >结转类</div>
                         <div @click.prevent.stop="addVoucher('keepModel')">存为模板</div>
                     </li>
                 </a> 
@@ -167,7 +167,7 @@
 
         </div>
         <!-- 凭证模板****************** -->
-        <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
+        <voucher-temp v-if="modelListCss" :temptype="temptype" @temp-click="tempClick"></voucher-temp>
         <!-- 下月账******************* -->
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
         <!-- <div class="footInfo " >
@@ -233,7 +233,7 @@
                 TemMoney:0,
                 tempMask:false
             },
-            
+            temptype:'',//模板类型
             superSearchVal:{//高级搜索参数******************
                     assistItemList:{type:'',list:''},
                     assistItem:'',
@@ -335,6 +335,11 @@
                         this.resetVoucher();
                         break;
                     case 'modelList':
+                        this.temptype='normal';
+                        this.modelListCss=true;
+                        break;
+                    case 'jieModel':  //结转模板
+                        this.temptype='jie';
                         this.modelListCss=true;
                         break;
                     case 'keepModel':
