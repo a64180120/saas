@@ -81,7 +81,7 @@
                             label="发布状态"
                             width="120">
                             <template slot-scope="scope">
-                                <i :class="{ newAddStateTrue:scope.row.Publish,newAddStateFalse:!scope.row.Publish }"></i>
+                                <i :class="{ newsPublishStateTrue:scope.row.Publish,newsPublishStateFalse:!scope.row.Publish }"></i>
                             </template>
                         </el-table-column>
                         <el-table-column
@@ -470,7 +470,30 @@
         text-align: center;
         padding-top: 10px;
     }
-
+    .newsPublishStateTrue:before,.newsPublishStateTrue:after{
+        content:"";
+        position:absolute;
+        width:8px;
+        height:18px;
+        border:1px solid #02a7e7;
+        border-width: 0 1px 1px 0;
+        transform: rotate(45deg);
+        top:12px;
+        left:48%;
+    }
+    .newsPublishStateFalse:before,.newsPublishStateFalse:after{
+        content:"";
+        position: absolute;
+        width:18px;
+        height:1px;
+        background: #d8281d;
+        transform: rotate(45deg);
+        left:40px;
+        left:45%;
+    }
+    .newsPublishStateFalse:before{
+        transform: rotate(-45deg);
+    }
 </style>
 <style>
     .el-table--striped .el-table__body tr.el-table__row--striped.current-row td, 

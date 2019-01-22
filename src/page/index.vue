@@ -451,7 +451,7 @@
 		//打开网址
 		openUrl(object){
 			//window.open(object.url);
-			this.$router.push({path: '/news/view', query: { phid:object.PhId }});
+			this.$router.push({path: '/news/view', query: { phid:object.PhId,type:'index' }});
 		},
 		//新闻 更多页面
 		openNewsList(typeid){

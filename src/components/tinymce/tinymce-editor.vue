@@ -75,8 +75,8 @@ export default {
     //tinymce.init({})
   },
   destroyed:function(){
-    //tinymce.destroy()
-    console.log('destroyed');
+    //tinymce.destroy(true)
+    //console.log(destroyed);
     //tinymce.remove("#tinymce");
   },
   methods: {
