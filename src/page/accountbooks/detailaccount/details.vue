@@ -44,7 +44,7 @@
                                             start-placeholder="开始日期"
                                             end-placeholder="结束日期"
                                             value-format="yyyy-MM-dd"
-                                            style="width: 250px;border:none;padding-right: 0;"
+                                            style="width: 270px;border:none;padding-right: 0;"
                                             popper-class="popper"
                                         >
                                         </el-date-picker>
@@ -81,7 +81,7 @@
 
                         <div class="el-input el-input--prefix" style="text-align: center; padding: 3px 10px;height: 35px;overflow: hidden">
                             <div style="width: 158px;height: 26px;line-height: 26px;margin: auto">
-                                <input type="text" autocomplete="off" placeholder="搜索科目编码/名称" class="el-input__inner" style="width: 158px;height: 26px;line-height: 26px;font-size: 10pt;" @change="searchCode">
+                                <input type="text" autocomplete="off" placeholder="搜索科目编码/名称" class="el-input__inner" style="width: 158px;height: 26px;line-height: 26px;font-size: 10pt;" @change="searchCode" @keyup.enter.native="searchCode">
                                 <i class="el-input__icon el-icon-lx-search" style="position: relative; left: -60px;z-index: 14; height: 26px;top: -28px;color: #dcdfe6;"></i>
 
                             </div>
@@ -416,7 +416,7 @@
                     //this.$message.error('开始发生金额不应大于结束发生金额');
                 }
                 else{
-                    this.showType='none';
+                    /*this.showType='none';*/
                     this.getData(false);
                 }
 
@@ -960,14 +960,6 @@
             width: 100%;
             padding: 0 30px;
         }
-        .timeSelectBox{
-            position: -ms-page;
-            right: -10px;
-            top: 100px;
-            bottom:-20px;
-            width: 60px;
-            z-index: 99;
-        }
     }
 
 
@@ -1205,17 +1197,20 @@
         right: -103px;
         z-index: 99;
         background-color: #fff;
-        width: 339px;
+        width: 360px;
         height: 230px;
         box-shadow: 0 0 6px 2px #c9ccce;
         border-radius: 10px 10px;
     }
-    .searchPanel input:focus{
-        box-shadow:0 0 3px .1px #00B8EE;
+    .searchPanel input{
+        height: 100%;
+        background-color: #fff;
     }
+
     .searchPanel .flexPublic{
         padding: 5px 10px;
         height: 45px;
+        background-color: #eee;
     }
     .searchPanel .searchPanel_title{
         height: 29px;
@@ -1233,8 +1228,8 @@
     }
     .searchPanel>.flexPublic:nth-of-type(3)>div:last-child,
     .searchPanel>.flexPublic:nth-of-type(4)>div:last-child{
-        width: 250px;
-        padding-left: 10px;
+        width: 270px;
+        padding: 5px 0;
     }
     .searchPanel>.flexPublic:nth-of-type(3)>div:last-child input,
     .searchPanel>.flexPublic:nth-of-type(4)>div:last-child input{
@@ -1249,6 +1244,7 @@
         height: 65px;
         border-top: 1px solid #dddfe4;
         padding: 0 40px;
+        background-color: #fff;
     }
     .searchPanel .searchPanel_btn{
         width: 135px;

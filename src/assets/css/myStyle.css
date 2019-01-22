@@ -277,10 +277,9 @@
 .content{
     height:100%;
     overflow-y: auto;
-    padding: 20px;
+    padding: 60px 20px 40px 20px;
     background: #fff;
-    padding-top: 50px;
-    margin-top:0;
+    margin-top: 0;
 }
 .popper{
     top: 235px !important;
@@ -312,7 +311,7 @@
   }
 
  /* 清除ie输入框的叉号 */
-  input[type=text]::-ms-clear{display: none;} 
+  input[type=text]::-ms-clear{display: none;}
 
   /*设置按钮样式--王冠冠*/
     .el-button--info:hover, .el-button--info:focus {
@@ -390,6 +389,7 @@ tbody td{
     color: #000;
     border: 1px solid #ebeef5;
     padding:0 10px;
+    text-align: center;
 }
 table .right{
     text-align: right;

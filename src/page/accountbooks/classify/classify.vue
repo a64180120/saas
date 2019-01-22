@@ -13,26 +13,31 @@
                         </div>-->
                         <div style="width:100%;float: right">
                             <ul  class="flexUl handle" style="float: left;line-height: 30px">
-                                <el-checkbox v-model="showFirst">只显示一级科目</el-checkbox>
-                                <el-checkbox v-model="showBenqi">剔除本期发生为零</el-checkbox>
-                                <el-checkbox v-model="showQimo">剔除期末余额为零</el-checkbox>
-                                <span>科目区间：</span>
-                                <el-select v-model="startCode" placeholder="请选择" @change="">
-                                   <!-- <el-option
-                                        v-for="item in province"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value" >
-                                    </el-option>-->
+                                <!--<el-checkbox v-model="showFirst">只显示一级科目</el-checkbox>-->
+                                <el-checkbox v-model="showBenqi" @change="dispart">剔除本期发生为零</el-checkbox>
+                                <el-checkbox v-model="showQimo" @change="dispart">剔除期末余额为零</el-checkbox>
+                                <span style="margin-left: 35px;">科目区间：</span>
+                                <el-select v-model="startCode" placeholder="请选择" @change="searchCodeStart">
+                                   <el-option
+                                        v-for="item in subjectLists"
+                                        :key="item.code"
+                                        :label="item.name"
+                                        :value="item.code"
+                                        :style="{'text-indent':item.layer*15+'px'}"
+                                   >
+                                    </el-option>
                                 </el-select>
                                 <span>至</span>
-                                <el-select v-model="endCode" placeholder="请选择" @change="">
-                                    <!--<el-option
-                                        v-for="item in province"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value" >
-                                    </el-option>-->
+                                <el-select v-model="endCode" placeholder="请选择" @change="searchCodeEnd">
+                                    <el-option
+                                        v-for="item in subjectLists"
+                                        :key="item.code"
+                                        :label="item.name"
+                                        :value="item.code"
+                                        :style="{'text-indent':item.layer*10+'px'}"
+                                        :disabled="item.code<startCode"
+                                    >
+                                    </el-option>
                                 </el-select>
                             </ul>
                             <ul class="flexUl handle">
@@ -42,8 +47,8 @@
                             </ul>
                             <ul  class="flexUl handle" style="line-height: 30px">
                                 <li class="searcherValue"><input type="text" placeholder="科目编码/名称" v-model="inputKvalue"></li>
-                                <li  class="searcherBtn" @click="getData">搜索</li>
-                                <li   class="searcherBtn" @click="showType='block'" style="margin-left: 10px">高级</li>
+                                <li  class="searcherBtn" @click="searchCode">搜索</li>
+                               <!-- <li   class="searcherBtn" @click="showType='block'" style="margin-left: 10px">高级</li>
                                 <div class="searchPanel" :style="{'display':showType}">
                                     <div class="flexPublic searchPanel_title">
                                         <div>高级查询</div>
@@ -82,7 +87,7 @@
                                         <div class="searchPanel_btn greybtn" @click="clearPorp">重置</div>
                                         <div class="searchPanel_btn bluebtn" @click="searchDetail">搜索</div>
                                     </div>
-                                </div>
+                                </div>-->
                             </ul>
                         </div>
                     </div>
@@ -91,12 +96,13 @@
                         <div class="tbHeader">
                             <table>
                                 <colgroup>
-                                    <col width="10%"/>
-                                    <col width="10%"/>
+                                    <col width="8%"/>
+                                    <col width="8%"/>
                                     <col width="10%"/>
                                     <col width="25%"/>
                                     <col width="15%"/>
                                     <col width="15%"/>
+                                    <col width="4%">
                                     <col width="15%"/>
                                 </colgroup>
                                 <thead>
@@ -107,6 +113,7 @@
                                     <td>摘要</td>
                                     <td>借方金额（元）</td>
                                     <td>贷方金额（元）</td>
+                                    <td>方向</td>
                                     <td>余额（元）</td>
                                 </tr>
                                 </thead>
@@ -116,32 +123,51 @@
                         <div class="tbBody" >
                             <table ref="printFrom">
                                 <colgroup>
-                                    <col width="10%"/>
-                                    <col width="10%"/>
+                                    <col width="8%"/>
+                                    <col width="8%"/>
                                     <col width="10%"/>
                                     <col width="25%"/>
                                     <col width="15%"/>
                                     <col width="15%"/>
+                                    <col width="4%">
                                     <col width="15%"/>
                                 </colgroup>
                                 <tbody>
-                                <template v-for="(item,index) in dataList">
-                                    <tr v-if="index==0">
-                                        <td :rowspan="dataList.length">{{dataList[0].subject_code}}</td>
-                                        <td :rowspan="dataList.length">{{dataList[0].k_name}}</td>
-                                        <td>{{dataList[0].ye_j_sum}}</td>
-                                        <td>{{dataList[0].ye_d_sum}}</td>
-                                        <td>{{dataList[0].yh_j_sum}}</td>
-                                        <td>{{dataList[0].yh_d_sum}}</td>
-                                        <td>{{dataList[0].yl_j_sum}}</td>
+                                <template v-for="(item) in dataList">
+                                    <template  v-if="item.Del.length>0">
+                                        <tr style="border-top: #00b7ee;page-break-after: always">
+                                            <td :rowspan="item.Del.length+1" style="border-bottom-color: #00B8EE">{{item.Kcode}}</td>
+                                            <td :rowspan="item.Del.length+1"  style="border-bottom-color: #00B8EE">{{item.Kname}}</td>
+                                            <td class="center">{{item.Del[0].Pdate}}</td>
+                                            <td class="center">{{item.Del[0].Abstract}}</td>
+                                            <td class="right">{{item.Del[0].Jsum}}</td>
+                                            <td class="right">{{item.Del[0].Dsum}}</td>
+                                            <td class="center">{{item.Del[0].K_balancetype}}</td>
+                                            <td class="right">{{item.Del[0].K_balancetype=='借'?item.Del[0].Jsum-item.Del[0].Dsum:item.Del[0].Dsum-item.Del[0].Jsum}}</td>
+                                        </tr>
+                                        <tr v-for="(del,index) in item.Del" :style="{'page-break-after': index==item.Del.length-1?'always':''}">
+                                        <template v-if="index>0">
+                                            <td  :style="{'border-bottom-color': index==item.Del.length-1?'#00B8EE':''}">{{del.Pdate}}</td>
+                                            <td :style="{'border-bottom-color': index==item.Del.length-1?'#00B8EE':''}">{{del.Abstract}}</td>
+                                            <td class="right" :style="{'border-bottom-color': index==item.Del.length-1?'#00B8EE':''}">{{del.Jsum}}</td>
+                                            <td class="right" :style="{'border-bottom-color': index==item.Del.length-1?'#00B8EE':''}">{{del.Dsum}}</td>
+                                            <td :style="{'border-bottom-color': index==item.Del.length-1?'#00B8EE':''}">{{del.K_balancetype}}</td>
+                                            <td class="right" :style="{'border-bottom-color': index==item.Del.length-1?'#00B8EE':''}">{{del.K_balancetype=='借'?item.Del[0].Jsum-item.Del[0].Dsum:item.Del[0].Dsum-item.Del[0].Jsum}}</td>
+                                        </template>
                                     </tr>
-                                    <tr v-else>
-                                        <td>{{item.ye_j_sum}}</td>
-                                        <td>{{item.ye_d_sum}}</td>
-                                        <td>{{item.yh_j_sum}}</td>
-                                        <td>{{item.yh_d_sum}}</td>
-                                        <td>{{item.yl_j_sum}}</td>
-                                    </tr>
+                                    </template>
+                                    <template v-else>
+                                        <tr style="border-top: #00b7ee;page-break-after: always">
+                                            <td :rowspan="item.Del.length+1" style="border-bottom-color: #00B8EE">{{item.Kcode}}</td>
+                                            <td :rowspan="item.Del.length+1"  style="border-bottom-color: #00B8EE">{{item.Kname}}</td>
+                                            <td colspan="6" class="center" style="border-bottom-color: #00B8EE">当前搜索数据为空</td>
+                                           <!-- <td class="center">{{item.Del[0].Abstract}}</td>
+                                            <td class="right">{{item.Del[0].Jsum}}</td>
+                                            <td class="right">{{item.Del[0].Dsum}}</td>
+                                            <td class="center">{{item.Del[0].K_balancetype}}</td>
+                                            <td class="right">{{item.Del[0].K_balancetype=='借'?item.Del[0].Jsum-item.Del[0].Dsum:item.Del[0].Dsum-item.Del[0].Jsum}}</td>-->
+                                        </tr>
+                                    </template>
                                 </template>
                                 </tbody>
                             </table>
@@ -188,9 +214,10 @@
                 endMoney:'',
                 inputKvalue:'',//搜索框输入
                 showFirst:false,//显示一级科目
-                showBenqi:false,//隐藏本期发生金额为0
+                showBenqi:true,//隐藏本期发生金额为0
                 showQimo:false,//隐藏期末发生金额为0
-                subjectLists:'',//科目列表
+                showType:0,//0全显示，1剔除本期发生金额为0,2剔除余额为0,3全部剔除
+                subjectLists:[],//科目列表
                 startCode:'',//查询开始科目
                 endCode:'',//结束科目
             }
@@ -208,26 +235,79 @@
             //this.getData();
             this.getSubjectData();
         },
+
         methods:{
+            //显示剔除
+            dispart:function(){
+                if(this.showBenqi&&this.showQimo){
+                    this.showType=3
+                }else{
+                    if(this.showBenqi){
+                        this.showType=1;
+                    }else if(this.showQimo){
+                        this.showType=2;
+                    }else{
+                        this.showType=0
+                    }
+                }
+                this.getData();
+            },
             //数据查询
             getData:function(){
+                let KcodeList=[];
+                for(var i in this.subjectLists){
+                    if(this.subjectLists[i].code>=this.startCode&&this.subjectLists[i].code<=this.endCode){
+                        KcodeList.push(this.subjectLists[i].code)
+                    }
+                }
+                let loading=this.$loading();
                 let data={
                     "uid": this.userid,
-                    "Kcode": "101,102,103",
+                    "Kcodes": KcodeList,
                     "Year": "2019",
                     "OrgIds": this.orgid,
                     "StartTime": "0",
-                    "EndTime": "12"
+                    "EndTime": "12",
+                    "ZeroType":this.showType
                 };
                 this.$axios.get(
                     'PVoucherMst/GetDetailAccountALL',
                     {params:data}
                 ).then(res=>{
+                    loading.close();
+
                     this.dataList=qs.parse(res).Record;
-                    console.log(qs.parse(res));
                 }).catch(err=>{
+                    loading.close();
                     console.log(err);
                 })
+            },
+            //输入框科目查询
+            searchCode:function(){
+                var k=0;
+                for(let i in this.subjectLists){
+                    if(this.inputKvalue==this.subjectLists[i].code||this.inputKvalue==this.subjectLists[i].name){
+                        this.startCode=this.subjectLists[i].code;
+                        this.endCode=this.subjectLists[i].code;
+                        this.getData();
+                    }else{
+                        k++;
+                        if(k==this.subjectLists.length){
+                            alert('搜索科目编码/名称不存在，请确认');
+                        }
+                    }
+                };
+            },
+            //开始科目更换查询
+            searchCodeStart:function(){
+                if(this.startCode>this.endCode){
+                    this.endCode=this.startCode
+                }
+                this.getData();
+            },
+            //结束科目查询
+            searchCodeEnd:function(){
+              this.getData()
             },
             //清除高级查询数据
             clearPorp:function(){
@@ -277,11 +357,10 @@
                     infoData:queryfilter
                 }).then(res => {
                     console.log(res);
-
-                    this.subjectLists=res;
-
+                    this.fiyClassList(res);
+                    this.startCode=this.subjectLists[0].code;
+                    this.endCode=this.subjectLists[0].code;
                     if(res.length>0){
-                        this.inputKvalue=res[0].KCode;
                         //加载第一个科目的明细
                         this.getData(false);
                     }
@@ -294,6 +373,17 @@
                 })
 
             },
+            //科目列表化，将所有子科目全部取出
+            fiyClassList:function(listC){
+              for(var i in listC){
+                  console.log(listC[i].Layers);
+                  this.subjectLists.push({'code':listC[i].KCode,'name':listC[i].KCode+"-"+listC[i].KName,'layer':listC[i].Layers});
+                  if(listC[i].children.length>0){
+                      this.fiyClassList(listC[i].children);
+                  }
+              }
+            },
+
             //刷新
             refresh:function(){
                 this.getData();

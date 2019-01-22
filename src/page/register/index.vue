@@ -215,6 +215,24 @@
                   })
               }
             };
+            let validStreet=(rule,value,callback)=>{
+                /*provincevalue: '',
+                    cityvalue: '',
+                    countyvalue: '',
+                    streetvalue: '',*/
+                if(this.registerForm2.provincevalue==''){
+                    callback(new Error('请选择省'))
+                }else if(this.registerForm2.cityvalue==''){
+                    callback(new Error('请选择城市'))
+                }
+                if(this.registerForm2.countyvalue==''){
+                    callback(new Error('请选择县'))
+                }else if(this.registerForm2.streetvalue==''){
+                    callback(new Error('请选择街道'))
+                }else if(value==''||value==undefined){
+                    callback()
+                }
+            };
             let validPwd=(rule,value,callback)=>{
                 console.log(rule);
                 if(value==''||value==undefined){
@@ -269,11 +287,11 @@
                     ],
                     phone:[
                         {required:true,message:'请输入手机号',trigger:'blur'},
-                        {required:true,validator:validMobile,trigger:'blur'}
+                        //{required:true,validator:validMobile,trigger:'blur'}
                     ],
                     phonecode:[
                         {required:true,message:'请输入验证码',trigger:'blur'},
-                        {required:true,validator:validCode,trigger:'blur'}
+                        //{required:true,validator:validCode,trigger:'blur'}
                     ],
                 },
                 registerForm2:{
@@ -291,10 +309,8 @@
                     company:[
                         {required:true,message:'请输入企业/单位名称',trigger:'blur'}
                     ],
-                    streetvalue:[
-                        {required:true,message:'请选择地址',trigger:'blur'}
-                    ],
                     addressDetail:[
+                        {required: true,validator:validStreet,trigger:'blur'},
                         {required:true,message:'请输入详细地址',trigger:'blur'}
                     ],
                     password :[
@@ -420,9 +436,16 @@
                     } else {
                         if (!this.disabled) {
                             this.disabled = true;
-                            this.getPhoneCode('register', this.registerForm1.phone);
-                            this.timer(59);
-                            document.getElementById('timerArea').innerText = '59S后重新发送';
+                            if(this.checkType==0){
+                                this.getPhoneCode('register', this.registerForm1.phone);
+                                this.timer(59);
+                                document.getElementById('timerArea').innerText = '59S后重新发送';
+                            }else{
+                                this.getPhoneCode('login', this.registerForm1.phone);
+                                this.timer(59);
+                                document.getElementById('timerArea').innerText = '59S后重新发送';
+                            }
+
                         }
                     }
                 })
@@ -511,37 +534,26 @@
                             that.city=[];
                             that.county=[];
                             that.street=[];
-                            //that.registerForm2.provincevalue=res[0].label;
                             that.registerForm2.provincevalue='';
                             that.registerForm2.cityvalue='';
                             that.registerForm2.countyvalue='';
                             that.registerForm2.streetvalue='';
-
-                            that.searchArea(res[0].value,1)
                         }else if(level==1){
                             that.city=res;
                             that.county=[];
                             that.street=[];
-                            //that.registerForm2.cityvalue=res[0].label;
                             that.registerForm2.cityvalue='';
                             that.registerForm2.countyvalue='';
                             that.registerForm2.streetvalue='';
-                            that.searchArea(res[0].value,2)
                         }else if(level==2){
                             that.county=res;
                             that.street=[];
-                            //that.registerForm2.countyvalue=res[0].label;
                             that.registerForm2.countyvalue='';
                             that.registerForm2.streetvalue='';
-                            that.searchArea(res[0].value,3)
                         }else if(level==3){
                             that.street=res;
-
                             that.registerForm2.streetvalue=''
-                            //that.registerForm2.streetvalue=res[0].label;
-
                         }else{
-                            //that.registerForm2.streetvalue=val;
                         }
                     }
                 )

@@ -71,12 +71,12 @@ export default {
     tinymce.init({})
   },
   activated: function(){
-    console.log(activated);
+    console.log('activated');
     //tinymce.init({})
   },
   destroyed:function(){
     //tinymce.destroy()
-    console.log(destroyed);
+    console.log('destroyed');
     //tinymce.remove("#tinymce");
   },
   methods: {

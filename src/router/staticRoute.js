@@ -207,7 +207,7 @@ const staticRoute = [
                 //科目余额
                 path: "balance",
                 component: () =>import("../page/accountbooks/subjectbalance/balance"),
-                meta:{ requireAuth:true,type:'page' ,name:'科目余额'}
+                meta:{ requireAuth:true,type:'page' ,name:'科目余额表'}
             },
             {
                 //总分类账
