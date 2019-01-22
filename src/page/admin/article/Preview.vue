@@ -6,7 +6,7 @@
                     <el-row>
                         <el-col :span="24">
                             <el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10"
-                                    style="float: right;margin-left: 10px"
+                                    style="float: right;margin-left: 10px" v-if="!viewType"
                                     @click="cancel">关闭预览
                             </el-button>
                         </el-col>
@@ -29,7 +29,7 @@
                     </div>
                     <art-preview :contents="article.Content" />
                 </div>
-                <div class="attachement">
+                <div class="attachement" v-if='AttachmentList.length>0'>
                     <p>附件</p>
                     <ul class="attlist">
                         <li @click.stop="AttachmentDownLoad(item)" v-for="(item,index) of AttachmentList" :key="index">{{item.BName}}</li>
@@ -45,6 +45,7 @@
 import { mapState, mapActions } from 'vuex'
 import artPreview from '@/components/ArticlePreview'
 import noData from '@/components/ArticlePreview/noData'
+import httpConfig from '@/util/ajaxConfig'
 
 export default {
   name: "Article_preview",
@@ -79,11 +80,20 @@ export default {
   },
   //计算
   computed: {
-      ...mapState({
-          userid: state => state.user.userid,
-          orgid: state => state.user.orgid
-      }),
-      
+        ...mapState({
+            userid: state => state.user.userid,
+            orgid: state => state.user.orgid
+        }),
+        picUrl: function () {
+                return httpConfig.baseurl;
+        },
+        viewType:function(){
+            if(this.$route.query.type==='index'){
+                return true;
+            }else{
+                return false;
+            }
+        }
   },
   methods: {
         getData(phid) {
@@ -116,7 +126,10 @@ export default {
         },
         //下载附件
         AttachmentDownLoad(item){
-            console.log(item);
+            //console.log(item);
+            //window.location.href = this.picUrl+item.BUrlPath
+            let base=httpConfig.getAxiosBaseConfig();
+            window.location.href = base.baseURL+"/File/GetDownLoadFile?filePath="+item.BUrlPath+"&fileName="+item.BName;
         }
   }
 };
