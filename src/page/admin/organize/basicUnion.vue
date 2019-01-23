@@ -2,7 +2,7 @@
     <div class="manageContent">
         <div class="unionState" style="height: 60px">
             <ul class="flexPublic" style="float: left">
-                <li class="flexPublic" style="float: left">
+                <li class="flexPublic" style="float: left;width: 25%;margin-right: 30px">
                     <div>隶属工会:</div>
                     <div class="selectContainer">
                         <select v-model="unionName">
@@ -12,18 +12,31 @@
                         </select>
                     </div>
                 </li>
-                <li class="flexPublic datepick" style="float: left">
-                    <div>使用期限:</div>
-                    <div class="block">
+                <li class="flexPublic datepick" style="float: left;width: 40% ;margin-right: 30px">
+                    <div style="margin-right: -130px">使用期限:</div>
+                    <!--<div class="block">-->
+                        <!--<el-date-picker-->
+                            <!--v-model="date1"-->
+                            <!--type="date"-->
+                            <!--placeholder="选择日期"-->
+                            <!--value-format="yyyy-MM-dd">-->
+                        <!--</el-date-picker>-->
+                    <!--</div>-->
+                    <div style="width: 78%">
                         <el-date-picker
-                            v-model="date1"
-                            type="date"
-                            placeholder="选择日期"
-                            value-format="yyyy-MM-dd">
+                            v-model="state_time"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd"
+                            size="small"
+                            style="width: 100%">
                         </el-date-picker>
                     </div>
+
                 </li>
-                <li class="flexPublic" style="float: right">
+                <li class="flexPublic" style="float: right;width: 25%">
                     <div>状态:</div>
                     <div class="selectContainer">
                         <select name="phoneHead" v-model="unionState">
@@ -136,6 +149,7 @@
         data() {
             return {
                 date1: '',
+                state_time:[],
                 unionSearchValue: '',
                 unionState: '',
                 unionName: '',
@@ -186,6 +200,7 @@
             }
         },
         methods: {
+            //获取隶属工会列表
             selectUnionName(){
                 var data = {
                     uid: "0",
@@ -202,12 +217,17 @@
                         console.log(err);
                     })
             },
+            //搜索按钮
             unionSearch() {
-                console.log(this.date1);
-                if(this.date1 == null){
-                    this.date1 = '';
+                console.log(this.state_time);
+                let startT ='', endT ='';
+                if(this.state_time == null || this.state_time == [] || this.state_time.length < 1){
+                    this.state_time = [];
+                }else{
+                    startT = this.state_time[0];
+                    endT = this.state_time[1];
                 }
-                if(this.unionName =='' && this.date1 =='' && this.unionState =='' && this.unionSearchValue == ''){
+                if(this.unionName =='' && this.state_time ==[] && this.unionState =='' && this.unionSearchValue == ''){
                     this.ajaxMode('');
                 }else{
                     // var queryfilter={
@@ -222,7 +242,7 @@
                         orgid: "0",
                         pagesize: this.pageSize,
                         pageindex: this.pageIndex - 1,
-                        value: "Basic" +","+this.unionName+","+this.date1+","+this.unionState+","+this.unionSearchValue
+                        value: "Basic" +","+this.unionName+","+startT+','+ endT+","+this.unionState+","+this.unionSearchValue
                     }
                     this.$axios.get('/SysOrganize/GetOrganizesBy', {params: data})
                         .then(res => {
@@ -235,6 +255,11 @@
                                 }
                                 if(this.userInfo[i].ServiceEndTime == null){
                                     this.userInfo[i].ServiceEndTime ='';
+                                }
+                                if(this.userInfo[i].JBuildDate == null || this.userInfo[i].JBuildDate == ''){
+                                    this.userInfo[i].JBuildDate = '';
+                                }else{
+                                    this.userInfo[i].JBuildDate =this.userInfo[i].JBuildDate.replace('T',' ');
                                 }
                             }
                             this.pageIndex = res.index + 1;
