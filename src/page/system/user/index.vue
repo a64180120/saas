@@ -549,10 +549,15 @@
             },
             //新增
             Add() {
+                // this.form.phid = 0;
+                // this.form.realName = '';
+                // this.form.mobilePhone = '';
+                // this.form.enabledMark = '0';
+                this.singleSelection = [];
                 this.dialogState = "add";
                 this.dialogTitle = "新增";
                 this.editVisible = true;
-                this.form={enabledMark: "0",};
+
                 this.$nextTick(() => {
                     this.$refs['forms'].resetFields();
                 })
@@ -882,7 +887,7 @@
                         VerifyTime: new Date
                     })
                 }
-
+                console.log(this.form.rolesid);
 
                 this.loading = true;
                 //提交asiox
