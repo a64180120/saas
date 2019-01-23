@@ -12,6 +12,13 @@
                                 <option value="1">包含未审核凭证</option>
                                 <option value="0">不包含未审核凭证</option>
                             </select>
+
+                        </div>
+                        <div class="block selectContainer" style="margin-left: 20px">
+                            <select class="el-input__inner el-button--small" v-model="carryOver" >
+                                <option value="0">转结前</option>
+                                <option value="1">转结后</option>
+                            </select>
                         </div>
                     </li>
                 </ul>
@@ -131,6 +138,7 @@
                 userState:0,
                 userStateValues:[{id:0,uname:'全部'},{id:1,uname:'启用'},{id:2,uname:'停用'},{id:3,uname:'临时停用'}],
                 proofType:'1',
+                carryOver:'0',
                 date1:[],
                 loading:false,
                 saasMessage:{
@@ -153,7 +161,6 @@
         },
         mounted(){
             this.getData();
-            console.log(this.user);
         },
         watch:{
             // /*
@@ -163,7 +170,10 @@
             //     this.getData(this.date1,this.proofType);
             // },
             proofType:function(){
-                this.getData(this.date1,this.proofType);
+                this.getData();
+            },
+            carryOver:function(){
+                this.getData();
             }
         },
         methods:{
@@ -201,7 +211,8 @@
                 var data = {
                     accountPeriod: param, //账期
                     isContainUncheck: this.proofType,      //是否包含未审核的凭证(1=包含，0=不包含)
-                    orgid:this.orgid
+                    orgid:this.orgid,
+                    carryOver:this.carryOver
                 };
                 var vm=this;
                 IncomList(vm,data).then(res => {
@@ -431,7 +442,8 @@
                     params:{
                         accountPeriod:this.date1.choosedYear+'-'+this.date1.choosedMonth,
                         isContainUncheck:this.proofType,
-                        orgid:this.orgid
+                        orgid:this.orgid,
+                        carryOver:this.carryOver
                     }
                 }) .then(res => {
                     window.location.href = base.baseURL+"/File/GetExportFile?filePath="+res.path+"&fileName="+res.filename;
@@ -471,7 +483,7 @@
     .formData_content{
         position: absolute;
         overflow-y: scroll;
-        bottom: -50px;
+        bottom: 0px;
         top: 80px;
         left: 0;
         right: -17px;

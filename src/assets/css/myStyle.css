@@ -277,10 +277,9 @@
 .content{
     height:100%;
     overflow-y: auto;
-    padding: 20px;
+    padding: 60px 20px 40px 20px;
     background: #fff;
-    padding-top: 50px;
-    margin-top:0;
+    margin-top: 0;
 }
 .popper{
     top: 235px !important;
@@ -310,6 +309,10 @@
   .el-submenu__icon-arrow{
       color:rgb(117, 74, 74) !important;
   }
+
+ /* 清除ie输入框的叉号 */
+  input[type=text]::-ms-clear{display: none;}
+
   /*设置按钮样式--王冠冠*/
     .el-button--info:hover, .el-button--info:focus {
         /*background: #a6a9ad;*/
@@ -349,4 +352,53 @@
     overflow-y: auto;
     border-radius: 5px;
     box-shadow: 0 0 1px 1px  #00b7ee;
+}
+/* 表格样式，仿eltable */
+.tbHeader{
+    width: 100%;
+    text-align: center;
+}
+.tbBody{
+    position: absolute;
+    bottom: 0;
+    top: 90px;
+    right: -17px;
+    left: 0;
+    overflow-y: scroll;
+}
+.tbBody table{
+    width: 100%;
+}
+.tbHeader table{
+    height: 100%;
+    width: 100%;
+}
+thead td{
+    border:1px solid white;
+    text-align:center ;
+    height: 48px;
+    line-height: 48px;
+    background: #d3e9f9;
+    color: #000;
+}
+
+tbody td{
+    height: 48px;
+    line-height: 48px;
+    background: transparent;
+    color: #000;
+    border: 1px solid #ebeef5;
+    padding:0 10px;
+    text-align: center;
+}
+table .right{
+    text-align: right;
+}
+table .left{
+    text-align: left;
+}
+
+tbody tr:hover{
+    background-color: #fafafa;
+    transition: background-color .25s ease;
 }

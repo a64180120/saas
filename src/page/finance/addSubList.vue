@@ -1,7 +1,7 @@
 <template>
-<!--17-->
-    <div @click.stop="0" class="vueDropdown defaultTheme" v-show-extend="show">
-      <div class="search-module clearfix" v-show="itemlists.kemu.length">
+<!--17下拉快捷搜索框-->
+    <div @click.stop="0" class="vue-dropdown default-theme" v-show-extend="show">
+      <div class="search-module clearfix" v-show="itemlists">
         <input  class="search-text" v-model="searchValue"
                @keyup='search($event)' :placeholder="placeholder" />
         <span class="search-icon"><img src="../../assets/icon/search.svg" alt=""></span>
@@ -12,15 +12,15 @@
           <span class="list-item-text">{{item.KCode}} &nbsp;{{item.KName}}</span>
         </li>
       </ul>
-      <div @click.stop="addSubject" class="tip__nodata" v-show="inputFocus">{{nodatatext}}</div>
+      <div class="tip__nodata" v-show="false"><router-link to="/setting/subject">{{nodatatext}}</router-link></div>
     </div>
 </template>
 
 <script>
   export default {
     mounted(){
-      this.itemlist=this.itemlists.kemu;
-      this.id=this.itemlists.id;
+     
+      this.itemlist=this.itemlists;
     },
     data(){
       return {
@@ -43,8 +43,10 @@
     watch:{
       itemlist:function(val){
         this.datalist = val.concat();
+      },
+      itemlists(val){
+        this.itemlist=this.itemlists;
       }
-
     },
     directives:{
       'show-extend':function(el,binding,vnode){//bind和 update钩子
@@ -60,21 +62,19 @@
       }
     },
     methods:{
-      addSubject(){
-        this.$emit('add-subject');
-      },
+
       appClick:function(data){
         this.searchValue=data;
-        this.$emit('item-click',{data:this.searchValue,id:this.id});
+
+        this.$emit('subadd-click',{data:this.searchValue});
         this.datalist=[];
       },
       search:function(e){
         let vm = this,searchvalue = e.currentTarget.value;
         if(!searchvalue){
-          //vm.datalist=[];
-          vm.datalist = vm.itemlist.concat();
+          vm.datalist =vm.itemlist.concat();
         }else{
-          vm.datalist = vm.itemlist.filter(function(item,index,arr){
+               vm.datalist = vm.itemlist.filter(function(item,index,arr){
             return item.KCode.indexOf(searchvalue) != -1||item.KName.indexOf(searchvalue) != -1;
           });
         }
@@ -92,16 +92,15 @@
 </script>
 
 <style lang="scss" scoped>
-  
-  .vueDropdown.defaultTheme {
+  .vue-dropdown.default-theme {
     position: absolute;
-    left:0;
-    top:0;
-    z-index:99;
     display: none;
+    top:0;
+    left:0;
     width: 100%;
     height:auto !important;
     margin: 0 auto;
+    z-index:99;
     background: #fff;
     box-shadow: 0px 0px 10px #ccc;
     &._self-show {
@@ -110,17 +109,17 @@
 
     .search-module {
       position: relative;
-      height: 30px;
-      line-height: 30px;
+      height: 45px;
+      line-height: 45px;
       .search-text {
         width: 100%;
-        height: 30px;
-        line-height:30px;
+        height: 45px;
+        line-height:45px;
         color:#999;
         padding-right: 2em;
         padding-left:0.5em;
         border:1px solid transparent;
-       
+        border-bottom-color: #ddd;
         box-shadow: none;
         position:relative;
         z-index:10 ;
@@ -144,15 +143,17 @@
     }
 
     .list-module {
-      max-height: 110px;
+      max-height: 200px;
       overflow-y: auto;
       background: #fff;
       position:relative;
       z-index:10 ;
+      border:1px solid #ccc;
       li {
         &._self-hide {
           display: none;
         }
+
         border-top: 1px solid #ddd;
         height:30px;
         line-height: 30px;
@@ -175,6 +176,13 @@
     background: #ddd;
     height:30px;
     line-height: 30px;
-    cursor:pointer;
+  }
+  .vue-dropdown.default-theme .search-module{
+    height:30px;
+    line-height: 100%;
+  }
+  .vue-dropdown.default-theme .search-module .search-text{
+    height:100%;
+    line-height: 100%;
   }
 </style>

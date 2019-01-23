@@ -201,7 +201,74 @@
                 </ul>
             </div>
         </div>
+        <div class="cover" :style="{'display':(showCountMsg?'none':'none')}">
+            <div class="coverContentFace" id="face">
+                <div  id="stepOne">
+                    <div>
+                        <div class="face_title">
+                            <input type="text"/>总工会
+                        </div>
+                        <div class="face_year">
+                            <input type="text"/>年度
+                        </div>
+                        <div class="face_name">
+                            工会经费收支预算表
+                        </div>
+                        <div class="face_manu">
+                                <div>目录</div>
+                                <ul>
+                                    <li>1. 本级预算说明书</li>
+                                    <li>2. 本级经费收支预算表</li>
+                                    <li>3. 本级机关支出预算表（县以上）</li>
+                                </ul>
+                        </div>
+                        <div class="face_sign">
+                            <div>
+                                <p>
+                                    本预算业经<input />年<input />月<input />日
+                                </p>
+                                <p>
+                                    第<input />届<input />次<input />工会委员会（常委会）讨论通过
+                                </p>
+                                <p>
+                                    工会主席：<input />
+                                    财务部长：<input />
+                                    制表：<input />
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    本预算业经<input />年<input />月<input />日</p>
+                                <p>
+                                    第<input />届<input />次经费审查委员会审查
+                                </p>
+                                <p>
+                                    经费审查委员会主任：<input />
+                                </p>
+                            </div>
+                        </div>
+                        <div class="face_reportTime">
+                            报出日期：<input />年<input />月<input />日
+                        </div>
+                    </div>
+                </div>
+                <div id="stepTwo" hidden>
+                    <h2>说明</h2>
+                    <tinymce-editor
+                        ref="editor"
+                        v-model="tableFace.Content"
+                        :initvalue="tableFace.Content"
+                        :disabled='false'
+                        @onClick='tinymceClick'>
+                    </tinymce-editor>
+                </div>
+                <div style="margin-top: 40px">
+                    <el-button>上一步</el-button>
+                    <el-button>下一步</el-button>
+                </div>
+            </div>
 
+        </div>
         <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
         <saas-msg :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></saas-msg>
     </div>
@@ -214,6 +281,7 @@
     //import { getLodop } from '@/plugins/Lodop/LodopFuncs'
     import TimeSelectBar from "@/components/TimeSelectBar/index"
     import saasMsg from '@/components/message/message'
+    import tinymceEditor from '@/components/tinymce/tinymce-editor.vue'
     export default {
         name: "user",
         data(){
@@ -239,11 +307,13 @@
                     message:'', //消息主体内容**************
                     delay:0
                 },
-                jyear:''
+                jyear:'',
+                tableFace:{
+                    Content:''
+                },
             }
         },
-        components: {TimeSelectBar,
-            saasMsg},
+        components: {TimeSelectBar,saasMsg,tinymceEditor},
 
         computed:{
             ...mapState({
@@ -259,6 +329,9 @@
             this.getChecked();
         },
         methods:{
+            tinymceClick(e,tinymceObj){
+                console.log(e);
+            },
             /*获取结账年*/
             getChecked(){
                 var data={
@@ -629,6 +702,10 @@
             // 打印
             printContent(e){
                 /*this.getPdf(this.$refs.printFrom);*/
+                let print = document.createElement("div");
+
+                let face = document.getElementById('face').cloneNode(true);
+                face.removeChild(face.lastChild)
                 let dm = this.$refs.printFrom.parentNode.firstChild.cloneNode(true);
 
                 dm.classList.add('first_child');
@@ -639,13 +716,16 @@
                 //获取打印内容的子节点 ;
                 let childList=cop.childNodes;
 
-               let len=15;
+               let len=13;
                 let level=Math.ceil(childList.length/len);
                 for(var i=1; i<level ; i++){
                     childList[i*len].setAttribute('style','page-break-after:always');
                     childList[i*len+1].setAttribute('style','border-top:1px solid #ebeef5;margin-top:20px');
                 }
-                this.$print(cop);
+                print.appendChild(face);
+                print.appendChild(cop);
+
+                this.$print(print);
             },
             //刷新
             refresh:function(){
@@ -707,14 +787,12 @@
     .unionState>ul>li{
         width:100%;
     }
-    .formData{
-        margin-bottom: 50px;
-    }
+
     .formData_content{
         margin-top: 0;
         position: absolute;
         overflow-y: scroll;
-        bottom: -50px;
+        bottom: 0px;
         top: 100px;
         left: 0;
         right: -17px;
@@ -874,6 +952,7 @@
         margin: -87.5px -181px;
         box-shadow: 0 0 5px 1px #d3e9f9;
     }
+
     .coverContent div:nth-of-type(1){
         border-bottom: 1px solid #eee;
         padding:10px 20px;
@@ -908,6 +987,85 @@
     .coverContent ul li:nth-of-type(2):hover{
         color: #00B8EE;
         background: #fff;
+    }
+    .coverContentFace{
+        width: 100%;
+        height: 80%;
+        margin-top: 5%;
+        background-color: #fff;
+        border-radius: 3px 3px;
+        overflow: hidden;
+        font-size: 16px;
+        text-align: center;
+        page-break-after: always;
+    }
+
+    .coverContentFace input{
+        border-bottom: 1px solid #ccc;
+        text-align: center;
+        display: inline-block;
+        width: 50px;
+        padding-bottom: 0;
+        letter-spacing: 0;
+    }
+    .face_title{
+        margin-top: 20px;
+        font-size: 30px;
+    }
+    .face_title input{
+        width: 300px;
+    }
+    .face_year{
+        margin-top: 20px;
+        font-size: 28px;
+    }
+    .face_year input{
+        width: 100px;
+    }
+    .face_name{
+        margin: 30px;
+        font-size: 40px;
+        font-weight: 600;
+        letter-spacing: 20px;
+    }
+    .face_manu{
+        margin-top: 20px;
+        font-size: 15px;
+    }
+    .face_manu div{
+        display: inline-block;
+        width: 20px;
+        margin-left: 15px;
+        margin-top: 15px;
+    }
+    .face_manu ul{
+        width: 20%;
+        display: inline-block;
+        text-align: left;
+    }
+    .face_manu ul li {
+        border-width: 0 0 1px 1px;
+        border-style: solid;
+    }
+    .face_sign{
+        margin-top: 20px;
+        padding-left: 5%;
+    }
+    .face_sign div{
+        width: 40%;
+        display: inline-block;
+        text-align: left;
+        margin-left: 25px;
+    }
+    .face_sign div p:first-child input{
+        width: 100px;
+    }
+    .face_sign div p:last-child{
+        margin-top: 15px;
+    }
+    .face_reportTime{
+        margin-top: 50px;
+        font-size: 18px;
     }
 </style>
 

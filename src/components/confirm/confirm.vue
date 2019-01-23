@@ -2,15 +2,15 @@
     <div v-show="visible"  class="saasConfirm">
         <div class="saasMsg">
             <p class="title"><span>提示</span>
-                <i @click="close(false)"></i>
+                <i @click="noclose(false)"></i>
             </p>
             <div>
                 <div class="imgCon"><img src="../../assets/images/error.png"></div>  
                 <span >{{message}}</span>
             </div>
             <div>
-                <span @click="okclose()" class="btn">确定</span>
-                <span @click="noclose()" class="btn">取消</span>
+                <span @click="okclose(type)" class="btn">{{btn1}}</span>
+                <span @click="noclose(type)" class="btn">{{btn2}}</span>
             </div>    
         </div>
     </div>
@@ -28,19 +28,30 @@ export default {
     //  vm.delayTime=parseInt(vm.delay/1000+1);
     //  console.log(vm.delayTime,vm.delay)
     //  vm.$nextTick(vm.oneTime(vm));
+   
   },
   methods:{
-      okclose(data){
-          this.$emit('ok-click',this.type);
+      okclose(type){
+          this.$emit('ok-click',type);
       },
-      noclose(data){
-          this.$emit('no-click',this.type);
+      noclose(type){
+            this.$emit('no-click',type);
       },
-      
+      close(){
+          this.$emit('update:visible',false);
+      },
   },
   props:{    
-      message:String,
-      type:String,
+      message:String, //提示信息
+      btn1:{   //按钮1
+        type:String,
+        default:'确定'
+        },
+      btn2:{  //按钮2
+        type:String,
+        default:'取消'
+        },
+      type:String,  //本次调用的方法名
       visible:false
   },
   computed:{
@@ -57,17 +68,28 @@ export default {
     position:fixed;
     left:0;
     top:0;
-    width:100%;
-    height:100%;
-    z-index:2999;
+    right:0;
+    bottom:0;
+    z-index:9999;
     background:rgba(0,0,0,0.5);
     box-shadow: 0 0 10px 2px #d3e9f9;
+    text-align: center;
+    &:after{
+        content:"";
+        display: inline-block;
+        height:100%;
+        width:0px;
+        vertical-align: middle;
+    }
     >.saasMsg{
         width: 370px;
         height: 220px;
-        position:absolute;
-        top:200px;
-        left:40%;
+        // position:absolute;
+        // top:200px;
+        // left:40%;
+        text-align: left;
+        display: inline-block;
+        vertical-align:middle;
         background: #fff;
         border:1px solid #ccc;
         font-size:14px;
@@ -85,7 +107,7 @@ export default {
                 justify-content: flex-end;
             }
             >.imgCon{
-                width:55px;
+                width:60px;
                 height:55px;
                 margin-right:15px;
                 >img{

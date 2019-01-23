@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import {formatDate} from '@/util/validate'; 
 
 /**
  * 数字金额 千分位格式化
@@ -116,4 +117,10 @@ Vue.filter('NumtoCHN', function(value) {
     chineseStr += cnInteger;
   }
   return chineseStr;
+});
+
+Vue.filter('formatDate', function(value,fmt='yyyy-MM-dd hh:mm') {
+  let date=new Date(value);
+
+  return formatDate(date,fmt)
 });

@@ -35,7 +35,8 @@
                 <a>
                     <li class="mode" style="width:60px;">
                         <div >模板</div>
-                        <div @click.prevent.stop="addVoucher('modelList')" >引用模板</div>
+                        <div @click.prevent.stop="addVoucher('modelList')" >普通类</div>
+                        <div @click.prevent.stop="addVoucher('jieModel')" >结转类</div>
                         <div @click.prevent.stop="addVoucher('keepModel')">存为模板</div>
                     </li>
                 </a> 
@@ -166,7 +167,7 @@
 
         </div>
         <!-- 凭证模板****************** -->
-        <voucher-temp v-if="modelListCss" @temp-click="tempClick"></voucher-temp>
+        <voucher-temp v-if="modelListCss" :temptype="temptype" @temp-click="tempClick"></voucher-temp>
         <!-- 下月账******************* -->
         <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
         <!-- <div class="footInfo " >
@@ -193,15 +194,22 @@
                 </div> 
             </div>
         </div>
-        <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
-        <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
-        <!-- <saasconfirm 
-            :type="saasConfirm.type"
-            :message="saasConfirm.message"
-            v-show="saasConfirm.visible" 
-            @ok-click="okConfirm"
-            @no-click="noConfirm">
-        </saasconfirm> -->
+        
+        <!-- 弹窗*****message:信息******delay:延迟毫秒  默认4000 -->
+        <message 
+            :message="saasMessage.message" 
+            :delay="saasMessage.delay"   
+            :visible.sync="saasMessage.visible" >
+        </message>
+        <saasconfirm 
+            :type="confirm.type"
+            :message="confirm.message"
+            v-show="confirm.visible" 
+            @ok-click="confirmOk"
+            @no-click="confirmNo">
+        </saasconfirm>
+
+        
     </div>
 </template>
 
@@ -225,7 +233,7 @@
                 TemMoney:0,
                 tempMask:false
             },
-            
+            temptype:'',//模板类型
             superSearchVal:{//高级搜索参数******************
                     assistItemList:{type:'',list:''},
                     assistItem:'',
@@ -243,8 +251,9 @@
             unCheckVal:'',
             checkedTime:'',//下一个结账月*******
             checkedYear:'',//已经结账的年份
-            pagesize:10,
+            pagesize:100,
             pageindex:0,
+            ascOrDesc:'ASC',
             totalRows:'',
             voucherDataList:{bool:false,data:{Mst:'',Attachements:[]}},//凭证数据***
             oldVoucherData:'',   //凭证传参时的中间值JSON
@@ -267,10 +276,10 @@
                 message:'', //消息主体内容**************
                 delay:0
             },
-            saasConfirm:{
-                message:'确定删除记录!',
-                visible:true,
-                type:'666'
+            confirm:{
+                message:'',
+                visible:false,
+                type:''
             },
             uInfo:''
         }},
@@ -295,6 +304,15 @@
                 switch(str){
                     case 'update':
                         this.voucherData();
+                        var item =this.voucherDataList.data.Mst;
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
@@ -317,6 +335,11 @@
                         this.resetVoucher();
                         break;
                     case 'modelList':
+                        this.temptype='normal';
+                        this.modelListCss=true;
+                        break;
+                    case 'jieModel':  //结转模板
+                        this.temptype='jie';
                         this.modelListCss=true;
                         break;
                     case 'keepModel':
@@ -325,10 +348,21 @@
                         break;
                     case 'moreVoucher':
                         //this.$store.commit("tagNav/turnCachePage",false);
-                        this.$router.push({path:'/finance/voucherList'})
+                        this.$store.commit("tagNav/upexcludeArr", ['voucherList']);
+                        this.$router.push({path:'/finance/voucherList',query:{reset:'reset'}})
+                        
                         break;
                     case 'audit'://审核
                         this.voucherData();
+                        var item =this.voucherDataList.data.Mst;
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
@@ -341,6 +375,15 @@
                         break;
                     case 'unAudit':
                         this.voucherData();
+                        var item =this.voucherDataList.data.Mst;
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         if(!this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
@@ -357,10 +400,28 @@
                         this.voucherAdd=false;
                         break;
                     case 'cut':  //剪切
+                        var item =this.voucherDataList.data.Mst;
+                            if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                                this.saasMessage={
+                                    visible:true,
+                                    delay:3000,
+                                    message:'该月已结账,无法修改!'
+                                }
+                                return;
+                            }
                         this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
                         this.voucherMaskShow('cut');
                         break;
                     case 'chongh':   //冲红
+                        var item =this.voucherDataList.data.Mst;
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                delay:3000,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         this.oldVoucherData=JSON.stringify(this.voucherDataList.data);
                         if(this.voucherDataList.data.Mst.WriteOff_PhIds.length>0){
                             this.saasMessage={
@@ -383,6 +444,14 @@
                         break;
                     case 'delete' :  //删除
                         this.voucherData();
+                        var item =this.voucherDataList.data.Mst;
+                        if(!(item.PMonth>=this.checkedTime&&item.Uyear>=this.checkedYear)){
+                            this.saasMessage={
+                                visible:true,
+                                message:'该月已结账,无法修改!'
+                            }
+                            return;
+                        }
                         if(this.voucherDataList.data.Mst.Verify){
                             this.saasMessage={
                                 visible:true,
@@ -400,24 +469,31 @@
                             }
                             return;
                         }
-                         if(confirm('确定删除记录!')){
-                            var data1={
-                                uid:this.uid,
-                                orgid:this.orgid,
-                                id:this.voucherDataList.data.Mst.PhId
-                            }
-                            this.delete(data1);
-                            this.voucherDataList.data={
-                                Mst:{},
-                                Attachements:[]
-                            }
-                            this.resetVoucher();
-                         }
+                        this.confirm={
+                            message:'此操作将永久删除凭证,是否继续?',
+                            type:'delete',
+                            visible:true
+                        }
+                        // if(confirm('确定删除记录!')){
+                        //     var data1={
+                        //         uid:this.uid,
+                        //         orgid:this.orgid,
+                        //         id:this.voucherDataList.data.Mst.PhId
+                        //     }
+                        //     this.delete(data1);
+                        //     this.voucherDataList.data={
+                        //         Mst:{},
+                        //         Attachements:[]
+                        //     }
+                        //     this.resetVoucher();
+                        //  }
                        
                         break;
                     case 'reset':
-                        if(confirm('凭证号重排过程中不允许取消、暂停操作。确定重排？')){
-                            this.resetShow=true;
+                        this.confirm={
+                            message:'凭证号重排过程中不允许取消、暂停操作。确定重排？',
+                            visible:true,
+                            type:'reset'
                         }
                         break;
                     case 'print':
@@ -425,16 +501,63 @@
                         this.keepVoucher('print');
                         break;
                     case 'fresh':   //刷新
+                        this.newAddList=[];
                          this.voucherDataList.data={
                             Mst:'',
                             Attachements:[]
                         }
                         this.superSearchVal.keyword='';
                         //this.resetVoucher();
-                        this.getChecked();
-                        this.voucherAdd=false;               
+                        //this.getChecked();
+                        this.voucherAdd=false;
+                        this.resetVoucher();               
                         break;
                 }
+            },
+            //confirm确认框方法*******
+            confirmOk(type){
+                this.confirm.visible=false;
+                switch (type){
+                    case 'delete':
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            id:this.voucherDataList.data.Mst.PhId
+                        }
+                        this.delete(data1);
+                        break;
+                    case 'reset':
+                        this.resetShow=true;
+                        break;
+                    case 'gengz':
+                        var vm = this;       
+                        vm.voucherAdd=false;
+                        vm.voucherDataList.data.Mst.PSource='更正';
+                        for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                            if(dtl.Abstract){
+                                dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                if(dtl.DtlAccounts){
+                                    dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                    dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                }   
+                            }                                            
+                        }
+                        
+                        vm.voucherMask='gengz';
+                         this.resetVoucher();
+                        break;
+                }
+            },
+            confirmNo(type){
+                this.confirm.visible=false;
+                switch(type){
+                    case 'gengz':
+                        this.getvoucherList();
+                        break;
+                }
+               
             },
             // //导航栏位置上移************
             // moveNavTop(){
@@ -448,9 +571,9 @@
             keepVoucher(str){
                 
                 var url='Add';
-                var oldPhId=this.voucherDataList.data.Mst.PhId;
                 var Vdata=this.voucherDataList.data;
-          
+                  console.log(Vdata)
+                  debugger
                 //判断科目金额摘要不能为空
                 for(var dtl of Vdata.Mst.Dtls){
                     if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
@@ -462,19 +585,19 @@
                         return;
                     }
                     
-                }
-                
+                }  
                 if(!this.dataCheck()){
                     this.saasMessage={
                         visible:true,
                         delay:4000,
                         message:'借贷不平衡,请查看!'
                     }
+                    this.getvoucherList('update');
                     return;
                 }
                 if(str=='gengz'){
                     this.clearPhId(Vdata.Mst);
-                    Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
+                    // Vdata.Mst.Dtls=Vdata.Mst.Dtls.splice(0,Vdata.Mst.Dtls.length/2);
                 }
                if(Vdata.Mst.Dtls.length<=0){
                    this.$message('请输入内容!')
@@ -492,7 +615,10 @@
                        Vdata.Mst.PMonth=Vdata.Mst.PDate.substring(5,7);
                    }
                }else{
-                   this.$message('请输入凭证会计期!')
+                   this.message={
+                       message:'请输入凭证会计期!',
+                       visible:true
+                   }
                    return;
                }
                if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
@@ -505,12 +631,17 @@
                    if (this.voucherDataList.data.Mst.PhId) {
                        url = 'Update';
                    }
-                  
+                    this.voucherAdd=true;
                     const loading1=this.$loading();
                    this.$axios.post('/PVoucherMst/Post' + url, data)
                        .then(res => {
                             loading1.close();
                            if (res.Status == 'success') {
+                               if(url=='Add'){
+                                   this.ascOrDesc='DESC';
+                                    this.getvoucherList(); 
+                               }
+                               
                                this.saasMessage={
                                   visible:true,
                                   delay:4000,
@@ -523,17 +654,19 @@
                                         },
                                         Attachements:[]
                                     }
+                                    this.voucherAdd=false;
                                     this.resetVoucher();
                                 }
                                if(str=='print'){
                                    this.printContent();
-                               }   
-                                this.voucherMask=false;
-                                if(oldPhId){
-                                    this.getVoucherData(oldPhId);
-                                }  
+                               }
+                                  
                            } else {
-                               this.$message(res.Msg)
+                               this.saasMessage={
+                                  visible:true,
+                                  delay:4000,
+                                  message:res.Msg
+                               }
                            }
                            
                        },
@@ -543,8 +676,12 @@
                         } 
                        )
                        .catch(err =>{
-                           this.$message(err);
                             loading1.close();
+                            this.saasMessage={
+                                  visible:true,
+                                  delay:4000,
+                                  message:'出错了!'
+                               };
                        } )
                }else if(url=='update'){
                    this.$message('当前月份已结账,无法修改凭证!')
@@ -574,7 +711,9 @@
                         }
                     }else{
                         this.voucherData();
-                        var dtls=this.voucherDataList.data.Mst.Dtls;
+                        var data=JSON.parse(JSON.stringify(this.voucherDataList.data));
+                        var dtls=data.Mst.Dtls;
+
                         if(this.temp.TemMoney==0){
                             for(var dtl of dtls){
                                 dtl.JSum='';
@@ -585,27 +724,27 @@
                                 }
                             }
                         }            
-                        this.keepModel(this.temp.TemName);
+                        this.keepModel(this.temp.TemName,data);
                         this.temp.tempMask=false;
                     }
                 }
             },
             //保存模板**********************
-            keepModel(name){
-                if(this.voucherDataList.data.Mst.PhId ){
-                    this.clearPhId(this.voucherDataList.data.Mst); 
+            keepModel(name,data){
+                if(data.Mst.PhId ){
+                    this.clearPhId(data.Mst); 
                 }
-                if(this.voucherDataList.data.Mst.Dtls.length<=0){
+                if(data.Mst.Dtls.length<=0){
                     this.$message('请输入内容!')
                     return;
                 }
-                this.voucherDataList.data.Mst.TemName=name;
-                this.voucherDataList.data.Mst.Userid=this.uid;
-                this.voucherDataList.data.Mst.UseCount=this.uInfo.Account;
+                data.Mst.TemName=name;
+                data.Mst.Userid=this.uid;
+                data.Mst.UseCount=this.uInfo.Account;
                 var data={
                     uid:this.uid,
                     orgid:this.orgid,
-                    infoData:this.voucherDataList.data
+                    infoData:data
                 }
                 const loading=this.$loading();
                 this.$axios.post('/PVoucherTemplateMst/PostAdd',data)
@@ -679,6 +818,8 @@
                     .then(res=>{
                         loading.close();
                         if(res.Status=='success'){
+                            this.ascOrDesc=='DESC';
+                            this.getvoucherList();
                             if(this.voucherMask=='cut'){
                                 this.saasMessage={
                                   visible:true,
@@ -705,7 +846,7 @@
             },
             voucherData(){//接收voucher组件传值************
                 this.voucherDataList.data=this.$refs.voucher.voucherData();
-                console.log(this.voucherDataList.data)
+                console.log('voucher组件传参',this.voucherDataList.data)
             },
             confirmData(data){
                 
@@ -719,12 +860,65 @@
                     Jcount=parseFloat(Jcount)+parseFloat(dtl.JSum?dtl.JSum:0);
                     Dcount=parseFloat(Dcount)+parseFloat(dtl.DSum?dtl.DSum:0);
                 }
-                console.log(Jcount.toFixed(2),Dcount.toFixed(2))
+                
                 if(Jcount.toFixed(2)==Dcount.toFixed(2)){
                     return true;
                 }else{
                     return false;
                 }
+            },
+             //获取最新一个凭证的时间放入引用的模板
+            getFreshVouchsideDate(str,Mst){
+
+                const loading1=this.$loading();
+                if(!this.sideDate){
+                    this.sideDate=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth()
+                }
+               
+                var data={
+                    uid:this.uid,
+                    orgid:this.orgid,
+                    sum1:'',
+                    sum2:'',
+                    keyword:'',
+                    pagesize:1,
+                    pageindex:0,
+                    sort:['PDate DESC','PNo DESC'],
+                   // itemValuePhid:649181122000008,
+                    itemValuePhid:'',
+                    queryfilter:{"PAccper*str*ge*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1]),
+                                    "PAccper*str*le*1":this.sideDate.split('-')[1]>9?this.sideDate.replace("-",''):(this.sideDate.split('-')[0]+'0'+this.sideDate.split('-')[1])}
+                }
+             
+                this.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
+                    .then(res=>{
+                      
+                       loading1.close();
+                        if(res.Record.length<=0){
+                            Mst.PNo='';
+                            Mst.PDate=this.sideDate; 
+                            this.voucherDataList.data.Mst=Mst;
+                            this.resetVoucher(); 
+                            this.voucherAdd=false;
+                                                
+                        } else{                         
+                            Mst.PNo='';
+                            Mst.PDate=res.Record[0].PDate;
+                            Mst.PMonth=res.Record[0].PMonth;
+                            Mst.Uyear=res.Record[0].Uyear;
+                            this.voucherDataList.data.Mst=Mst;
+                            this.resetVoucher(); 
+                            this.voucherAdd=false;
+                        }   
+                        console.log(Mst)
+                        
+                    },err => {
+                        console.log(err);
+                       
+                    })
+                    .catch(err=>{
+                        this.$message({ showClose: true,message: '获取列表失败了!', type: "error"});loading1.close();
+                    })
             },
             //接收temp组件传值***********************
             tempClick(data){
@@ -736,11 +930,13 @@
                             dtl.DtlAccounts[0].PersistentState=1;
                         }
                     }
-                    data.PDate=new Date;
-                    data.PNo='';
-                    this.voucherDataList.data.Mst=data;
-                    this.resetVoucher(); 
-                    this.voucherAdd=false;
+                    this.getFreshVouchsideDate('temp',data);
+                   
+                    //data.PDate=new Date;
+                    //data.PNo='';
+                    // this.voucherDataList.data.Mst=data;
+                    // this.resetVoucher(); 
+                    // this.voucherAdd=false;
                 }
                 this.modelListCss=false;
             },
@@ -819,8 +1015,8 @@
             },
             //前后快速翻页定位凭证****************
             getvoucher(str){
+                console.log(this.count)
                 if(str=='pre'){
-                    console.log(this.count)
                     if(this.count>0){
                         this.count--;
                         this.voucherDataList.data={
@@ -871,7 +1067,7 @@
                 vm.$axios.get('/PVoucherMst/GetVoucherList',{params:data})
                     .then(res=>{
                         loading1.close();
-                        console.log(res);
+                        
                          if(res.Status=='success'){        
                             vm.$message(res.Msg);
                             vm.voucherDataList.data={
@@ -887,7 +1083,7 @@
                                 delay:0
                             }
                         }
-                         else{               
+                        else{               
                             if(val=='searcher'&&res.Record.length>1){
                                vm.$store.commit("tagNav/upexcludeArr", ['voucherList']);
                                  vm.$router.push({path:'/finance/voucherList',query:{voucherList:res.Record}})   
@@ -901,14 +1097,22 @@
                                 return;
                             }     
                             vm.newAddList=res.Record;
-                            vm.count=(val=='pre')?this.newAddList.length-1:0;
+                            var  oldCount=vm.count;
+                            vm.count=(val=='pre')?vm.newAddList.length-1:0;
+                            if(vm.ascOrDesc=='DESC'){
+                                vm.count=vm.newAddList.length-1;
+                            }
+                            if(val=='update'){
+                                vm.count=oldCount;
+                            }
                             vm.totalRows=res.totalRows;
                             vm.pagesize=res.size;
                             vm.pageindex=res.index;
+
                             vm.voucherDataList.data={
                                 Mst:vm.newAddList[vm.count]
                             };
-                            console.log( vm.voucherDataList.data)  
+                             
                             vm.resetVoucher();                          
                         }
                     },
@@ -926,7 +1130,8 @@
                 this.year=year;
                 this.sideDate=year+'-'+i;
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                this.getvoucherList('reset');
+                this.ascOrDesc='ASC';
+                this.getvoucherList();
                 this.voucherAdd=true;
             },
             //鼠标按下***************
@@ -1000,7 +1205,7 @@
                             this.saasMessage={
                                   visible:true,
                                   delay:4000,
-                                  message:res.Msg
+                                  message:str=='check'?'结账成功!':'反结账成功!'
                                };
                             this.getChecked();
                         }else{
@@ -1036,7 +1241,8 @@
                 this.month=parseInt($event.target.innerHTML)
                 this.sideDate=this.year+'-'+this.month;
                 this.superSearchVal.date2=this.superSearchVal.date1=this.year+'-'+(this.month>9?this.month:('0'+this.month));
-                this.getvoucherList('reset');
+                this.ascOrDesc='ASC';
+                this.getvoucherList();
                 this.voucherAdd=true;
             },
             //凭证重排月份选择******************
@@ -1100,13 +1306,20 @@
                 this.voucherData();  
                 var Mst=this.voucherDataList.data.Mst;
                 if(Mst.WriteOff_PhIds.length>0){
-                    if(confirm("该凭证已经冲红,需要重新冲红吗?")){
-                        
-                    }else{
-                        this.voucherMaskShow(false);
-                        return;
+                    this.saasMessage={
+                        message:'该凭证已经冲红,无法冲红!',
+                        delay:4000,
+                        visible:true
                     }
-                }
+                    this.voucherMaskShow(false);
+                    return;
+                    // if(confirm("该凭证已经冲红,需要重新冲红吗?")){
+                    //     return;
+                    // }else{
+                    //     this.voucherMaskShow(false);
+                    //     return;
+                    // }
+                }   
                 var year;
                 var month;
                 var date1;
@@ -1123,8 +1336,6 @@
                         dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
                     }
                 }
-               
-                this.clearPhId(this.voucherDataList.data.Mst); 
                 this.voucherDataList.data.Mst.PhidTransaction=oldPhId;
                 this.voucherDataList.data.Mst.PSource='冲红'
                 this.resetVoucher();        
@@ -1176,7 +1387,7 @@
             },
             keepChoose(val){
                 var vm=this;
-                console.log(val);
+                console.log(val,this.voucherDataList.data);
                 if(val){
                     this.voucherData();
                     var id = this.voucherDataList.data.Mst.PhId;
@@ -1197,7 +1408,7 @@
                 
                         this.cut(vm,data1);
                     }else if(val=='chongh'){  //冲红
-                        var Vdata=this.voucherDataList.data;
+                         var Vdata=JSON.parse(JSON.stringify(this.voucherDataList.data));
                         if(Vdata.Mst.Dtls.length<=0){
                             this.$message('请输入内容!')
                             return;
@@ -1217,53 +1428,67 @@
                             this.$message('请输入凭证会计期!')
                             return;
                         }
+                        
+                        this.clearPhId(Vdata.Mst); 
                         if((Vdata.Mst.Uyear>=this.checkedYear)&&(Vdata.Mst.PMonth>=this.checkedTime)){
                             var data = {
                                 uid: this.uid,
                                 orgid: this.orgid,
                                 orgcode: this.orgcode,
-                                infoData: this.voucherDataList.data
+                                infoData: Vdata
                             }
                             var oldPhId=this.voucherDataList.data.Mst.PhidTransaction;
                             var oldData=this.voucherDataList.data.Mst;
                             const loading=this.$loading();
                             //this.voucherMask=false; 
-                            this.voucherDataList.bool=false; 
+
+                             debugger
                             this.$axios.post('/PVoucherMst/PostAdd', data)
                                 .then(res => {
-                                    if (res.Status == 'success') {
-                                        if(confirm('保存成功，是否生成【更正凭证】？')){
-                                            this.voucherMask=true;
-                                            vm.voucherDataList.bool=true; 
-                                            vm.voucherDataList.data.Mst=oldData
-                                            vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
-                                            vm.voucherDataList.data.Mst.PSource='更正';
-                                            for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
-                                                if(dtl.SubjectCode){
-                                                    dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
-                                                    dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
-                                                    dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
-                                                    if(dtl.DtlAccounts){
-                                                        dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
-                                                        dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
-                                                    }   
-                                                }                                                   
-                                            }
-                                            vm.voucherMask='gengz';
-                                            this.voucherAdd=false; 
-                                        }else{
-                                            vm.voucherMask=false;
-                                            this.voucherAdd=true;
-                                            vm.getVoucherData(oldPhId);     
-                                        }
-                                    } else {
-                                        this.$message({ showClose: true,message: res.MSg, type: "error"});
-                                    }
                                     loading.close();
-                                },
-                                err => {
+                                    console.log(this.voucherDataList.data)
+                             debugger
+
+                                    if (res.Status == 'success') {
+                                        vm.voucherMask=false;
+                                        vm.voucherAdd=true;
+                                        this.confirm={
+                                            visible:true,
+                                            message:'保存成功，是否生成【更正凭证】？',
+                                            type:'gengz'
+                                    }
+                                        
+                                        // if(confirm('保存成功，是否生成【更正凭证】？')){
+                                        //     vm.voucherDataList.bool=true; 
+                                        //     vm.voucherDataList.data.Mst=oldData
+                                        //     vm.voucherDataList.data.Mst.PhId=oldData.PhidTransaction;
+                                        //     vm.voucherDataList.data.Mst.PSource='更正';
+                                        //     for(var dtl of  vm.voucherDataList.data.Mst.Dtls ){
+                                        //         if(dtl.SubjectCode){
+                                        //             dtl.Abstract=dtl.Abstract.replace("注销",'更正错账');
+                                        //             dtl.JSum=dtl.JSum?dtl.JSum*-1:'';
+                                        //             dtl.DSum=dtl.DSum?dtl.DSum*-1:'';
+                                        //             if(dtl.DtlAccounts){
+                                        //                 dtl.DtlAccounts[0].JSum=dtl.DtlAccounts[0].JSum?dtl.DtlAccounts[0].JSum*-1:'';
+                                        //                 dtl.DtlAccounts[0].DSum=dtl.DtlAccounts[0].DSum?dtl.DtlAccounts[0].DSum*-1:'';
+                                        //             }   
+                                        //         }                                            
+                                        //     }
+                                        //     vm.voucherMask='gengz'; 
+                                        // }else{
+                                        //     vm.voucherMask=false;
+                                        //     vm.getvoucherList();     
+                                        // }
+                                    } else {
+                                         this.saasMessage={
+                                            visible:true,
+                                            message:res.Msg
+                                        };
+                                    }
+                                   
+                                },err => {
                                     console.log(err);
-                                        loading.close();
+                                    loading.close();
                                 })
                                 .catch(err=>{
                                     this.$message({ showClose: true,message: err, type: "error"});
@@ -1331,8 +1556,7 @@
                                   visible:true,
                                   delay:4000,
                                   message:res.Msg
-                               };
-                               
+                               };  
                                vm.delete(data1);
                            } else {
                                vm.$message('保存失败,请重试!')
@@ -1426,7 +1650,7 @@
                         }
                     }
                     &:hover{
-                        height:90px;
+                        height:120px;
                         border:1px solid #00b7ee;
                         background: #fff;
                         opacity: 1;
@@ -1920,8 +2144,8 @@
     }
     .codeResetContainer{
         background: rgba(0,0,0,0.5);
-        position: absolute;
-        z-index: 99;
+        position: fixed;
+        z-index: 999;
         left:0;
         top:0;
         width:100%;

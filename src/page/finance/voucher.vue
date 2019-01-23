@@ -71,7 +71,7 @@
                         </div>
                         <li>
                             <div class="inputContainer" >
-                                <textarea :disabled="disabled" :class="{chongHcss:AbstractCss=='冲红',gengZcss:AbstractCss=='更正'}" v-model="item.Abstract" @focus="showAddIcon(index,item,$event)" @blur="defaultHandle(item.Abstract)" maxlength="100"></textarea>
+                                <textarea :disabled="disabled" :class="{chongHcss:AbstractCss=='冲红',gengZcss:AbstractCss=='更正'}" v-model="item.Abstract" @focus="showAddIcon(index,item,$event)" @blur="defaultHandle(item.Abstract)" maxlength="50"></textarea>
                             </div>
                         </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
@@ -89,7 +89,7 @@
                                 </ul>
                             </div>
                             <searchSelect style="z-index:10" :itemlists="itemlists[index]" :placeholder="itemlistText" v-if="kemuSel[index].checked"
-                                          :nodatatext="itemText" @item-click="itemClick"></searchSelect>
+                                          :nodatatext="itemText" @add-subject="addNewSubject" @item-click="itemClick"></searchSelect>
                             <div @click.stop="1" v-show="assistItem[index].checked" class="assistContainer">
                                 <ul>
                                     <li v-for="(assist,index2) of assistList" :key="index2">
@@ -188,6 +188,101 @@
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
         </div>
+        <!-- 科目新增 -->
+        <div v-if="addPageShow" class="addPageCon">
+            <div class="addPage">
+                <div class="title"><span>科目新增</span><i @click.stop="addPageShow=false"></i><div style="clear:both"></div></div>
+                <ul>
+                    <li >
+                        <div>上级科目</div>
+                        <div  @click.stop=" addSubSel" style="position:relative">
+                            <div style="padding-left:10px"><span v-show="!subjectInfo.preSubject.KCode">必选</span>{{subjectInfo.preSubject.KCode}}&nbsp;{{subjectInfo.preSubject.KName}}</div>
+                            <addSubList @subadd-click="subAddData" v-if="addSubShow1" :placeholder='"选择上级科目(必填)"' :itemlists="addDataSub" ></addSubList>   
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li style="overflow: hidden;">
+                        <div>科目编码</div>
+                        <div class="subCodeCss">
+
+                            <span >{{subjectInfo.preSubject?subjectInfo.preSubject.KCode:''}}</span>
+                            <div class="inputContainer">
+                                <input  placeholder="必填"
+                                        type="text" v-model="subjectInfo.KCode">
+                            </div>
+
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>科目名称</div>
+                        <div>
+                            <div class="inputContainer">
+                                <input  placeholder="必填" type="text" v-model="subjectInfo.KName">
+                            </div>
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>科目类别</div>
+                        <div  style="padding-left:10px;border:1px solid #ccc">
+                            {{navList[subjectInfo.preSubject.KType]}}
+                        </div>
+
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>余额方向</div>
+                        <div>
+                            <label v-show="subjectInfo.KBalanceType==1">
+                                <input v-model="subjectInfo.KBalanceType" value="1" type="radio" name="balance">
+                                &nbsp;借方&nbsp;&nbsp;&nbsp;
+                            </label>
+                            <label v-show="subjectInfo.KBalanceType==2">
+                                <input v-model="subjectInfo.KBalanceType" value="2"  type="radio" name="balance">
+                                &nbsp;贷方&nbsp;&nbsp;&nbsp;
+                            </label>
+                            <label v-show="subjectInfo.KBalanceType==3">
+                                <input v-model="subjectInfo.KBalanceType" value="3"  type="radio" name="balance">
+                                &nbsp;借/贷&nbsp;&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                    <li>
+                        <div>启/停用</div>
+                        <div style="border:0">
+                            <label >
+                                <input v-model="subjectInfo.EnabledMark" value="0" type="radio" name="enable">
+                                &nbsp;启用&nbsp;&nbsp;&nbsp;
+                            </label>
+                            <label >
+                                <input v-model="subjectInfo.EnabledMark" value="1" type="radio" name="enable">
+                                &nbsp;停用&nbsp;&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div style="clear:both"></div>
+
+                    </li>
+                    <li>
+                        <div>辅助核算</div>
+                        <div style="overflow-y:auto;padding:0 5px;">
+                            <label v-for="(assist,index2) of addDataAux" :key=index2>
+                                <input type="checkbox" v-model="subjectInfo.AuxiliaryTypes[index2]">
+                                &nbsp;{{assist.BaseName}}
+                            </label>
+                        </div>
+                        <div style="clear:both"></div>
+                    </li>
+                </ul>
+                <div class="finishBtn">
+                    <span @click.stop="addPageShow=false" class="btn">取消</span>
+                    <span @click.stop="addFinish()" class="btn">保存</span>
+                    <div style="clear:both"></div>
+                </div>
+            </div>
+            <div></div>
+        </div>
         <!-- 附件弹出框 -->
         <el-dialog title="选择附件"  :visible.sync="picVisible" :modal=false width="40%">
             <picture-upload @uploadimg="uploadimg" :imgList="imglist" :limit="3" @removeimg="removeimg"></picture-upload>
@@ -199,6 +294,8 @@
 </template>
 
 <script>
+    import { SubjectAdd } from '@/api/subject/subjectInfo'
+    import addSubList from './addSubList'
     import searchSelect from './searchSelect'
     import {mapState, mapActions} from 'vuex'
     import UserInfo from "@/util/auth";
@@ -249,6 +346,26 @@
             assistItem:[],//辅助项显示隐藏样式参数********************
             assistItemMask:false,//辅助项遮罩********
             assistCheck:true,
+            addPageShow:false,//科目新增*************
+            addSubShow1:false,//科目选择****
+            addDataSub:'',//上级科目****
+            addDataAux:'',//科目的可选辅助项*****
+            navList:[    //科目类别
+                '资产类',
+                '负债类',
+                '净资产类',
+                '收入类',
+                '支出类'
+            ],
+            subjectInfo:{  //新增科目的值
+                preSubject:'',
+                KCode:'',
+                KName:'',
+                KType:'',
+                EnabledMark:'',
+                KBalanceType:'',
+                AuxiliaryTypes:[]
+            },
             sideDateNew:'',
             nowTime:new Date,
             AbstractCss:false,
@@ -277,7 +394,8 @@
                     Dtls:[]
                 }
                 this.PMakePerson=this.username;
-                if(!this.sideDate){
+             
+                if(this.sideDate){
                     this.sideDateNew=this.sideDate;
                 } else{
                     this.sideDateNew=this.nowTime.getFullYear()+'-'+ (parseInt(this.$store.state.Pconfig.jmonth)+1);
@@ -482,6 +600,7 @@
             //获取最新一个凭证
             getFreshVoucher(){
                 const loading1=this.$loading();
+               
                 if(!this.sideDateNew){
                     this.sideDateNew=this.nowTime.getFullYear()+'-'+this.nowTime.getMonth()
                 }
@@ -503,15 +622,12 @@
                     .then(res=>{
                        
                         if(res.Record.length<=0){
-                            this.PDate=this.nowTime;                     
+                            this.PDate=this.sideDateNew;                     
                         } else{                         
                             this.PDate=res.Record[0].PDate;
                         }   
                         
                         loading1.close();
-                    },err => {
-                        console.log(err);
-                       
                     },err => {
                         console.log(err);
                        
@@ -696,7 +812,7 @@
                 const loading5=this.$loading();
                 this.$axios.get('/PVoucherMst/GetSubjectBalance',{params:data})
                     .then(res=>{
-                        console.log(res)
+                        
                         if(res.Status=='error'){
                             this.$message(res.Msg);
                             return;
@@ -947,9 +1063,150 @@
                 this.countDai++;    
                 this.$forceUpdate();
             },
-            defaultHandle(val,){
+            defaultHandle(val){  //保存上一个摘要
                 this.defaultData.Abstract=val;
             },
+            addSubSel(){
+                this.addSubShow1=true;
+                this.$forceUpdate();
+
+            },
+            addNewSubject(){  //获取所有科目,和辅助项
+                var data1={
+                    orgid:this.orgid,
+                    uid:this.uid,
+                    Ryear:this.sideDateNew.slice(0,4)
+                }
+                const loading2=this.$loading();
+                this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})   
+                .then(res=>{
+                
+                        loading2.close();
+                        if(res.Status=='success'){
+                            this.addDataSub=res.PSubject;
+                            this.addDataAux=res.Type;
+                            
+                                      
+                            this.addPageShow=true; 
+                            this.subjectInfo={
+                                preSubject:'',
+                                KCode:'',
+                                KName:'',
+                                EnabledMark:'',
+                                KType:'',
+                                KBalanceType:'',
+                                AuxiliaryTypes:[]
+                            }                       
+                        }
+                        
+                    },err => {
+                        console.log(err);
+                    })
+                    .catch(err=>{
+                        loading2.close();
+                    })
+                },
+                //接收addsub选中的值**
+                subAddData(data){                    
+                    
+                    this.subjectInfo={
+                        preSubject:data.data,
+                        KCode:'',
+                        KName:'',
+                        EnabledMark:data.data.EnabledMark,
+                        KType:data.data.KType,
+                        KBalanceType:data.data.KBalanceType,
+                        AuxiliaryTypes:[]
+                    }  
+                    for(var t=0;t<this.addDataAux.length;t++){
+                        this.subjectInfo.AuxiliaryTypes[t]=false;
+                    }    
+                    this.addSubShow1=false;
+                    this.$forceUpdate();   
+                },
+                addFinish(){
+                    var auxi=[];
+                    var vm=this;
+                    for(var t in this.addDataAux){
+                        if(this.subjectInfo.AuxiliaryTypes[t])
+                            auxi.push(this.addDataAux);
+                    }
+          
+                    this.subjectInfo.OrgId=this.orgid;
+                    this.subjectInfo.Layers=parseInt(this.subjectInfo.preSubject.Layers)+1;
+                    this.subjectInfo.KType=this.subjectInfo.preSubject.KType;
+                    this.subjectInfo.Uyear=this.subjectInfo.preSubject.Uyear;
+                    this.subjectInfo.OrgCode=this.orgcode;
+                    this.subjectInfo.ParentId=this.subjectInfo.preSubject.PhId;
+               
+                    if(this.addPageShow){
+                        //新增***************
+                        if((!this.subjectInfo.preSubject)||(!this.subjectInfo.KName)||(!this.subjectInfo.KCode)){
+                            this.saasMessage={
+                                message:'请输入科目名和科目代码、上级科目!',
+                                visible:true,
+                                delay:4000
+                            }
+                            return;
+                        }
+                        var info=JSON.parse(JSON.stringify(this.subjectInfo));//防止页面瞬间变化***
+                        info.KCode=this.subjectInfo.preSubject.KCode+this.subjectInfo.KCode;
+             
+                        // if(this.subjectInfo.KCode){
+                        //     info.KCode=this.subjectInfo.preSubject.KCode+this.subjectInfo.KCode;
+                        // }else{
+                        //     info.KCode=this.subjectInfo.preSubject.KCode+(this.subjectInfo.preSubject.children?'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1):'01');
+                        // }
+
+                        // if(this.subjectInfo.preSubject.children){
+                        //     this.subjectInfo.KCode=parseInt(this.subjectInfo.preSubject.KCode)+'0'+(parseInt(this.subjectInfo.preSubject.children.length)+1);
+                        // }else{
+                        //     this.subjectInfo.KCode=parseInt(this.subjectInfo.preSubject.KCode)+'01';
+                        // }
+                        var data1={
+                            uid:this.uid,
+                            orgid:this.orgid,
+                            ParentSubject:this.addData,
+                            Subject: info,
+                            AuxiliaryTypeList:auxi
+                        }
+                       
+                        const loading=this.$loading();
+                        SubjectAdd(vm,data1)
+                        .then(res=>{
+                            loading.close();
+                            if(res.Status=='success'){
+                                console.log(res,res.Msg)
+                                this.saasMessage={
+                                    message:res.Msg,
+                                    visible:true,
+                                    delay:4000
+                                }
+                            }else{
+                                this.saasMessage={
+                                    message:res.Msg,
+                                    visible:true,
+                                    delay:4000
+                                }
+                            }
+                            this.addPageShow=false;
+                            
+                        },err => {
+                            loading.close();
+                            console.log(err);
+
+                        })
+                        .catch(err=>{
+                            loading.close();
+                            this.saasMessage={
+                                    message:err?err:'出错了!',
+                                    visible:true,
+                                    delay:4000
+                                }
+                        })
+                    }
+                },
+
             //附件上传************************************
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
             // beforeAvatarUpload(file) {
@@ -1017,12 +1274,12 @@
                 this.picVisible=true;
             },
             removeimg(item,deleValue) {//
-            console.log(item,deleValue)
+            
                this.imglist=item;
                 if(item.length<1){
                     return;
                 }
-                console.log(item,deleValue,this.imglist);
+               
                 // var urls=deleValue.imgPath.split('/');
                 // console.log(this.imglist,item,urls,deleValue)
                 // for(var i in item[0]){ 
@@ -1124,7 +1381,8 @@
         },
         components:{
             searchSelect,
-            pictureUpload
+            pictureUpload,
+            addSubList
         }
     }
 </script>
@@ -1572,6 +1830,124 @@
         width:50px;
     }
 }
+.addPageCon{
+        position:fixed;
+        left:0;
+        top:0;
+        right:0;
+        bottom:0;
+        z-index:999;
+        font-size:16px;
+        text-align: center;
+        color:#666;
+        background:rgba(0,0,0,0.5);
+        >div:last-of-type{
+            display: inline-block;
+            height:100%;
+            width:0px;
+            vertical-align: middle;
+        }
+        >.addPage{
+            width:556px;
+            height:396px;
+            display: inline-block;
+            vertical-align: middle;
+            background:#fff;
+            padding:5px 10px;
+            >ul{
+                padding:20px 50px 0px;
+                >li{
+
+                    height:30px;
+                    line-height:30px;
+                    margin-bottom:10px;
+
+                    .inputContainer>input{
+                        border:0;
+                        height:80%;
+                        position:relative;
+
+                    }
+
+                    .subCodeCss{
+                        overflow: hidden;
+                        >span{
+                            float:left;
+                            height:30px;
+                            line-height: 30px;
+                            width:20%;
+                            background: #ccc;
+                            color:#fff;
+                            text-align: right;
+                            padding-right:5px;
+                        }
+                        >div{
+                            float:left;
+                            width:80%;
+                            >input{
+                                border:0;
+                            }
+                        }
+                    }
+                    >div{
+                        height:100%;
+                    }
+                    >div:last-of-type{
+                        width:0;
+                        height:0;
+                    }
+                    >div:first-of-type{
+                        float:left;
+                        width:75px;
+                        text-align: right;
+                        padding-right:10px;
+                    }
+                    >div:nth-of-type(2){
+                        float:left;
+                        width:359px;
+                        border:1px solid #ccc;
+                        text-align:left;
+                    }
+                    &:nth-of-type(4) >div:nth-of-type(2){
+                         border:0;
+                    }
+                    &:nth-of-type(5) >div:nth-of-type(2){
+                         border:0;
+                    }
+
+                }
+                &>li:last-of-type{
+                    overflow-y: auto;
+                    margin-top:10px;
+                    height:40px;
+                }
+
+            }
+        }
+    }
+    .title{
+        border-bottom: 1px solid #ccc;
+        padding:8px 3px;
+        width:100%;
+        font-family: Arial;
+        font-size: 14.0pt;
+        font-style: normal;
+        font-weight: 700;
+        >span{
+            float:left;
+        }
+        i{
+            float:right;
+            background: url("../../assets/icon/close.svg");
+            background-size:cover ;
+            width:20px;
+            height:20px;
+            cursor:pointer;
+            &:hover{
+                opacity:0.7;
+            }
+        }
+    }
 </style>
 <style>
 .voucherHead .el-input--suffix .el-input__inner{

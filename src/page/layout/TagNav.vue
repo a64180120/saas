@@ -5,7 +5,7 @@
             class="tag-nav-item"
             :class="isActive(item) ? 'cur' : ''"
             v-for="(item, index) in tagNavList"
-            :to="item.path"
+            :to="item.fullPath"
             :key="index">
                 {{item.title}}
                 <span class='el-icon-close' @click.prevent.stop="closeTheTag(item, index)"></span>
@@ -62,6 +62,7 @@ export default {
       this.$store.commit("tagNav/addTagNav", {
         name: this.$router.getMatchedComponents()[1].name,
         path: this.$route.path,
+        fullPath: this.$route.fullPath,
         title: this.$route.meta.name,
         noCache: this.$route.meta.noCache
       });
