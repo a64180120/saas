@@ -103,6 +103,24 @@ const actions = {
             });
         });
     },
+    //上传图片附件
+    Pictureupload({ commit }, data) {
+        return new Promise((resolve, reject) => {
+            let baseheader=httpConfig.getHeaderConfig();
+            let base=httpConfig.getAxiosBaseConfig();
+
+            let config_header = { "Content-Type": "multipart/form-data" };
+            var new_header = Object.assign({},config_header, baseheader);
+            axios.create(base).post('/SysPicture/PostUploadFile', data, { headers:new_header }).then(res => {
+                var response=JSON.parse(res.data);
+                resolve(response);
+
+            }).catch((error) =>{
+                //错误
+                reject(error);
+            });
+        });
+    },
     // 上传图片管理附件
     PicUpload({ commit }, data) {
         return new Promise((resolve, reject) => {
