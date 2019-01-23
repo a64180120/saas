@@ -9,6 +9,29 @@
                                 <el-checkbox v-model="showFirst">只显示一级科目</el-checkbox>
                                 <el-checkbox v-model="showBenqi">剔除本期发生为零</el-checkbox>
                                 <el-checkbox v-model="showQimo">剔除期末余额为零</el-checkbox>
+                                <!--<span style="margin-left: 15px;">科目区间：</span>
+                                <el-select v-model="startCode" placeholder="请选择" @change="searchCodeStart"  style="width: 120px">
+                                    <el-option
+                                        v-for="item in subjectLists"
+                                        :key="item.code"
+                                        :label="item.name"
+                                        :value="item.code"
+                                        :style="{'text-indent':item.layer*15+'px'}"
+                                    >
+                                    </el-option>
+                                </el-select>
+                                <span>至</span>
+                                <el-select v-model="endCode" placeholder="请选择" @change="searchCodeEnd" style="width: 120px">
+                                    <el-option
+                                        v-for="item in subjectLists"
+                                        :key="item.code"
+                                        :label="item.name"
+                                        :value="item.code"
+                                        :style="{'text-indent':item.layer*10+'px'}"
+                                        :disabled="item.code<startCode"
+                                    >
+                                    </el-option>
+                                </el-select>-->
                             </ul>
                             <ul class="flexUl handle">
                                 <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel">导出</li ></a>
@@ -34,7 +57,7 @@
                                                 start-placeholder="开始日期"
                                                 end-placeholder="结束日期"
                                                 value-format="yyyy-MM-dd"
-                                                style="width: 250px;border:none;padding-right: 0;"
+                                                style="width: 270px;border:none;padding-right: 0;"
                                                 popper-class="popper"
                                             >
                                             </el-date-picker>
@@ -47,12 +70,12 @@
                                         </div>
 
                                     </div>
-                                    <div class="flexPublic">
+                                    &lt;!&ndash;<div class="flexPublic">
                                         <div>金额</div>
                                         <div class="flexPublic">
                                             <input v-model="startMoney"/>至<input v-model="endMoney"/>
                                         </div>
-                                    </div>
+                                    </div>&ndash;&gt;
                                     <div class="flexPublic searchPanel_bottom">
                                         <div class="searchPanel_btn greybtn" @click="clearPorp">重置</div>
                                         <div class="searchPanel_btn bluebtn" @click="searchDetail">搜索</div>
@@ -119,7 +142,7 @@
                                 (showFirst&&item.Layers!=0||
                                 showBenqi&&item.yh_j_sum==0&&item.yh_d_sum==0||
                                 showQimo&&item.ys_j_sum==0&&item.ys_d_sum==0)?'none':''}">
-                                    <td :style="{'text-indent':item.Layers==0?'':'20px'}">{{item.subject_code}}</td>
+                                    <td :style="{'text-indent':item.Layers==0?'':'20px','text-align':'left'}">{{item.subject_code}}</td>
                                     <td>{{item.k_name}}</td>
                                     <td class="right">
                                         <template v-if="item.ye_j_sum!=0">
@@ -347,23 +370,30 @@
     .searchPanel{
         position: absolute;
         top: 42px;
-        right: 130px;
+        right: 0px;
         z-index: 99;
         background-color: #fff;
-        width: 339px;
-        height: 230px;
+        width: 360px;
+        height: 180px;
         box-shadow: 0 0 6px 2px #c9ccce;
         border-radius: 10px 10px;
+        overflow: hidden;
     }
+    .searchPanel input{
+        height: 100%;
+        background-color: #fff;
+    }
+
     .searchPanel .flexPublic{
         padding: 5px 10px;
         height: 45px;
+        background-color: #eee;
     }
     .searchPanel .searchPanel_title{
         height: 29px;
         background-color: #00b7ee;
         color: #fff;
-        border-radius: 10px 10px 0 0 ;
+        border-radius: 10px 10px 0 0;
     }
     .searchPanel .searchPanel_title div:nth-of-type(2){
         padding: 3px;
@@ -373,13 +403,11 @@
         color: #00b7ee;
         cursor: pointer;
     }
-    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child,
-    .searchPanel>.flexPublic:nth-of-type(4)>div:last-child{
-        width: 250px;
-        padding-left: 10px;
+    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child{
+        width: 270px;
+        padding: 5px 0;
     }
-    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child input,
-    .searchPanel>.flexPublic:nth-of-type(4)>div:last-child input{
+    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child input{
         width: 116px;
         display: inline;
         font-size: 14px;
@@ -387,13 +415,11 @@
         border: none;
         padding-left: 5px;
     }
-    .searchPanel input:focus{
-        box-shadow:0 0 3px .1px #00B8EE;
-    }
     .searchPanel .searchPanel_bottom{
         height: 65px;
         border-top: 1px solid #dddfe4;
         padding: 0 40px;
+        background-color: #fff;
     }
     .searchPanel .searchPanel_btn{
         width: 135px;

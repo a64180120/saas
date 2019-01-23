@@ -2,9 +2,9 @@
     <div class="manageContent">
         <div class="unionState" style="height: 60px;">
             <ul class="flexPublic" style="float: left">
-                <li class="flexPublic">
+                <li class="flexPublic" style="float: left;width: 30%;margin-right: 30px">
                     <div>地区:</div>
-                    <div>
+                    <div  style="width: 70%">
                         <el-cascader
                             placeholder=""
                             :options="options"
@@ -12,7 +12,6 @@
                             filterable
                             :clearable="clearable"
                             @change ="changeArea"
-                            style="width: 90%; margin-top: 10px"
                             change-on-select
                         ></el-cascader>
                         <!--<select v-model="unionName">-->
@@ -21,18 +20,28 @@
                         <!--</select>-->
                     </div>
                 </li>
-                <li class="flexPublic datepick">
-                    <div>服务期限:</div>
-                    <div class="block">
+                <li class="flexPublic datepick" style="float: left;width: 40% ;margin-right: 30px;margin-top: -10px">
+                    <div  style="margin-right: -150px">服务期限:</div>
+                    <div style="width: 78%">
+                        <!--<el-date-picker-->
+                            <!--v-model="date1"-->
+                            <!--type="date"-->
+                            <!--placeholder="选择日期"-->
+                            <!--value-format="yyyy-MM-dd">-->
+                        <!--</el-date-picker>-->
                         <el-date-picker
-                            v-model="date1"
-                            type="date"
-                            placeholder="选择日期"
-                            value-format="yyyy-MM-dd">
+                            v-model="state_time"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd"
+                            size="small"
+                            style="width: 100%">
                         </el-date-picker>
                     </div>
                 </li>
-                <li class="flexPublic">
+                <li class="flexPublic" style="float: right;width: 25%;margin-top: -10px">
                     <div>状态:</div>
                     <div class="selectContainer">
                         <select name="phoneHead" v-model="unionState">
@@ -119,6 +128,7 @@
         name: "union",
         data() {
             return {
+                state_time:[],
                 date1: '',
                 unionSearchValue: '',
                 unionState: '',
@@ -279,16 +289,22 @@
             handleItemChange (val) {
                 this.getNodes(val);
             },
+            //选中各级地址
             changeArea(val){
                 console.log(val);
                 this.getNodes(val);
                 this.areaId = val;
             },
+            //搜索按钮
             unionSearch() {
                 console.log(this.areaId);
-                console.log(this.date1);
-                if(this.date1 == null){
-                    this.date1 = '';
+                console.log(this.state_time);
+                let startT = '', endT='';
+                if(this.state_time == null || this.state_time == [] || this.state_time.length < 1){
+                    this.state_time = [];
+                }else{
+                    startT = this.state_time[0];
+                    endT = this.state_time[1];
                 }
                 let l = this.areaId.length;
                 if(l < 1){
@@ -298,7 +314,7 @@
                         this.areaId[j] = "";
                     }
                 }
-                if(this.areaId =='' && this.date1 =='' && this.unionState =='' && this.unionSearchValue == ''){
+                if(this.areaId =='' && this.state_time ==[] && this.unionState =='' && this.unionSearchValue == ''){
                     this.ajaxMode('');
                 }else{
                     // var queryfilter={
@@ -313,7 +329,7 @@
                         orgid: "0",
                         pagesize: this.pageSize,
                         pageindex: this.pageIndex - 1,
-                        value: "union" +","+this.areaId[0]+","+this.areaId[1]+","+this.areaId[2]+','+this.areaId[3]+','+this.date1+","
+                        value: "union" +","+this.areaId[0]+","+this.areaId[1]+","+this.areaId[2]+','+this.areaId[3]+','+startT + ','+ endT+","
                             +this.unionState+","+this.unionSearchValue
                     }
                     this.$axios.get('/SysOrganize/GetOrganizesBy', {params: data})

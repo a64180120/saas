@@ -71,7 +71,7 @@ export default {
     tinymce.init({})
   },
   activated: function(){
-    console.log(activated);
+    console.log('activated');
     //tinymce.init({})
   },
   destroyed:function(){

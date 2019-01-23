@@ -53,11 +53,11 @@
                 <div style="height: 160px;">
                     <div class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
                         <div class="Current_year" >
-                            <i class="el-icon-minus" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
+                            <i class="el-icon-minus" style="cursor: pointer" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
                             <p style="display:none;"></p>
                             <span style="width:13px;display:none;">-</span>
                             <p>{{choosedYear}}</p>
-                            <i class="el-icon-plus" @click="((choosedYear<choosedYearEnd)?choosedYear++:choosedYear=choosedYearEnd)"></i>
+                            <i class="el-icon-plus" style="cursor: pointer" @click="((choosedYear<choosedYearEnd)?choosedYear++:choosedYear=choosedYearEnd)"></i>
                         </div>
                         <ul>
                             <template v-for="n in 12">
@@ -69,11 +69,11 @@
                     </div>
                     <div id="box" class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
                         <div id="Current_year1" class="Current_year" >
-                            <i class="el-icon-minus" @click="((choosedYearEnd>choosedYear)?choosedYearEnd--:choosedYearEnd=choosedYear)"></i>
+                            <i class="el-icon-minus" style="cursor: pointer" @click="((choosedYearEnd>choosedYear)?choosedYearEnd--:choosedYearEnd=choosedYear)"></i>
                             <p style="display:none;"></p>
                             <span style="width:13px;display:none;">-</span>
                             <p>{{choosedYearEnd}}</p>
-                            <i class="el-icon-plus" @click="((choosedYearEnd<(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))?choosedYearEnd++:choosedYearEnd=(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))"></i>
+                            <i class="el-icon-plus" style="cursor: pointer" @click="((choosedYearEnd<(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))?choosedYearEnd++:choosedYearEnd=(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))"></i>
                         </div>
                         <ul id="Month"  style="border-left: 1px solid #eee;">
                             <template v-for="n in 12">
@@ -100,11 +100,11 @@
            <div class="Popup" v-bind:style="{'display':showTog,'left':'-225px'}">
                 <div class="Content_area date" :style="{'display':monthsSelCss=='kuaiji'?'block':'none'}">
                     <div class="Current_year" >
-                        <i class="el-icon-minus" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
+                        <i class="el-icon-minus" style="cursor: pointer" @click="((choosedYear>startyear)?choosedYear--:choosedYear=startyear)"></i>
                         <p style="display:none;"></p>
                         <span style="width:13px;display:none;">-</span>
                         <p>{{choosedYear}}</p>
-                        <i class="el-icon-plus" @click="((choosedYear<(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))?choosedYear++:choosedYear=(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))"></i>
+                        <i class="el-icon-plus" style="cursor: pointer" @click="((choosedYear<(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))?choosedYear++:choosedYear=(Math.floor(jiezhangYear) + (jiezhangMonth=='12'&&(jiezhangYear+1)!=startyear?1:0)))"></i>
                     </div>
                     <ul >
                         <template v-for="n in 12">
@@ -412,17 +412,19 @@
         line-height:25px;
         z-index: 1;
         box-shadow: 0px 1px 10px 0.1px #d3e9f9;
+        font-size: 18px;
     }
     .name{
         width: 40px !important;
         height: 25px !important;
         text-align: center !important;
         line-height: 25px !important;
-        font-size: 14px !important;
-        color: #000 !important;
+        font-size: 15px !important;
+        color: #45c0f7 !important;
         border: none !important;
         border-radius: 0 !important;
         box-shadow: 0px 0px 0px #fff!important;
+        font-weight: 600;
         margin-left: 5px;
         margin-top: 4px;
 
@@ -434,6 +436,7 @@
         line-height: 30px;
         color: #ffffff;
         background:#45c0f7;
+        font-size: 14px;
         cursor: pointer;
     }
     .Popup{
