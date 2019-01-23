@@ -97,6 +97,12 @@ const staticRoute = [
                 meta:{ requireAuth:true ,type:'page',name:'轮播图管理'}
             },
             {
+                //图片新闻管理
+                path: "new",
+                component: () =>import( "../page/admin/picture/new"),
+                meta:{ requireAuth:true ,type:'page',name:'图片新闻管理'}
+            },
+            {
                 //文章管理 -预览
                 path: "article/detail",
                 component: () => import("../page/admin/article/Detail"),
