@@ -44,9 +44,12 @@
             <h4 class="artTitle"> {{ article.Title }}</h4>
             <div class="info">
               <p style="margin-top:10px;">{{ article.PublishTime}}
-                <span style="margin-left:15px">
-                  <i class="glyphicon glyphicon-eye-open" style="color:#999;"></i> &nbsp;{{ article.Hitrate}}
+                <span style="float: right; margin-right: 465px;">
+                  &nbsp;{{article.Hitrate}}
                 </span>
+                <i style="width: 20px; height: 20px;float: right;">
+                    <img src="@/assets/images/yan.png" style="width: 100%;height: 100%;" />
+                </i>
               </p>
             </div>
           </div>
@@ -62,9 +65,9 @@
         </div>
         <div class="journalism2">
           <div style="overflow:hidden; padding:15px; border-bottom: #7fa409 2px solid; position:relative;" >
-            <h3>行业动态</h3>
+            <h3 style="font-size: 24px;">行业动态</h3>
             <h3 class="fh">
-              <a href="/index">返回首页</a>
+              <a href="/index" style=" color:#7fa409;">返回首页</a>
             </h3>
           </div>
           <!-- <div class="kuang1">
@@ -108,7 +111,7 @@
                   class="glyphicon glyphicon-link"
                   style=" position:absolute; top:5px; color:#7fa409"
                 ></i>
-                <h5 style="margin-left:18px; border-bottom:#7fa409 2px solid;width: 56px;">所有新闻</h5>
+                <h5 style="margin-left:1px; border-bottom:#7fa409 2px solid;width: 56px;">所有新闻</h5>
               </a>
             </li>
           </ul>
@@ -690,7 +693,7 @@ h4:hover{
     width: 100%;
     padding-bottom: 6px;
     text-align: right;
-    margin-top: -10px;
+    margin-top: 4px;
 }
 .info {
     color: #a3afb7;
@@ -705,6 +708,13 @@ h4:hover{
     right: 15px !important;
     font-size: 15px !important;
     color: #7fa409 !important;
+
+
+
+
+
+
+
 }
 .sou1{
 	width: 84%;
