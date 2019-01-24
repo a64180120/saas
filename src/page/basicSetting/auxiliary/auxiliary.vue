@@ -41,8 +41,8 @@
                         <li>
                             <i v-show="!updatePage" :class="{newAddStateTrue:!item.EnabledMark,newAddStateFalse:item.EnabledMark}"></i>
                             <div v-show="updatePage">
-                                <label>启用<input :name="'EnabledMark'+index" v-model="item.EnabledMark" value=0 type="radio"></label>
-                                <label>停用<input :name="'EnabledMark'+index" v-model="item.EnabledMark" value=1  type="radio"></label>
+                                <label style="cursor:pointer">启用<input :name="'EnabledMark'+index" v-model="item.EnabledMark" value=0 type="radio"></label>
+                                <label style="cursor:pointer">停用<input :name="'EnabledMark'+index" v-model="item.EnabledMark" value=1  type="radio"></label>
                             </div>
                         </li>
                         <li v-show="updatePage" class="addIconCon">
@@ -398,9 +398,13 @@
     } */
      .formData>ul.formDataItems>li.addIconCon{
         position:absolute;
+        width:0;
+        left:0;
+        top:0;
+    }
+    .formData>ul.formDataItems:hover>li.addIconCon{
         width:25px;
         left:-25px;
-        top:0;
     }
     .formDataItems{
 

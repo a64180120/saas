@@ -332,8 +332,8 @@ export default {
       if(!this.startYear){
           this.startYear=(new Date).getFullYear();
       }
-      this.year=this.startYear;
-      console.log(this.year)    
+      this.year=(new Date).getFullYear();  
+      
   },
   //计算
   computed: {
@@ -1044,7 +1044,6 @@ export default {
     //接收年份选择****
     yearSelect(data){
         this.year=data.choosedYear;
-
         this.getSubjectList();
     },
     //刷新
