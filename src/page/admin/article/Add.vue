@@ -52,7 +52,7 @@
                     :rules="rules"
                     label-width="80px">
                     <el-form-item label="信息类别" prop="PhIdType">
-                        <el-select v-model="form.PhIdType" placeholder="" style="width: 40%">
+                        <el-select v-model="form.PhIdType" placeholder="" style="width: 40%" @change='ArticleTypeChange'>
                             <el-option v-for="item in articleType" :key="item.PhId" :label="item.Name"
                                        :value="item.PhId"></el-option>
                         </el-select>
@@ -120,9 +120,11 @@
                 phid: '',
                 form: {
                     PhId: 0,         //主键
-                    PhIdType: '',   //信息类别
+                    PhIdType: '',   //类型主键
+                    CodeType:'',    //类型编码
                     Title: '',       //标题
                     Content: '',     //文本
+                    ContentText:'',   //纯文本
                     Name: '',        //信息来源
                     LevelType: '',    //制度级别
                     Ontop: "0",        //是否置顶
@@ -150,7 +152,8 @@
                     {name: '省级', value: 2},
                     {name: '市级', value: 3}
                 ],
-                articleType: []
+                articleType: [],
+                tinymce:''
             }
         },
         created() {
@@ -247,6 +250,13 @@
             preview() {
                 this.$router.push({path: '/admin/article/preview', query: { phid:this.form.PhId }});
             },
+            //新闻类型 选中值发生变化Change
+            ArticleTypeChange(value){
+                var item= this.articleType.filter((d) => { return d.PhId ===value});
+                if(item.length>0){
+                    this.form.CodeType=item[0].Code;
+                }
+            },
             /**
              * 保存事件
              */
@@ -256,6 +266,11 @@
                     if (valid) {
                         this.$refs['form2'].validate((valid2) => {
                             if(valid2){
+                                var activeEditor = this.tinymce.activeEditor; 
+                                var editBody = activeEditor.getBody(); 
+                                activeEditor.selection.select(editBody); 
+                                this.form.ContentText = activeEditor.selection.getContent({'format':'text'});
+
                                 if (this.type === 'add') {
                                     //新增保存
                                     this.AddSave();
@@ -313,8 +328,10 @@
                 let formData = new FormData();
                 formData.append("PhId", this.form.PhId);
                 formData.append("PhIdType", this.form.PhIdType);
+                formData.append("CodeType", this.form.CodeType);
                 formData.append("Title", this.form.Title);
                 formData.append("Content", this.form.Content);
+                formData.append("ContentText", this.form.ContentText);
                 formData.append("Ontop", Number(this.form.Ontop));
                 formData.append("Name", this.form.Name);
                 formData.append("Author", this.username);
@@ -375,22 +392,7 @@
                     console.log(error);
                     this.$message({showClose: true, message: '文章修改失败', type: 'error'})
                 })
-
-                // this.$axios.post('/SysNews/PostUpdate', {
-                //     uid: this.userid,
-                //     orgid: this.orgid,
-                //     infoData: updateNews
-                // }).then(res => {
-                //     console.log(res)
-                //     if (res.Status === 'error') {
-                //         this.$message.error(res.Msg);
-                //         return
-                //     }
-                //     this.$message.success("修改成功!");
-                // })
-                // .catch(err => {
-                //         console.log(err)
-                // })
+                
             },
             /**
              * 发布事件
@@ -466,7 +468,7 @@
                 })
             },
             tinymceClick(e,tinymceObj){
-                console.log(e);
+                this.tinymce=tinymceObj;
             },
             //删除附件
             attachmentRemove(file, fileList){
