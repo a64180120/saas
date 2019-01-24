@@ -70,12 +70,12 @@
                                         </div>
 
                                     </div>
-                                    &lt;!&ndash;<div class="flexPublic">
+                                    <!--<div class="flexPublic">
                                         <div>金额</div>
                                         <div class="flexPublic">
                                             <input v-model="startMoney"/>至<input v-model="endMoney"/>
                                         </div>
-                                    </div>&ndash;&gt;
+                                    </div>-->
                                     <div class="flexPublic searchPanel_bottom">
                                         <div class="searchPanel_btn greybtn" @click="clearPorp">重置</div>
                                         <div class="searchPanel_btn bluebtn" @click="searchDetail">搜索</div>
@@ -270,12 +270,7 @@
                     {params:data}
                 ).then(res=>{
                     this.dataList=qs.parse(res).Record;
-                    this.dataList[0].yh_j_sum=10,
-                    this.dataList[0].yh_d_sum=10,
-                    this.dataList[0].ys_j_sum=10,
-                    this.dataList[0].ys_d_sum=100;
                     loading.close();
-                    console.log(qs.parse(res));
                 }).catch(err=>{
                     loading.close();
                     console.log(err);

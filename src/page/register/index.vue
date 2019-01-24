@@ -55,13 +55,15 @@
                                          :style="{'background-color':disabled?'#CCCCCC':'#2473EB','color':disabled?'grey':'white'}" @click="sendCode" id="timerArea">{{timertitle}}</div>
                                 </el-form-item>
                                 <div style="text-align: center">
-                                    <template v-if="checkType==0">
+                                    <div class="selfBtn blueBtn" @click="changeshowArea('secondStep')">下一步</div>
+                                    <router-link to="/index"><button class="selfBtn whiteBtn">取消</button></router-link>
+                                    <!--<template v-if="checkType==0">
                                         <div class="selfBtn blueBtn" @click="changeshowArea('secondStep')">下一步</div>
                                         <router-link to="/index"><button class="selfBtn whiteBtn">取消</button></router-link>
                                     </template>
                                     <template v-else>
                                         <div class="selfBtn blueBtn" @click="codeRegister">下一步</div>
-                                    </template>
+                                    </template>-->
 
                                 </div>
                             </div>
@@ -70,11 +72,11 @@
                             <div :class="{active_showarea:showArea!='secondStep'}">
                                 <el-form-item prop="company">
                                     <img src="@/assets/images/register/1.png">
-                                    <el-input v-model="registerForm2.company" type="text" placeholder="请输入企业/单位名称（必填）"></el-input>
+                                    <el-input :disabled="checkType==1" v-model="registerForm2.company" type="text" placeholder="请输入企业/单位名称（必填）"></el-input>
                                 </el-form-item>
                                 <el-form-item prop="addressDetail">
                                     <img src="@/assets/images/register/dz.png" style="bottom: 35px;">
-                                    <el-select v-model="registerForm2.provincevalue" placeholder="请选择" @change="searchArea(registerForm2.provincevalue,1)">
+                                    <el-select :disabled="checkType==1" v-model="registerForm2.provincevalue" placeholder="请选择" @change="searchArea(registerForm2.provincevalue,1)">
                                         <el-option
                                             v-for="item in province"
                                             :key="item.value"
@@ -82,7 +84,7 @@
                                             :value="item.value" >
                                         </el-option>
                                     </el-select>
-                                    <el-select v-model="registerForm2.cityvalue" placeholder="请选择" style="margin-left: 0px" @change="searchArea(registerForm2.cityvalue,2)">
+                                    <el-select :disabled="checkType==1" v-model="registerForm2.cityvalue" placeholder="请选择" style="margin-left: 0px" @change="searchArea(registerForm2.cityvalue,2)">
                                         <el-option
                                             v-for="item in city"
                                             :key="item.value"
@@ -90,7 +92,7 @@
                                             :value="item.value">
                                         </el-option>
                                     </el-select>
-                                    <el-select v-model="registerForm2.countyvalue" placeholder="请选择" style="margin-left: 0px" @change="searchArea(registerForm2.countyvalue,3)">
+                                    <el-select :disabled="checkType==1" v-model="registerForm2.countyvalue" placeholder="请选择" style="margin-left: 0px" @change="searchArea(registerForm2.countyvalue,3)">
                                         <el-option
                                             v-for="item in county"
                                             :key="item.value"
@@ -98,7 +100,7 @@
                                             :value="item.value">
                                         </el-option>
                                     </el-select>
-                                    <el-select v-model="registerForm2.streetvalue" placeholder="请选择" style="margin-left: 0px">
+                                    <el-select :disabled="checkType==1" v-model="registerForm2.streetvalue" placeholder="请选择" style="margin-left: 0px">
                                         <el-option
                                             v-for="item in street"
                                             :key="item.value"
@@ -106,7 +108,7 @@
                                             :value="item.value">
                                         </el-option>
                                     </el-select>
-                                    <el-input v-model="registerForm2.addressDetail" type="text" placeholder="请输入详细地址、门牌号（必填）"></el-input>
+                                    <el-input :disabled="checkType==1" v-model="registerForm2.addressDetail" type="text" placeholder="请输入详细地址、门牌号（必填）"></el-input>
                                 </el-form-item>
                                 <!--<el-form-item prop="addressDetail">
                                     <img src="@/assets/images/register/register_ordinary.png">
@@ -224,17 +226,17 @@
                     callback(new Error('请选择省'))
                 }else if(this.registerForm2.cityvalue==''){
                     callback(new Error('请选择城市'))
-                }
-                if(this.registerForm2.countyvalue==''){
+                }else if(this.registerForm2.countyvalue==''){
                     callback(new Error('请选择县'))
                 }else if(this.registerForm2.streetvalue==''){
                     callback(new Error('请选择街道'))
                 }else if(value==''||value==undefined){
                     callback()
+                }else{
+                    callback()
                 }
             };
             let validPwd=(rule,value,callback)=>{
-                console.log(rule);
                 if(value==''||value==undefined){
                     callback()
                 }else{
@@ -252,7 +254,6 @@
                 }
             };
             let validPwdR=(rule,value,callback)=>{
-                console.log(2);
                 if(value==''||value==undefined){
                     callback()
                 }else{
@@ -287,11 +288,11 @@
                     ],
                     phone:[
                         {required:true,message:'请输入手机号',trigger:'blur'},
-                        //{required:true,validator:validMobile,trigger:'blur'}
+                        {required:true,validator:validMobile,trigger:'blur'}
                     ],
                     phonecode:[
                         {required:true,message:'请输入验证码',trigger:'blur'},
-                        //{required:true,validator:validCode,trigger:'blur'}
+                        {required:true,validator:validCode,trigger:'blur'}
                     ],
                 },
                 registerForm2:{
@@ -367,59 +368,112 @@
                         this.registerRules1.name[0].required=false;
                     }
                     this.$refs.validFormF.validate((valid) => {
-                        console.log(valid);
                         if(valid){
-                            this.showArea=val;
+                            if(this.checkType==0){
+                                this.showArea=val;
+                            }else{
+                                this.codeRegister();
+                            }
+
                         }
                     })
                 }
                 if(val=='sub'){
                     this.$refs.validFormS.validate((valid) => {
-                        console.log('valid'+valid);
-
+                        console.log(valid);
+                        alert(valid);
                         if(valid){
-                            this.showArea=val;
-                            let userInfo={
-                                'RealName':this.registerForm1.name,
-                                'Account':this.registerForm1.phone,
-                                'MobilePhone':this.registerForm1.phone,
-                                'Password':this.registerForm2.password
-                            }, orgInfo={
-                                'OrgName':this.registerForm2.company,
-                                'Province': this.registerForm2.provincevalue,
-                                'City': this.registerForm2.cityvalue,
-                                'County':this.registerForm2.countyvalue,
-                                'Street':this.registerForm2.streetvalue,
-                                'Address':this.registerForm2.addressDetail
-                            };
-                            // )
-                            let base=httpConfig.getAxiosBaseConfig();
-                            //测试的Header
-                            let headconfig=httpConfig.getTestHeaderConfig();
-                            httpajax.create(base)({
-                                method: 'post',
-                                url: '/SysUser/PostRegister',
-                                data: qs.stringify({
-                                    'userInfo':userInfo,
-                                    'orgInfo':orgInfo
-                                }),
-                                headers:headconfig
-                            }).then(res => {
-                                res=JSON.parse(res.data);
-                                console.log(res);
-                                if(res.Status=='success'){
-                                    this.$message('注册成功!');
-                                    this.$router.push({ path: "/login"})
-                                }else{
-                                    this.$message(res.Msg);
+                            let loading=this.$loading();
+                            if(this.checkType==0){
+                                this.showArea=val;
+                                let userInfo={
+                                    'RealName':this.registerForm1.name,
+                                    'Account':this.registerForm1.phone,
+                                    'MobilePhone':this.registerForm1.phone,
+                                    'Password':this.registerForm2.password
+                                }, orgInfo={
+                                    'OrgName':this.registerForm2.company,
+                                    'Province': this.registerForm2.provincevalue,
+                                    'City': this.registerForm2.cityvalue,
+                                    'County':this.registerForm2.countyvalue,
+                                    'Street':this.registerForm2.streetvalue,
+                                    'Address':this.registerForm2.addressDetail
+                                };
+                                // )
+                                let base=httpConfig.getAxiosBaseConfig();
+                                //测试的Header
+                                let headconfig=httpConfig.getTestHeaderConfig();
+                                httpajax.create(base)({
+                                    method: 'post',
+                                    url: '/SysUser/PostRegister',
+                                    data: qs.stringify({
+                                        'userInfo':userInfo,
+                                        'orgInfo':orgInfo
+                                    }),
+                                    headers:headconfig
+                                }).then(res => {
+                                    loading.close();
+                                    res=JSON.parse(res.data);
+                                    console.log(res);
+                                    if(res.Status=='success'){
+                                        this.$message('注册成功!');
+                                        this.$router.push({ path: "/login"})
+                                    }else{
+                                        this.$message(res.Msg);
+                                        this.showArea='selectArea';
+                                        this. registerForm1={name: '',code:'',phone:'',phonecode:'',};
+                                        this.registerForm2={company:'',provincevalue: '',cityvalue: '',countyvalue: '',streetvalue: '',addressDetail:'',password: '',confirmpassword:'',}
+                                        this.searchArea(0,0);
+                                    }
+                                }).catch(err => {
+                                    loading.close();
+                                    this.$message('注册失败!');
                                     this.showArea='selectArea';
                                     this. registerForm1={name: '',code:'',phone:'',phonecode:'',};
                                     this.registerForm2={company:'',provincevalue: '',cityvalue: '',countyvalue: '',streetvalue: '',addressDetail:'',password: '',confirmpassword:'',}
                                     this.searchArea(0,0);
-                                }
-                            }).catch(err => {
-                                console.log(err)
-                            })
+                                    console.log(err)
+                                })
+                            }else{
+                                let data={
+                                    uid:0,
+                                    Phone:this.registerForm1.phone,
+                                    NewPwd:this.registerForm2.password
+                                };
+                                let base = httpConfig.getAxiosBaseConfig();
+                                let headconfig = httpConfig.getTestHeaderConfig();
+                                alert(111111111111);
+                                httpajax.create(base)({
+                                    method: 'post',
+                                    url: '/SysUser/PostUpdatePwdByPhoneNumber',
+                                    data:qs.stringify(data),
+                                    headers: headconfig
+                                }).then(res => {
+                                    loading.close();
+                                    if(JSON.parse(res.data).Status=='success'){
+                                        this.$message('注册成功');
+                                        this. registerForm1={name: '',code:'',phone:'',phonecode:'',};
+                                        this.registerForm2={company:'',provincevalue: '',cityvalue: '',countyvalue: '',streetvalue: '',addressDetail:'',password: '',confirmpassword:'',}
+                                        this.searchArea(0,0);
+                                        this.$router.push({ path: "/login"})
+
+                                    }else{
+                                        this.$message('注册失败!');
+                                        this.showArea='selectArea';
+                                        this. registerForm1={name: '',code:'',phone:'',phonecode:'',};
+                                        this.registerForm2={company:'',provincevalue: '',cityvalue: '',countyvalue: '',streetvalue: '',addressDetail:'',password: '',confirmpassword:'',}
+                                        this.searchArea(0,0);
+                                    }
+                                }).catch(err=>{
+                                    loading.close();
+                                    this.$message('注册失败!');
+                                    this.showArea='selectArea';
+                                    this. registerForm1={name: '',code:'',phone:'',phonecode:'',};
+                                    this.registerForm2={company:'',provincevalue: '',cityvalue: '',countyvalue: '',streetvalue: '',addressDetail:'',password: '',confirmpassword:'',}
+                                    this.searchArea(0,0);
+                                    console.log(err);
+                                })
+                            }
                         }
                     })
                 }
@@ -436,15 +490,10 @@
                     } else {
                         if (!this.disabled) {
                             this.disabled = true;
-                            if(this.checkType==0){
                                 this.getPhoneCode('register', this.registerForm1.phone);
                                 this.timer(59);
                                 document.getElementById('timerArea').innerText = '59S后重新发送';
-                            }else{
-                                this.getPhoneCode('login', this.registerForm1.phone);
-                                this.timer(59);
-                                document.getElementById('timerArea').innerText = '59S后重新发送';
-                            }
+
 
                         }
                     }
@@ -471,7 +520,7 @@
             //邀请码注册
             codeRegister:function(){
 
-                this.$refs.validFormF.validate((valid) => {
+               /* this.$refs.validFormF.validate((valid) => {
                     console.log(valid);
                     if(valid){
                         console.log(this.registerForm1.phone);
@@ -492,13 +541,52 @@
                                 this.registerForm1.code='';
                             }else{
                                 alert('暂时禁用 ，后面接口完善后再开启');
-                                /*this.$message('验证成功!');
-                                this.$router.push({ path: "/login"})*/
+                                /!*this.$message('验证成功!');
+                                this.$router.push({ path: "/login"})*!/
                             }
                         }).catch(err=>{
                             console.log(err);
                         })
                     }
+                })*/
+                let base = httpConfig.getAxiosBaseConfig();
+                let headconfig = httpConfig.getTestHeaderConfig();
+                httpajax.create(base)({
+                    method: 'get',
+                    url: '/SysUser/GetCheckInvitationCode?Phone='+this.registerForm1.phone+'&InvitationCode='+this.registerForm1.code,
+                    headers: headconfig
+                }).then(res => {
+                    console.log(JSON.parse(res.data));
+                    //data: "{"Status":"error","Msg":"邀请不存在，请联系邀请人"}";
+                    let data=JSON.parse(res.data);
+                    if(data.Status=='error'){
+                        this.$message(data.Msg);
+                        this.registerForm1.code='';
+                    }else{
+                        /*
+                        * \"orgs\":[{
+                        * \"PhId\":502190114000010,
+                        * \"MobilePhone\":\"13506836172\",
+                        * \"TelePhone\":null,
+                        * \"Province\":\"330000\",
+                        * \"City\":\"330100\",
+                        * \"County\":\"330105\",
+                        * \"Street\":\"330105009\",
+                        * \"Address\":\"中国智慧产业园N座9F\",
+                        * */
+                        this.registerForm2.addressDetail=data.orgs[0].Address;
+                        this.registerForm2.company=data.orgs[0].OrgName;
+
+                        this.searchAreaDetail(data.orgs[0].Province,0);
+                        this.searchAreaDetail(data.orgs[0].County,2);
+                        this.searchAreaDetail(data.orgs[0].City,1);
+                        this.searchAreaDetail(data.orgs[0].Street,3);
+
+                        this.showArea='secondStep';
+
+                    }
+                }).catch(err=>{
+                    console.log(err);
                 })
             },
             timer:function(t){
@@ -514,6 +602,34 @@
                             document.getElementById('timerArea').innerText ='重新发送验证码';
                         }
                     },1000)
+            },
+            //查询具体城市
+            searchAreaDetail:function(areaId,type){
+                let base=httpConfig.getAxiosBaseConfig();
+                //测试的Header
+                let headconfig=httpConfig.getTestHeaderConfig();
+                httpajax.create(base)({
+                    url: "/SysArea/GetAreaName?areaId="+areaId,
+                    method: "get",
+                    headers:headconfig
+                }).then(res=>{
+                    console.log(res);
+                    switch (type) {
+                        case 0:
+                            {this.registerForm2.provincevalue=res.data;break};
+                        case 1:
+                            {this.registerForm2.cityvalue=res.data;break};
+                        case 2:
+                            {this.registerForm2.countyvalue=res.data;break};
+                        case 3:
+                            {this.registerForm2.streetvalue=res.data;break};
+                        default:{
+                            break;
+                        }
+                    }
+                }).catch(err=>{
+                    console.log(err);
+                })
             },
         //    查询省市县街道
             searchArea:function(val,level){
