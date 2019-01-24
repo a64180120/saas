@@ -364,7 +364,8 @@
 				pageindex:this.pageIndex-1,
 				pagesize:this.pageSize,
 				queryfilter:{
-					"LevelType*num*eq":type,  //设计****   
+					"LevelType*num*eq":type,  //制度级别(1-国家,2-省级,3-市级)
+					"Publish*num*eq":1,  //发布状态   
 				}
 			};
 			//console.log(type);

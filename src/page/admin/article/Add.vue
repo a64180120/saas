@@ -124,6 +124,7 @@
                     CodeType:'',    //类型编码
                     Title: '',       //标题
                     Content: '',     //文本
+                    ContentText:'',   //纯文本
                     Name: '',        //信息来源
                     LevelType: '',    //制度级别
                     Ontop: "0",        //是否置顶
@@ -151,7 +152,8 @@
                     {name: '省级', value: 2},
                     {name: '市级', value: 3}
                 ],
-                articleType: []
+                articleType: [],
+                tinymce:''
             }
         },
         created() {
@@ -264,6 +266,11 @@
                     if (valid) {
                         this.$refs['form2'].validate((valid2) => {
                             if(valid2){
+                                var activeEditor = this.tinymce.activeEditor; 
+                                var editBody = activeEditor.getBody(); 
+                                activeEditor.selection.select(editBody); 
+                                this.form.ContentText = activeEditor.selection.getContent({'format':'text'});
+
                                 if (this.type === 'add') {
                                     //新增保存
                                     this.AddSave();
@@ -324,6 +331,7 @@
                 formData.append("CodeType", this.form.CodeType);
                 formData.append("Title", this.form.Title);
                 formData.append("Content", this.form.Content);
+                formData.append("ContentText", this.form.ContentText);
                 formData.append("Ontop", Number(this.form.Ontop));
                 formData.append("Name", this.form.Name);
                 formData.append("Author", this.username);
@@ -460,7 +468,7 @@
                 })
             },
             tinymceClick(e,tinymceObj){
-                console.log(e);
+                this.tinymce=tinymceObj;
             },
             //删除附件
             attachmentRemove(file, fileList){
