@@ -184,7 +184,7 @@
         SysUserUpdatePassword,
         SysUserSendInvitationCode
     } from '@/api/user/userInfo'
-    import {SysRoleList} from '@/api/role/roleInfo'
+    import {SysRoleList, SysRoleListNoAdmin} from '@/api/role/roleInfo'
     import {isvalidatemobile} from '@/util/validate'
 
     export default {
@@ -454,7 +454,7 @@
             async getRoleData() {
                 var vm = this;
                 //获取200角色信息
-                SysRoleList(vm, {
+                SysRoleListNoAdmin(vm, {
                     PageIndex: 0,
                     PageSize: 200
                 }).then(res => {
@@ -550,9 +550,9 @@
             //新增
             Add() {
                 // this.form.phid = 0;
-                // this.form.realName = '';
-                // this.form.mobilePhone = '';
-                // this.form.enabledMark = '0';
+                this.form.realName = '';
+                this.form.mobilePhone = '';
+                this.form.enabledMark = '0';
                 this.singleSelection = [];
                 this.dialogState = "add";
                 this.dialogTitle = "新增";
@@ -883,7 +883,7 @@
                         RoleCode: roleItem[0].Name,
                         EnabledMark: '0',
                         NickName: this.form.realName,
-                        Verify:'1',
+                        Verify:'0',
                         VerifyTime: new Date
                     })
                 }

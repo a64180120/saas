@@ -82,7 +82,8 @@
                     uid: this.uid,
                     orgid: this.orgid,
                     pagesize: this.pageSize,
-                    pageindex: this.pageIndex - 1
+                    pageindex: this.pageIndex - 1,
+                    PositionType: 'top'
                 };
                 this.fileList = [];
 

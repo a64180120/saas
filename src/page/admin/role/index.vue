@@ -75,7 +75,7 @@
                 <el-form-item label="备注：" prop="Description">
                     <el-input v-model="form.Description" placeholder="15位汉字以内"></el-input>
                 </el-form-item>
-                <el-form-item label="账号状态：" prop="EnabledMark">
+                <el-form-item label="角色状态：" prop="EnabledMark">
                     <el-radio-group v-model="form.EnabledMark">
                         <el-radio :label='0'>启用</el-radio>
                         <el-radio :label='1'>停用</el-radio>
@@ -301,6 +301,7 @@
             //新增按钮
             PageAdd() {
                 this.form = {};
+                this.form.EnabledMark = 0;
                 this.singleSelection= [];
                 this.CheckedList = [];
                 this.showForm = true;
