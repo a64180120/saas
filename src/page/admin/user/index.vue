@@ -156,7 +156,7 @@
         <!--地址选择器-->
         <el-dialog :title="'地址选择'" :visible.sync="addressVisible" width="40%" :close="dialogClose">
             <template>
-                <el-select v-model="Province" placeholder="" style="width: 20%" @change="changeProvince">
+                <el-select v-model="Province" placeholder="" filterable style="width: 20%" @change="changeProvince">
                     <el-option
                         v-for="item in ProvinceList"
                         :key="item.value"
@@ -165,7 +165,7 @@
                     </el-option>
                 </el-select>
                 <span>省</span>
-                <el-select v-model="City" placeholder="" style="width: 20%" @change="changeCity">
+                <el-select v-model="City" placeholder="" filterable style="width: 20%" @change="changeCity">
                     <el-option
                         v-for="item in CityList"
                         :key="item.value"
@@ -174,7 +174,7 @@
                     </el-option>
                 </el-select>
                 <span>市</span>
-                <el-select v-model="County" placeholder="" style="width: 20%" @change="changeCounty">
+                <el-select v-model="County" placeholder="" filterable style="width: 20%" @change="changeCounty">
                     <el-option
                         v-for="item in CountyList"
                         :key="item.value"
@@ -183,7 +183,7 @@
                     </el-option>
                 </el-select>
                 <span>区</span>
-                <el-select v-model="Street" placeholder="" style="width: 20%" @change="changeStreet">
+                <el-select v-model="Street" placeholder="" filterable style="width: 20%" @change="changeStreet">
                     <el-option
                         v-for="item in StreetList"
                         :key="item.value"

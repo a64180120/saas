@@ -96,7 +96,7 @@
   .vueDropdown.defaultTheme {
     position: absolute;
     left:0;
-    top:100%;
+    top:0;
     z-index:99;
     display: none;
     width: 100%;

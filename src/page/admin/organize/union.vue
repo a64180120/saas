@@ -75,21 +75,27 @@
             </div>
         </div>
         <div class="formData">
-            <ul>
+            <ul style="overflow-y: scroll">
                 <li>序号</li>
                 <li>用户号</li>
                 <li>组织编码</li>
                 <li>组织名称</li>
                 <li>创建日期</li>
             </ul>
-            <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}"
-                @click="chooseOn(index,item.PhId)" v-for="(item,index) of userInfo" :key="index">
-                <li>{{index+1+(pageIndex-1)*pageSize}}</li>
-                <li>{{item.UserAccount}}</li>
-                <li>{{item.EnCode}}</li>
-                <li>{{item.OrgName}}</li>
-                <li>{{item.NgInsertDt.replace('T',' ')}}</li>
-            </ul>
+            <div class="hideScroll">
+
+            </div>
+            <div class="formData notChangeCol" style="margin-top: 0px; overflow-y: scroll; height: 500px">
+                <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}"
+                    @click="chooseOn(index,item.PhId)" v-for="(item,index) of userInfo" :key="index" >
+                    <li>{{index+1+(pageIndex-1)*pageSize}}</li>
+                    <li>{{item.UserAccount}}</li>
+                    <li>{{item.EnCode}}</li>
+                    <li>{{item.OrgName}}</li>
+                    <li>{{item.NgInsertDt.replace('T',' ')}}</li>
+                </ul>
+            </div>
+
         </div>
         <div class="formDataPages">
             <div class="flexPublic">
@@ -376,6 +382,7 @@
                     return value.checked = false
                 })
                 this.userInfoCssList[index].checked = true;
+                // console.log(item.style);
                 this.$forceUpdate();
                 this.PhIdList = PhId;
             },
@@ -445,7 +452,14 @@
 </script>
 
 <style scoped>
-
+    .hideScroll{
+        position: absolute;
+        top:85px;
+        right:20px;
+        width: 16px;
+        height:100%;
+        background: #fff;
+    }
 
     .formData > ul > li {
         border-right: 1px solid #fff;
@@ -473,16 +487,19 @@
         min-width: 31px;
         padding: 0 2px;
     }
-
+    .notChangeCol> ul:first-child {
+        background: transparent;
+        color: #000;
+    }
+    ul.formDataItems.flexPublic.userInfoCss {
+        background: #ddd;
+    }
     .formData > ul.formDataItems:hover {
         background: #ddd;
     }
-
     .formDataItems {
-
         border-bottom: 1px solid #ddd;
     }
-
     .formData > ul.formDataItems > li {
         border-right: 1px solid #ddd;
         border-left: 0;

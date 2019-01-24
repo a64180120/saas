@@ -34,23 +34,29 @@
     			<p>0571-88270588</p>
   			</div>
 		</div>
+  		
+  		
+		
 		<div class="decorate"></div>
 		<div class="Broadcast_box" style="animation-delay:0.5s;">
 			<div style="width: 1178px;margin-left: 11px; margin-top:4px; position: relative;" >
 				<!-- <img src="@/assets/img/t1.jpg" style="position: absolute;width: 100%;height: 552px;"> -->
 				<el-carousel height="552px" >
-					<el-carousel-item>
-						<img src="@/assets/img/t1.jpg">
-					</el-carousel-item>
-					<el-carousel-item>
-						<img src="@/assets/img/t2.jpg">
-					</el-carousel-item>
-					<el-carousel-item>
-						<img src="@/assets/img/t3.jpg">
-					</el-carousel-item>
-					<el-carousel-item>
-						<img src="@/assets/img/t4.jpg">
-					</el-carousel-item>
+                    <el-carousel-item v-for="item in topPicList" :key="item">
+                        <img :src="picUrl+item.Picpath">
+                    </el-carousel-item>
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t1.jpg">-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t2.jpg">-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t3.jpg">-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t4.jpg">-->
+					<!--</el-carousel-item>-->
 				</el-carousel>
 			</div>
 		</div>
@@ -69,7 +75,49 @@
   			</div>
 			<div class="Journalism_left">
   				<a href="http://www.zjtax.gov.cn/" target="_blank">
-
+    				<div class="img_box">
+                        <img :src="picUrl + trendPic.Picpath" v-if="trendPic.Picpath">
+						<!--<img src="@/assets/img/img1.png"/>-->
+					</div>
+    				<div class="txt_box">
+      					<h1 style="float:left;">新版企业所得税申报表启用</h1>
+      					<p>	
+            				陈大光于1956年出生于越南北部宁平省，拥
+        					有博士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当选国会代表进
+        					入越南第十三届国会。陈大光长期在越南内
+            			</p>
+    				</div>
+    				<div class="txt_box1">
+      					<p>
+            				陈大光于1956年出生于越南北部宁平省，拥
+        					有博士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当选国会代表进
+        					入越南第十三届国会。陈大光长期和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当选国和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当士学位和教授职称。他于2006年越共十
+        					大进入越共中央委员会，2011年越共十一大
+        					进入越共中央政治局，同年当选国在越南内
+           				</p>
+    				</div>
     			</a>
   			</div>
 			<div class="Journalism_right">
@@ -122,18 +170,21 @@
 					
 				</div>
 				<el-carousel indicator-position="none" height="400px" arrow="never">
-					<el-carousel-item>
-						<a href="#"><img src="@/assets/img/n1.png" alt=""></a>
-					</el-carousel-item>
-					<el-carousel-item >
-						<a href="#"><img src="@/assets/img/n2.jpg" alt=""></a>
-					</el-carousel-item>
-					<el-carousel-item >
-						<a href="#"><img src="@/assets/img/n3.jpg" alt=""></a>
-					</el-carousel-item>
-					<el-carousel-item>
-						<a href="#"><img src="@/assets/img/n4.jpg" alt=""></a>
-					</el-carousel-item>
+                    <el-carousel-item v-for="item in bottomPicList" :key="item">
+                        <a href="#"><img :src="picUrl+item.Picpath" alt=""></a>-
+                    </el-carousel-item>
+					<!--<el-carousel-item>-->
+						<!--<a href="#"><img src="@/assets/img/n1.png" alt=""></a>-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item >-->
+						<!--<a href="#"><img src="@/assets/img/n2.jpg" alt=""></a>-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item >-->
+						<!--<a href="#"><img src="@/assets/img/n3.jpg" alt=""></a>-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<a href="#"><img src="@/assets/img/n4.jpg" alt=""></a>-->
+					<!--</el-carousel-item>-->
 				</el-carousel>
 			</div>
 			<div class="policy_right">
@@ -259,7 +310,6 @@
   import Auth from "@/util/auth";
   import md5 from 'js-md5'
   import desHelper from "@/util/desHelper"
-  //import Header from '@/page/components/page/Header'
 
 
   export default {
@@ -277,14 +327,17 @@
               }
           }
       };
-      return {		  
-		userDropDown:false, //修改密码弹窗
-		dialog: {
+      return {
+          trendPic:'',
+          bottomPicList:[], //公会之窗
+          topPicList:[], //轮播图列表
+		  userDropDown:false, //修改密码弹窗
+		  dialog: {
 			editPaw: {
 				show: false
 			}
-		},
-		editPaw: {
+		  },
+		  editPaw: {
 			oldPaw: "",
 			newPaw: "",
 			confirmNewPaw: ""
@@ -338,15 +391,14 @@
            return user.userInfo
           }
         }
-	},
-	components:{
-		//Header
-	},
+    },
     mounted(){
-		console.log(this.carouselImgs)
-
-		this.getnewsInfo('')
-		this.getproInfoList()
+		console.log(this.carouselImgs);
+		this.getTrendPic();
+		this.getBottomPicList();
+        this.getTopPicList();
+		this.getnewsInfo();
+		this.getproInfoList();
     },
     methods:{
 		...mapActions({
@@ -357,18 +409,86 @@
 		NavTo(str){
 			this.$router.push({path:str});
 		},
+        //获取行业动态图片
+        getTrendPic(){
+            let data = {
+                uid: this.uid,
+                orgid: this.orgid,
+                pagesize: '20',
+                pageindex: '0',
+                PositionType: 'bottom',
+                Title: '行业动态'
+            };
+            this.$axios.get('/SysPicture/GetSysPictureQueryList', {params: data})
+                .then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    console.log(res);
+                    if(res.list.length > 0){
+                        this.trendPic = res.list[0];
+                    }
+                    //this.bottomPicList = res.list;
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.$message({showClose: true, message: "公会之窗获取错误", type: "error"});
+                })
+        },
+        //获取工会之窗图片
+        getBottomPicList(){
+            let data = {
+                uid: this.uid,
+                orgid: this.orgid,
+                pagesize: '20',
+                pageindex: '0',
+                PositionType: 'bottom',
+                Title: '工会之窗'
+            };
+            this.$axios.get('/SysPicture/GetSysPictureQueryList', {params: data})
+                .then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.bottomPicList = res.list;
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.$message({showClose: true, message: "公会之窗获取错误", type: "error"});
+                })
+        },
+        //获取动态轮播图
+        getTopPicList(){
+            let data = {
+                uid: this.uid,
+                orgid: this.orgid,
+                pagesize: '20',
+                pageindex: '0',
+                PositionType: 'top'
+            };
+            this.$axios.get('/SysPicture/GetSysPictureQueryList', {params: data})
+                .then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.topPicList = res.list;
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.$message({showClose: true, message: "轮播图获取错误", type: "error"});
+                })
+        },
 		//获取政策制度信息
-		getnewsInfo(type){
+		getnewsInfo(){
 			var parames={
 				value:291190117000001,
 				pageindex:this.pageIndex-1,
 				pagesize:this.pageSize,
-				queryfilter:{
-					"LevelType*num*eq":type,  //制度级别(1-国家,2-省级,3-市级)
-					"Publish*num*eq":1,  //发布状态   
-				}
 			};
-			//console.log(type);
+
 			this.GetNewsList(parames).then(res => {
 				if (res.Status === 'error') {
 					this.$message.error(res.Msg);
@@ -422,16 +542,57 @@
 		},
 		typeclick(object){
         	//alert(object);
-			this.active=object;
+        	this.active=object;
+
+			let countryInfo=[
+			{info:'李玉赋在全国总工会机关传达学习中央经济工作会议精神会议上强调认真学习贯彻中央经济工作会议精神 团结动员广大职工为保持经济持续健康发展和社会大局稳定作出新贡献',date:'2018-12-25',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97580'},
+			{info:'全国总工会党组召开会议传达学习习近平总书记在庆祝改革开放40周年大会上重要讲话精神',date:'2018-12-21',url:'http://www.acftu.org/template/10041/file.jsp?cid=222&aid=97563'},
+			{info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+			{info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+			{info:'全国总工会权益保障部 中国劳动和社会保障科学研究院战略合作框架协议签约仪式在京举行 ',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97131'},
+			{info:'全总女职工部赴云南省调研指导工会女职工工作',date:'2018-08-23',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96879'},
+			{info:'《全国工会干部培训基础教材》（2018版）出版',date:'2018-08-30',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=96918'},
+			];
+
+			let provinceInfo=[
+			{info:'关于评选推荐全国模范职工之家、全国模范职工小家、全国优秀工会工作者和全国优秀工会积极分子、全国优秀工会之友的通知 ',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-05-08/9581253785651033.html'},
+			{info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
+			{info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
+			{info:'中华全国总工会办公厅关于印发《基层工会经费收支管理办法》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877049644557550.html'},
+			{info:'浙江省财政厅 浙江省总工会关于提前下达2018年度职工帮扶专项资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2017-12-05/13752942087233041.html'},
+			{info:'关于印发《浙江省总工会本级基本建设项目管理办法（试行）》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200524602960515.html'},
+			{info:'关于下拨“尊法守法·携手筑梦”服务农民工法治宣传行动专项补助资金的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-03-07/4200612334907516.html'},
+			];
+
+			let cityInfo=[
+			{info:'机关工会工作暂行条例',date:'2018-05-02',url:'http://www.hzgh.org/newsview33982.htm'},
+			{info:'浙江省总工会关于加强和规范基层工会经费收支管理的实施细则',date:'2018-05-02',url:'http://www.hzgh.org/newsview33654.htm'},
+			{info:'关于印发《杭州市总工会内部审计工作办法》的通知 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview33916.htm'},
+			{info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
+			{info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
+			{info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
+			{info:'国务院办公厅关于深入贯彻工会法支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10849.htm'},
+			{info:'国务院印发《关于做好当前和今后一个时期促进就业工作的若干意见》',date:'2018-05-02',url:'http://www.acftu.org/template/10041/file.jsp?cid=1078&aid=97478'},
+			];
+
+			let allInfo=[
+			{info:'全国工会劳动和技能竞赛工作理论研讨现场会在山东潍坊召开',date:'2018-11-13',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97323'},
+			{info:'全总召开全国工会社会组织工作研讨会',date:'2018-10-17',url:'http://www.acftu.org/template/10041/file.jsp?cid=721&aid=97132'},
+			{info:'关于印发《浙江省总工会2018年工作要点》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-26/3422131293878883.html'},
+			{info:'浙江省总工会关于印发《加强和规范基层工会经费收支管理的实施细则》的通知',date:'2018-05-02',url:'http://www.zjftu.org/page/zj_zgh/zj_xxgk/zj_xxgk_zcwj/2018-02-08/1877044506553794.html'},
+			{info:'中华全国总工会办公厅关于加强基层工会经费收支管理的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview32021.htm'},
+			{info:'杭州市人民政府办公厅关于贯彻落实《工会法》支持工会工作的通知',date:'2018-05-02',url:'http://www.hzgh.org/newsview10855.htm'},
+			{info:'中共杭州市委关于加强和改善党对新时期工会、共青团、妇联工作领导的意见 ',date:'2018-05-02',url:'http://www.hzgh.org/newsview10854.htm'},
+			]
 
 			if(object==='country') {
-				this.getnewsInfo('1')
+			this.newsInfo=countryInfo;
 			}else if(object==='province'){
-				this.getnewsInfo('2')
+			this.newsInfo=provinceInfo;
 			}else if(object==='city'){
-				this.getnewsInfo('3')
+			this.newsInfo=cityInfo;
 			}else if(object==='all'){
-				this.getnewsInfo('')
+			this.newsInfo=allInfo;
 			}
       	},
       	//修改密码

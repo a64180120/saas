@@ -50,7 +50,7 @@
             <div style="overflow:hidden;height:87%">
                 <div class="monthsContainer">
                     <ul style="top:0" @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false,$event)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
-                        <li v-for="item of nowYear-startYear+1"  :key="item">
+                        <li v-for="item of nowYear-2000"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
                                 <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:(i>checkedTime)&&(nowYear-item+1>=checkedYear),futureM:(nowYear-item+1>=nowYear)&&(i>(nowTime.getMonth()+1))}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
@@ -91,7 +91,7 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="nextMonthCss=true">确认</span>
+                        <span @click="yearsTrue('check',checkVal)">确认</span>
                     </p>
                 </div>
                 <div v-show="monthsSelCss=='fanjiezhang'" class="yearsContent jiezhang">
@@ -170,7 +170,7 @@
         <!-- 凭证模板****************** -->
         <voucher-temp v-if="modelListCss" :temptype="temptype" @temp-click="tempClick"></voucher-temp>
         <!-- 下月账******************* -->
-        <next-month :checkVal="checkVal" v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
+        <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
         <!-- <div class="footInfo " >
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
@@ -253,7 +253,6 @@
             unCheckVal:'',
             checkedTime:'',//下一个结账月*******
             checkedYear:'',//已经结账的年份
-            startYear:'',//建账日期
             pagesize:100,
             pageindex:0,
             ascOrDesc:'ASC',
@@ -292,16 +291,12 @@
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
                 this.voucherAdd=true;
-            }else if(this.$route.query.reset=='reset'){
-                this.$store.commit("tagNav/upexcludeArr", []);
-            }
+            } 
             
         },
         mounted(){  
             this.getChecked();
-            this.uInfo= userInfo.getUserInfoData().userInfo;
-            this.startYear=userInfo.getUserInfoData().orgInfo.StartYear; 
-            
+            this.uInfo= userInfo.getUserInfoData().userInfo; 
             //this.moveNavTop();
         },
         methods:{
@@ -586,7 +581,8 @@
                 
                 var url='Add';
                 var Vdata=this.voucherDataList.data;
-                          
+                  console.log(Vdata)
+                  debugger
                 //判断科目金额摘要不能为空
                 for(var dtl of Vdata.Mst.Dtls){
                     if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
@@ -1645,8 +1641,7 @@
                     width:60px;
                     height:30px;       
                     overflow: hidden;
-                    position:absolute; 
-                            
+                    position:absolute;                   
                     transition:all 0.2s linear;
                     border:1px solid #00b7ee;
                     >div{
@@ -1672,7 +1667,8 @@
                         border:1px solid #00b7ee;
                         background: #fff;
                         opacity: 1;
-                        z-index:99;           
+                         z-index: 5;
+                         
                          >span{
                              &:first-of-type{
                                  color:#fff;
@@ -1687,7 +1683,7 @@
                 height:30px;
                 overflow:hidden; 
                 position: absolute;
-               
+                z-index: 2;
                 width:100%;
                 margin:0;  
                 opacity:1;         
@@ -1714,7 +1710,6 @@
                  height:auto;
                 background: #00b7ee; 
                 border-top:0; 
-                 z-index: 99;
             }
         }
 
@@ -1850,7 +1845,7 @@
     .asideNav{
         width:55px;
         position:absolute;
-        z-index:999;
+        z-index:9;
         right:0px;
         top:0px;
         height: 95%;

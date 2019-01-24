@@ -133,9 +133,6 @@
           checkOutCss:false,
           checkCss:false
       }},
-      props:{
-          checkVal:Number
-      },
       mounted(){
           this.getChecked();
       },
@@ -151,7 +148,7 @@
                     this.checkCss=true;
                     break;
                 case 'check': //结账*********
-                    this.checkOut('check',this.checkVal?this.checkVal:this.checkedTime);                    
+                    this.checkOut('check',this.checkedTime);                    
                     
                     break;
                 case 'audit': //凭证审核页面****
@@ -177,19 +174,17 @@
         },
         //开始检查*********************
         matchBegin(){
-            console.log(this.checkVal)
             var data={
                 orgid:this.orgid,
                 Year:this.nowTime.getFullYear().toString(),
-                Pmonth:this.checkVal?this.checkVal:this.checkedTime
+                Pmonth:this.checkedTime
             }
              var data2={
                  OrgIds:this.orgid,
                  Year:this.nowTime.getFullYear().toString(),
-                 Pmonth:this.checkVal?this.checkVal:this.checkedTime
+                 Pmonth:this.checkedTime
              }
              //期初余额检查************
-             const loading=this.$loading();
              this.$axios.get('/PVoucherMst/GetStartBalance',{params:data2})
                  .then(res=>{
                      if(res.Status=='success'){
@@ -211,7 +206,6 @@
                                              //断号检查********************
                                              this.$axios.get('/PVoucherMst/GetCkeckBreakNo',{params:data})
                                                  .then(res=>{
-                                                     loading.close();
                                                      if(res.Status=='success'){
                                                          this.checkFaile[3] = false;
                                                      }
@@ -223,7 +217,6 @@
                                                      }
                                                      this.$message("检查结束!")
                                                  },err => {
-                                                     loading.close();
                                                     console.log(err);
                                                 
                                                 })
@@ -233,7 +226,7 @@
                              })
 
                  })
-                 .catch(err=>{loading.close();this.$message({ showClose: true,message: err, type: "error"});})
+                 .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});})
 
           },
           //获取当前结账的最新月份************
