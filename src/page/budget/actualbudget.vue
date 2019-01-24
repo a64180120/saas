@@ -621,7 +621,7 @@
                 //获取打印内容的子节点 ;
                 let childList=cop.childNodes;
 
-                let len=15;
+                let len=13;
                 let level=Math.ceil(childList.length/len);
                 for(var i=1; i<level ; i++){
                     childList[i*len].setAttribute('style','page-break-after:always');
@@ -672,13 +672,10 @@
     .unionState>ul>li{
         width:100%;
     }
-    .formData{
-        margin-bottom: 50px;
-    }
     .formData_content{
         position: absolute;
         overflow-y: scroll;
-        bottom: -50px;
+        bottom: 0px;
         top: 90px;
         left: 0;
         right: -17px;

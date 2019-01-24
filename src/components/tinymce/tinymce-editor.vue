@@ -71,12 +71,12 @@ export default {
     tinymce.init({})
   },
   activated: function(){
-    console.log(activated);
+    console.log('activated');
     //tinymce.init({})
   },
   destroyed:function(){
-    //tinymce.destroy()
-    console.log(destroyed);
+    //tinymce.destroy(true)
+    //console.log(destroyed);
     //tinymce.remove("#tinymce");
   },
   methods: {
@@ -88,6 +88,14 @@ export default {
     //可以添加一些自己的自定义事件，如清空内容
     clear() {
       this.myValue = ''
+    },
+    getContent(){
+        var activeEditor = tinymce.activeEditor; 
+        var editBody = activeEditor.getBody(); 
+        activeEditor.selection.select(editBody); 
+        var text = activeEditor.selection.getContent({'format':'text'});
+
+        return text;
     }
   },
   watch: {

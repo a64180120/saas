@@ -66,7 +66,7 @@
                 this.ajaxMode();
             },
             ajaxMode() {
-                console.log('222222wwwww');
+                //console.log('222222wwwww');
                 let data = {
                     uid: "0",
                     orgid: "0",

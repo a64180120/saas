@@ -6,9 +6,32 @@
                     <div class="unionState" style="width: 100%;height: 40px">
                         <div style="width:100%;float: right">
                             <ul  class="flexUl handle" style="float: left;line-height: 30px">
-                                <el-checkbox>只显示一级科目</el-checkbox>
-                                <el-checkbox>剔除本期发生为零</el-checkbox>
-                                <el-checkbox>剔除期末余额为零</el-checkbox>
+                                <el-checkbox v-model="showFirst">只显示一级科目</el-checkbox>
+                                <el-checkbox v-model="showBenqi">剔除本期发生为零</el-checkbox>
+                                <el-checkbox v-model="showQimo">剔除期末余额为零</el-checkbox>
+                                <!--<span style="margin-left: 15px;">科目区间：</span>
+                                <el-select v-model="startCode" placeholder="请选择" @change="searchCodeStart"  style="width: 120px">
+                                    <el-option
+                                        v-for="item in subjectLists"
+                                        :key="item.code"
+                                        :label="item.name"
+                                        :value="item.code"
+                                        :style="{'text-indent':item.layer*15+'px'}"
+                                    >
+                                    </el-option>
+                                </el-select>
+                                <span>至</span>
+                                <el-select v-model="endCode" placeholder="请选择" @change="searchCodeEnd" style="width: 120px">
+                                    <el-option
+                                        v-for="item in subjectLists"
+                                        :key="item.code"
+                                        :label="item.name"
+                                        :value="item.code"
+                                        :style="{'text-indent':item.layer*10+'px'}"
+                                        :disabled="item.code<startCode"
+                                    >
+                                    </el-option>
+                                </el-select>-->
                             </ul>
                             <ul class="flexUl handle">
                                 <a><li style='margin:0 0 0px 20px;' @click="postBalanceSheetExcel">导出</li ></a>
@@ -16,8 +39,8 @@
                                 <a><li style="margin:0;border: 0;background: none;font-size: 27px;color: #00B8EE;" class="el-icon-refresh" @click="refresh"></li></a>
                             </ul>
                             <ul  class="flexUl handle" style="line-height: 30px">
-                                <li class="searcherValue"><input type="text" placeholder="凭证字号/摘要" v-model="inputKvalue"></li>
-                                <li  class="searcherBtn" @click="selectBtn">搜索</li>
+                                <li class="searcherValue"><input type="text" placeholder="科目编码/名称" v-model="inputKvalue"></li>
+                                <li  class="searcherBtn" @click="getData">搜索</li>
                                 <li   class="searcherBtn" @click="showType='block'" style="margin-left: 10px">高级</li>
                                 <div class="searchPanel" :style="{'display':showType}">
                                     <div class="flexPublic searchPanel_title">
@@ -25,7 +48,7 @@
                                         <div class="el-icon-close" @click="showType='none'"></div>
                                     </div>
                                     <div class="flexPublic">
-                                        <div>凭证日期:</div>
+                                        <div>账期</div>
                                         <div>
                                             <el-date-picker
                                                 v-model="zwTime"
@@ -34,39 +57,35 @@
                                                 start-placeholder="开始日期"
                                                 end-placeholder="结束日期"
                                                 value-format="yyyy-MM-dd"
-                                                style="width: 250px;border:none;padding-right: 0;"
+                                                style="width: 270px;border:none;padding-right: 0;"
                                                 popper-class="popper"
                                             >
                                             </el-date-picker>
                                         </div>
                                     </div>
                                     <div class="flexPublic">
-                                        <div>凭证号码</div>
+                                        <div>科目编码</div>
                                         <div class="flexPublic">
                                             <input v-model="StartPNo"/>至<input v-model="EndPno"/>
                                         </div>
 
                                     </div>
-                                    <div class="flexPublic">
-                                        <div>发生金额</div>
+                                    &lt;!&ndash;<div class="flexPublic">
+                                        <div>金额</div>
                                         <div class="flexPublic">
                                             <input v-model="startMoney"/>至<input v-model="endMoney"/>
                                         </div>
-                                    </div>
+                                    </div>&ndash;&gt;
                                     <div class="flexPublic searchPanel_bottom">
                                         <div class="searchPanel_btn greybtn" @click="clearPorp">重置</div>
                                         <div class="searchPanel_btn bluebtn" @click="searchDetail">搜索</div>
                                     </div>
                                 </div>
-
-
                             </ul>
-
                         </div>
-
                     </div>
 
-                    <div>
+                    <div >
                         <div class="tbHeader">
                             <table>
                                 <colgroup>
@@ -105,7 +124,7 @@
                             </table>
                         </div>
                         <div class="tbBody" >
-                            <table>
+                            <table  ref="printFrom">
                                 <colgroup>
                                     <col width="8%"/>
                                     <col width="12%"/>
@@ -119,18 +138,52 @@
                                     <col width="10%"/>
                                 </colgroup>
                                 <tbody>
-
-                                <tr v-for="item in dataList">
-                                    <td>{{item.subject_code}}</td>
+                                <tr v-for="item in dataList" :style="{'display':
+                                (showFirst&&item.Layers!=0||
+                                showBenqi&&item.yh_j_sum==0&&item.yh_d_sum==0||
+                                showQimo&&item.ys_j_sum==0&&item.ys_d_sum==0)?'none':''}">
+                                    <td :style="{'text-indent':item.Layers==0?'':'20px','text-align':'left'}">{{item.subject_code}}</td>
                                     <td>{{item.k_name}}</td>
-                                    <td>{{item.ye_j_sum}}</td>
-                                    <td>{{item.ye_d_sum}}</td>
-                                    <td>{{item.yh_j_sum}}</td>
-                                    <td>{{item.yh_d_sum}}</td>
-                                    <td>{{item.yl_j_sum}}</td>
-                                    <td>{{item.yl_d_sum}}</td>
-                                    <td>{{item.ys_j_sum}}</td>
-                                    <td>{{item.ys_d_sum}}</td>
+                                    <td class="right">
+                                        <template v-if="item.ye_j_sum!=0">
+                                            {{item.ye_j_sum | NumFormat}}
+                                        </template>
+                                    </td>
+                                    <td class="right">
+                                        <template v-if="item.ye_d_sum!=0">
+                                            {{item.ye_d_sum | NumFormat}}
+                                        </template>
+                                    </td>
+                                    <td class="right">
+                                        <template v-if="item.yh_j_sum!=0">
+                                            {{item.yh_j_sum | NumFormat}}
+                                        </template>
+                                    </td>
+                                    <td class="right">
+                                        <template v-if="item.yh_d_sum!=0">
+                                            {{item.yh_d_sum | NumFormat}}
+                                        </template>
+                                    </td>
+                                    <td class="right">
+                                        <template v-if="item.yl_j_sum!=0">
+                                            {{item.yl_j_sum | NumFormat}}
+                                        </template>
+                                    </td>
+                                    <td class="right">
+                                        <template v-if="item.yl_d_sum!=0">
+                                            {{item.yl_d_sum | NumFormat}}
+                                        </template>
+                                    </td>
+                                    <td class="right">
+                                        <template v-if="item.ys_j_sum!=0">
+                                            {{item.ys_j_sum | NumFormat}}
+                                        </template>
+                                    </td>
+                                    <td class="right">
+                                        <template v-if="item.ys_d_sum!=0">
+                                            {{item.ys_d_sum | NumFormat}}
+                                        </template>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -160,7 +213,12 @@
         name: "balance",
         data (){
             return{
-                date1:'',
+                date1:{
+                    choosedMonth: '',
+                    choosedMonthEnd: '',
+                    choosedYear: '',
+                    choosedYearEnd: '',
+                },
                 dataList:'',
                 showType:'none',
                 zwTime:'',
@@ -168,7 +226,10 @@
                 EndPno:'',
                 startMoney:'',
                 endMoney:'',
-                inputKvalue:''
+                inputKvalue:'',
+                showFirst:false,
+                showBenqi:false,
+                showQimo:false
 
             }
         },
@@ -182,46 +243,56 @@
             }),
         },
         mounted(){
+            let currentYear = new Date();
+            let currentyear=currentYear.getFullYear(currentYear);
+            let currentMonth=currentYear.getMonth()+1;
+            this.date1.choosedMonth=currentMonth;
+            this.date1.choosedMonthEnd=currentMonth;
+            this.date1.choosedYear=currentyear;
+            this.date1.choosedYearEnd=currentyear;
             this.getData();
         },
         methods:{
-            selectBtn:function(){
-
-            },
             //数据查询
             getData:function(){
+                const loading=this.$loading();
                 let data={
-                    "Year":  2019,
+                    "Year":  this.date1.choosedYear,
                     "OrgIds": this.orgid,
-                    "StartTime":"",
-                    "EndTime":"",
-                    "StartPNo":"",
-                    "EndPno":"",
-                    "value":""
-
+                    "StartTime":this.zwTime[0],
+                    "EndTime":this.zwTime[1],
+                    "StartPNo":this.StartPNo,
+                    "EndPno":this.EndPno,
+                    "value":this.inputKvalue
                 };
                 this.$axios.get(
                     'PVoucherMst/GetSubjectBalanceReport',
                     {params:data}
                 ).then(res=>{
                     this.dataList=qs.parse(res).Record;
+                    this.dataList[0].yh_j_sum=10,
+                    this.dataList[0].yh_d_sum=10,
+                    this.dataList[0].ys_j_sum=10,
+                    this.dataList[0].ys_d_sum=100;
+                    loading.close();
                     console.log(qs.parse(res));
                 }).catch(err=>{
+                    loading.close();
                     console.log(err);
                 })
             },
             //清除高级查询数据
             clearPorp:function(){
                 this.zwTime='';
-                this.startCode='';
-                this.endCode='';
+                this.StartPNo='';
+                this.EndPno='';
                 this.startMoney='';
                 this.endMoney=''
             },
             searchDetail:function(){
-                if(this.startCode>this.endCode){
+                if(this.StartPNo>this.EndPno){
                     this.saasMessage={
-                        message:'开始凭证号不应大于结束凭证号码',
+                        message:'开始科目编码不应大于结束科目编码',
                         delay:3000,
                         visible:true
                     };
@@ -273,11 +344,10 @@
             },
             // 打印
             printContent(e){
-                let dm = this.$refs.printFrom.parentNode.firstChild.cloneNode(true);
-                dm.classList.add('first_child');
+                //获取打印表格的表头
+                let dm = this.$refs.printFrom.parentNode.parentNode.firstChild.firstChild.childNodes[2].cloneNode(true);
                 let cop = this.$refs.printFrom.cloneNode(true);
-                cop.insertBefore(dm,cop.firstChild);
-                cop.classList.remove('formData_content');
+                cop.insertBefore(dm,cop.childNodes[2]);
                 this.$print(cop) // 使用
             },
         }
@@ -293,82 +363,37 @@
         float: left;
         vertical-align: top;
     }
-    .tbHeader{
-        width: 100%;
-        text-align: center;
-    }
-    .tbBody{
-        margin-top: -1px;
-        position: absolute;
-        bottom: 0;
-        top: 102px;
-        right: -17px;
-        left: 0;
-        overflow-y: scroll;
-    }
-    .tbBody table{
-        width: 100%;
-    }
-    .tbHeader table{
-        height: 100%;
-        width: 100%;
-    }
     thead td{
-        border-width: 0px 0px 1px 1px;
-        border-color:white;
-        border-style: solid;
-        text-align:center ;
-        height: 30px;
-        line-height: 30px;
-        background: #d3e9f9;
-        color: #000;
+        height: 24px;
+        line-height: 24px;
     }
-    thead td:nth-of-type(1),thead td:last-of-type{
-        border-right: 1px;
-    }
-
-    tbody td{
-        height: 48px;
-        line-height: 48px;
-        background: transparent;
-        color: #000;
-        border-width: 1px 0px 0px 1px;
-        border-color:#ebeef5;
-        border-style: solid;
-        padding:0 10px;
-    }
-    tbody tr td:last-child{
-        border-right: 1px solid #ebeef5;
-    }
-    tbody tr:hover{
-        background-color: #fafafa;
-        transition: background-color .25s ease;
-    }
-    tbody tr:last-child td{
-        border-bottom: 1px solid #ebeef5;
-    }
-
-
     .searchPanel{
         position: absolute;
         top: 42px;
-        right: 130px;
+        right: 0px;
         z-index: 99;
         background-color: #fff;
-        width: 339px;
-        height: 230px;
+        width: 360px;
+        height: 180px;
         box-shadow: 0 0 6px 2px #c9ccce;
         border-radius: 10px 10px;
+        overflow: hidden;
     }
+    .searchPanel input{
+        height: 100%;
+        background-color: #fff;
+    }
+
     .searchPanel .flexPublic{
         padding: 5px 10px;
         height: 45px;
+        background-color: #eee;
     }
     .searchPanel .searchPanel_title{
         height: 29px;
         background-color: #00b7ee;
         color: #fff;
-        border-radius: 10px 10px 0 0 ;
+        border-radius: 10px 10px 0 0;
     }
     .searchPanel .searchPanel_title div:nth-of-type(2){
         padding: 3px;
@@ -378,13 +403,11 @@
         color: #00b7ee;
         cursor: pointer;
     }
-    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child,
-    .searchPanel>.flexPublic:nth-of-type(4)>div:last-child{
-        width: 250px;
-        padding-left: 10px;
+    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child{
+        width: 270px;
+        padding: 5px 0;
     }
-    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child input,
-    .searchPanel>.flexPublic:nth-of-type(4)>div:last-child input{
+    .searchPanel>.flexPublic:nth-of-type(3)>div:last-child input{
         width: 116px;
         display: inline;
         font-size: 14px;
@@ -392,13 +415,11 @@
         border: none;
         padding-left: 5px;
     }
-    .searchPanel input:focus{
-        box-shadow:0 0 3px .1px #00B8EE;
-    }
     .searchPanel .searchPanel_bottom{
         height: 65px;
         border-top: 1px solid #dddfe4;
         padding: 0 40px;
+        background-color: #fff;
     }
     .searchPanel .searchPanel_btn{
         width: 135px;
