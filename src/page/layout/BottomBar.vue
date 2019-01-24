@@ -56,13 +56,13 @@ export default {
     height: 50px;
     left: -290px;    
     //border-bottom: 1px solid #00B8EE;
-    z-index: 99;
+    z-index: 9;
     bottom: 0px;
     
     .bottomBorder{
         position:absolute;
         height:10px;
-        width:100%;
+        width:80%;
         border-radius:0 10px 0 0;
         background:#eaeaea;
         bottom:0;
@@ -99,7 +99,7 @@ export default {
     height: 60px;
     overflow: hidden;
     left:0;
-    z-index: 99;
+    z-index: 9;
     bottom: 10px;
     text-align: right;
     transition: all 0.5s linear;
@@ -237,7 +237,7 @@ export default {
             background-size:cover;
             text-align:right;
             padding-right:50px;
-            transition:all 0.5s; 
+            transition:all 1s; 
             &:nth-of-type(1){
                 //transform:translate(350px);
                 float:left;
@@ -290,7 +290,7 @@ export default {
             }
         }
         .el-submenu{
-            transition:all 0.5s; 
+            transition:all 1s; 
             height:45px;
             line-height:45px;
             text-align:right;

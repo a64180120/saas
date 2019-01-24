@@ -70,7 +70,7 @@
             </div>
         </div>
         <div class="formData">
-            <ul>
+            <ul  style="overflow-y: scroll">
                 <li>序号</li>
                 <li>用户号</li>
                 <li>组织编码</li>
@@ -87,7 +87,11 @@
                 <li>启用/停用</li>
                 <li>服务期限</li>
             </ul>
-            <ul class="formDataItems">
+            <div class="hideScroll">
+
+            </div>
+
+            <ul class="formDataItems" style="overflow-y: scroll; height: 500px">
                 <li :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item.PhId)"
                     v-for="(item,index) of userInfo" :key="index">
                     <ul class="formDataItem flexPublic">
@@ -411,7 +415,14 @@
 </script>
 
 <style scoped>
-
+    .hideScroll{
+        position: absolute;
+        top:85px;
+        right:20px;
+        width: 16px;
+        height:100%;
+        background: #fff;
+    }
 
     .formData > ul:first-child > li {
         border-right: 1px solid #fff;

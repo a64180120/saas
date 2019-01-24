@@ -88,14 +88,6 @@ export default {
     //可以添加一些自己的自定义事件，如清空内容
     clear() {
       this.myValue = ''
-    },
-    getContent(){
-        var activeEditor = tinymce.activeEditor; 
-        var editBody = activeEditor.getBody(); 
-        activeEditor.selection.select(editBody); 
-        var text = activeEditor.selection.getContent({'format':'text'});
-
-        return text;
     }
   },
   watch: {

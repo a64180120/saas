@@ -45,7 +45,7 @@
             </div>
         </div>
         <div v-show="examineTab" class="formData">
-            <ul>
+            <ul style="overflow-y: scroll">
                 <li>序号</li>
                 <li>企业/单位名称</li>
                 <li>联系人姓名</li>
@@ -57,26 +57,32 @@
                     <div>（天）</div>
                 </li>
             </ul>
-            <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}"
-                @click.ctrl="chooseMany(index, item.PhId)"  @click="chooseOn(index,item.PhId, chFlam)" v-for="(item,index) of userInfo" :key="index">
-                <li>{{index+1+(pageIndex-1)*pageSize}}</li>
-                <li :title="item.OrgName">{{item.OrgName}}</li>
-                <li>{{item.Director}}</li>
-                <li>{{item.TelePhone||item.MobilePhone}}</li>
-                <li :title="item.Address">{{item.Address}}</li>
-                <li class="flexPublic">
-                    <div class="progressContainer">
-                        <div class="progress" :style="{background:infoStyle[index],width:item.Integrity+'%'}" style="background-color: #ffffff">
-                            {{item.Integrity <= 80 ?'':item.Integrity+' %'}}
+            <div class="hideScroll">
+
+            </div>
+            <div class="formData notChangeCol"  style="margin-top: 0px; overflow-y: scroll; height: 500px">
+                <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}"
+                    @click.ctrl="chooseMany(index, item.PhId)"  @click="chooseOn(index,item.PhId, chFlam)" v-for="(item,index) of userInfo" :key="index">
+                    <li>{{index+1+(pageIndex-1)*pageSize}}</li>
+                    <li :title="item.OrgName">{{item.OrgName}}</li>
+                    <li>{{item.Director}}</li>
+                    <li>{{item.TelePhone||item.MobilePhone}}</li>
+                    <li :title="item.Address">{{item.Address}}</li>
+                    <li class="flexPublic">
+                        <div class="progressContainer">
+                            <div class="progress" :style="{background:infoStyle[index],width:item.Integrity+'%'}" style="background-color: #ffffff">
+                                {{item.Integrity <= 80 ?'':item.Integrity+' %'}}
+                            </div>
+                            <div
+                                :style="{color:infoStyle[index],width:(100-item.Integrity)<20?20:100-item.Integrity+'%',display:(100-item.Integrity)<20?'none':'block'}">
+                                {{item.Integrity}} %
+                            </div>
                         </div>
-                        <div
-                            :style="{color:infoStyle[index],width:(100-item.Integrity)<20?20:100-item.Integrity+'%',display:(100-item.Integrity)<20?'none':'block'}">
-                            {{item.Integrity}} %
-                        </div>
-                    </div>
-                </li>
-                <li>{{item.EnableTime}}</li>
-            </ul>
+                    </li>
+                    <li>{{item.EnableTime}}</li>
+                </ul>
+            </div>
+
             <el-dialog :title="'批量审核'" :visible.sync="editVisible" width="30%" :close="dialogClose">
                 <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right">
                     <el-form-item label="审核状态：" prop="Verify">
@@ -124,7 +130,7 @@
             <!--</div>-->
         </div>
         <div v-show="!examineTab" class="formData">
-            <ul>
+            <ul style="overflow-y: scroll">
                 <li>序号</li>
                 <li>企业/单位名称</li>
                 <li>联系人姓名</li>
@@ -133,16 +139,22 @@
                 <li>审核状态</li>
                 <li>审核时间</li>
             </ul>
-            <ul class=" formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}"
-               @click="chooseOn(index,item.PhId)" v-for="(item,index) of examined" :key="index">
-                <li>{{index+1+(pageIndex-1)*pageSize}}</li>
-                <li :title="item.OrgName">{{item.OrgName}}</li>
-                <li>{{item.Director}}</li>
-                <li>{{item.TelePhone||item.MobilePhone}}</li>
-                <li :title="item.Address">{{item.Address}}</li>
-                <li><i :class="{examSuccess : item.Verify,examFailed : !item.Verify}"></i></li>
-                <li>{{item.VerifyDt}}</li>
-            </ul>
+            <div class="hideScrollT">
+
+            </div>
+            <div class="formData notChangeCol" style="overflow-y: scroll; height: 500px;margin-top: 0px">
+                <ul class=" formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}"
+                    @click="chooseOn(index,item.PhId)" v-for="(item,index) of examined" :key="index">
+                    <li>{{index+1+(pageIndex-1)*pageSize}}</li>
+                    <li :title="item.OrgName">{{item.OrgName}}</li>
+                    <li>{{item.LinkMan}}</li>
+                    <li>{{item.TelePhone||item.MobilePhone}}</li>
+                    <li :title="item.Address">{{item.Address}}</li>
+                    <li><i :class="{examSuccess : item.Verify,examFailed : !item.Verify}"></i></li>
+                    <li>{{item.VerifyDt}}</li>
+                </ul>
+            </div>
+
         </div>
         <div class="formDataPages">
             <div class="flexPublic">
@@ -603,6 +615,29 @@
 
 <style scoped>
 
+    .hideScroll{
+        position: absolute;
+        top:140px;
+        right:20px;
+        width: 16px;
+        height:100%;
+        background: #fff;
+    }
+    .hideScrollT{
+        position: absolute;
+        top:132px;
+        right:20px;
+        width: 16px;
+        height:100%;
+        background: #fff;
+    }
+    .notChangeCol> ul:first-child {
+        background: transparent;
+        color: #000;
+    }
+    ul.formDataItems.flexPublic.userInfoCss {
+        background: #ddd;
+    }
     .unionState > ul > li.lookState {
         width: 200px;
     }

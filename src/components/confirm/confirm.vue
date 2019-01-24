@@ -92,7 +92,6 @@ export default {
         vertical-align:middle;
         background: #fff;
         border:1px solid #ccc;
-        box-shadow: 0 0 10px 2px #d3e9f9;
         font-size:14px;
         padding:20px;
         >div{

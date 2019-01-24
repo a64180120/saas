@@ -32,11 +32,11 @@ const staticRoute = [
     },
     {
         path:'/news/view',
-        component: () => import("../page/news/View")
+        component: () => import("../page/admin/article/Preview")
     },
     {
         path:'/news/list',
-        component: () => import("../page/news/ListView")
+        component: () => import("../page/admin/article/ListView")
     },
     {
         //系统管理
