@@ -3,10 +3,10 @@
     <div class="asideNav"><!--右侧时间选择组件-->
             <div @click.stop="yearSelShow"><span>会计期</span></div>
             <p>{{sideDate.split('-')[0]}}</p>
-            <div style="overflow:hidden;height:91%">
+            <div class="monthsOver" >
                 <div class="monthsContainer">
                     <ul style="top:0" @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
-                        <li v-for="item of nowYear-2000"  :key="item">
+                        <li v-for="item of nowYear-startYear+1"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
                                 <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:i>checkedTime&&nowYear-item+1||nowYear-item+1>checkedYear,futureM:nowYear-item+1==nowYear&&i>nowYear+1}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
@@ -45,7 +45,7 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="yearsTrue('check',checkVal)">确认</span>
+                        <span @click="monthCheckShow">确认</span>
                     </p>
                 </div>
                 <div v-show="monthsSelCss=='fanjiezhang'" class="yearsContent jiezhang">
@@ -62,7 +62,10 @@
                     </p>
                 </div>
 
+            
             </div>
+             <!-- 下月账///结账******************* -->
+            <next-month :checkVal="checkVal" v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
                <!-- 弹窗*****message:信息******delay:延迟毫秒 -->
             <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
 
@@ -71,10 +74,13 @@
 </template>
 
 <script>
+    import nextMonth from './nextMonthCheck'
+    import userInfo from '@/util/auth'
   import {mapState, mapActions} from 'vuex'
 export default { 
     mounted(){
          this.getChecked();
+         this.startYear=userInfo.getUserInfoData().orgInfo.StartYear;
         //  if (window.addEventListener){
         //         //var month= document.getElementById('scrollMonth');
         //         window.addEventListener('DOMMouseScroll',this.wheel,false);
@@ -88,8 +94,10 @@ export default {
             sideDate:'',
             year:'',
             month:'',
+            startYear:'',
             checkedTime:'',
             checkedYear:'',
+            nextMonthCss:false, //结账显示
             nowTime:new Date,
             nowYear:(new Date).getFullYear(),
             monthsSelCss:'kuaiji',
@@ -103,7 +111,7 @@ export default {
         }
     },
     methods:{
-        //获取当前结账的最新月份************
+            //获取当前结账的最新月份************
             getChecked(){
                 var data={
                     uid:this.uid,
@@ -115,7 +123,7 @@ export default {
                         if(!res.CheckRes){
                             this.$message({ showClose: true,message: '当前组织未初始化,请开始初始化!', type: "error"});
                             return;
-                        }                      
+                        }                 
                         this.checkedTime=res.Record[0].JAccountPeriod+1;
                         this.checkedYear=res.Record[0].JYear;
                         this.sideDate=res.Record[0].JYear+'-'+this.checkedTime;
@@ -226,6 +234,26 @@ export default {
                     })
                     .catch(err=>{console.log(err);loading1.close();})
             },
+            //结账显示***
+            monthCheckShow(){
+                if(this.checkVal<this.checkedTime){
+                    this.saasMessage={
+                        visible:true,
+                        message:'当前月份已结账!'
+                    }
+                }else{
+                     this.nextMonthCss=true;
+                }     
+            },
+             //接收结账传值******************
+            nextMonthHandle(data){
+                if(data===false){
+                    this.nextMonthCss=false;
+                    this.getChecked();
+                }else{
+                    console.log(data)
+                }
+            },
             //会计期年份上下切换******
             nextYear(bool){
                 var year=this.year;
@@ -289,6 +317,9 @@ export default {
                 orgcode: state => state.user.orgcode,
                 uid:state=>state.user.userid
             })
+    },
+    components:{
+        nextMonth
     }
 }
 </script>
@@ -322,6 +353,10 @@ export default {
             font-size: 18px;
             background: #fff;
             color:#04a9f4;
+        }
+        .monthsOver{
+            overflow: hidden;
+            height:91%;
         }
         .monthsContainer{
             height:100%;
