@@ -12,6 +12,12 @@
             <!-- 左侧菜单 -->
             <!-- <nav-bar :isCollapse="collapsevule"></nav-bar> -->
         </template>
+
+        <template>
+            <bottom-bar :isCollapse="collapsevule" v-once>
+
+            </bottom-bar>
+        </template>
         <div class="content-box" :class="{'content-collapse':collapsevule}">
             <tag-nav></tag-nav>
             <div class="content">
@@ -22,11 +28,7 @@
                 </transition>
             </div>
         </div>
-        <template>
-            <bottom-bar :isCollapse="collapsevule" v-once>
-
-            </bottom-bar>
-        </template>
+        
         <!--15天提示弹窗-->
         <!--timerShowType?'block':'none'-->
         <!--此处代码用于开启15天弹窗提示-->

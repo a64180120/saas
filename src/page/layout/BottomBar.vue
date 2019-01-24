@@ -48,7 +48,7 @@ export default {
 <style lang='scss' scoped>
 .sys-footer{
     display: flex;
-    position: absolute;   
+    position: fixed;   
     border-color: #ccc;
     background: transparent;
     width:1300px;
@@ -91,7 +91,7 @@ export default {
 
 .navtitle{
     display: flex;
-    position: absolute;
+    position: fixed;
     background:url("../../assets/images/nav4.png") 100% 0 no-repeat;         
     color:#fff;
     background-size:cover;

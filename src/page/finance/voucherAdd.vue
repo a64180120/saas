@@ -43,30 +43,6 @@
                 <a @click.prevent.stop="addVoucher('fresh')"><li style="padding:0 5px;width:60px">新增</li></a>                  
             </ul>
         </div>
-        <!--凭证组件*******************-->
-        <div style="overflow-y:auto;width:100%;position:relative;z-index:9" :class="{voucherMask:voucherMask}" ref="print">
-            <div  class="voucherContainer">
-                <p v-if="voucherMask" class="title">
-                    <span v-if="voucherMask=='copy'">复制凭证</span>
-                    <span v-if="voucherMask=='cut'">剪切凭证</span>
-                    <span v-if="voucherMask=='chongh'">冲红凭证</span>
-                    <span v-if="voucherMask=='gengz'">更正凭证</span>
-                    <span v-if="voucherMask=='update'">修改凭证</span>
-                    <i @click="keepChoose(false)"></i>
-                </p>
-                <div style="height:40px;" v-if="voucherMask">
-                    <span style="float:right" class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
-                    <span style="float:right" class="btn" @click.stop="keepChoose(false)">取消</span>
-                </div>
-
-                <div class="voucherDisabledCon">
-                    <div :class="{voucherDisabled:voucherAdd}"></div>
-                    <voucher :disabled="voucherAdd" :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" ref="voucher"></voucher>
-                </div>
-                 <div v-show="(!voucherMask)&&voucherDataList.bool" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
-            </div>
-           
-        </div>
         <!--右侧时间选择组件-->
         <div class="asideNav">
             <div @click.stop="yearSelShow"><span>会计期</span></div>
@@ -134,6 +110,31 @@
 
             </div>
         </div>
+        <!--凭证组件*******************-->
+        <div style="overflow-y:auto;width:100%;position:relative;" :class="{voucherMask:voucherMask}" ref="print">
+            <div  class="voucherContainer">
+                <p v-if="voucherMask" class="title">
+                    <span v-if="voucherMask=='copy'">复制凭证</span>
+                    <span v-if="voucherMask=='cut'">剪切凭证</span>
+                    <span v-if="voucherMask=='chongh'">冲红凭证</span>
+                    <span v-if="voucherMask=='gengz'">更正凭证</span>
+                    <span v-if="voucherMask=='update'">修改凭证</span>
+                    <i @click="keepChoose(false)"></i>
+                </p>
+                <div style="height:40px;" v-if="voucherMask">
+                    <span style="float:right" class="btn" @click.stop="keepChoose(voucherMask)">保存</span>
+                    <span style="float:right" class="btn" @click.stop="keepChoose(false)">取消</span>
+                </div>
+
+                <div class="voucherDisabledCon">
+                    <div :class="{voucherDisabled:voucherAdd}"></div>
+                    <voucher :disabled="voucherAdd" :sideDate='sideDate' :dataList="voucherDataList" v-if="voucherDataList.bool" @Msg-click="voucherMsg" ref="voucher"></voucher>
+                </div>
+                 <div v-show="(!voucherMask)&&voucherDataList.bool" class="voucherBG"><img src="../../assets/images/d.png">  </div>            
+            </div>
+           
+        </div>
+        
         <!--凭证重排****************************-->
         <div v-if="resetShow" class="codeResetContainer">
             <div>
@@ -201,6 +202,7 @@
             :delay="saasMessage.delay"   
             :visible.sync="saasMessage.visible" >
         </message>
+        <!-- confirm -->
         <saasconfirm 
             :type="confirm.type"
             :message="confirm.message"
@@ -572,6 +574,13 @@
             //    footer.style.bottom="65px";
             //    navtitle.style.bottom="65px";
             // },
+            //接收voucher信息***
+            voucherMsg(data){
+                this.saasMessage={
+                    visible:true,
+                    message:data
+                }
+            },
             //保存凭证*******************
             keepVoucher(str){
                 
@@ -1190,7 +1199,11 @@
                     url='/PBusinessConfig/UpdateBusinessConfig';
                 }else if(str=='uncheck'){
                     if(this.unCheckVal>this.checkedTime-1){
-                        this.$message('当前月份还未结账,无法反结账!');
+                        this.saasMessage={
+                            message:'当前月份还未结账,无法反结账!',
+                            visible:true
+                        }
+                        
                         return;
                     }
                     url='/PBusinessConfig/GetUnUpdateBusinessConfig';

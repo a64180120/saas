@@ -75,7 +75,7 @@
                             </div>
                             <div class="abstractSearch">
                                 <ul  v-show="addIcon[index].checked&&AbstractAContents.length>0">
-                                    <li :title="item.AContent" v-for="(item,indAbstract) of AbstractAContents " :key="indAbstract">{{item.AContent}}</li>
+                                    <li @click.stop="chooseAbstractOk(item,abs.AContent)" :title="abs.AContent" v-for="(abs,indAbstract) of AbstractAContents " :key="indAbstract">{{abs.AContent}}</li>
                                 </ul>
                                 <div></div>
                             </div>
@@ -104,7 +104,7 @@
                                         <div  class="assistSelCon">
                                             <div @click.stop="assistSelsShow(index2)">{{assistSels[index2].BaseName}}</div>
                                             <ul v-show="assistSels[index2].checked">
-                                                <li  @click.stop="AuxiliaryValOk(val,index2)" v-for="(val,ind3) of assist.Children" :key="ind3"> {{val.BaseName}}</li>
+                                                <li  @click.stop="AuxiliaryValOk(val,index)" v-for="(val,ind3) of assist.Children" :key="ind3"> {{val.BaseName}}</li>
                                                 
                                             </ul>
                                             <div v-show="assistSels[index2].checked" @click.stop="addAuxiliaryVal(assist,index)">增加选项</div>
@@ -524,7 +524,7 @@
         mounted(){
             this.initMoneyCss();
             this.getSubject(); 
-            this.getAbstract();       
+            this.getAbstract();      
         },
         methods:{
             //voucher组件要返回数据的函数********************
@@ -802,11 +802,7 @@
                 this.$axios.get('PVoucherMst/GetAttachmentListByID',{params:data})
                 .then(res=>{
                     if(res.Status=='error'){
-                        this.saasMessage={
-                            message:res.Msg,
-                            visible:true,
-                            delay:4000
-                        }
+                        this.messageCallback(res.Msg)
                     }
                     this.imglist=res.Record;
                     
@@ -827,10 +823,7 @@
                     if(res.Status=='success'){
                         this.AbstractList=res.Data;
                     }else{
-                        this.saasMessage={
-                            message:res.Msg,
-                            visible:true
-                        }
+                        this.messageCallback(res.Msg)
                     }               
                 })
                 .catch(err=>{
@@ -864,11 +857,7 @@
                 this.$axios.get('/PSubject/GetPSubjectListByOrgId',{params:data})
                     .then(res=>{
                         if(res.Status=='error'){
-                            this.saasMessage={
-                                delay:4000,
-                                message:res.Msg,
-                                visible:true
-                            }
+                            this.messageCallback(res.Msg)
                         }
                         this.subjectlist=res;
                         
@@ -901,11 +890,8 @@
                             for(var a in res){
                                 
                                 if(res[a].Children.length<=0){
-                                    this.saasMessage={
-                                        delay:4000,
-                                        visible:true,
-                                        message:'该科目下存在辅助项没有值,请先添加!'
-                                    }  
+                                    this.messageCallback('该科目下存在辅助项没有值,请先添加!')
+                                    
                                     res[a].Children=[{BaseName:'',BaseCode:''}];   
                                 }
                                 this.assistSels[a]=res[a].Children[0];
@@ -959,13 +945,11 @@
                   
                     if(res.Status=='success'){
                         this.addAuxiliaryValShow=false;
-                        this.saasMessage={
-                            message:'保存成功!',
-                            visible:true
-                        }
+                        this.messageCallback('保存成功!')
+                      
 
                         // this.getAssist(this.addauxiliarySub.data,this.addauxiliarySub.id);
-                        // debugger;
+                   
                         this.assistItemMask=false;
                         this.assistCheck=false;
                         for(var kemu in this.kemuSel){
@@ -977,10 +961,7 @@
                         this.voucherInfo[index].SubjectName='';
                         
                     }else{
-                        this.saasMessage={
-                            message:res.Msg,
-                            visible:true
-                        }
+                        this.messageCallback(res.Msg)
                     }
                 })
                 .catch(err=>{
@@ -1020,10 +1001,7 @@
                       
           
                     }else{
-                        this.saasMessage={
-                            message:res.Msg,
-                            visible:true
-                        }
+                        this.messageCallback(res.Msg)
                     }
                 })
                 .catch(err=>{
@@ -1036,10 +1014,7 @@
             //新增辅助项类型**
             addAuxiliaryType(){
                 if(!this.addAuxiliaryForm.BaseName){
-                    this.saasMessage={
-                        message:'请输入辅助项类型名称!',
-                        visible:true
-                    }
+                    this.messageCallback('请输入辅助项类型!')
                     return;
                 }else{
                     var data={
@@ -1067,10 +1042,7 @@
                             }   
                             
                         }else{
-                            this.saasMessage={
-                                message:res.Msg,
-                                visible:true
-                            }
+                            this.messageCallback(res.Msg)
                         }
                     })
                     .catch(err=>{
@@ -1104,10 +1076,7 @@
                         this.addauxiliaryShow=false;
                         this.getAssist(this.addauxiliarySub.data,this.addauxiliarySub.id);
                     }else{
-                        this.saasMessage={
-                            message:res.Msg,
-                            visible:true
-                        }
+                        this.messageCallback(res.Msg)
                     }
                 })
                 .catch(err=>{
@@ -1121,14 +1090,11 @@
                 if(bool){
                     for(var ass of this.assistSels){
                         if(!ass.PhId){
-                            this.saasMessage={
-                                message:'辅助项不能为空!',
-                                visible:true
-                            }
+                            this.messageCallback('辅助项不能为空!')
                             return;
                         }
                     }
-                    item.DtlAccounts.assistItem=this.assistSels;
+                    item.DtlAccounts.assistItem=JSON.parse(JSON.stringify(this.assistSels));
                     //console.log(this.assistSels)
                 }else{
                     item.SubjectCode='';
@@ -1394,7 +1360,6 @@
                 if(!item.Abstract){
                     item.Abstract=this.defaultData.Abstract; //摘要为空自动添加上一个摘要
                 }
-                
                 if(!this.countJie||!this.countDai){  //数据监听不好判断数组,为了触发合计尝试加了countJIe中间值尝试******后续研究
                     this.countJie=0;
                     this.countDai=0;
@@ -1419,10 +1384,13 @@
                 this.countDai++;    
                 this.$forceUpdate();
             },
+            //从摘要模板列表选择摘要
+            chooseAbstractOk(item,val){
+                item.Abstract=val;
+                this.defaultData.Abstract=val;
+            },
             defaultHandle(val,index){  //保存上一个摘要
-                
-                this.defaultData.Abstract=val.Abstract;
-                console.log(this.defaultData,val)
+                this.defaultData.Abstract=val.Abstract;   
                 this.addIcon[index].checked=false;
             },
             addSubSel(){
@@ -1439,7 +1407,6 @@
                 const loading2=this.$loading();
                 this.$axios.get('PSubject/GetPSubjectLastList',{params:data1})   
                 .then(res=>{
-                        console.log(res)
                         loading2.close();
                         if(res.Status=='success'){
                             this.addDataSub=res.PSubject;
@@ -1502,11 +1469,8 @@
                     if(this.addPageShow){
                         //新增***************
                         if((!this.subjectInfo.preSubject)||(!this.subjectInfo.KName)||(!this.subjectInfo.KCode)){
-                            this.saasMessage={
-                                message:'请输入科目名和科目代码、上级科目!',
-                                visible:true,
-                                delay:4000
-                            }
+                            this.messageCallback('请输入科目名和科目代码、上级科目!')
+                           
                             return;
                         }
                         var info=JSON.parse(JSON.stringify(this.subjectInfo));//防止页面瞬间变化***
@@ -1535,20 +1499,7 @@
                         SubjectAdd(vm,data1)
                         .then(res=>{
                             loading.close();
-                            if(res.Status=='success'){
-                                console.log(res,res.Msg)
-                                this.saasMessage={
-                                    message:res.Msg,
-                                    visible:true,
-                                    delay:4000
-                                }
-                            }else{
-                                this.saasMessage={
-                                    message:res.Msg,
-                                    visible:true,
-                                    delay:4000
-                                }
-                            }
+                            this.messageCallback(res.Msg)
                             this.addPageShow=false;
                             
                         },err => {
@@ -1558,11 +1509,7 @@
                         })
                         .catch(err=>{
                             loading.close();
-                            this.saasMessage={
-                                    message:err?err:'出错了!',
-                                    visible:true,
-                                    delay:4000
-                                }
+                            this.messageCallback('出错了!')
                         })
                     }
                 },
@@ -1674,6 +1621,10 @@
             uploadimg(item) {
                 this.imglist=item;
             },
+            //voucher组件需要弹出的提示
+            messageCallback(data){
+                this.$emit('Msg-click',data)
+            }
             // ...mapActions({
             //     uploadFile: 'uploadFile/Voucherupload'
             // }),
@@ -2141,6 +2092,8 @@
             border:1px solid #999;
         }
         >div:nth-of-type(2){
+            position:relative;
+            z-index:9;
             background:#00b7ee;
             color:#fff;
             font-size:16px;
@@ -2154,7 +2107,7 @@
             border:1px solid #999;
             border-top:0;
             overflow: hidden;
-            height:150px;
+            max-height:150px;
             overflow-y: auto;
             >li{
                 border-bottom:1px solid #ccc;
