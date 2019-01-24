@@ -214,7 +214,7 @@
                 endMoney:'',
                 inputKvalue:'',//搜索框输入
                 showFirst:false,//显示一级科目
-                showBenqi:true,//隐藏本期发生金额为0
+                showBenqi:false,//隐藏本期发生金额为0
                 showQimo:false,//隐藏期末发生金额为0
                 showType:0,//0全显示，1剔除本期发生金额为0,2剔除余额为0,3全部剔除
                 subjectLists:[],//科目列表
