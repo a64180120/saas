@@ -778,6 +778,7 @@
                     if (res.Data[0]) {
                         this.orgForm.EnterpriseAttachment = res.Data[0];
                         this.$message.success("上传成功");
+                        // console.log(this.orgForm.EnterpriseAttachment);
                     }
 
                 }).catch(error => {

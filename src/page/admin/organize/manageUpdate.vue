@@ -81,28 +81,28 @@
                     </div>
                     <div class="block flexPublic">
                         <div class="selectContainer">
-                            <select v-model="Province" @change="changeProvince">
+                            <select v-model="Province" @change="changeProvince" style="background: transparent">
                                 <option v-for="item in ProvinceValue" :key="item.value" :value="item.value" >{{item.label}}
                                 </option>
                             </select>
                         </div>
                         <div>省</div>
                         <div class="selectContainer">
-                            <select v-model="City" @change="changeCity">
+                            <select v-model="City" @change="changeCity" style="background: transparent">
                                 <option v-for="item in CityValue" :key="item.value" :value="item.value">{{item.label}}
                                 </option>
                             </select>
                         </div>
                         <div>市</div>
                         <div class="selectContainer">
-                            <select v-model="County" @change="changeCounty">
+                            <select v-model="County" @change="changeCounty" style="background: transparent">
                                 <option v-for="item in CountyValue" :key="item.value" :value="item.value">{{item.label}}
                                 </option>
                             </select>
                         </div>
                         <div>县</div>
                         <div class="selectContainer">
-                            <select v-model="Street" @change="changeStreet">
+                            <select v-model="Street" @change="changeStreet" style="background: transparent">
                                 <option v-for="item in StreetValue" :key="item.value" :value="item.value">{{item.label}}
                                 </option>
                             </select>
@@ -127,14 +127,14 @@
                     <div class="addFormItemTitle">联系电话</div>
                     <div>
                         <div class="selectContainer">
-                            <select name="phoneHead" v-model="phoneHead">
+                            <select name="phoneHead" v-model="phoneHead" style="background: transparent">
                                 <option v-for="item in phoneHeadValues" :key="item.id" :value="item.id">{{item.name}}
                                 </option>
 
                             </select>
                         </div>
                         <div>-</div>
-                        <div class="inputContainer">
+                        <div class="inputContainer" style="height: 100%">
                             <input type="text" v-model="TelePhone" placeholder="请输入联系电话">
                         </div>
                     </div>
@@ -978,7 +978,8 @@
     .manage-update .el-input--suffix .el-input__inner {
         margin: 0;
         padding-right: 0;
-        height: 100%;
+        height: 41px;
+        line-height: 41px;
     }
     .avatar-uploader{
         position: absolute;

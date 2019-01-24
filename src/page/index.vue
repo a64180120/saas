@@ -42,18 +42,21 @@
 			<div style="width: 1178px;margin-left: 11px; margin-top:4px; position: relative;" >
 				<!-- <img src="@/assets/img/t1.jpg" style="position: absolute;width: 100%;height: 552px;"> -->
 				<el-carousel height="552px" >
-					<el-carousel-item>
-						<img src="@/assets/img/t1.jpg">
-					</el-carousel-item>
-					<el-carousel-item>
-						<img src="@/assets/img/t2.jpg">
-					</el-carousel-item>
-					<el-carousel-item>
-						<img src="@/assets/img/t3.jpg">
-					</el-carousel-item>
-					<el-carousel-item>
-						<img src="@/assets/img/t4.jpg">
-					</el-carousel-item>
+                    <el-carousel-item v-for="item in topPicList" :key="item">
+                        <img :src="picUrl+item.Picpath">
+                    </el-carousel-item>
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t1.jpg">-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t2.jpg">-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t3.jpg">-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<img src="@/assets/img/t4.jpg">-->
+					<!--</el-carousel-item>-->
 				</el-carousel>
 			</div>
 		</div>
@@ -73,7 +76,8 @@
 			<div class="Journalism_left">
   				<a href="http://www.zjtax.gov.cn/" target="_blank">
     				<div class="img_box">
-						<img src="@/assets/img/img1.png"/>
+                        <img :src="picUrl + trendPic.Picpath" v-if="trendPic.Picpath">
+						<!--<img src="@/assets/img/img1.png"/>-->
 					</div>
     				<div class="txt_box">
       					<h1 style="float:left;">新版企业所得税申报表启用</h1>
@@ -166,18 +170,21 @@
 					
 				</div>
 				<el-carousel indicator-position="none" height="400px" arrow="never">
-					<el-carousel-item>
-						<a href="#"><img src="@/assets/img/n1.png" alt=""></a>
-					</el-carousel-item>
-					<el-carousel-item >
-						<a href="#"><img src="@/assets/img/n2.jpg" alt=""></a>
-					</el-carousel-item>
-					<el-carousel-item >
-						<a href="#"><img src="@/assets/img/n3.jpg" alt=""></a>
-					</el-carousel-item>
-					<el-carousel-item>
-						<a href="#"><img src="@/assets/img/n4.jpg" alt=""></a>
-					</el-carousel-item>
+                    <el-carousel-item v-for="item in bottomPicList" :key="item">
+                        <a href="#"><img :src="picUrl+item.Picpath" alt=""></a>-
+                    </el-carousel-item>
+					<!--<el-carousel-item>-->
+						<!--<a href="#"><img src="@/assets/img/n1.png" alt=""></a>-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item >-->
+						<!--<a href="#"><img src="@/assets/img/n2.jpg" alt=""></a>-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item >-->
+						<!--<a href="#"><img src="@/assets/img/n3.jpg" alt=""></a>-->
+					<!--</el-carousel-item>-->
+					<!--<el-carousel-item>-->
+						<!--<a href="#"><img src="@/assets/img/n4.jpg" alt=""></a>-->
+					<!--</el-carousel-item>-->
 				</el-carousel>
 			</div>
 			<div class="policy_right">
@@ -321,7 +328,9 @@
           }
       };
       return {
-		  
+          trendPic:'',
+          bottomPicList:[], //公会之窗
+          topPicList:[], //轮播图列表
 		  userDropDown:false, //修改密码弹窗
 		  dialog: {
 			editPaw: {
@@ -384,10 +393,12 @@
         }
     },
     mounted(){
-		console.log(this.carouselImgs)
-
-		this.getnewsInfo()
-		this.getproInfoList()
+		console.log(this.carouselImgs);
+		this.getTrendPic();
+		this.getBottomPicList();
+        this.getTopPicList();
+		this.getnewsInfo();
+		this.getproInfoList();
     },
     methods:{
 		...mapActions({
@@ -398,6 +409,78 @@
 		NavTo(str){
 			this.$router.push({path:str});
 		},
+        //获取行业动态图片
+        getTrendPic(){
+            let data = {
+                uid: this.uid,
+                orgid: this.orgid,
+                pagesize: '20',
+                pageindex: '0',
+                PositionType: 'bottom',
+                Title: '行业动态'
+            };
+            this.$axios.get('/SysPicture/GetSysPictureQueryList', {params: data})
+                .then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    console.log(res);
+                    if(res.list.length > 0){
+                        this.trendPic = res.list[0];
+                    }
+                    //this.bottomPicList = res.list;
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.$message({showClose: true, message: "公会之窗获取错误", type: "error"});
+                })
+        },
+        //获取工会之窗图片
+        getBottomPicList(){
+            let data = {
+                uid: this.uid,
+                orgid: this.orgid,
+                pagesize: '20',
+                pageindex: '0',
+                PositionType: 'bottom',
+                Title: '工会之窗'
+            };
+            this.$axios.get('/SysPicture/GetSysPictureQueryList', {params: data})
+                .then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.bottomPicList = res.list;
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.$message({showClose: true, message: "公会之窗获取错误", type: "error"});
+                })
+        },
+        //获取动态轮播图
+        getTopPicList(){
+            let data = {
+                uid: this.uid,
+                orgid: this.orgid,
+                pagesize: '20',
+                pageindex: '0',
+                PositionType: 'top'
+            };
+            this.$axios.get('/SysPicture/GetSysPictureQueryList', {params: data})
+                .then(res => {
+                    if (res.Status === 'error') {
+                        this.$message.error(res.Msg);
+                        return
+                    }
+                    this.topPicList = res.list;
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.$message({showClose: true, message: "轮播图获取错误", type: "error"});
+                })
+        },
 		//获取政策制度信息
 		getnewsInfo(){
 			var parames={

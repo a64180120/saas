@@ -32,11 +32,11 @@ const staticRoute = [
     },
     {
         path:'/news/view',
-        component: () => import("../page/admin/article/Preview")
+        component: () => import("../page/news/View")
     },
     {
         path:'/news/list',
-        component: () => import("../page/admin/article/ListView")
+        component: () => import("../page/news/ListView")
     },
     {
         //系统管理
@@ -103,6 +103,12 @@ const staticRoute = [
                 path: "picture",
                 component: () =>import( "../page/admin/picture"),
                 meta:{ requireAuth:true ,type:'page',name:'轮播图管理'}
+            },
+            {
+                //图片新闻管理
+                path: "new",
+                component: () =>import( "../page/admin/picture/new"),
+                meta:{ requireAuth:true ,type:'page',name:'图片新闻管理'}
             },
             {
                 //文章管理 -预览
