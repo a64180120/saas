@@ -89,7 +89,10 @@
                     orgid:this.orgid,
                     pagesize:this.pagesize,
                     pageindex:this.pageindex,
-                    queryfilter:{"TemName*str*llike*1":this.searchVal}
+                    queryfilter:{"TemName*str*llike*1":this.searchVal,"PType*str*eq":"记"}
+                }
+                if(this.temptype=='jie'){
+                   data.queryfilter={"TemName*str*llike*1":this.searchVal,"PType*str*eq":"结"}
                 }
                 this.$axios.get('PVoucherTemplateMst/GetVoucherTemplateList',{params:data})
                     .then(res=>{

@@ -25,7 +25,7 @@
                 <a class="btn" @click.prevent="handle('audit')"><li >审核</li></a>    
                 <a class="btn" @click.prevent="handle('delete')"><li >删除</li></a>
                 <a class="btn" @click.prevent="handle('update')"><li >修改</li></a>
-                <router-link class="btn" to="/home"><li >新增</li></router-link>          
+                <a class="btn" @click.prevent="handle('add')"><li >新增</li></a>          
             </ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
         </div>
         <div class="voucherSelect">
@@ -37,7 +37,7 @@
             </div>
             <div>
                 <el-checkbox  v-model="listAll">全选</el-checkbox>
-                <!-- <el-checkbox v-model="listCancle">取消全选</el-checkbox> -->
+                <el-checkbox v-model="listInverse">反选</el-checkbox>
             </div>
             <div class="searcherCon">
                 <div @click.stop="highGradeToggle(!highGradeCss)">高级</div>
@@ -121,7 +121,7 @@
                         <ul>
                             <li>
                                 <span>凭证日期 : {{item.PDate?item.PDate.substring(0,10):''}}</span>
-                                <span>凭证字号 : 记-{{item.PNo}}</span>
+                                <span>凭证字号 : {{item.PType}}-{{item.PNo}}</span>
                                 <span>附件数 : {{item.PAttachment}}</span>
                                 <span>制单人 : {{item.PMakePerson}}</span>
                                 <span>审核人 : {{item.PAuditorName}}</span>
@@ -157,37 +157,9 @@
             <router-link to="">运营规范</router-link>
             <router-link to="">关于政云</router-link>
         </div> -->
-        <!--凭证重排****************************-->
-        <div v-if="resetShow" class="codeResetContainer">
-            <div>
-                <p class="flexPublic">
-                    <span>凭证重排</span>
-                    <i @click="resetCode(false)"></i>
-                </p>
-                <div  class="yearsContent">
-                    <p>请选择会计期</p>
-                    <div class="flexPublic">
-                        <div>{{year}}</div>
-                        <div class="flexPublic">
-                            <img @click="nextYear(false)" src="../../assets/icon/leftArr.svg" alt="">
-                            <img @click="nextYear(true)" src="../../assets/icon/leftArr.svg" alt="">
-                        </div>
-                    </div>
-                    <ul @click="resetCodeMonth" :class="{allActive:allReset}"  class="year-month">
-                        <li :class="{active:month==index}" v-for="index of 12" :key="index">{{index}}月</li>
-                    </ul>
-                    <div>
-                        <p>
-                            <label ><input type="checkbox" v-model="allReset">对所有会计期进行凭证号重排</label>
-                        </p>
-                        <div>
-                            <span @click="resetCode(false)" class="btn">取消</span>
-                            <span @click="resetCode(true)" class="btn">确认</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
+         <!--凭证手动重排****************************-->
+        <num-reset :visible.sync="numResetShow" @msg-click="numResetMsg"></num-reset>
         <!-- 年度选择 -->
         <side-time v-if="fresh" @time-click="getSideDate" ref='sideDate'></side-time>
         <!-- 弹出凭证********************* -->
@@ -293,13 +265,13 @@
             :type="confirm.type"
             :visible.sync="confirm.visible"
             @ok-click="confirmOk"
-            @no-click="confirmNo" >
-            
+            @no-click="confirmNo" >    
         </saasconfirm>
     </div>
 </template>
 
 <script>
+    import numReset from './voucherNoReset'
     import subList from './addSublist'
     import printTem from "@/page/finance/vprint/printTemPdf"
     import httpConfig from '@/util/ajaxConfig'
@@ -415,10 +387,11 @@
                     visible:false
                 },
                 listAll:false,  //列表全选
-                listCancle:true, //列表取消选中
+                listInverse:false, //列表反xuan
                 printCss:false ,   //凭证打印显示***********
                 printData:[],//打印数据
-                tableData:[]   //打印的表格数据
+                tableData:[],   //打印的表格数据
+                numResetShow:false  //凭证重排窗口
             }
         },
         methods:{
@@ -426,6 +399,10 @@
             handle(str){
                 var item =JSON.parse(JSON.stringify(this.chooseItem));    
                 switch(str){
+                    case 'add':  //新增页面
+                        this.$store.commit("tagNav/upexcludeArr", ['voucherAdd']);
+                        this.$router.push({path:'/finance/voucherAdd',query:{reset:'reset'}});
+                        break;
                     case 'update'://修改**********
                         if(item.length!=1){
                             this.saasMessage={
@@ -556,11 +533,19 @@
                         }
                         break;
                     case 'reset':
-                        this.confirm={
-                            message:'凭证号重排过程中不允许取消、暂停操作。确定重排？',
-                            type:'reset',
-                            visible:true
-                        }
+                        // this.confirm={
+                        //     message:'凭证号重排过程中不允许取消、暂停操作。确定重排？',
+                        //     type:'reset',
+                        //     visible:true
+                        // }
+                        this.numResetShow=true;
+                        // this.confirm={
+                        //     message:'请选择手动重排还是自动重排!',
+                        //     visible:true,
+                        //     btn1:'手动重排',
+                        //     btn2:'自动重排',
+                        //     type:'reset'
+                        // }
                         break;
                     case 'print': 
                         this.printVoucher(); 
@@ -689,6 +674,7 @@
                 this.confirm.visible=false;
                 var item =JSON.parse(JSON.stringify(this.chooseItem));
                 switch(type){
+                    
                     case 'audit':
                         var PhIds=[];
                         for(var id of item){
@@ -702,9 +688,6 @@
                             PhIds.push(id.PhId);
                         }
                         this.audit(false,PhIds);
-                        break;
-                    case 'reset':
-                        this.resetShow=true;
                         break;
                     case 'delete':
                         var PhIds=[];
@@ -737,7 +720,6 @@
                             }                                            
                         }
                         
-                          
                         break;
                 }
             },
@@ -750,6 +732,15 @@
                         this.getvoucherList();     
                         break;
                 }
+            },
+            //重排返回的数据
+            numResetMsg(msg){
+                this.numResetShow=false;
+                this.saasMessage={
+                    message:msg,
+                    visible:true
+                }
+                this.getvoucherList();     
             },
             //高级搜索显示隐藏****************
             highGradeToggle(bool) {   
@@ -843,6 +834,7 @@
 
             //多选*************
             choose(item,index){
+                var val;
                 if(item.checked){
                     item.checked=false;
                     this.chooseItem.forEach((val,i,arr)=>{
@@ -856,6 +848,15 @@
                     this.chooseItem.push(item);
                     this.$forceUpdate();
                 }
+                val=this.voucherList.every((val,index,arr)=>{
+                    return val.checked==true
+                })
+                if(val){
+                    this.listAll=true;
+                }else{
+                    this.listAll=false;
+                }
+               
             },
              //[反]审核*****************
             audit(bool,PhId){              
@@ -1603,48 +1604,7 @@
                 }
                
             },
-             //凭证重排月份选择******************
-            resetCodeMonth($event){
-              this.month= this.month=parseInt($event.target.innerHTML);
-            },
-            
-            //凭证号重排确认***************
-            resetCode(val){
-                if(val){
-                    const loading5=this.$loading();
-                    var data={
-                        orgid:this.orgid,
-                        Year:this.sideDate.split('-')[0],
-                        Pmonth:this.sideDate.split('-')[1]
-                    }
-                    var url='/PVoucherMst/GetRebuilder';
-                    if(this.allReset){
-                        url='PVoucherMst/GetRebuilderForAllYear';
-                        data={
-                            orgid:this.orgid,
-                            Year:this.sideDate.split('-')[0],
-                        }
-                    }
-                    this.$axios.get(url,{params:data})
-                        .then(res=>{
-                            console.log(res)
-                            if(res.Status=='error'){
-                                this.$message(res.Msg);
-                            }else if(res.Status=='success'){
-                                this.$message('重排成功!');
-                                this.resetShow=false;
-                                this.getvoucherList();
-                            }
-                            loading5.close();
-                        },err => {
-                        console.log(err);
-                        loading5.close();
-                    })
-                        .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
-                }else{
-                    this.resetShow=false;
-                }
-            },
+           
             //  * 获取辅助项信息
             //  * query:查询参数
             //  *  */
@@ -1706,6 +1666,7 @@
                 this.superSearchVal.assistItem=childData.data;
                 this.superSearchVal.show=false;
             },
+           
             //导入凭证***********************
             testFile(){
                // this.$message('功能开发中!!')
@@ -1855,6 +1816,17 @@
             
         },
         computed:{
+            // listAll:{
+            //     get(val){
+            //         val=this.voucherList.every((val,index,arr)=>{
+            //             return val.checked==true
+            //         })
+            //         console.log(val)
+            //     },
+            //     set(){
+
+            //     }
+            // },
             ...mapState({
                 orgid: state => state.user.orgid,
                 uid: state => state.user.userid,
@@ -1864,7 +1836,7 @@
             }),
             picUrl:function(){
                 return httpConfig.baseurl;
-        },
+            },
         },
         watch:{
             superSearchValPhId(val){
@@ -1880,20 +1852,40 @@
                 
             },
             listAll(bool){
-                //this.listCancle=!bool;
-                for(var vou of this.voucherList){
+                if(bool){
+                    for(var vou of this.voucherList){
                         vou.checked=bool;
+                    }
+                    this.chooseItem=JSON.parse(JSON.stringify(this.voucherList));
+                }else if(this.voucherList.every((val,index,arr)=>{
+                            return val.checked==true;
+                        })){
+                         this.chooseItem=[]; 
+                         for(var vou of this.voucherList){
+                            vou.checked=bool;
+                        }  
                 }
-                this.chooseItem=bool?this.voucherList:[];
-                this.$forceUpdate();
+                
+                
             },
-            // listCancle(bool){
-            //     this.listAll=!bool;
-            //     for(var vou of this.voucherList){
-            //             vou.checked=!bool;
-            //     }
-            //     this.chooseItem=[];
-            // }
+            listInverse(bool){
+               
+                var newList=[];
+                for(var vou of this.voucherList){
+                    vou.checked=!vou.checked;
+                    if(vou.checked){
+                        newList.push(vou);
+                    }  
+                }
+                this.chooseItem=newList; 
+                // if(newList.length==this.voucherList.length&&!this.listAll){
+                //     this.chooseItem=[];
+                //     for(var vou of this.voucherList){
+                //         vou.checked=false;  
+                //     }
+                // }
+                
+            }
         },
         filters:{
             sum(val,dtl){
@@ -2047,7 +2039,8 @@
             sideTime,
             voucher,
             printTem,
-            subList
+            subList,
+            numReset
         }
     }
     
@@ -3057,4 +3050,3 @@
         }
      */
 </style>
-

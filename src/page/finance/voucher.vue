@@ -3,7 +3,7 @@
     <div class="voucher">
         <div class="voucherHead">
             <ul class="flexPublic">
-                <li><span>凭证字号: </span><span>{{PNo?'记-':''}}</span>  <span>{{PNo}}</span></li>
+                <li><span>凭证字号: </span><span>{{PNo?(PType+'-'):''}}</span>  <span>{{PNo}}</span></li>
                 <li>
                     <div class="block">
                         <span class="demonstration">凭证日期: </span>
@@ -69,7 +69,7 @@
                             <div @click="handleContent(true,index)" class="addIcon"></div>
                             <div @click="handleContent(false,index)" class="deleteIcon"></div>
                         </div>
-                        <li>
+                        <li class="abstractContainer">
                             <div class="inputContainer" >
                                 <textarea :disabled="disabled" :class="{chongHcss:AbstractCss=='冲红',gengZcss:AbstractCss=='更正'}" v-model="item.Abstract" @focus="showAddIcon(index,item,$event)" @keyup="AbsSearch(item.Abstract)" @blur="defaultHandle(item,index)" maxlength="50"></textarea>
                             </div>
@@ -79,6 +79,7 @@
                                 </ul>
                                 <div></div>
                             </div>
+                            
                         </li>
                         <li @click.stop="handleKemuSel(index)" class="kemu">
                             <div>
@@ -98,7 +99,7 @@
                                           :nodatatext="itemText" @add-subject="addNewSubject" @item-click="itemClick"></searchSelect>
                             <div @click.stop="1" v-show="assistItem[index].checked" class="assistContainer">
                                 <ul>
-                                    <li v-for="(assist,index2) of assistList" :key="index2">
+                                    <li   v-for="(assist,index2) of assistList" :key="index2">
                                         <div :title="assist.BaseName">{{assist.BaseName}}</div>
                                         <div  class="assistSelCon">
                                             <div @click.stop="assistSelsShow(index2)">{{assistSels[index2].BaseName}}</div>
@@ -108,15 +109,16 @@
                                             </ul>
                                             <div v-show="assistSels[index2].checked" @click.stop="addAuxiliaryVal(assist,index)">增加选项</div>
                                             <div></div>
-                                            <select  v-model="assistSels[index2]">
+                                            <!-- <select  v-model="assistSels[index2]">
                                                 <option :value="val" v-for="(val,index) of assist.Children" :key="index">{{val.BaseName}}</option>
-                                            </select>
+                                            </select> -->
+                                            
                                         </div>
                                         <div style="clear:both"></div>
                                     </li>
                                 </ul>
                                 <p><span @click.stop="assistOk(true,item,index)">确认</span><span @click.stop="assistOk(false,item,index)">取消</span></p>
-                                <router-link to="/setting/auxiliary">添加辅助项</router-link>
+                                <a @click.stop="addauxiliary(assistList)" style="cursor:pointer">添加辅助项</a>
                             </div>
                         </li>
                         <li @click="moneyInputShow(item,'jiefang')" class="flexPublic money">
@@ -201,7 +203,7 @@
                 <li><label>出纳: <span>{{PCashier}}</span> </label></li>
             </ul>
         </div>
-        
+        <!-- 科目新增 -->
         <div v-if="addPageShow" class="addPageCon">
             <div class="addPage">
                 <div class="title"><span>科目新增</span><i @click.stop="addPageShow=false"></i><div style="clear:both"></div></div>
@@ -289,8 +291,81 @@
                     </li>
                 </ul>
                 <div class="finishBtn">
-                    <span @click.stop="addPageShow=false" class="btn">取消</span>
-                    <span @click.stop="addFinish()" class="btn">保存</span>
+                     <span @click.stop="addFinish()" class="btn">保存</span>
+                    <span @click.stop="addPageShow=false" style="margin-left:30px"  class="btn">取消</span>
+                   
+                    <div style="clear:both"></div>
+                </div>
+            </div>
+            <div></div>
+        </div>
+        <!-- 辅助项新增 -->
+        <div v-if="addauxiliaryShow" class="addAuxiliaryCon">
+            <div class="addPage">
+                <div class="title"><span>辅助项新增</span><i @click.stop="addauxiliaryShow=false"></i><div style="clear:both"></div></div>
+                <ul>
+                    <li>
+                        <div>类型名称</div>
+                        <div style="width:240px;margin-right: 10px" class="inputContainer">
+                            <input type="text" placeholder="请输入辅助项名称" v-model="addAuxiliaryForm.BaseName">
+                        </div>
+                        <div @click="addAuxiliaryType" class="btn">立即创建</div>
+                    </li>
+                    <li>
+                        <div>是否启用</div>
+                        <div><label> <input v-model="addAuxiliaryForm.EnabledMark" value='0' name='auxiliaryAdd' type="radio">&nbsp;是</label></div>
+                        <div style="margin-left:20px"><label> <input v-model="addAuxiliaryForm.EnabledMark"  value='1'  name='auxiliaryAdd' type="radio">&nbsp;否</label></div>
+                    </li>
+                    <li style="margin-bottom:0;">
+                        <div>已关联辅助项</div>
+                    </li>
+                    <li>
+                        <div style="overflow-y:auto;padding:0 5px;">
+                            <label v-for="(assist,index2) of addDataAux" :key=index2>
+                                <input type="checkbox" v-model="addAuxiliaryForm.AuxiliaryTypes[index2]">
+                                &nbsp;{{assist.BaseName}}
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+                <div>
+                   
+                    <span @click.stop="addauxiliaryFinish()" class="btn" >保存</span>
+                    <span @click.stop="addauxiliaryShow=false" style="margin-left:30px" class="btn">取消</span>
+                    <div style="clear:both"></div>
+                </div>
+            </div>
+            <div></div>
+        </div>
+        <!-- 辅助项值新增 -->
+        <div v-if="addAuxiliaryValShow" class="addAuxiliaryVal">
+            <div class="addPage">
+                <div class="title"><span>辅助选项新增</span><i @click.stop="addAuxiliaryValShow=false"></i><div style="clear:both"></div></div>
+                <ul>
+                    <li>
+                        <div>辅助项编码</div>
+                        <div class="inputContainer" >
+                            <input disabled style="background:#ddd" type="text">
+                        </div>
+                    </li>
+                    <li>
+                        <div>辅助项名称</div>
+                        <div class="inputContainer">
+                            <input v-model="addAuxiliaryValForm.BaseName"  type="text">
+                        </div>
+                    </li>
+                    <li>
+                        <div>辅助项状态</div>
+                        <div>
+                            <label ><input name="auxiliaryVal" v-model="addAuxiliaryValForm.EnabledMark" value="0" type="radio">&nbsp;启用</label>
+                            <label style="margin-left:20px"><input v-model="addAuxiliaryValForm.EnabledMark" name="auxiliaryVal" value="1" type="radio">&nbsp;停用</label>
+                        </div>
+                    </li>
+                </ul>
+                <div>
+                   
+                    <span @click.stop="addAuxiliaryValFinish" class="btn" >保存</span>
+                    <span @click.stop="addAuxiliaryValShow=false" style="margin-left:30px" class="btn">取消</span>
                     <div style="clear:both"></div>
                 </div>
             </div>
@@ -307,7 +382,8 @@
 </template>
 
 <script>
-    import { SubjectAdd } from '@/api/subject/subjectInfo'
+
+    import { SubjectAdd,SubjectUpdate } from '@/api/subject/subjectInfo'
     import addSubList from './addSubList'
     import searchSelect from './searchSelect'
     import {mapState, mapActions} from 'vuex'
@@ -379,6 +455,28 @@
                 KBalanceType:'',
                 AuxiliaryTypes:[]
             },
+            addauxiliaryShow:false,  //新增辅助项类型显示
+            addauxiliarySub:'', //当前选中的科目
+            addAuxiliaryForm:{   //新增辅助项页面的值
+                EnabledMark:0,
+                BaseName:'',
+                AuxiliaryTypes:[]
+            },
+            allAuxiliarys:[],  //该组织所有的辅助项
+            checkedAuxiliarys:[],//该科目选中的辅助项
+            addAuxiliaryValShow:false, //新增辅助项值显示
+            addAuxiliaryValForm:{   //页面上的值
+                EnabledMark:0,
+                BaseName:''
+            },
+            addAuxiliaryValData:{  //新增回传的值
+                TypeId:'',
+                UpdateList:[]
+            },
+            AbstractList:[],  //ajax获取的摘要模板列表
+            AbstractAContents:[],//展示的列表
+            abstractListShow:false, //摘要模板搜索显示
+            abstractSearch:'',//摘要模板搜索值
             sideDateNew:'',
             nowTime:new Date,
             AbstractCss:false,
@@ -541,7 +639,10 @@
                     }
                 }
                 if(!this.PhId){
-                    this.fatherData.PType='记';
+                    
+                    if(this.fatherData.PType!='结'){
+                        this.fatherData.PType='记';
+                    }
                     this.fatherData.OrgId=this.orgid;
                     this.fatherData.OrgCode=this.orgcode;
                     this.fatherData.PersistentState=1;
@@ -778,10 +879,12 @@
                     id:val.data.PhId,
                     orgid:this.orgid,
                 } 
+                console.log(2222,val,index,data)
                 const loading1=this.$loading();
                 this.$axios.get("/PSubject/GetVoucherAuxiliaryBySubject",{params:data})
                     .then(res=>{
-                        loading1.close();
+                        
+                        loading1.close();     
                         if(res.length>0){
                             console.log(1111,res)
                             for(var a in res){
@@ -791,12 +894,15 @@
                                     
                                     res[a].Children=[{BaseName:'',BaseCode:''}];   
                                 }
-                                this.assistSels[a]=this.assistList[a].Children[0];
-                                
-                            }
+                                this.assistSels[a]=res[a].Children[0];
+                                this.assistSels[a].checked=false;
+                            }        
+                            this.assistList=res;
                             this.assistItem[val.id].checked=true;
                             this.assistItemMask=true;
                             this.assistCheck=true;
+                            
+                            this.$forceUpdate();
                         }else{
                             this.assistList=[]
                         }
@@ -1000,7 +1106,8 @@
                 this.moneyInputHide();
             },
             //科目下拉框选择的科目********************************
-            itemClick(childMsg){               
+            itemClick(childMsg){    
+                this.addauxiliarySub=childMsg;//缓存当前科目           
                 this.voucherInfo[childMsg.id].SubjectCode=childMsg.data.KCode;
                 this.voucherInfo[childMsg.id].SubjectName=childMsg.data.FullName;
                 this.kemuSel[childMsg.id].checked=false;
@@ -1055,6 +1162,10 @@
                 this.$forceUpdate();
             },
             kemuCancle($event,index,item){
+                for(var kemu in this.kemuSel){
+                    this.assistItem[kemu].checked=false;
+                    this.kemuSel[kemu].checked=false;
+                }
                 this.voucherInfo[index].DtlAccounts.assistItem=[];
                 this.voucherInfo[index].SubjectCode='';
                 this.voucherInfo[index].SubjectName='';
@@ -1076,9 +1187,9 @@
             },
             //金额输入框失去焦点*******************
             inputBlur($event,item,value,index){
-                if(!item.SubjectCode) {
-                    item.money[value]='';
-                } 
+                // if(!item.SubjectCode) {
+                //     item.money[value]='';
+                // } 
                 var input;
                 if($event.target){
                     input=$event.target;
@@ -1217,10 +1328,10 @@
                 }
             },
             moneyInputShow(item,val){//金额输入框展示**********************
-                if(item.SubjectCode){
+                
                     item.moneyInput[val]=true;
                     this.moneyInputMask=true;
-                }
+                
                 for(var item of this.kemuSel){   //隐藏科目选择****解决bug
                     item.checked=false;
                 }
@@ -1240,7 +1351,8 @@
                 }
                 this.moneyInputMask=false;
             },
-            showAddIcon(index,item,$event){//增删icon显示*************//添加默认摘要*****************
+            showAddIcon(index,item,$event){//增删icon显示*************//添加默认摘要*****************显示摘要模板列表
+                this.AbstractAContents=this.AbstractList;  //摘要模板
                 for(var add of this.addIcon){
                     add.checked=false;
                 }
@@ -1338,6 +1450,7 @@
                     this.addSubShow1=false;
                     this.$forceUpdate();   
                 },
+                //新增科目完成**
                 addFinish(){
                     var auxi=[];
                     var vm=this;
@@ -1400,6 +1513,7 @@
                         })
                     }
                 },
+             
 
             //附件上传************************************
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
@@ -1575,12 +1689,14 @@
             "orgForm.ServiceTime"(val){           
                 this.orgForm.ServiceStartTime=''
                 this.orgForm.ServiceEndTime=''
-            }
+            },
+         
         },
         components:{
             searchSelect,
             pictureUpload,
-            addSubList
+            addSubList,
+           
         }
     }
 </script>
@@ -1663,6 +1779,40 @@
         padding:2px 5px;
         font-size:15px;
     }
+       .voucherContentItem .abstractContainer{
+           position:relative;
+
+           >div.abstractSearch{
+              position:absolute;
+              top:100%;
+              left:0;
+               width:100%;
+               z-index:9;
+              >ul{
+                  width:100%;
+                  max-height:150px;
+                  overflow-y: auto;
+                  background:rgb(247, 234, 234);
+                  border:1px solid #ccc;
+                  >li{
+                      height:30px;
+                      line-height: 30px;
+                      padding:0 3px;
+                      position: relative;
+                     
+                      text-overflow: ellipsis;
+                      overflow: hidden;
+                      white-space:nowrap;
+                      cursor:pointer;
+                      &:hover{
+                          background:#ccc;
+                          
+                      }
+                  }
+              } 
+              
+           }
+       }
     .addIcon,.deleteIcon{
         width:25px;
         height:25px;
@@ -1917,6 +2067,7 @@
         height:30px;
         line-height: 30px;
         text-align: center;
+        position: relative;
         // padding-left:15%;
         >div{
             float:left;
@@ -1924,6 +2075,10 @@
                 position:relative;
 
             }
+        }
+        .assistSelCon>ul{
+            position:relative;
+            z-index:9;
         }
     }
     .kemu>.assistContainer>ul>li>div:nth-of-type(2){
@@ -1974,8 +2129,7 @@
             border-top-color:#333;
         }
     }
-    .kemu>.assistContainer>ul>li>div:first-of-type{
-        
+    .kemu>.assistContainer>ul>li>div:first-of-type{        
         width:50%;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -2068,6 +2222,65 @@
     float:left;
     &.inputContainer{
         width:50px;
+    }
+}
+.addAuxiliaryVal,
+.addAuxiliaryCon{
+    position:fixed;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    z-index:999;
+    font-size:16px;
+    text-align: center;
+    color:#666;
+    background:rgba(0,0,0,0.5);
+    >div:last-of-type{
+        display: inline-block;
+        height:100%;
+        width:0px;
+        vertical-align: middle;
+    }
+    >.addPage{
+        width:556px;
+        height:300px;
+        display: inline-block;
+        vertical-align: middle;
+        background:#fff;
+        padding:5px 10px;
+        >ul{
+            padding:20px 40px 0 40px;
+            >li{
+                height:30px;
+                line-height: 30px;
+                text-align:left;
+                margin-bottom:10px;
+                >div{
+                    display: inline-block;
+                    &:first-of-type{
+                        margin-right:10px;
+                    } 
+                }
+                &:last-of-type{
+                    overflow-y: auto;
+                    height:67px;
+                    padding:5px 20px;
+                }
+            }
+        }
+    }
+}
+.addAuxiliaryVal{
+    .inputContainer{
+        width:320px;
+    }
+    >.addPage>ul>li:last-of-type{
+        padding:0 ;
+        height:30px;
+    }
+    >.addPage{
+        height:230px;
     }
 }
 .addPageCon{
@@ -2188,6 +2401,9 @@
             }
         }
     }
+
+
+
 </style>
 <style>
 .voucherHead .el-input--suffix .el-input__inner{

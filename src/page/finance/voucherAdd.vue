@@ -50,7 +50,7 @@
             <div style="overflow:hidden;height:87%">
                 <div class="monthsContainer">
                     <ul style="top:0" @mouseleave.stop="dragLeave" @mousemove.stop="dragMove" @mouseup.stop="dragDown(false,$event)" @mousedown.prevent.stop="dragDown(true,$event)"   id="scrollMonth" class="months">
-                        <li v-for="item of nowYear-2000"  :key="item">
+                        <li v-for="item of nowYear-startYear+1"  :key="item">
                             <ul>
                                 <li>{{nowYear-item+1}}</li>
                                 <li :class="{active:sideDate.split('-')[1]==i&&nowYear-item+1==sideDate.split('-')[0],unchecked:(i>checkedTime)&&(nowYear-item+1>=checkedYear),futureM:(nowYear-item+1>=nowYear)&&(i>(nowTime.getMonth()+1))}" @click="sideMonth(i,nowYear-item+1)" v-for="i of 12" :key="i">{{i}}</li>
@@ -91,7 +91,7 @@
                     </div>
                     <p>
                         <span @click="yearsTrue(false)">取消</span>
-                        <span @click="yearsTrue('check',checkVal)">确认</span>
+                        <span @click="nextMonthCss=true">确认</span>
                     </p>
                 </div>
                 <div v-show="monthsSelCss=='fanjiezhang'" class="yearsContent jiezhang">
@@ -134,9 +134,10 @@
             </div>
            
         </div>
-        
+         <!--凭证手动重排****************************-->
+        <num-reset :visible.sync="resetShow" @msg-click="numResetMsg"></num-reset>
         <!--凭证重排****************************-->
-        <div v-if="resetShow" class="codeResetContainer">
+        <!-- <div v-if="resetShow" class="codeResetContainer">
             <div>
                 <p class="flexPublic">
                     <span>凭证重排</span>
@@ -166,11 +167,11 @@
                 </div>
             </div>
 
-        </div>
+        </div> -->
         <!-- 凭证模板****************** -->
         <voucher-temp v-if="modelListCss" :temptype="temptype" @temp-click="tempClick"></voucher-temp>
         <!-- 下月账******************* -->
-        <next-month v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
+        <next-month :checkVal="checkVal" v-if="nextMonthCss" @child-click="nextMonthHandle"></next-month>
         <!-- <div class="footInfo " >
             <router-link to="">服务协议</router-link>
             <router-link to="">运营规范</router-link>
@@ -216,6 +217,7 @@
 </template>
 
 <script>
+    import numReset from './voucherNoReset'
     import userInfo from '@/util/auth'
     import nextMonth from './nextMonthCheck'
     import voucher from './voucher'
@@ -253,6 +255,7 @@
             unCheckVal:'',
             checkedTime:'',//下一个结账月*******
             checkedYear:'',//已经结账的年份
+            startYear:'',//建账日期
             pagesize:100,
             pageindex:0,
             ascOrDesc:'ASC',
@@ -291,12 +294,16 @@
                 this.voucherDataList.data.Mst=this.$route.query.list,
                 this.resetVoucher();
                 this.voucherAdd=true;
-            } 
+            }else if(this.$route.query.reset=='reset'){
+                this.$store.commit("tagNav/upexcludeArr", []);
+            }
             
         },
         mounted(){  
             this.getChecked();
-            this.uInfo= userInfo.getUserInfoData().userInfo; 
+            this.uInfo= userInfo.getUserInfoData().userInfo;
+            this.startYear=userInfo.getUserInfoData().orgInfo.StartYear; 
+            
             //this.moveNavTop();
         },
         methods:{
@@ -491,13 +498,7 @@
                         //  }
                        
                         break;
-                    case 'reset':
-                        this.confirm={
-                            message:'凭证号重排过程中不允许取消、暂停操作。确定重排？',
-                            visible:true,
-                            type:'reset'
-                        }
-                        break;
+                   
                     case 'print':
                         this.voucherData();
                         this.keepVoucher('print');
@@ -514,6 +515,10 @@
                         this.voucherAdd=false;
                         this.resetVoucher();               
                         break;
+                    case 'reset':
+                        this.resetShow=true;
+                        break;
+                
                 }
             },
             //confirm确认框方法*******
@@ -528,9 +533,7 @@
                         }
                         this.delete(data1);
                         break;
-                    case 'reset':
-                        this.resetShow=true;
-                        break;
+                   
                     case 'gengz':
                         var vm = this;       
                         vm.voucherAdd=false;
@@ -581,8 +584,7 @@
                 
                 var url='Add';
                 var Vdata=this.voucherDataList.data;
-                  console.log(Vdata)
-                  debugger
+                          
                 //判断科目金额摘要不能为空
                 for(var dtl of Vdata.Mst.Dtls){
                     if(!(dtl.SubjectCode&&dtl.Abstract&&(dtl.JSum||dtl.DSum))){
@@ -1258,47 +1260,57 @@
                 this.getvoucherList();
                 this.voucherAdd=true;
             },
-            //凭证重排月份选择******************
-            resetCodeMonth($event){
-              this.month= this.month=parseInt($event.target.innerHTML);
-            },
-            //凭证号重排确认***************
-            resetCode(val){
-                if(val){
-                    const loading5=this.$loading();
-                    var data={
-                        orgid:this.orgid,
-                        Year:this.sideDate.split('-')[0],
-                        Pmonth:this.sideDate.split('-')[1]
-                    }
-                    var url='/PVoucherMst/GetRebuilder';
-                    if(this.allReset){
-                        url='PVoucherMst/GetRebuilderForAllYear';
-                        data={
-                            orgid:this.orgid,
-                            Year:this.sideDate.split('-')[0],
-                        }
-                    }
-                    this.$axios.get(url,{params:data})
-                        .then(res=>{
-                            
-                            if(res.Status=='error'){
-                                this.$message(res.Msg);
-                            }else if(res.Status=='success'){
-                                this.$message('重排成功!');
-                                this.resetShow=false;
-                            }
-                            loading5.close();
-                        },
-                        err => {
-                            console.log(err);
-                                loading5.close();
-                         })
-                        .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
-                }else{
-                    this.resetShow=false;
+           
+             //重排返回的数据
+            numResetMsg(msg){
+                this.resetShow=false;
+                this.saasMessage={
+                    message:msg,
+                    visible:true
                 }
-            },
+                this.getvoucherList();     
+            }, 
+            //凭证重排月份选择******************
+            // resetCodeMonth($event){
+            //   this.month= this.month=parseInt($event.target.innerHTML);
+            // },
+            // //凭证号重排确认***************
+            // resetCode(val){
+            //     if(val){
+            //         const loading5=this.$loading();
+            //         var data={
+            //             orgid:this.orgid,
+            //             Year:this.sideDate.split('-')[0],
+            //             Pmonth:this.sideDate.split('-')[1]
+            //         }
+            //         var url='/PVoucherMst/GetRebuilder';
+            //         if(this.allReset){
+            //             url='PVoucherMst/GetRebuilderForAllYear';
+            //             data={
+            //                 orgid:this.orgid,
+            //                 Year:this.sideDate.split('-')[0],
+            //             }
+            //         }
+            //         this.$axios.get(url,{params:data})
+            //             .then(res=>{
+                            
+            //                 if(res.Status=='error'){
+            //                     this.$message(res.Msg);
+            //                 }else if(res.Status=='success'){
+            //                     this.$message('重排成功!');
+            //                     this.resetShow=false;
+            //                 }
+            //                 loading5.close();
+            //             },
+            //             err => {
+            //                 console.log(err);
+            //                     loading5.close();
+            //              })
+            //             .catch(err=>{this.$message({ showClose: true,message: err, type: "error"});loading5.close();})
+            //     }else{
+            //         this.resetShow=false;
+            //     }
+            // },
             //会计期内容切换************************************
             checkOutSel(val){
                 this.monthsSelCss=val;
@@ -1609,6 +1621,7 @@
             voucher,
             voucherTemp,
             nextMonth,
+            numReset
         }
     }
 </script>
@@ -1641,7 +1654,8 @@
                     width:60px;
                     height:30px;       
                     overflow: hidden;
-                    position:absolute;                   
+                    position:absolute; 
+                            
                     transition:all 0.2s linear;
                     border:1px solid #00b7ee;
                     >div{
@@ -1667,8 +1681,7 @@
                         border:1px solid #00b7ee;
                         background: #fff;
                         opacity: 1;
-                         z-index: 5;
-                         
+                        z-index:99;           
                          >span{
                              &:first-of-type{
                                  color:#fff;
@@ -1683,7 +1696,7 @@
                 height:30px;
                 overflow:hidden; 
                 position: absolute;
-                z-index: 2;
+               
                 width:100%;
                 margin:0;  
                 opacity:1;         
@@ -1710,6 +1723,7 @@
                  height:auto;
                 background: #00b7ee; 
                 border-top:0; 
+                 z-index: 99;
             }
         }
 
@@ -1845,7 +1859,7 @@
     .asideNav{
         width:55px;
         position:absolute;
-        z-index:9;
+        z-index:999;
         right:0px;
         top:0px;
         height: 95%;
