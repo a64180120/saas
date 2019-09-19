@@ -12,6 +12,10 @@ const state = {
     zwinite:'' ,
     //科目代码层级
     subjectlength:'' ,
+    //建账日期
+    jbuildDate:'',
+    //账务初始化
+    ZwInited:''
 };
 
 //计算获取取新数据
@@ -38,8 +42,9 @@ const mutations = {
                          data.JSubjectCodeLength8+";"+
                          data.JSubjectCodeLength9+";"+
                          data.JSubjectCodeLength10;
-
             state.subjectlength = slength;
+            state.jbuildDate=data.JBuildDate;
+            state.ZwInited=data.ZwInited;
             Auth.setPConfigStatus(data);
         }else{
             Auth.removePConfigStatus();
@@ -75,7 +80,6 @@ const actions = {
             }).then(res => {
                 if (res &&res.Status === "success") {
                     //用户信息缓存
-                    
                     commit("setPConfig", res.Data);
                 }
                 resolve(res);

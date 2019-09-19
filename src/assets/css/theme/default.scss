@@ -48,7 +48,7 @@ $linkColor: $themeColor !default;
 -------------------------- */
 /* login */
 //$loginBg: url($baseImageURL+"login.jpg") center center no-repeat !default;
-$loginBg: url($baseImageURL+"login.jpg") !default;
+$loginBg: url($baseImageURL + "login.jpg") !default;
 $loginBtn: $themeColorDarken !default;
 $loginTextColor: darken($white, 12%) !default;
 $loginErrTextColor: #e5b989 !default;

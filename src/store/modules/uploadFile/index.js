@@ -22,9 +22,9 @@ const mutations = {
 const actions = {
 
     // 上传附件
-    Orgupload({ commit }, data) {
+    Orgupload({ commit ,rootState}, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
@@ -40,17 +40,18 @@ const actions = {
         });
     },
     // 凭证上传附件
-    Voucherupload({ commit }, data) {
+    Voucherupload({ commit,rootState }, data) {
+        console.log(data)
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
             var new_header = Object.assign({},config_header, baseheader);
-            console.log(data)
+     
             axios.create(base).post('/PVoucherAttachment/PostUploadFile', data, { headers:new_header }).then(res => {
                 var response=JSON.parse(res.data);
-                console.log(response)
+                
                 resolve(response);
 
         　　}).catch((error) =>{
@@ -60,19 +61,15 @@ const actions = {
         });
     },
     // 凭证导入excel
-    Excelupload({ commit }, data) {
+    Excelupload({ commit,rootState }, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
-
             let config_header = { "Content-Type": "multipart/form-data" };
             var new_header = Object.assign({},config_header, baseheader);
-            console.log(data)
             axios.create(base).post('/PVoucherMst/PostUploadFile', data, { headers:new_header }).then(res => {
                 var response=JSON.parse(res.data);
-                console.log(response)
                 resolve(response);
-
         　　}).catch((error) =>{
                 //错误
                 reject(error);
@@ -86,9 +83,9 @@ const actions = {
         });
     },
     // 上传封面图片附件
-    Newsupload({ commit }, data) {
+    Newsupload({ commit ,rootState}, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
@@ -104,9 +101,10 @@ const actions = {
         });
     },
     //上传图片附件
-    Pictureupload({ commit }, data) {
+    Pictureupload({ commit,rootState }, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            //let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
+            let baseheader=httpConfig.getTestHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
@@ -122,13 +120,15 @@ const actions = {
         });
     },
     // 上传图片管理附件
-    PicUpload({ commit }, data) {
+    PicUpload({ commit,rootState }, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            //let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
+            let baseheader=httpConfig.getTestHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
             var new_header = Object.assign({},config_header, baseheader);
+
             axios.create(base).post('/SysPicture/PostAddSysPicture', data, { headers:new_header }).then(res => {
                 var response=JSON.parse(res.data);
                 resolve(response);
@@ -140,9 +140,9 @@ const actions = {
         });
     },
     //新增文章信息
-    AddSysNews({ commit }, data) {
+    AddSysNews({ commit,rootState }, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
@@ -158,9 +158,9 @@ const actions = {
         });
     },
     //修改文章信息
-    UpdateSysNews({ commit }, data) {
+    UpdateSysNews({ commit,rootState }, data) {
         return new Promise((resolve, reject) => {
-            let baseheader=httpConfig.getHeaderConfig();
+            let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
             let base=httpConfig.getAxiosBaseConfig();
 
             let config_header = { "Content-Type": "multipart/form-data" };
@@ -169,6 +169,22 @@ const actions = {
                 var response=JSON.parse(res.data);
                 resolve(response);
         　　}).catch((error) =>{
+                //错误
+                reject(error);
+            });
+        });
+    },
+    //日记帐导入功能
+    accountupload({ commit,rootState }, data) {
+        return new Promise((resolve, reject) => {
+            let baseheader=httpConfig.getHeaderConfig(rootState.user.dbname);
+            let base=httpConfig.getAxiosBaseConfig();
+            let config_header = { "Content-Type": "multipart/form-data" };
+            var new_header = Object.assign({},config_header, baseheader);
+            axios.create(base).post('Cashier/PostInportCashier', data, { headers:new_header }).then(res => {
+                var response=JSON.parse(res.data);
+                resolve(response);
+            }).catch((error) =>{
                 //错误
                 reject(error);
             });

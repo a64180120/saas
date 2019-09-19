@@ -5,7 +5,11 @@ const whiteList = [
     '/register',
     '/index',
     '/news/view',
-    '/news/list'
+    '/news/list',
+    '/operateInfo',
+    '/serviceInfo',
+    '/demo/supcan',
+    '/error'
 ]
 
 export default whiteList

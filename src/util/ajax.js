@@ -75,7 +75,7 @@ function stopRepeatRequest(url, cancelfunction) {
 const service = axios.create({
     baseURL: httpConfig.getAxiosBaseConfig().baseURL,
     // 请求超时时间
-    timeout: 10000
+    timeout: 20000
     // transformRequest:[function transformRequest(data, headers) {      
     //     /* 把类似content-type这种改成Content-Type */
     //     let keys = Object.keys(headers);
@@ -103,13 +103,45 @@ service.interceptors.request.use(
 
         //let config_header = { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" };
         //var new_header = Object.assign({},config_header, baseheader);  //合并对象
-        let baseheader=httpConfig.getTestHeaderConfig();
-        config.headers = baseheader
 
-        //POST传参序列化
-        if (config.method === "post") {
+        //默认区域数据库
+        var dbbase=store.state.user.dbname;
+        //defultdbname：true 是，转换数据库 未默认数据库
+        if(config.method.toUpperCase()==="GET"){
+            // 
+
+            if(config.params===undefined){
+                config.params={};
+            }
+            if(config.params.defultdbname===true){
+                dbbase=store.state.user.defultdbname;
+                delete config.params.defultdbname;
+            }
+            config.params.nowTimeRandom = new Date().getTime();
+        }
+        if(config.method.toUpperCase()==="POST"){
+            if(config.data ===undefined){
+                config.data={};
+            }
+            if(config.data.defultdbname===true){
+                dbbase=store.state.user.defultdbname;
+                delete config.data.defultdbname;
+            }
+
+            config.data.nowTimeRandom=new Date().getTime();
+             //POST传参序列化
             config.data = qs.stringify(config.data);
         }
+
+        //console.log(config.url+":"+dbbase);
+        let baseheader=httpConfig.getTestHeaderConfig(dbbase);
+        config.headers = baseheader;
+
+        
+       
+        // if (config.method === "post") {
+        //     config.data = qs.stringify(config.data);
+        // }
 
         //Token校验
         // checkToken(cancel, function(){
@@ -117,7 +149,7 @@ service.interceptors.request.use(
         //     console.log(token);
         //     //config.headers.Authorization = `${store.state.user.token}`
         // })
-        //debugger;
+        // ;
         //添加请求的url
         //stopRepeatRequest(config.baseURL+config.url, cancel)
 
@@ -145,7 +177,18 @@ service.interceptors.response.use(
         //     }
         // }
 
-        return Promise.resolve(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
+        //return Promise.resolve(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
+
+        if(typeof(res)=="object" && Object.prototype.toString.call(res).toLowerCase()=="[object object]" && !res.length){
+          
+            return Promise.reject(res);
+  
+          }else{
+  
+            var jsonStr=res.replace(/\n/g,"\\n").replace(/\r/g,"\\r");
+            return Promise.resolve(JSON.parse(jsonStr));
+            
+          }
 
     },
     error => {
@@ -186,10 +229,21 @@ service.interceptors.response.use(
                     Message({message: `服务器错误！错误代码：${error.response.status}`,type: "error" });
             }
 
-            const res = error.response.data
+            const obj = error.response.data
             //return Promise.reject(JSON.parse(error.response.data));
-            
-            return Promise.reject(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
+
+            //return Promise.reject(JSON.parse(res.replace(/\n/g,"\\n").replace(/\r/g,"\\r")));
+
+            if(typeof(obj)=="object" && Object.prototype.toString.call(obj).toLowerCase()=="[object object]" && !obj.length){
+              
+              return Promise.reject(obj);
+    
+            }else{
+    
+              const res = obj.replace(/\n/g,"\\n").replace(/\r/g,"\\r")
+              return Promise.reject(JSON.parse(res));
+    
+            }
 
         }
     }

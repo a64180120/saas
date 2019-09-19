@@ -14,10 +14,7 @@
     overflow-y: auto;
     box-sizing: border-box;
     .el-dialog__header{
-        background:$headerBgColor;
-        .el-dialog__title{
-            color:#fff;
-        }
+        border-bottom:1px solid #dcdfe6;
     }
 
 }

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 您可以将不认同 "supcan(带注释).xml" 中的条项，添加到下面去修改 -->
+<root>
+<global>
+	<convertPicture>
+	</convertPicture>
+	
+	<RichText>
+	</RichText>
+</global>
+<Treelist>
+	<paste>
+	</paste>
+
+	<Properties>
+	</Properties>
+
+	<Fonts>
+	</Fonts>
+
+	<col>
+	</col>
+
+	<convertData>
+	</convertData>
+
+	<convertDataCopy>
+	</convertDataCopy>
+</Treelist>
+<Freeform>
+	<Properties>
+	</Properties>
+
+	<Fonts>
+	</Fonts>
+
+	<Objects>
+		<Input>
+		</Input>
+	</Objects>
+</Freeform>
+<Report>
+	<Paste>
+	</Paste>
+
+	<convertData>
+	</convertData>
+</Report>
+<echarts>
+	<echarts_server>http://127.0.0.1:8025/Resource/echarts-2.2.7/doc/example.html</echarts_server>
+</echarts> 
+</root>

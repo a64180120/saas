@@ -9,13 +9,11 @@ body,
 .wrapper {
     width: 100%;
     height: 100%;
-    min-height: 500px;
-    min-width: 1150px;
+    /* min-height: 500px; */
+    min-width: 1200px;
 }
 
-body {
-    font-family: 'PingFang SC', "Helvetica Neue", Helvetica, "microsoft yahei", arial, STHeiTi, sans-serif;
-}
+
 
 a {
     text-decoration: none
@@ -45,12 +43,11 @@ a {
 }
 .timeSelect .container{
     position: absolute;
-    top: 60px;
-    bottom: 70px;
-    left: 20px;
-    right: 20px;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
     overflow: hidden;
-    padding-right: 85px;
 }
 .content-collapse {
     left: 65px;
@@ -83,7 +80,7 @@ a {
     top: -30px;
     bottom: -40px;
     width: 60px;
-    z-index: 99;
+    z-index: 1;
 }
 .formData_content>ul{
     border-bottom: 1px solid #ebeef5;
@@ -92,15 +89,6 @@ a {
 .formData_content>ul:hover{
     background-color: #fafafa!important;
     transition: background-color .25s ease;
-}
-/*兼容IE11样式  测试后才可确定是否可用*/
-@media screen and(-ms-high-contrast:active),(-ms-high-contrast:none){
-    .timeSelectBox{
-        position: -ms-page;
-        height: 85%;
-        width: 60px;
-        z-index: 99;
-    }
 }
 .crumbs {
     margin: 10px 0;

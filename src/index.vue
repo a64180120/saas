@@ -11,9 +11,13 @@ import Cookie from 'js-cookie'
 import Auth from "@/util/auth"
 import { mapState } from 'vuex'
 import loading from '@/components/loading'
-
+import { uuid } from "@/util/validate";
 
 export default {
+    beforeRouteEnter(to, from, next){
+        console.log(to,from,next);
+        next();
+    },
     data() {
         return {
             islogout:false,
@@ -81,11 +85,20 @@ export default {
     mounted() {
         this.$nextTick(() => {
             setTheme("theme-default")
-            this.$store.commit("setThemeColor", "theme-default")
+            //this.$store.commit("setThemeColor", "theme-default")
+
+           
+            //获取全局token的sessionId
+            var session=Auth.getSession();
+             console.log("session:"+session);
+            if(!session  || session.Status=='error'){
+                this.$store.commit("setSession", uuid());
+            }else{
+                this.$store.commit("setSession", session);
+            }
 
             // this.getConfigJson(res=>{
             //     console.log(Auth.getBaseUrl())
-
             // });
 
             //加载token信息
@@ -108,7 +121,7 @@ export default {
 
         })
         //测试可以注释这条
-        //this.getloginState();
+        this.getloginState();
     },
     methods: {
         //循环判断，当前用户的登录状态
@@ -117,15 +130,14 @@ export default {
             this.interval = window.setInterval(() => {
                 setTimeout(() => {
                     var user=Auth.getUserInfoData(),
-                        token=Auth.getToken();
-                    if(user && token){
-                        console.log(user.userInfo.PhId);
-                        console.log(token.sessionId);
-                        //let userid=user.userInfo.PhId
+                        sessionId=Auth.getSession();
+                    if(user && sessionId){
+                        //console.log(user.userInfo.PhId);
+                        console.log(sessionId);
 
                         me.$axios.get('/SysUser/GetLoginState',{params:{
                             uid:this.userid,
-                            sessionid:token.sessionId
+                            sessionid:sessionId
                         }})
                         .then(res=>{
                             console.log(res)

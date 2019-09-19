@@ -1,5 +1,5 @@
 export default {
-    // 当前语言模式  zh / en 
+    // 当前语言模式  zh / en
     lang: '',
     // 已经加载的语言包
     langPack: ['zhCN'],
@@ -12,5 +12,11 @@ export default {
     // 通知框等需要自动消失的时间
     duration: 3000,
     //loader提示
-    isLoading: false
+    isLoading: false,
+    //预算汇总弹窗
+    routerToBudgetcount:false,
+    //报表汇总弹窗
+    routerToReportcount:false,
+    //缓存标识符
+    sessionId:''
 }

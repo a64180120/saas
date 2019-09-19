@@ -15,3 +15,16 @@
     }
     #{$property}: $remValues;
 }
+@mixin border-radius($radius) {
+    border-radius: $radius;
+    -ms-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -webkit-border-radius: $radius;
+}
+
+@mixin transform($val) {
+    transform: $val;
+    -ms-transform:$val;
+    -moz-transform: $val;
+    -webkit-transform: $val;
+}

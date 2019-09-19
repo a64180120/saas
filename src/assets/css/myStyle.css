@@ -1,4 +1,11 @@
+body{
+     font-family:"PFang","PingFang" ,"songti", "Helvetica Neue", Helvetica,arial, sans-serif;
 
+}
+*{
+    font-family:"PFang","PingFang" ,"songti", "Helvetica Neue", Helvetica,arial, sans-serif;
+    box-sizing: border-box;
+}
 .el-input--suffix .el-input__inner{
     margin:0;
     padding-right: 0;
@@ -46,8 +53,10 @@
     position: relative;
     height:30px;
     width:120px;
-    border-radius: 3px;
+    border-radius: 5px;
+    overflow: hidden;
     text-align: center;
+
 }
 .selectContainer>select{
     border:0;
@@ -60,6 +69,7 @@
     background: none;
     text-align: center;
     background: #fff;
+    cursor:pointer;
 }
 .manageContent{
     width:100%;
@@ -69,6 +79,13 @@
     position:relative;
     padding: 20px;
 }
+.timeSelect{
+    height: 100%;
+    position: relative;
+}
+/*.timeSelect div,.timeSelect span,.timeSelect input,.timeSelect li{
+    font-size: 18px !important;
+}*/
 .timeSelect .manageContent{
     padding: 0;
 }
@@ -84,20 +101,20 @@
 
 .searcherValue{
     border:1px solid #ddd;
-    border-radius: 10px 0 0 10px ;
+    border-radius: 3px 0 0 3px ;
     overflow: hidden;
     padding-left:10px;
 }
 .searcherValue>input{
     min-width:100px;
-    height:30px;
+    height:28px;
     outline: none;
     margin:0;
     font-size: 14px;
     border:0;
 }
 .searcherBtn{
-    height:32px;
+    height:30px;
     width:60px;
     text-align: center;
     line-height: 30px;
@@ -135,10 +152,12 @@
     justify-content: space-between;
     align-items: center;
     font-size:13px;
-}
-.formData>ul:first-child{
-    background: #d3e9f9;
-    color:#000;
+    /*background: #fff;*/
+    background-color: #d3e9f9;
+    color:#3e3e3e;
+    border-top:1px solid #ebeef5 ;
+    /*border-bottom:1px solid #ebeef5 ;*/
+    border-left:1px solid #ebeef5 ;
 }
 .datepick{
     font-size: 13px;
@@ -247,22 +266,42 @@
 .newAddStateFalse:before{
     transform: rotate(-45deg);
 }
-.btn{
+/* .hideScroll{
+    position: absolute;
+    top:0;
+    right:0;
+    width: 17px;
+    height:100%;
+    background: #fff;
+} */
+.btngrey,.btn{
     display: inline-block;
     cursor: pointer;
     background: #00b7ee;
     color:#fff;
     text-align: center;
     border:1px solid #00b7ee;
-    border-radius: 5px;
+    border-radius: 4px;
     height:30px;
     line-height: 30px;
     width:90px;
+}
+a.btn{
+    color:#fff;
 }
 .btn:hover{
     background: #fff;
     color:#00b7ee;
 }
+.btngrey{
+    background: #fff;
+    border:1px solid #00b7ee;
+    color:#00b7ee;
+}
+/*.btngrey:hover{*/
+    /*color: #ccc;*/
+    /*background: #fff;*/
+/*}*/
 .btnDisabled{
     background: #fff;
     color:#aaa;
@@ -276,8 +315,9 @@
 }
 .content{
     height:100%;
-    overflow-y: auto;
-    padding: 60px 20px 40px 20px;
+    /* min-height: 544px; */
+    /* overflow-y: auto; */
+    padding: 60px 20px 20px 20px;
     background: #fff;
     margin-top: 0;
 }
@@ -309,7 +349,9 @@
   .el-submenu__icon-arrow{
       color:rgb(117, 74, 74) !important;
   }
-
+  .el-input--suffix .el-input__inner{
+    line-height: 30px;
+}
  /* 清除ie输入框的叉号 */
   input[type=text]::-ms-clear{display: none;}
 
@@ -333,8 +375,9 @@
     height: 60px;
     width: 150px;
     border: 2px solid #ff9f7b;
-    position: relative;
-    right: 80px;
+    position: fixed;
+    right: 180px;
+    top: 300px;
     text-align: center;
     line-height: 30px;
     font-size: 18px;
@@ -343,8 +386,7 @@
     -webkit-transform: rotate(30deg);
     -ms-transform: rotate(30deg);
     transform: rotate(30deg);
-    background-color: white;
-    float: right;
+    background-color: rgba(255,255,255,0.6);
 }
 
 /* 导航子菜单 */
@@ -354,55 +396,277 @@
     text-align: center;
     bottom:5px;
     overflow-y: auto;
-    border-radius: 5px;
-    box-shadow: 0 0 1px 1px  #00b7ee;
+    background:#fff;
+    color:#00b7ee;
 }
 /* 表格样式，仿eltable */
-.tbHeader{
+.timeSelect .formData{
+    overflow-x: visible;
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.timeSelect table {
+    width: 100%;
+    font-size: 17px !important;
+    color: #4e4e4e;
+}
+.timeSelect .tbHeader{
     width: 100%;
     text-align: center;
+    overflow: hidden;
 }
-.tbBody{
-    position: absolute;
-    bottom: 0;
-    top: 90px;
-    right: -17px;
-    left: 0;
+.timeSelect .tbBody{
+    /*position: relative;
+    height: 441px;
     overflow-y: scroll;
+    margin-right: -17px;
+    overflow-x:hidden ;*/
+    position: absolute;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    left: 0;
+    right: -17px;
+    top: 50px;
+    bottom: 0;
 }
-.tbBody table{
+.timeSelect .tbBody table{
     width: 100%;
+    table-layout: fixed;
 }
-.tbHeader table{
+.timeSelect .tbHeader table{
     height: 100%;
     width: 100%;
+    table-layout: fixed;
 }
-thead td{
-    border:1px solid white;
+.timeSelect thead td{
+    border:1px solid #bbb;
+   /* border: 1px solid #fff;*/
     text-align:center ;
     height: 48px;
-    line-height: 48px;
-    background: #d3e9f9;
-    color: #000;
+    background-color: #d3e9f9;
+    /*background-color: #fff;*/
+    /*background-color: #a0e3ff;*/
+    /*color: #3e3e3e;*/
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding:0 8px;
+
 }
 
-tbody td{
-    height: 48px;
-    line-height: 48px;
-    background: transparent;
-    color: #000;
-    border: 1px solid #ebeef5;
-    padding:0 10px;
-    text-align: center;
+.timeSelect tbody td{
+    border: 1px solid #bbb;
+    /*border: 1px solid #bcbdbd;*/
+    text-align: left;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 8px;
 }
-table .right{
-    text-align: right;
+.timeSelect tbody tr:first-child td{
+    border-top: 0px;
 }
-table .left{
+.timeSelect tbody tr:nth-of-type(2n){
+    /*background-color: #ebfaff;*/
+}
+.timeSelect td input{
+    padding-right: 8px;
+}
+.timeSelect td a{
+    color:#45c0f7;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.timeSelect table .left{
     text-align: left;
 }
-
-tbody tr:hover{
+.timeSelect table .right{
+    text-align: right;
+}
+.timeSelect table .center{
+    text-align: center;
+}
+.timeSelect table .bolder{
+    font-weight: 600;
+}
+.timeSelect tbody tr:hover{
     background-color: #fafafa;
     transition: background-color .25s ease;
 }
+.timeSelect .flexUl{
+    float: right;
+}
+.timeSelect .flexUl li{
+    text-align: center;
+    display: inline-block;
+    float: left;
+    vertical-align: top;
+    width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0;
+    overflow: hidden;
+    margin-left: 10px;
+    background-color: #00B8EE;
+    color: #fff;
+    line-height: 28px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid #00B8EE;
+}
+.timeSelect .flexUl li:hover{
+    color: #00B8EE;
+    border: 1px solid #00B8EE;
+    background-color: #fff;
+}
+.timeSelect .flexUl .searcherValue{
+    height: 30px;
+    display: inline-block;
+    vertical-align: bottom
+}
+.timeSelect .flexUl .searcherBtn{
+    vertical-align: bottom;
+    margin-left: -8px;
+    display: inline-block;
+
+}
+.biaoqian{
+    position: absolute;
+    background: #ff7f00;
+    line-height: 32px;
+    height: 32px;
+    padding: 0 15px;
+    border-radius: 0 16px 16px 0;
+    left: -20px;
+    color: white;
+    cursor: pointer;
+}
+.fixTitle{
+    position: fixed;
+    left: 40px;
+    right: 57px;
+    top: 0px;
+    background: white;
+    box-shadow: 0 0 10px 2px #c4d3dd;
+    z-index: 99;
+}
+.adminPicture .el-upload-list--picture-card .el-upload-list__item-status-label{
+    background:none;
+    box-shadow: none;
+}
+.adminPicList .el-upload-list--picture-card .el-upload-list__item .el-icon-check:before{
+    content:'';
+}
+.adminPicList  .el-upload-list__item.published::after{
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 7px;
+    border: 1px solid #fff;
+    border-width: 0 0 2px 2px;
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    top: 2px;
+    right: 3px;
+}
+.adminPicList  .el-upload-list__item.published::before{
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 20px;
+    background: #3df53d;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    top: -4px;
+    right: -13px;
+}
+/* 菜单页面样式--王冠冠 */
+.menuStyleByW .el-input--suffix .el-input__inner {
+    margin: 0;
+    padding-right: 0;
+    height: 40px;
+    line-height: 40px;
+}
+.el-message-box__btns .el-button:nth-child(1) {
+    border-color: #00B8EE;
+    color: #00B8EE;
+    background:#fff;
+}
+
+.area-option .el-scrollbar .el-select-dropdown__wrap  ul li span{
+    font-size: 16px;
+}
+
+.listFont{
+	font-size: 17px !important;
+    color: #4e4e4e !important;
+}
+/*图标样式*/
+.hyzIcon_book{
+    position: relative;
+    top: -2px;
+    width: 20px;
+    height: 30px;
+    text-align: center;
+    background-image: url("../../assets/images/hyzicon/bookmark.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: -5px;
+}
+.hyzIcon_eye{
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    background-image: url("../../assets/images/hyzicon/eye.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+.hyzIcon_eyeclose{
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    background-image: url("../../assets/images/hyzicon/eyeclose.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/*单行省略号*/
+.overText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirmCon .el-message-box__content{
+  padding-top:0;
+
+}
+.confirmCon .el-message-box__header{
+  background: #fff;
+}
+.confirmCon  .el-message-box__message{
+  border-top: 1px solid #dbdbdb;
+}
+
+.confirmCon  .confirmImg{
+    width:55px;
+    height: 55px;
+    background: url(../images/message.png) no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .eldialogClass{
+
+  }

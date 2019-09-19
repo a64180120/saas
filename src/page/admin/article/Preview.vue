@@ -103,7 +103,7 @@ export default {
                 orgid: this.orgid
             };
 
-            this.$axios.get('/SysNews/GetNewsAndAttachmentByNid', {params: {phid:phid}})
+            this.$axios.get('/SysNews/GetNewsAndAttachmentByNid', {params: data})
                 .then(res => {
                     if (res.Status === 'error') {
                         this.$message.error(res.Msg);
@@ -216,7 +216,6 @@ export default {
             color: #79CA63;
             text-align: left;
             text-decoration: none;
-            font-family: Arial,Arial;
             font-size: 14.0pt;
             font-style: normal;
             font-weight: 700;

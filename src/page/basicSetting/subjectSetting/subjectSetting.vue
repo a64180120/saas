@@ -37,7 +37,7 @@
       <ul class="formDataItems flexPublic" :class="{userInfoCss:userInfoCssList[index].checked}" @click="chooseOn(index,item)" v-for="(item,index) of userInfo" :key="index">
         <li>{{index+1+(pageIndex-1)*pageSize}}</li>
         <li>{{item.KCode}}</li>
-        <li>{{item.KName}}</li>
+        <li>{{item.KName }}</li>
         <li>{{item.KType}}</li>
         <li>{{item.KBalanceType}}</li>
         <li>{{item.KAmountCheck}}</li>
@@ -217,7 +217,8 @@
     }
   }
   .formData>ul.formDataItems:hover{
-    background: #ddd;
+      background-color: #fafafa;
+      transition: background-color .25s ease;
   }
   .formDataItems{
 

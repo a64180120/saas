@@ -3,14 +3,16 @@
         <div class="container">
             <aside class="asideNav">
                 <ul>
-                    <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">基层工会组织</li>
-                    <li @click="unionTab('union')" :class="{asideActive:asideActive=='union'}">机关工会组织</li>
-                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i v-if="showVerify" >{{dVerifyNum}}</i>待审核基层组织</li>
+                    <li @click="unionTab('basic')" :class="{asideActive:asideActive=='basic'}">工会组织</li>
+                    <li @click="unionTab('union')" :class="{asideActive:asideActive=='union'}" v-if="noLook">机关工会组织</li>
+                    <li @click="unionTab('look')" :class="{asideActive:asideActive=='look'}"><i v-if="showVerify" >{{dVerifyNum>99?'99+':dVerifyNum}}</i>待审核工会组织</li>
+                    <li @click="unionTab('verify')" :class="{asideActive:asideActive=='verify'}">授权与验证</li>
                 </ul>
             </aside>
             <look v-if="asideActive=='look'" @time-click="ajaxMode"></look>
             <basic v-if="asideActive=='basic'"></basic>
             <union v-if="asideActive=='union'"></union>
+            <verify v-if="asideActive=='verify'"></verify>
         </div>
     </div>
 </template>
@@ -19,11 +21,13 @@
     import union from './union'
     import basic from './basicUnion'
     import look from './lookUnion'
+    import verify from './verify'
     import {mapState, mapActions} from 'vuex'
     export default {
         name: "manage",
         data() {
             return {
+                noLook: false,
                 asideActive: 'basic',
                 dVerifyNum : "",
                 showVerify : true,
@@ -66,19 +70,20 @@
                 this.ajaxMode();
             },
             ajaxMode() {
-                console.log('222222wwwww');
+
                 let data = {
                     uid: "0",
                     orgid: "0",
-                    pagesize: 300,
+                    pagesize: 15,
                     pageindex: 0,
-                    value: "0"
+                    value: "0",
+                    isSystem:'0'
                 };
                 this.$axios.get('/SysOrganize/GetOrganizesByAuditStatus', {params: data})
                     .then(res => {
-                        console.log(res);
+
                         this.dVerifyNum = res.totalRows;
-                        console.log(this.dVerifyNum);
+                        
                         if(res.totalRows == 0){
                             this.showVerify = false;
                         }else{
@@ -99,7 +104,8 @@
         components: {
             union,
             basic,
-            look
+            look,
+            verify
         }
     }
 </script>
@@ -139,11 +145,11 @@
     .asideNav > ul > li > i {
         font-style: normal;
         position: absolute;
-        top: 0px;
+        top: 5px;
         right: -10px;
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
         text-align: center;
         background: red;
         color: #fff;

@@ -1,8 +1,24 @@
 <template>
-    <div class="sys-page">
+    <div class="sys-page" style="font-size:18px">
         <div class="container">
-            <div class="unionState flexPublic">
-                <div class="flexPublic">
+            <div class="unionState flexPublic2">
+
+                <ul class="flexPublic handle">
+                    <div class="searcherValue" style="border-radius:4px 0 0 4px">
+                        <input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="标题">
+                    </div>
+                    <div @click="unionSearch" class="searcherBtn" style="border-radius:0;width: 60px">搜索</div>
+                    <a @click.prevent="handlePage('add')"><li>新增</li></a>
+                    <a @click.prevent="handlePage('edit')"><li>修改</li></a>
+                    <a @click.prevent="handlePage('delete')"><li>删除</li></a>
+                    <a @click.prevent="handlePage('publish')"><li>发布</li></a>
+                    <a @click.prevent="handlePage('nopublish')"><li>取消发布</li></a>
+                    <a @click.prevent="handlePage('type')"><li>分类管理</li></a>
+                    <a>
+                        <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;background: #FFFFFF;min-width:30px;padding:0;border:0'></li>
+                    </a>
+                </ul>
+                <div class="flexPublic" style="margin-right:10px; float: left">
                     <div>
                         发布状态：
                     </div>
@@ -21,31 +37,18 @@
                             v-model="creatTime"
                             type="date"
                             size='small'
+                            value-format='yyyy-MM-dd'
                             placeholder="选择日期" style="width: 180px;">
                         </el-date-picker>
                     </div>
                 </div>
-                <ul class="flexPublic handle">
-                    <div class="searcherValue">
-                        <input @keyup.enter="unionSearch" v-model="unionSearchValue" type="text" placeholder="标题">
-                    </div>
-                    <div @click="unionSearch" class="searcherBtn btn" style="width: 60px">搜索</div>
-                    <a @click.prevent="handlePage('add')"><li>新增</li></a>
-                    <a @click.prevent="handlePage('edit')"><li>修改</li></a>
-                    <a @click.prevent="handlePage('delete')"><li>删除</li></a>
-                    <a @click.prevent="handlePage('publish')"><li>发布</li></a>
-                    <a @click.prevent="handlePage('nopublish')"><li>取消发布</li></a>
-                    <a @click.prevent="handlePage('type')"><li>分类管理</li></a>
-                    <a>
-                        <li class="el-icon-refresh" @click="freshPage" style='margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;'></li>
-                    </a>
-                </ul>
+
             </div>
-            <div class="auxiliary manageContent">
+            <div class="auxiliary manageContent" style="font-size:18px">
                 <div class="auxiliaryNav">
                     <p class="auxiliaryNavTitle">信息类别</p>
                     <ul>
-                        <li @click.stop="navTabTurn(item)" :class="{active:navActive.Name==item.Name}" v-for="(item,index) of navTab" :key="index">{{item.Name}}</li>
+                        <li :title="item.Name" @click.stop="navTabTurn(item)" :class="{active:navActive.Name==item.Name}" v-for="(item,index) of navTab" :key="index">{{item.Name}}</li>
                     </ul>
                 </div>
                 <div class="formData listContent">
@@ -56,7 +59,7 @@
                         :header-cell-style="getRowClassNews"
                         @row-click="clickRowNews"
                         highlight-current-row
-                        style="width: 100%">
+                        style="width: 100%;font-size:18px">
                         <el-table-column
                             type="index"
                             label="序号"
@@ -114,6 +117,7 @@
             <!--类型页面-->
             <article-type datalists="" @type-click="addTypeFinish" v-if="handleNav=='type'"></article-type>
         </div>
+        <message :message="saasMessage.message" :delay="saasMessage.delay" :visible.sync="saasMessage.visible" ></message>
     </div>
 </template>
 
@@ -136,7 +140,14 @@
                 navTab:[],
                 pageSize: 10, //pageSize
                 pageIndex: 1, //pageIndex
-                total:0
+                total:0,
+                activated:false,
+                saasMessage:{
+
+                },
+                PhTypeId:'',
+                /*判断是否有置顶信息*/
+                isHaveTop:false
             }
         },
         created(){
@@ -145,6 +156,15 @@
         mounted(){
             //加载辅助项类型
             this.getTypeData();
+            console.log(this.navActive.PhId)
+        },
+        activated: function(){
+            console.log('activated_1');
+            if( this.activated){
+                console.log('activated_2');
+                this.getData('');
+            }
+            
         },
         //计算
         computed:{
@@ -159,6 +179,11 @@
         },
         //组件
         components:{ articleType },
+        watch:{
+            PhTypeId(val,oldval){
+                console.log(val)
+            }
+        },
         methods:{
             initInfoCss(){
                 for(var i in this.listInfo){
@@ -184,12 +209,12 @@
                             return
                         }
 
-                        console.log(res)
+                        console.log(res.List)
 
                         this.listInfo=res.List;
                         this.navTab=res.Type;
                         this.total=Number(res.Total);
-
+                        this.PhTypeId = res.Type[0].PhId
                         if(this.navTab.length>0){
                             this.navActive=this.navTab[0];
                         }
@@ -197,6 +222,13 @@
                         for(var i=0;i<this.listInfo.length;i++){
                             this.listInfoCssList[i]={checked:false};
                         }
+                        this.isHaveTop = this.listInfo.some(item =>{
+                            if (item.Ontop == '1'){
+                                return true
+                            }
+                        })
+                        console.log( this.isHaveTop)
+                        this.activated=true;
 
                     })
                     .catch(err=>{
@@ -210,7 +242,9 @@
             },
             //切换分类触发方法
             navTabTurn(item){
+                console.log(item.PhId)
                 this.navActive=item;
+                this.selectedItem='';
                 //加载数据
                 this.getData('');
             },
@@ -237,28 +271,35 @@
              * query:查询参数
              *  */
             getData(query){
+
                 let data = {
                     uid: this.uid,
                     orgid: this.orgid,
                     value:this.navActive.PhId,
                     pagesize:this.pageSize,
-                    pageindex:this.pageIndex-1
+                    pageindex:this.pageIndex-1,
+                    queryfilter:query
                 };
 
-                //debugger
-
+                // 
                 this.$axios.get('/SysNews/GetSysNewsListByTypeId',{params:data})
                     .then(res=>{
                         if(res.Status==='error'){
                             this.$message.error(res.Msg);
                             return
                         }
-
                         this.listInfo=res.List;
                         this.total=Number(res.Total);
+                        this.isHaveTop = this.listInfo.some(item =>{
+                            if (item.Ontop == '1'){
+                                return true
+                            }
+                        })
                         for(var i=0;i<this.listInfo.length;i++){
                             this.listInfoCssList[i]={checked:false};
+
                         }
+
                     })
                     .catch(err=>{
                         console.log(err)
@@ -273,20 +314,50 @@
                     case 'add':
                         //新增的按钮
                         this.handleNav='add';
-                        this.$router.push({path: '/admin/article/add', query: { type:this.handleNav, phid:0 }});
+                        //this.$router.push({path: '/admin/article/add', query: { type:this.handleNav, phid:0 }});
+                        this.$router.push({name:'article_add',params:{activeNav:this.navActive,type:this.handleNav, phid:0,isHaveTop:this.isHaveTop,isAdd:true}})
                         break;
                     case 'edit':
                         //编辑按钮
+                        if(!this.selectedItem){
+                            this.saasMessage={
+                                visible:true,
+                                message:'请选择要修改的新闻!'
+                            }
+                            return ;
+                        }
                         this.handleNav='edit';
-                        this.$router.push({path: '/admin/article/add', query: { type:this.handleNav, phid:this.selectedItem.PhId }});
+                        this.$router.push({name:'article_add',params: {activeNav:this.navActive, type:this.handleNav, phid:this.selectedItem.PhId,isHaveTop:this.isHaveTop,isAdd:false}});
                         break;
                     case 'delete':
+
+                        if(!this.selectedItem){
+                            this.saasMessage={
+                                visible:true,
+                                message:'请选择要修改的新闻!'
+                            }
+                            return ;
+                        }
                         this.deleteBase();
                         break;
                     case 'publish':
+                        if(!this.selectedItem){
+                            this.saasMessage={
+                                visible:true,
+                                message:'请选择要修改的新闻!'
+                            }
+                            return ;
+                        }
                         this.PublishNews(1);
                         break;
                     case 'nopublish':
+                        if(!this.selectedItem){
+                            this.saasMessage={
+                                visible:true,
+                                message:'请选择要修改的新闻!'
+                            }
+                            return ;
+                        }
                         this.PublishNews(0);
                         break;
                     case 'type':
@@ -298,7 +369,14 @@
              * 搜索按钮
              */
             unionSearch(){
-                this.getData('');
+
+                var query={
+                    "Publish*num*eq":this.publishState,   //发布状态
+                    "NgInsertDt*str*eq":this.creatTime,   //创建时间
+                    "Title*str*eq":this.unionSearchValue,   //标题
+                }
+
+                this.getData(query);
             },
             /** 
              * 删除方法
@@ -339,22 +417,23 @@
              */
             PublishNews(state){
 
-                var pubmodel=this.selectedItem;
-                pubmodel.Publish=state;
-                pubmodel.Publisher=this.username;
-                //pubmodel.PublishTime=state;
-
-                var data={
-                    uid:this.uid,
-                    orgid:this.orgid,
-                    infoData:pubmodel
-                }
-
-                this.$confirm('取消发布该文章, 是否继续?', '提示', {
+                var title=state===0?'取消发布':'发布';
+                this.$confirm(title+'该文章, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    var pubmodel=this.selectedItem;
+                    pubmodel.Publish=state;
+                    pubmodel.Publisher=this.username;
+                    //pubmodel.PublishTime=state;
+
+                    var data={
+                        uid:this.uid,
+                        orgid:this.orgid,
+                        infoData:pubmodel
+                    }
+
                     this.$axios.post('/SysNews/PostPutSysNews',data)
                         .then(res=>{
                             if(res.Status==='error'){
@@ -363,22 +442,24 @@
                             }
                             this.getData('');
                             this.initInfoCss();
-                            this.$message.success('发布成功!');  
+                            this.$message.success(title+'成功!');
+                            this.selectedItem = ""
                         })
                         .catch(err=>{
                             console.log(err)
+                            this.selectedItem = ""
                             this.$message({ showClose: true,message: "发布错误", type: "error"});
                         })
                 }).catch((err) => {
-                    console.log(err)   
+                    //console.log(err)
+                    this.getData('');
                 });
             },
             //分类管理弹窗完成*************
             addTypeFinish(val){
                 this.handleNav=false;
-                if(val){
-                    this.getTypeData();
-                }
+                this.getTypeData();
+
             },
             // 给表单的表头添加背景颜色
             getRowClassNews({row, column, rowIndex, columnIndex}){
@@ -401,12 +482,12 @@
 
 <style scoped>
     .el-icon-refresh:before {
-        content: "\E633";
-        font-size: 20px;
+        /* content: "\E6D0"; */
+        font-size: 25px;
         color: #00B8EE;
     }
     .container{
-        height:90%;
+        height:100%;
         overflow-y: auto;
     }
     .manageContent{
@@ -415,6 +496,7 @@
     }
     .unionState{
         padding:0 10px;
+        min-width: 1190px;
     }
     .auxiliary{
         display: flex;
@@ -450,6 +532,7 @@
         text-align: center;
         border:1px solid #00b8ee;
         border-radius: 5px;
+        overflow: hidden;
     }
     .auxiliaryNav>ul>li:hover{
         background: #00b8ee;
@@ -488,11 +571,17 @@
         height:1px;
         background: #d8281d;
         transform: rotate(45deg);
-        left:40px;
-        left:45%;
+        top:22px;
+        left:44%;
     }
     .newsPublishStateFalse:before{
         transform: rotate(-45deg);
+    }
+    .flexPublic2>ul,
+    .flexPublic2>li,
+    .flexPublic2>span,
+    .flexPublic2>div{
+        float:right;
     }
 </style>
 <style>
@@ -503,6 +592,9 @@
 
     .el-table--enable-row-hover .el-table__body tr:hover>td{
 	    background-color: #ddd;
+    }
+    .el-input__inner{
+        line-height:30px;
     }
 </style>
 

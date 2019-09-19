@@ -1,6 +1,6 @@
 <template>
-    <div class="sys-page" style="background-color: #ffffff">
-        <div class="container">
+    <div class="sys-page menuStyleByW" style="font-size:18px;background-color: #ffffff">
+        <div class="container" style="height: 100%">
             <div class="handle-box" style="position: relative">
                 <el-row>
                     <el-col :span="24">
@@ -9,22 +9,29 @@
                         <!--<el-option label="无效" value="0"></el-option>-->
                         <!--<el-option label="有效" value="1"></el-option>-->
                         <!--</el-select>-->
-                        <el-input v-model="select_word" placeholder="菜单名称" prefix-icon="el-icon-search" class="handle-input mr10" size="small"></el-input>
-                        <el-button type="primary" icon="el-icon-search" size="small" @click="search">搜索</el-button>
-                        <el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10" @click="ButtonManagement" style="float:right">按钮管理</el-button>
-                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="PageDelete" style="float:right">删除菜单</el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="PageEdit" style="float:right">修改菜单</el-button>
+                        <el-button size="small" class="el-icon-refresh" style="float: right;padding:0;margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;"
+                                   @click="freshPage">
+                        </el-button>
+
+                        <el-button type="info" size="small" class="handle-del mr10" @click="ButtonManagement" style="float:right;margin-left: 10px">按钮管理</el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" @click="PageDelete" style="float:right">删除菜单</el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" @click="PageEdit" style="float:right">修改菜单</el-button>
 
                         <!--<el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="PageReset">查看菜单</el-button>-->
-                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="PageAdd" style="float:right">添加菜单</el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" @click="PageAdd" style="float:right">添加菜单</el-button>
+                        <el-button type="primary" size="small" class="search box-seach" @click="search">搜索</el-button>
+                        <el-input v-model="select_word" placeholder="菜单名称" style="float:right" prefix-icon="el-icon-search" class="box-input handle-input borderRadius mr10" size="small"></el-input>
+
                     </el-col>
                 </el-row>
             </div>
             <tree-table
                 :data="tableData"
+                 style="font-size:18px"
                 :columns="columns"
                 :extraheight='extraheight'
                 border
+                :rowKey="rowkeyMenu"
                 ref="multipleTable"
                 :expand-all="expandAll"
                 v-loading="loading"
@@ -34,7 +41,7 @@
                 <!-- <el-table-column type="selection" width="55" align="center"></el-table-column> -->
                 <!--<el-table-column label="序号" type="index" width="50"></el-table-column>-->
                 <!--<el-table-column prop="Name" label="菜单名称" width="120"></el-table-column>-->
-                <el-table-column label="连接" align="center">
+                <el-table-column label="连接" align="left">
                     <template slot-scope="scope">
                         {{ scope.row.UrlAddress}}
                     </template>
@@ -104,14 +111,14 @@
                 <el-form-item label="菜单姓名：" prop="Name">
                     <el-input v-model="form.Name"></el-input>
                 </el-form-item>
-                <el-form-item label="连接：" prop="UrlAddress">
-                    <el-input v-model="form.UrlAddress"></el-input>
+                <el-form-item label="连接：" prop="UrlAddress" >
+                    <el-input v-model="form.UrlAddress" :disabled="qIsSystem"></el-input>
                 </el-form-item>
                 <el-form-item label="图标：" prop="Icon">
                     <el-input v-model="form.Icon"></el-input>
                 </el-form-item>
                 <el-form-item label="目标：" prop="Type">
-                    <el-select v-model="form.Type" placeholder="==请选择==" class="handle-select mr10">
+                    <el-select v-model="form.Type" placeholder="==请选择==" class="handle-select mr10" :disabled="qIsSystem">
                         <el-option label="无页面" value="1"></el-option>
                         <el-option label="框架页" value="2"></el-option>
                         <el-option label="弹出页" value="3"></el-option>
@@ -134,8 +141,8 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="saveEdit('form')">保 存</el-button>
-                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button @click="editVisible = false" style="color: #00B8EE; border-color: #00B8EE;">取 消</el-button>
+                <el-button type="primary" @click="saveEdit('form')">保 存</el-button>               
             </span>
         </el-dialog>
         <!--按钮管理弹出页-->
@@ -149,6 +156,9 @@
                         <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" @click="PageAddButton">添加按钮</el-button>
                         <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" @click="PageEditButton">修改按钮</el-button>
                         <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" @click="PageDeleteButton">删除按钮</el-button>
+                        <el-button size="small" class="el-icon-refresh" style="padding:0;margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;"
+                                   @click="PageFreshButton">
+                        </el-button>
                         <!--<el-button type="info" icon="el-icon-lx-redpacket_fill" size="small" class="handle-del mr10" @click="PageReset">查看菜单</el-button>-->
                         <!--<el-button type="info" icon="el-icon-lx-message" size="small" class="handle-del mr10" @click="SendCode">按钮管理</el-button>-->
                     </el-col>
@@ -157,13 +167,15 @@
             <tree-table
                 :data="tableDataButton"
                 :columns="columnsButton"
+                :extraheight='extraheight'
                 border
+                :rowKey="rowkeyMenu"
                 ref="multipleTableButton"
                 :expand-all="expandAllButton"
                 v-loading="loadingButton"
                 highlight-current-row
                 :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
-                @onRowClick="handleClickRow">
+                @onRowClick="handleClickRowBtn">
                 <el-table-column label="位置"  align="center">
                     <template slot-scope="scope">
                         <span v-if="scope.row.Location==='1'">初始</span>
@@ -205,14 +217,14 @@
                 <el-form-item label="名称：" prop="Name">
                     <el-input v-model="formButton.Name"></el-input>
                 </el-form-item>
-                <el-form-item label="编号：" prop="EnCode">
-                    <el-input v-model="formButton.EnCode"></el-input>
+                <el-form-item label="编码：" prop="EnCode">
+                    <el-input v-model="formButton.EnCode" :disabled="qbIsSystem"></el-input>
                 </el-form-item>
                 <!--<el-form-item label="图标：" prop="Icon">-->
                     <!--<el-input v-model="formButton.Icon"></el-input>-->
                 <!--</el-form-item>-->
                 <el-form-item label="上级按钮：" prop="ParentName">
-                    <el-input v-model="formButton.ParentName" disabled="true"></el-input>
+                    <el-input v-model="formButton.ParentName" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="位置：" prop="Location">
                     <el-select v-model="formButton.Location" placeholder="==请选择==" class="handle-select mr10">
@@ -240,8 +252,8 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="saveButton('formButton')">保 存</el-button>
-                <el-button @click="editButton = false">取 消</el-button>
+                <el-button @click="editButton = false" style="color: #00B8EE; border-color: #00B8EE;">取 消</el-button>
+                <el-button type="primary" @click="saveButton('formButton')">保 存</el-button>               
             </span>
         </el-dialog>
         <!--<div style="position: fixed; top:120px;bottom: 0px; width: 50px;background-color: #FFFFFF;right: 0px;">-->
@@ -250,12 +262,16 @@
     </div>
 </template>
 <script>
-    import treeTable from "@/components/tree-table/indexHeight";
+    import treeTable from "@/components/tree-table/indexHeightTree";
     export default {
         name: "MenuList",
         components: { treeTable },
         data() {
             return {
+
+                rowkeyMenu:'PhId',
+                qbIsSystem: false,
+                qIsSystem: false,
                 columns: [
                     {
                         text: "菜单名称",
@@ -276,11 +292,12 @@
                 tableData: [], //table数据
                 tableDataButton:[],
                 qData: [],
-                extraheight:300,
+                extraheight:70+50+40+100+80,
                 // pageSize: 10, //pageSize
                 // pageIndex: 1, //pageIndex
                 // totalCount: 0, //总页数
                 singleSelection: [], //选中行
+                singleSelectionBtn:[],//菜单按钮页面选中行
                 //state_mark: "", //菜单状态
                 select_word: "", //搜索字段
                 select_Button: "",//菜单按钮搜索字段
@@ -313,15 +330,16 @@
                     IsExpand: false,
                     EnabledMark: true,
                     AllowEdit: false,
-                    AlowDelete: false
+                    AlowDelete: false,
+                    IsSystem: ""
                 },
                 rules: {
                     Name: [
                         { required: true, message: "请输入菜单姓名", trigger: "blur" }
                     ],
-                    UrlAddress: [
-                        { required: true, message: "请输入相应连接", trigger: "blur" }
-                    ],
+                    //UrlAddress: [
+                        //{ required: true, message: "请输入相应连接", trigger: "blur" }
+                    //],
                     Type: [
                         { required: true, message: "请选择目标状态", trigger: "change" }
                     ]
@@ -367,7 +385,12 @@
         },
         computed: {},
         //components: {},
-
+        mounted(){
+            //设置表格高度
+            let containerHeight = document.getElementsByClassName('container')[0].clientHeight;
+            let handleBoxHeight = document.getElementsByClassName('handle-box')[0].clientHeight;
+            this.extraheight = containerHeight - handleBoxHeight
+        },
         methods: {
             // 分页导航
             // handleCurrentChange(val) {
@@ -382,6 +405,7 @@
             handleCurrentChange(row) {
                 console.log(row);
             },
+            //菜单页面选中行
             handleClickRow(row) {
                 console.log(row);
                 this.singleSelection = [];
@@ -391,7 +415,19 @@
                 //alert(this.singleSelection);
                 console.log(this.singleSelection);
             },
+            //菜单按钮页面选中行
+            handleClickRowBtn(row) {
+                console.log(row);
+                this.singleSelectionBtn = [];
+                this.singleSelectionBtn.push(row);
+
+                //console.log(this.singleSelectionBtn);
+                //alert(this.singleSelection);
+                console.log(this.singleSelectionBtn);
+            },
+            //获取菜单数据列表
             getData() {
+                this.tableData = [];
                 this.loading = true;
                 this.$axios.get("/SysMenu/GetSysMenuList", {
                     params: {
@@ -418,6 +454,7 @@
             },
             // 获取相应菜单下按钮的数据
             getDataButton(menuId) {
+                this.tableDataButton = [];
                 console.log(menuId);
                 this.loadingButton = true;
                 this.$axios.get("/SysMenu/GetSysMenuButtonList", {
@@ -444,6 +481,7 @@
                     }
                 );
             },
+            //搜索菜单列表
             search() {
                 this.loading = true;
                 if(this.select_word == "")
@@ -475,6 +513,7 @@
                 }
                 this.is_search = true;
             },
+            //搜索菜单按钮列表
             searchBntton() {
                 this.loadingButton = true;
                 if(this.select_Button == "")
@@ -520,8 +559,14 @@
                 };
                 this.editVisible = true;
             },
-            //新增按钮
+            //刷新按钮
+            freshPage(){
+                this.singleSelection = [];
+                this.getData();                
+            },
+            //新增菜单
             PageAdd() {
+                this.qIsSystem = false;
                 let object = this.singleSelection;
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if(id != 0)
@@ -545,12 +590,15 @@
                 this.dialogState = "add";
                 this.editVisible = true;
             },
-            //修改按钮
+            //修改菜单
             PageEdit() {
                 let object = this.singleSelection;
 
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if (id != 0) {
+                    if(object[0].IsSystem == '1'){
+                        this.qIsSystem = true;
+                    }
                     this.qParentId = object[0].ParentId;
                     // this.loading=true
                     this.$axios.get("/SysMenu/GetSysMenu", {
@@ -599,12 +647,12 @@
                         this.dialogState = "edit";
                         this.editVisible = true;
 
-                        this.singleSelection = [];
+                        //this.singleSelection = [];
                         this.$forceUpdate();
                     });
                     this.dialogState = "edit";
                     this.editVisible = true;
-                    this.singleSelection = [];
+                    //this.singleSelection = [];
 
                 } else {
                     this.$message({
@@ -613,12 +661,17 @@
                     });
                 }
             },
-            //删除按钮
+            //删除菜单
             PageDelete() {
                 //let length = this.singleSelection.length;
                 let object = this.singleSelection;
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if (id != 0) {
+                    console.log(object[0]);
+                    if(object[0].IsSystem == '1'){
+                        this.$message.error('该菜单为内置菜单，不能进行删除！');
+                        return;
+                    }
                     var data = {
                         uid: "0",
                         orgid: "0",
@@ -662,6 +715,7 @@
             //按钮管理
             ButtonManagement()
             {
+                this.singleSelectionBtn =[];
                 let object = this.singleSelection;
                 let menuId = object.length > 0 ? object[0].PhId : 0;
                 console.log(object);
@@ -669,6 +723,7 @@
                     this.buttonManage = true;
                     this.qMenuId = menuId;
                     this.getDataButton(menuId);
+                    //this.singleSelection =[];
                     //this.$router.push({path: '/admin/menu/buttonManage', query: {PhId: id}});
                 } else {
                     this.$message({
@@ -676,33 +731,52 @@
                         type: "warning"
                     });
                 }
-                this.singleSelection = [];
+                //this.singleSelection = [];
             },
             //新增按钮
             PageAddButton() {
                 //dialogButton=='add'?'新增按钮':'修改按钮'" :visible.sync="editButton"
-                let object = this.singleSelection;
+                this.formButton = {
+                    Name: "",
+                    EnCode: "",
+                    Icon: "",
+                    MenuId: "",
+                    ParentId: "",
+                    ParentName: "",
+                    Location: "",
+                    JsEvent: "",
+                    UrlAddress:"",
+                    SortCode: "",
+                    Description: "",
+                    IsPublic: true,
+                    EnabledMark: true,
+                    AllowEdit: false,
+                    AlowDelete: false
+                };
+                let object = this.singleSelectionBtn;
                 let id = object.length > 0 ? object[0].PhId : 0;
-                if(id != 0)
-                {
+                if (id != 0) {
                     this.qParentButtonId = id;
                     this.qParentButtonName = object[0].Name;
                 } else {
                     this.qParentButtonId = "0";
                     this.qParentButtonName = "父级按钮";
                 }
-                this.fromButton ={};
-                this.fromButton.EnabledMark = true;
+
                 this.formButton.ParentName = this.qParentButtonName;
                 this.dialogButton = "add";
                 this.editButton = true;
+                this.qbIsSystem = false;
                 console.log(this.qMenuId);
             },
             //修改按钮
             PageEditButton() {
-                let object = this.singleSelection;
+                let object = this.singleSelectionBtn;
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if (id != 0) {
+                    if(object[0].IsSystem == '1'){
+                        this.qbIsSystem = true;
+                    }
                     this.qParentButtonId = object[0].ParentId;
                     this.$axios.get("/SysMenu/GetSysMenuButton", {
                         params: {
@@ -738,12 +812,12 @@
                         console.log(this.formButton);
                         this.dialogButton = "edit";
                         this.editButton = true;
-                        this.singleSelection = [];
+                        //this.singleSelection = [];
                         this.$forceUpdate();
                     });
                     this.dialogButton = "edit";
                     this.editButton = true;
-                    this.singleSelection = [];
+                    //this.singleSelection = [];
 
                 } else {
                     this.$message({
@@ -755,9 +829,13 @@
             //删除按钮
             PageDeleteButton() {
                 //let length = this.singleSelection.length;
-                let object = this.singleSelection;
+                let object = this.singleSelectionBtn;
                 let id = object.length > 0 ? object[0].PhId : 0;
                 if (id != 0) {
+                    if(object[0].IsSystem == '1'){
+                        this.$message.error('该按钮为内置按钮，不能进行删除！');
+                        return;
+                    }
                     var data = {
                         uid: "0",
                         orgid: "0",
@@ -779,7 +857,7 @@
                                     }else{
                                         this.$message.error('删除失败,请重试!');
                                     }
-                                    this.singleSelection = [];
+                                    this.singleSelectionBtn = [];
                                     this.getDataButton(this.qMenuId);
                                 });
                         })
@@ -796,6 +874,11 @@
                         type: "warning"
                     });
                 }
+            },
+            //按钮管理页面刷新按钮
+            PageFreshButton(){
+                this.singleSelectionBtn = [];
+                this.getDataButton(this.qMenuId);
             },
             //密码重置
             //PageReset() {},
@@ -948,7 +1031,7 @@
                                     }else{
                                         this.$message.error('新增失败,请重试!');
                                     }
-                                    this.singleSelection = [];
+                                    this.singleSelectionBtn = [];
                                     this.getDataButton(this.qMenuId);
                                 });
                         }else {
@@ -965,7 +1048,7 @@
                                     }else{
                                         this.$message.error('修改失败,请重试!');
                                     }
-                                    this.singleSelection = [];
+                                    this.singleSelectionBtn = [];
                                     this.getDataButton(this.qMenuId);
                                 });
                         }
@@ -977,11 +1060,25 @@
                     }
                 });
             }
-        }
+        },
+
     };
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style scoped>
+    .el-icon-refresh:before {
+        /* content: "\E6D0"; */
+        font-size: 25px;
+        color: #00B8EE;
+    }
+
+    .handle-del{
+        font-size: 14px;
+        padding: 7px 15px;
+    }
+    .handle-del:hover{
+        border-color: #00b7ee;
+    }
     .el-checkbox-option {
         width: 100%;
         float: left;
@@ -999,6 +1096,26 @@
         width: 300px;
         display: inline-block;
     }
+    .box-input >>> .el-input__inner{
+        border-radius: 4px 0 0 4px;
+        height: 30px;
+        line-height: 30px;
+    }
+    .box-input >>> .el-input__inner:focus{
+        border-color: #ccc;
+    }
+    .box-seach{
+        float:right;
+        border-radius:0 4px 4px 0;
+        margin:0;
+        font-size: 18px;
+        padding-top: 5px;
+        padding-bottom:5px ;
+    }
+    .box-seach:hover{
+        background: #FFFFFF;
+        color: #00b7ee;
+    }
     .del-dialog-cnt {
         font-size: 16px;
         text-align: center;
@@ -1010,5 +1127,15 @@
 
     .red {
         color: #ff0000;
+    }
+    .borderRadius input{
+        border-radius: 4px 0 0 4px;
+    }
+
+    .menuStyleByW .el-input--suffix .el-input__inner {
+        margin: 0;
+        padding-right: 0;
+        height: 40px;
+        line-height: 40px;
     }
 </style>

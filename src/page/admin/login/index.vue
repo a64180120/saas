@@ -61,15 +61,16 @@
                 login: 'auth/adminloginByPhone'
             }),
             submitForm(formName) {
+                console.log(this.login);
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.login({
                             UserID: this.loginForm.UserID,
                             UserPwd: this.loginForm.UserPwd
                         }).then(res => {
-                            this.$router.push('home') //跳转主页
+                            this.$router.push('/home') //跳转主页
                             // if(res.login){
-                            //     this.$router.push('home') //跳转主页
+                            //     this.$router.push('/home') //跳转主页
                             // } else {
                             //     this.sysMsg = res.message
                             // }

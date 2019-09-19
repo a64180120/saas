@@ -133,7 +133,7 @@
           pagesize:this.pageSize,
           pageindex:this.pageIndex-1
         };
-        this.$axios.get('http://10.0.45.51:7758/api/GCW/SysOrganize/GetSysOrganizeList',{params:data})
+        this.$axios.get('/SysOrganize/GetSysOrganizeList',{params:data})
           .then(res=>{
 
             console.log(res)

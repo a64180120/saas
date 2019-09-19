@@ -161,7 +161,7 @@
 
         }
         .list-item-text{
-          font-size: 12px;
+          font-size: 16px;
         }
       }
     }

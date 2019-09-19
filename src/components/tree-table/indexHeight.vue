@@ -4,6 +4,7 @@
   :data="formatData"
   :row-style="showRow"
   :height="tableHeight"
+  row-key="PhId"
   v-bind="$attrs"
   @row-click="handleClickRow"
   @current-change="handleCurrentChange">
@@ -104,6 +105,7 @@ export default {
       }
       const func = this.evalFunc || treeToArray
       const args = this.evalArgs ? Array.concat([tmp, this.expandAll], this.evalArgs) : [tmp, this.expandAll]
+        console.log(func.apply(null, args))
       return func.apply(null, args)
     }
   },

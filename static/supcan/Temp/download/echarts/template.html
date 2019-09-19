@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <style type="text/css">
+        body { margin:0; overflow: hidden; }
+    </style>
+    <script src="<!--ECHARTS_JS_DIR-->/echarts.js"></script>
+    <script>
+        var option = <!--OPTION-->;
+        var curChart = null;
+        var curTheme = null;
+        var myChart = null;
+        //自适应宽高
+        function autoResize()
+        {
+            var dv = document.getElementById('main');
+            dv.style.width  = document.documentElement.clientWidth + 'px';
+            dv.style.height = document.documentElement.clientHeight + 'px';
+        }
+        //浏览器大小改变时重置大小
+        window.onresize = function () {
+            autoResize();
+            if(myChart != null) myChart.resize();
+        }
+    </script>
+</head>
+
+<body scroll="no">
+    <div id="main">
+    <script defer="defer">
+        autoResize();
+        require.config({
+            paths: { echarts: '<!--ECHARTS_JS_DIR-->'}
+        });
+        require([
+            'echarts',
+            'echarts/theme/<!--ECHARTS_THEME-->',
+            'echarts/chart/<!--ECHARTS_TYPE-->',
+            ],
+            function(ec, theme) {
+                curChart = ec;
+                curTheme = theme;
+                setTimeout(run, 100);
+            }
+        );
+        function run() {
+            myChart = curChart.init(document.getElementById('main'), curTheme);
+            myChart.setOption(option);
+        }
+        
+        // interactive
+        function setChartItemData(indexSeries, indexData, data) {
+            try {
+                option.series[indexSeries].data[indexData].value = data;
+            }
+            catch(e) {
+            }
+        }
+        function updateOption() {
+            setTimeout(run2, 100);
+        }
+        function run2() {
+            myChart.setOption(option);
+        }
+    </script>
+    </div>
+</body>
+</html>

@@ -28,7 +28,8 @@ module.exports = {
             '@': resolve('src'),
             'static': path.resolve(__dirname, '../static'),
             'sysStatic': resolve('src/assets'),
-            'sysComponents': resolve('src/components')
+            'sysComponents': resolve('src/components'),
+            'supan': resolve('static/supcan/dynaload.js'),
         }
     },
     module: {

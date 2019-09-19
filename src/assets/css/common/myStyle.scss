@@ -78,3 +78,28 @@ ul{
 .p0{
   padding:0  !important;
 }
+
+@media print{
+    html,body{
+        height: inherit;
+    }
+    body{
+        height: inherit !important;
+    }
+    #printForm{
+        height: inherit !important;
+    }
+    .timeSelect{
+        padding: 30px 100px!important;
+        margin: 0!important;
+    }
+    #printContentArea{
+        margin: 0px!important;
+    }
+    th,td{
+        font-size: 14px;
+        padding: 2px;
+        height: 30px;
+
+    }
+}

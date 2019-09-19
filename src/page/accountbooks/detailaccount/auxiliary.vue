@@ -71,7 +71,7 @@
                     <li>摘要</li>
                     <li>借方金额(元)</li>
                     <li>贷方金额(元)</li>
-                    <li>方向</li>
+                    <li>借/贷</li>
                     <li>余额(元)</li>
                 </ul>
                 <ul class="formDataItems flexPublic" v-for="item of dataInfo" :key="item.uid">

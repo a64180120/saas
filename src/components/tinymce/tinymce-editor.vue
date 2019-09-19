@@ -1,7 +1,7 @@
 <template>
   <div class="tinymce-editor">
     <editor
-      id='tinymce'
+      :id="id"
       v-model="myValue"
       :init="init"
       :disabled="disabled"
@@ -43,15 +43,19 @@ export default {
     toolbar: {
       type: [String, Array],
       default: 'undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists image media table | removeformat'
+    },
+    id: {
+      type: String,
+      default: 'tinymce'
     }
   },
   data() {
     return {
       //初始化配置
       init: {
-        language_url: '/static/tinymce/zh_CN.js',
+        language_url: 'static/tinymce/zh_CN.js',
         language: 'zh_CN',
-        skin_url: '/static/tinymce/skins/lightgray',
+        skin_url: 'static/tinymce/skins/lightgray',
         height: 320,
         plugins: this.plugins,
         toolbar: this.toolbar,
@@ -90,10 +94,10 @@ export default {
       this.myValue = ''
     },
     getContent(){
-        var activeEditor = tinymce.activeEditor; 
-        var editBody = activeEditor.getBody(); 
-        activeEditor.selection.select(editBody); 
-        var text = activeEditor.selection.getContent({'format':'text'});
+        // var activeEditor = tinymce.activeEditor; 
+        // var editBody = activeEditor.getBody(); 
+        // activeEditor.selection.select(editBody); 
+        // var text = activeEditor.selection.getContent({'format':'text'});
 
         return text;
     }

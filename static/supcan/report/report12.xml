@@ -1,0 +1,817 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--By Supcan Report -->
+<Report>
+	<WorkSheet name="Sheet">
+		<Properties>
+			<BackGround bgColor="#FFFFFF"/>
+			<DefaultTD>
+				<TD fontIndex="0" textColor="#000000" transparent="true" leftBorder="1" topBorder="1" leftBorderColor="#C0C0C0" leftBorderStyle="solid" topBorderColor="#C0C0C0" topBorderStyle="solid" decimal="2" align="left" vAlign="middle" isProtected="false" isThousandSeparat="true" datatype="0" isRound="true" isPrint="true"/>
+			</DefaultTD>
+			<Other isShowZero="true" isRefOri="true" LineDistance="0" isRowHeightAutoExtendAble="true"/>
+		</Properties>
+		<Fonts>
+			<Font faceName="微软雅黑" charSet="134" height="-14" weight="400" pitchAndFamily="34" quality="1" outPrecision="3" clipPrecision="2"/>
+		</Fonts>
+		<Table>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="15"/>
+			<TR height="24" sequence="0">
+				<TD col="0" align="center">2016、2017年对比表（年度）</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="1">
+				<TD col="2">总收入</TD>
+				<TD col="3">村集体经营性收入</TD>
+				<TD col="4">资产总额     </TD>
+				<TD col="5">净资产</TD>
+				<TD col="6">总支出</TD>
+				<TD col="7">村级债务</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="2">
+				<TD col="0">东山街道</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">246887269.82 </TD>
+				<TD col="3">175407741.78 </TD>
+				<TD col="4">1744841515.54 </TD>
+				<TD col="5">1534840947.27 </TD>
+				<TD col="6">104042189.33 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="3">
+				<TD col="1">2017年</TD>
+				<TD col="2">351106081.11 </TD>
+				<TD col="3">249111042.15 </TD>
+				<TD col="4">2088593326.02 </TD>
+				<TD col="5">1913593636.09 </TD>
+				<TD col="6">113831187.50 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="4">
+				<TD col="1">增幅</TD>
+				<TD col="2">42.21%</TD>
+				<TD col="3">42.02%</TD>
+				<TD col="4">19.70%</TD>
+				<TD col="5">24.68%</TD>
+				<TD col="6">9.41%</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="5">
+				<TD col="0">章村社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">40787017.59 </TD>
+				<TD col="3">37746797.59 </TD>
+				<TD col="4">420,918,071.19    </TD>
+				<TD col="5">374,868,490.48    </TD>
+				<TD col="6">6,597,858.25    </TD>
+				<TD col="7">34189159.34 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="6">
+				<TD col="1">2017年</TD>
+				<TD col="2">41268257.18 </TD>
+				<TD col="3">35964457.18    </TD>
+				<TD col="4">640020070.57 </TD>
+				<TD col="5">588993981.35 </TD>
+				<TD col="6">8361136.08 </TD>
+				<TD col="7">32907121.10 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="7">
+				<TD col="1">增幅</TD>
+				<TD col="2">1.18%</TD>
+				<TD col="3">-4.72%</TD>
+				<TD col="4">52.05%</TD>
+				<TD col="5">57.12%</TD>
+				<TD col="6">26.73%</TD>
+				<TD col="7">-0.26 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="8">
+				<TD col="0">东山社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">12430594.89 </TD>
+				<TD col="3">9840202.89 </TD>
+				<TD col="4">147,333,506.78    </TD>
+				<TD col="5">145,269,609.46    </TD>
+				<TD col="6">7,305,856.31    </TD>
+				<TD col="7">5124738.58 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="9">
+				<TD col="1">2017年</TD>
+				<TD col="2">7173489.81 </TD>
+				<TD col="3">4853237.81 </TD>
+				<TD col="4">147186684.33 </TD>
+				<TD col="5">141658282.89 </TD>
+				<TD col="6">7067599.30 </TD>
+				<TD col="7">105890.51 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="10">
+				<TD col="1">增幅</TD>
+				<TD col="2">-42.29%</TD>
+				<TD col="3">-50.68%</TD>
+				<TD col="4">-0.10%</TD>
+				<TD col="5">-2.49%</TD>
+				<TD col="6">-3.26%</TD>
+				<TD col="7">-0.39 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="11">
+				<TD col="0">中前社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">32997216.16 </TD>
+				<TD col="3">25549573.46 </TD>
+				<TD col="4">189,198,077.66    </TD>
+				<TD col="5">185,929,294.68    </TD>
+				<TD col="6">11,447,313.26    </TD>
+				<TD col="7">21549902.90 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="12">
+				<TD col="1">2017年</TD>
+				<TD col="2">29083178.73 </TD>
+				<TD col="3">20220007.96 </TD>
+				<TD col="4">192,219,872.60    </TD>
+				<TD col="5">191,950,953.05    </TD>
+				<TD col="6">16,196,962.58    </TD>
+				<TD col="7">12886216.15 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="13">
+				<TD col="1">增幅</TD>
+				<TD col="2">-11.86%</TD>
+				<TD col="3">-20.86%</TD>
+				<TD col="4">1.60%</TD>
+				<TD col="5">3.24%</TD>
+				<TD col="6">41.49%</TD>
+				<TD col="7">-0.53 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="14">
+				<TD col="0">岔路社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">10248251.25 </TD>
+				<TD col="3">9592051.25 </TD>
+				<TD col="4">82,008,517.09    </TD>
+				<TD col="5">31,663,420.11    </TD>
+				<TD col="6">6,981,442.34    </TD>
+				<TD col="7">3266808.91 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="15">
+				<TD col="1">2017年</TD>
+				<TD col="2">4787240.71 </TD>
+				<TD col="3">2996720.71 </TD>
+				<TD col="4">74,110,481.60    </TD>
+				<TD col="5">21,154,757.01    </TD>
+				<TD col="6">9,057,531.33    </TD>
+				<TD col="7">-4270290.62 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="16">
+				<TD col="1">增幅</TD>
+				<TD col="2">-53.29%</TD>
+				<TD col="3">-68.76%</TD>
+				<TD col="4">-9.63%</TD>
+				<TD col="5">-33.19%</TD>
+				<TD col="6">29.74%</TD>
+				<TD col="7">-0.83 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="17">
+				<TD col="0">邵圣社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">12139833.49 </TD>
+				<TD col="3">3982013.49 </TD>
+				<TD col="4">61,464,831.94    </TD>
+				<TD col="5">65,202,517.26    </TD>
+				<TD col="6">5,763,371.17    </TD>
+				<TD col="7">6376462.32 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="18">
+				<TD col="1">2017年</TD>
+				<TD col="2">13678171.32 </TD>
+				<TD col="3">6209225.57 </TD>
+				<TD col="4">70,364,218.20    </TD>
+				<TD col="5">75,418,663.78    </TD>
+				<TD col="6">6,756,665.76    </TD>
+				<TD col="7">6921505.56 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="19">
+				<TD col="1">增幅</TD>
+				<TD col="2">12.67%</TD>
+				<TD col="3">55.93%</TD>
+				<TD col="4">14.48%</TD>
+				<TD col="5">15.67%</TD>
+				<TD col="6">17.23%</TD>
+				<TD col="7">-0.05 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="20">
+				<TD col="0">龙西社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">2315823.24 </TD>
+				<TD col="3">1393273.24 </TD>
+				<TD col="4">81,605,311.17    </TD>
+				<TD col="5">79,313,579.37    </TD>
+				<TD col="6">2,733,112.00    </TD>
+				<TD col="7">-417288.76 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="21">
+				<TD col="1">2017年</TD>
+				<TD col="2">2767045.65 </TD>
+				<TD col="3">1287445.65 </TD>
+				<TD col="4">74,729,601.05    </TD>
+				<TD col="5">75,319,727.71    </TD>
+				<TD col="6">5,015,499.31    </TD>
+				<TD col="7">-2248453.66 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="22">
+				<TD col="1">增幅</TD>
+				<TD col="2">19.48%</TD>
+				<TD col="3">-7.60%</TD>
+				<TD col="4">-8.43%</TD>
+				<TD col="5">-5.04%</TD>
+				<TD col="6">83.51%</TD>
+				<TD col="7">-0.64 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="23">
+				<TD col="0">骆村社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">33144107.63 </TD>
+				<TD col="3">31730373.63 </TD>
+				<TD col="4">297,476,610.17    </TD>
+				<TD col="5">276,870,755.79    </TD>
+				<TD col="6">8,851,671.29    </TD>
+				<TD col="7">24292436.34 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="24">
+				<TD col="1">2017年</TD>
+				<TD col="2">26291771.82 </TD>
+				<TD col="3">24053847.82 </TD>
+				<TD col="4">303,543,937.29    </TD>
+				<TD col="5">284,003,276.03    </TD>
+				<TD col="6">8,326,731.22    </TD>
+				<TD col="7">17965040.60 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="25">
+				<TD col="1">增幅</TD>
+				<TD col="2">-20.67%</TD>
+				<TD col="3">-24.19%</TD>
+				<TD col="4">2.04%</TD>
+				<TD col="5">2.58%</TD>
+				<TD col="6">-5.93%</TD>
+				<TD col="7">-0.15 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="26">
+				<TD col="0">外港社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">5350650.07 </TD>
+				<TD col="3">765412.11 </TD>
+				<TD col="4">8,658,941.80    </TD>
+				<TD col="5">8,544,041.80    </TD>
+				<TD col="6">2,245,339.33    </TD>
+				<TD col="7">3105310.74 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="27">
+				<TD col="1">2017年</TD>
+				<TD col="2">7443976.32 </TD>
+				<TD col="3">202922.30 </TD>
+				<TD col="4">12,215,292.21    </TD>
+				<TD col="5">11,832,069.21    </TD>
+				<TD col="6">2,611,979.66    </TD>
+				<TD col="7">4831996.66 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="28">
+				<TD col="1">增幅</TD>
+				<TD col="2">39.12%</TD>
+				<TD col="3">-73.49%</TD>
+				<TD col="4">41.07%</TD>
+				<TD col="5">38.48%</TD>
+				<TD col="6">16.33%</TD>
+				<TD col="7">0.23 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="29">
+				<TD col="0">晓里社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">5169575.59 </TD>
+				<TD col="3">388897.47 </TD>
+				<TD col="4">7,353,313.19    </TD>
+				<TD col="5">8,271,285.61    </TD>
+				<TD col="6">3,563,094.86    </TD>
+				<TD col="7">1606480.73 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="30">
+				<TD col="1">2017年</TD>
+				<TD col="2">7321861.70 </TD>
+				<TD col="3">429005.28 </TD>
+				<TD col="4">9,422,914.12    </TD>
+				<TD col="5">9,862,080.69    </TD>
+				<TD col="6">4,926,249.31    </TD>
+				<TD col="7">2395612.39 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="31">
+				<TD col="1">增幅</TD>
+				<TD col="2">41.63%</TD>
+				<TD col="3">10.31%</TD>
+				<TD col="4">28.15%</TD>
+				<TD col="5">19.23%</TD>
+				<TD col="6">38.26%</TD>
+				<TD col="7">0.03 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="32">
+				<TD col="0">上坊社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">12586022.31 </TD>
+				<TD col="3">6960816.05 </TD>
+				<TD col="4">50,797,154.81    </TD>
+				<TD col="5">20,498,370.27    </TD>
+				<TD col="6">10,890,754.61    </TD>
+				<TD col="7">1695267.70 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="33">
+				<TD col="1">2017年</TD>
+				<TD col="2">43896469.16 </TD>
+				<TD col="3">39220690.16 </TD>
+				<TD col="4">57,905,253.56    </TD>
+				<TD col="5">48,552,311.34    </TD>
+				<TD col="6">14,620,317.48    </TD>
+				<TD col="7">29276151.68 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="34">
+				<TD col="1">增幅</TD>
+				<TD col="2">248.77%</TD>
+				<TD col="3">463.45%</TD>
+				<TD col="4">13.99%</TD>
+				<TD col="5">136.86%</TD>
+				<TD col="6">34.25%</TD>
+				<TD col="7">2.15 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="35">
+				<TD col="0">高桥社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">14058474.98 </TD>
+				<TD col="3">7326528.98 </TD>
+				<TD col="4">45,739,274.62    </TD>
+				<TD col="5">28,536,178.32    </TD>
+				<TD col="6">9,848,577.51    </TD>
+				<TD col="7">4209897.47 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="36">
+				<TD col="1">2017年</TD>
+				<TD col="2">20426984.18 </TD>
+				<TD col="3">8855907.18 </TD>
+				<TD col="4">50,699,459.57    </TD>
+				<TD col="5">37,476,060.39    </TD>
+				<TD col="6">8,312,923.60    </TD>
+				<TD col="7">12114060.58 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="37">
+				<TD col="1">增幅</TD>
+				<TD col="2">45.30%</TD>
+				<TD col="3">20.87%</TD>
+				<TD col="4">10.84%</TD>
+				<TD col="5">31.33%</TD>
+				<TD col="6">-15.59%</TD>
+				<TD col="7">0.61 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="38">
+				<TD col="0">佘村社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">11467732.81 </TD>
+				<TD col="3">1313978.81 </TD>
+				<TD col="4">12,171,578.51    </TD>
+				<TD col="5">7,936,345.90    </TD>
+				<TD col="6">6,439,924.64    </TD>
+				<TD col="7">5027808.17 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="39">
+				<TD col="1">2017年</TD>
+				<TD col="2">23984028.65 </TD>
+				<TD col="3">8072970.65 </TD>
+				<TD col="4">10,905,734.05    </TD>
+				<TD col="5">24,714,408.87    </TD>
+				<TD col="6">6,595,090.99    </TD>
+				<TD col="7">17388937.66 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="40">
+				<TD col="1">增幅</TD>
+				<TD col="2">109.14%</TD>
+				<TD col="3">514.39%</TD>
+				<TD col="4">-10.40%</TD>
+				<TD col="5">211.41%</TD>
+				<TD col="6">2.41%</TD>
+				<TD col="7">1.07 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="41">
+				<TD col="0">泥塘社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">38279600.23 </TD>
+				<TD col="3">33347226.23 </TD>
+				<TD col="4">248,143,697.20    </TD>
+				<TD col="5">238,580,024.26    </TD>
+				<TD col="6">8,851,400.04    </TD>
+				<TD col="7">29428200.19 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="42">
+				<TD col="1">2017年</TD>
+				<TD col="2">72133051.48 </TD>
+				<TD col="3">67559471.48 </TD>
+				<TD col="4">309,478,614.79    </TD>
+				<TD col="5">300,884,178.52    </TD>
+				<TD col="6">4,700,435.77    </TD>
+				<TD col="7">67432615.71 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="43">
+				<TD col="1">增幅</TD>
+				<TD col="2">88.44%</TD>
+				<TD col="3">102.59%</TD>
+				<TD col="4">24.72%</TD>
+				<TD col="5">26.11%</TD>
+				<TD col="6">-46.90%</TD>
+				<TD col="7">1.35 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="44">
+				<TD col="0">天云社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">6045985.58 </TD>
+				<TD col="3">2783232.58 </TD>
+				<TD col="4">5,293,314.01    </TD>
+				<TD col="5">5,863,684.95    </TD>
+				<TD col="6">2,857,601.53    </TD>
+				<TD col="7">3188384.05 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="45">
+				<TD col="1">2017年</TD>
+				<TD col="2">4814882.53 </TD>
+				<TD col="3">1737040.53 </TD>
+				<TD col="4">6,525,205.53    </TD>
+				<TD col="5">6,962,572.01    </TD>
+				<TD col="6">3,065,477.55    </TD>
+				<TD col="7">1749404.98 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="46">
+				<TD col="1">增幅</TD>
+				<TD col="2">-20.36%</TD>
+				<TD col="3">-37.59%</TD>
+				<TD col="4">23.27%</TD>
+				<TD col="5">18.74%</TD>
+				<TD col="6">7.27%</TD>
+				<TD col="7">-0.28 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="47">
+				<TD col="0">永安社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">3647745.73 </TD>
+				<TD col="3">1192705.73 </TD>
+				<TD col="4">30,216,404.45    </TD>
+				<TD col="5">28,921,494.20    </TD>
+				<TD col="6">5,402,052.28    </TD>
+				<TD col="7">-1754306.55 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="48">
+				<TD col="1">2017年</TD>
+				<TD col="2">18900815.95 </TD>
+				<TD col="3">16157035.95 </TD>
+				<TD col="4">51,320,598.31    </TD>
+				<TD col="5">46,621,360.59    </TD>
+				<TD col="6">4,058,633.84    </TD>
+				<TD col="7">14842182.11 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="49">
+				<TD col="1">增幅</TD>
+				<TD col="2">418.15%</TD>
+				<TD col="3">1254.65%</TD>
+				<TD col="4">69.84%</TD>
+				<TD col="5">61.20%</TD>
+				<TD col="6">-24.87%</TD>
+				<TD col="7">4.43 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="50">
+				<TD col="0">大里社区居委会</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">6218638.27 </TD>
+				<TD col="3">1494658.27 </TD>
+				<TD col="4">56,462,910.95    </TD>
+				<TD col="5">28,571,854.81    </TD>
+				<TD col="6">4,262,819.91    </TD>
+				<TD col="7">1955818.36 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="51">
+				<TD col="1">2017年</TD>
+				<TD col="2">27134855.92 </TD>
+				<TD col="3">11291055.92 </TD>
+				<TD col="4">77,945,388.24    </TD>
+				<TD col="5">48,188,952.65    </TD>
+				<TD col="6">4,157,953.72    </TD>
+				<TD col="7">22976902.20 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="52">
+				<TD col="1">增幅</TD>
+				<TD col="2">336.35%</TD>
+				<TD col="3">655.43%</TD>
+				<TD col="4">38.05%</TD>
+				<TD col="5">68.66%</TD>
+				<TD col="6">-2.46%</TD>
+				<TD col="7">3.39 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="53">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="54">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="55">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="56">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="57">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="58">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="59">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="60">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="61">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="62">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="63">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="64">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="65">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="66">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="67">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="68">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="69">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="70">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="71">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="72">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="73">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="74">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="75">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="76">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="77">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="78">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="79">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="80">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="81">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="82">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="83">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="84">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="85">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="86">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="87">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="88">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="89">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="90">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="91">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="92">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="93">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="94">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="95">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="15" sequence="96">
+				<TD col="0" leftBorder="0"/>
+				<TD col="1" leftBorder="0"/>
+				<TD col="2" leftBorder="0"/>
+				<TD col="3" leftBorder="0"/>
+				<TD col="4" leftBorder="0"/>
+				<TD col="5" leftBorder="0"/>
+				<TD col="6" leftBorder="0"/>
+				<TD col="7" leftBorder="0"/>
+				<TD col="8" leftBorder="0"/>
+				<TD col="9" leftBorder="0"/>
+				<TD col="10" leftBorder="0"/>
+				<TD col="11" leftBorder="0"/>
+				<TD col="12" leftBorder="0"/>
+				<TD col="13" leftBorder="0"/>
+				<TD col="14" leftBorder="0"/>
+				<TD col="15" leftBorder="0"/>
+				<TD col="16" leftBorder="0"/>
+				<TD col="17" leftBorder="0"/>
+				<TD col="18" leftBorder="0"/>
+				<TD col="19" leftBorder="0"/>
+				<TD col="20" leftBorder="0" topBorder="0"/>
+			</TR>
+		</Table>
+		<Merges>
+			<Range row1="0" col1="0" row2="0" col2="7"/>
+		</Merges>
+		<GraphicObjects>
+			<Echart unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="bar1">
+				<Properties Exp="Type=3;Title=资产总额、净资产;Theme=macarons;DataExp1=3:4;DataExp2=E:F;Meaning1=2;Meaning2=A;MeaningPos=1;"/>
+				<Rect x1="89" y1="1250" x2="889" y2="1650"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '资产总额、净资产',
+        subtext: ''
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['东山街道','Row 4']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'category',
+            data : ['资产总额','净资产']
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value'
+        }
+    ],
+    series : [
+        {
+            name:'东山街道',
+            type:'bar',
+            data:[1744841515.54,1534840947.27],
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name: '平均值'}
+                ]
+            }
+        },
+        {
+            name:'Row 4',
+            type:'bar',
+            data:[2088593326.02,1913593636.09],
+            markPoint : {
+                data : [
+                    {name : '年最高', value : 182.2, xAxis: 7, yAxis: 183, symbolSize:18},
+                    {name : '年最低', value : 2.3, xAxis: 11, yAxis: 3}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name : '平均值'}
+                ]
+            }
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+		</GraphicObjects>
+		<PrintPage>
+			<Paper>
+				<Margin left="19" top="25" right="19" bottom="25"/>
+			</Paper>
+			<Page isIgnoreValidBorder="false">
+				<PageCode>
+					<Font faceName="微软雅黑" charSet="134" height="-14" weight="400"/>
+				</PageCode>
+			</Page>
+		</PrintPage>
+	</WorkSheet>
+</Report>

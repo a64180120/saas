@@ -14,7 +14,7 @@ $themeColorDarken: darken($themeColor, 8%);
 -------------------------- */
 /* login */
 //$loginBg: url($baseImageURL+"login.jpg") center center no-repeat;
-$loginBg: url($baseImageURL+"login.jpg");
+$loginBg: url($baseImageURL +"login.jpg");
 $loginBtn: #424f60;
 $loginTextColor: $lightGray;
 $loginInputBorderColor: rgba(255,255,255,.1);

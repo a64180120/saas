@@ -24,7 +24,7 @@ export default {
                 // chrome/FF/Edge/IE11/IE10/IE9
                 // e.deltaY > 0 即鼠标滚轮向下滚动，则该条向右滚动，left值变负
                 const scrollSpace = e.deltaY > 0 ? -1 * this.wheelSpeed : this.wheelSpeed
-                if(e.deltaY > 0){ 
+                if(e.deltaY > 0){
                     if(Math.abs(this.left + scrollSpace) <= (scrollContWidth - scrollWrapWidth)){
                         this.left += scrollSpace
                     }
@@ -43,7 +43,7 @@ export default {
             const scrollWrapWidth = this.$refs.scrollWrap.offsetWidth
             const tarWidth = tar.offsetWidth
             const tarLeft = tar.offsetLeft
-            
+
             if(tarLeft < -1 * this.left){
                 // 激活的标签导航在左边
                 this.left = -tarLeft
@@ -57,11 +57,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .scroll-wrap{
-    position: relative;
-    width: 100%;
+    position: absolute;
     height: 100%;
     white-space: nowrap;
     overflow: hidden;
+    left: 10px;
+    right: 120px;
 }
 .scroll-cont{
     position: absolute;

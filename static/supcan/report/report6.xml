@@ -1,0 +1,550 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--By Supcan Report -->
+<Report>
+	<WorkSheet name="Sheet">
+		<Properties>
+			<BackGround bgColor="#FFFFFF"/>
+			<DefaultTD>
+				<TD fontIndex="0" textColor="#000000" transparent="true" leftBorder="1" topBorder="1" leftBorderColor="#C0C0C0" leftBorderStyle="solid" topBorderColor="#C0C0C0" topBorderStyle="solid" decimal="2" align="left" vAlign="middle" isProtected="false" isThousandSeparat="true" datatype="0" isRound="true" isPrint="true"/>
+			</DefaultTD>
+			<Other isShowZero="true" isRefOri="true" LineDistance="0" isRowHeightAutoExtendAble="true"/>
+		</Properties>
+		<Fonts>
+			<Font faceName="微软雅黑" charSet="134" height="-14" weight="400" pitchAndFamily="34" quality="1" outPrecision="3" clipPrecision="2"/>
+		</Fonts>
+		<Table>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="15"/>
+			<TR height="24" sequence="0">
+				<TD col="1"/>
+				<TD col="2"/>
+				<TD col="3"/>
+				<TD col="4"/>
+				<TD col="5"/>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="1">
+				<TD col="0" align="center">村集体经济总收入构成</TD>
+				<TD col="1"/>
+				<TD col="2"/>
+				<TD col="3"/>
+				<TD col="4"/>
+				<TD col="5"/>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="2">
+				<TD col="1">经营收入</TD>
+				<TD col="2">发包及上交收入</TD>
+				<TD col="3">投资收益</TD>
+				<TD col="4">其他收入</TD>
+				<TD col="5">合计</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="61" sequence="3">
+				<TD col="0">集体经营性收入</TD>
+				<TD col="1" formula="=LJJZJE(&quot;501&quot;,&quot;321&quot;,month(),,,,)+DLJJE(&quot;501&quot;,,,,,)"/>
+				<TD col="2" formula="=LJJZJE(&quot;511&quot;,&quot;321&quot;,month(),,,,)+DLJJE(&quot;511&quot;,,,,,)"/>
+				<TD col="3" formula="=LJJZJE(&quot;561&quot;,&quot;321&quot;,month(),,,,)+DLJJE(&quot;561&quot;,,,,,)"/>
+				<TD col="4" formula="=LJJZJE(&quot;531&quot;,&quot;321&quot;,month(),,,,)+DLJJE(&quot;531&quot;,,,,,)"/>
+				<TD col="5" formula="=sum(B4+C4+D4+E4)"/>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="4">
+				<TD col="0">补助收入</TD>
+				<TD col="5" formula="=LJJZJE(&quot;522&quot;,&quot;321&quot;,month(),,,,)+DLJJE(&quot;522&quot;,,,,,)"/>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="5">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="6">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="7">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="8">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="9">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="10">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="11">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="12">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="13">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="14">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="15">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="16">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="17">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="18">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="19">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="20">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="21">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="22">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="23">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="24">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="25">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="26">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="27">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="28">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="29">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="30">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="31">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="32">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="33">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="34">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="35">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="36">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="37">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="38">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="39">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="40">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="41">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="42">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="43">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="44">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="45">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="46">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="47">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="48">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="49">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="50">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="51">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="52">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="53">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="54">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="55">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="56">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="57">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="58">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="59">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="60">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="61">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="62">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="63">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="64">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="65">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="66">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="67">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="68">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="69">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="70">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="71">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="72">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="73">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="74">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="75">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="76">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="77">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="78">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="79">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="80">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="81">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="82">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="83">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="84">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="85">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="86">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="87">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="88">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="89">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="90">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="91">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="92">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="93">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="94">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="95">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="96">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="97">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="98">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="99">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="100">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="15" sequence="101">
+				<TD col="0" leftBorder="0"/>
+				<TD col="1" leftBorder="0"/>
+				<TD col="2" leftBorder="0"/>
+				<TD col="3" leftBorder="0"/>
+				<TD col="4" leftBorder="0"/>
+				<TD col="5" leftBorder="0"/>
+				<TD col="6" leftBorder="0"/>
+				<TD col="7" leftBorder="0"/>
+				<TD col="8" leftBorder="0"/>
+				<TD col="9" leftBorder="0"/>
+				<TD col="10" leftBorder="0"/>
+				<TD col="11" leftBorder="0"/>
+				<TD col="12" leftBorder="0"/>
+				<TD col="13" leftBorder="0"/>
+				<TD col="14" leftBorder="0"/>
+				<TD col="15" leftBorder="0"/>
+				<TD col="16" leftBorder="0"/>
+				<TD col="17" leftBorder="0"/>
+				<TD col="18" leftBorder="0"/>
+				<TD col="19" leftBorder="0"/>
+				<TD col="20" leftBorder="0" topBorder="0"/>
+			</TR>
+		</Table>
+		<Merges>
+			<Range row1="2" col1="0" row2="2" col2="0"/>
+			<Range row1="0" col1="0" row2="0" col2="0"/>
+			<Range row1="1" col1="0" row2="1" col2="5"/>
+		</Merges>
+		<GraphicObjects>
+			<Echart unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="pie1">
+				<Properties Exp="Type=2;Theme=macarons;DataRow=5;DataExp1=4,5;MeaningPos=1;"/>
+				<Rect x1="7" y1="179" x2="316" y2="463"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '某站点用户访问来源', 
+        subtext: '纯属虚构', 
+        x: 'center'
+    }, 
+    tooltip : {
+        trigger: 'item', 
+        formatter: '{a} <br\/>{b} : {c} ({d}%)'
+    }, 
+    legend : {
+        orient: 'vertical', 
+        x: 'left', 
+        data : ['集体经营性收入','补助收入']
+    }, 
+    toolbox : {
+        show: true, 
+        feature : {
+            mark : {
+                show: true
+            }, 
+            dataView : {
+                show: true, 
+                readOnly: false
+            }, 
+            magicType : {
+                show: true, 
+                type : ['pie','funnel'], 
+                option : {
+                    funnel : {
+                        x: '25%', 
+                        width: '50%', 
+                        funnelAlign: 'left', 
+                        max: 1548
+                    }
+                }
+            }, 
+            restore : {
+                show: true
+            }, 
+            saveAsImage : {
+                show: true
+            }
+        }
+    }, 
+    calculable: true, 
+    series : [
+        {
+            name: 'Series', 
+            type: 'pie', 
+            radius: '55%', 
+            center : ['50%','60%'], 
+            data : [
+                {name: '集体经营性收入', value: 22.57}, 
+                {name: '补助收入', value: 20}
+            ]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+			<Echart unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="pie4">
+				<Properties Exp="Type=1;Theme=macarons;DataRow=3;TitleRow=2;DataExp1=B,C,D,E;Meaning1=A;MeaningPos=1;"/>
+				<Rect x1="373" y1="192" x2="735" y2="465"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '南丁格尔玫瑰图', 
+        subtext: '纯属虚构', 
+        x: 'center'
+    }, 
+    tooltip : {
+        trigger: 'item', 
+        formatter: '{a} <br\/>{b} : {c} ({d}%)'
+    }, 
+    legend : {
+        x: 'center', 
+        y: 'bottom', 
+        data : ['经营收入','发包及上交收入','投资收益','其他收入']
+    }, 
+    toolbox : {
+        show: true, 
+        feature : {
+            mark : {
+                show: true
+            }, 
+            dataView : {
+                show: true, 
+                readOnly: false
+            }, 
+            magicType : {
+                show: true, 
+                type : ['pie','funnel']
+            }, 
+            restore : {
+                show: true
+            }, 
+            saveAsImage : {
+                show: true
+            }
+        }
+    }, 
+    calculable: true, 
+    series : [
+        {
+            name: 'A', 
+            type: 'pie', 
+            radius : [20,110], 
+            roseType: 'radius', 
+            width: '40%',           // for funnel
+            max: 40,                // for funnel
+            itemStyle : {
+                normal : {
+                    label : {
+                        show: false
+                    }, 
+                    labelLine : {
+                        show: false
+                    }
+                }, 
+                emphasis : {
+                    label : {
+                        show: true
+                    }, 
+                    labelLine : {
+                        show: true
+                    }
+                }
+            }, 
+            data : [
+                {name: '经营收入', value: 9.24}, 
+                {name: '发包及上交收入', value: 3.86}, 
+                {name: '投资收益', value: 1.68}, 
+                {name: '其他收入', value: 7.79}
+            ]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+		</GraphicObjects>
+		<PrintPage>
+			<Paper>
+				<Margin left="19" top="25" right="19" bottom="25"/>
+			</Paper>
+			<Page isIgnoreValidBorder="false">
+				<PageCode>
+					<Font faceName="微软雅黑" charSet="134" height="-14" weight="400"/>
+				</PageCode>
+			</Page>
+		</PrintPage>
+	</WorkSheet>
+</Report>

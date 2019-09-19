@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?><!--By Luxery Form 6.4, NewGrand Software Co.Ltd.--><LForm><Version>11</Version><InternalVersion>2</InternalVersion>
+<WorkSheet name="报表" isDefaultPrint="true"><Properties><BackGround bgColor="#FFFFFF"/>
+<DefaultTD>
+<TD fontIndex="0" textColorIndex="0" leftBorderColorIndex="86" topBorderColorIndex="86" decimal="2" align="left" vAlign="middle" leftBorder="1" topBorder="1" leftBorderStyle="solid" topBorderStyle="solid" transparent="true" isDataSource="false" isProtected="false" isThousandSeparat="true" isRound="true"/>
+</DefaultTD><Other isShowZero="false" isForGraphicObjectsOnly="false"/></Properties>
+<Fonts>
+<Font faceName="SimSun" charSet="134" height="-14" weight="400"/></Fonts>
+<Table>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="140"/>
+<Col width="15"/>
+<TR height="24" rowNumber="0"><TD/><TD/><TD/><TD/><TD/><TD align="center">合计</TD><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="1"><TD>301</TD><TD/><TD>总计</TD><TD formula="=sum(D3,D4,D5,D6,D7,D8,D9,D10,D11)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="2"><TD>30101</TD><TD/><TD>基本工资</TD><TD formula="=XJFE(,,,a3,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="3"><TD>30103</TD><TD/><TD>奖金</TD><TD formula="=XJFE(,,,a4,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="4"><TD>30109</TD><TD/><TD>职业年金缴费</TD><TD formula="=XJFE(,,,a5,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="5"><TD>30110</TD><TD/><TD>职工基本医疗保险缴费</TD><TD formula="=XJFE(,,,a6,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="6"><TD>30111</TD><TD/><TD>公务员医疗补助缴费</TD><TD formula="=XJFE(,,,a7,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="7"><TD>30112</TD><TD/><TD>其他社会保障缴费</TD><TD formula="=XJFE(,,,a8,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="8"><TD>30113</TD><TD/><TD>住房公积金</TD><TD formula="=XJFE(,,,a9,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="9"><TD>30114</TD><TD/><TD>医疗费</TD><TD formula="=XJFE(,,,a10,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="10"><TD>30199</TD><TD/><TD>小计</TD><TD formula="=sum(D12)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="11"><TD>3019901</TD><TD/><TD>201001福利支出</TD><TD formula="=XJFE(,,,a12,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="12"><TD>310</TD><TD/><TD>小计</TD><TD formula="=sum(D14)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="13"><TD>31010</TD><TD/><TD>安置补助</TD><TD formula="=XJFE(,,,a14,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="14"><TD>399</TD><TD/><TD>小计</TD><TD formula="=sum(D16)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="15"><TD>39907</TD><TD/><TD>国家赔偿费用支出</TD><TD formula="=XJFE(,,,a16,,,,,,,,&quot;1&quot;,,,,,,)"/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+<TR height="24" rowNumber="16"><TD/><TD/><TD/><TD/><TD/><TD align="center"/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD/><TD topBorder="0"/></TR>
+</Table>
+<Merges></Merges>
+
+
+<PrintPage><Printer isBindPrinter="false" Duplex="0"/>
+<Paper paperNumber="9" IsBindPaper="false" oriantation="portrait" scale="100" printCopies="1"><Margin left="19" top="25" right="19" bottom="25"/></Paper>
+<Page align="left" vAlign="top" isPrintBackGround="true" isPrintEmptyRow="true" isIgnoreValidBorder="false">
+<GridLine isPrintAble="true" isUseOriginalColor="false"></GridLine>
+<Page-break isLandscapePaging="true" printSequence="1"><FixedRowCols headerRows="0" footerRows="0" leftCols="0" rightCols="0" isFooterRowsAtBottom="false" leftColsWhenLandscapePaging="0"/></Page-break><PageCode isPrint="true" isPrintWhenPageBreak="true"><Expression align="center" vAlign="bottom"/><Font faceName="SimSun" charSet="134" height="-14" weight="400"/></PageCode></Page></PrintPage>
+<summaries></summaries>
+
+<Memos>
+<Blob id="15">14	(pzrq&gt;=to_date(&apos;2018-01-01 00:00:00&apos;))	2018.01.01	brq		0
+15	(pzrq&lt;=to_date(&apos;2018-12-31 23:59:59&apos;))	2018.12.31	erq		0
+</Blob>
+<Blob id="12">0</Blob>
+<Blob id="11">2</Blob>
+<Blob id="10">zw001</Blob>
+<Blob id="9">zw001	部门代码	bm_code											1	1	
+zw001	部门名称	bm_name													
+zw001	附件数	fj													
+zw001	功能科目代码	yskm_code											1	1	
+zw001	功能科目名称	yskm_name													
+zw001	结算单据号	zphjsdjh													
+zw001	经办机构代码	jbjg_code											1	1	
+zw001	经办机构名称	jbjg_name													
+zw001	经费类型代码	jflx_code											1	1	
+zw001	经费类型名称	jflx_name													
+zw001	科目代码	km_code											1	1	
+zw001	科目名称	km_name													
+zw001	凭证号	pzh													
+zw001	凭证日期	pzrq													
+zw001	往来单位代码	wldwdm													
+zw001	往来单位名称	wldwmc													
+zw001	往来地区代码	wldqdm													
+zw001	往来地区名称	wldqmc													
+zw001	往来个人代码	wlgr_code													
+zw001	往来个人名称	wlgr_name													
+zw001	项目代码	xm_code											1	1	
+zw001	项目名称	xm_name													
+zw001	业务单据号	djh													
+zw001	预算单位代码	ysdw_code											1	1	
+zw001	预算单位名称	ysdw_name													
+zw001	预算类型代码	yslx_code													
+zw001	预算类型名称	yslx_name													
+zw001	摘要	zy													
+zw001	指标来源代码	zbly_code											1	1	
+zw001	指标来源名称	zbly_name													
+zw001	专项用途代码	zxyt_code											1	1	
+zw001	专项用途名称	zxyt_name													
+zw001	组织代码	orgcode											1	1	
+zw001	经济科目代码	jjkm_code_orgid	1		1	1							1	1	
+zw001	经济科目代码（加组织ID）	jjkm_code			0								1	1	
+zw001	经济科目名称	jjkm_name			1	3									
+</Blob>
+<Blob id="13">D	=XJFE(,,,#a,,,,,,,,&quot;1&quot;,,,,,,)	0	0	</Blob>
+<Blob id="16">15</Blob>
+<Blob id="20">0</Blob>
+<Blob id="18">0</Blob>
+<Blob id="17">0</Blob></Memos></WorkSheet>
+
+<Limit>0</Limit>
+<profile><default><isautorowheightcalc>0</isautorowheightcalc><isdrawformulatag>0</isdrawformulatag><verticalspace>0</verticalspace></default><macro><mon>12</mon><orgcode>201001</orgcode><userno>01</userno></macro></profile></LForm>

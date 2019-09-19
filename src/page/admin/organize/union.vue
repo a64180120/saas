@@ -495,7 +495,8 @@
         background: #ddd;
     }
     .formData > ul.formDataItems:hover {
-        background: #ddd;
+        background-color: #fafafa;
+        transition: background-color .25s ease;
     }
     .formDataItems {
         border-bottom: 1px solid #ddd;

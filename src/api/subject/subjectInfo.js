@@ -4,17 +4,17 @@
  * object 当前对象 vue
  * param 参数集合
 */
-export function SubjectList(object,param) {
+export function SubjectList (object, param) {
   return new Promise((resolve, reject) => {
     object.$axios({
-        url: "/PSubject/PostPSubjectQueryList",
-        method: 'post',
-        data: param
+      url: "/PSubject/PostPSubjectQueryList",
+      method: 'post',
+      data: param
     }).then(res => {
-        resolve(res.Data)
+      resolve(res.Data)
     }).catch(error => {
-        //错误
-        reject(error);
+      //错误
+      reject(error);
     });
   });
 }
@@ -25,40 +25,40 @@ export function SubjectList(object,param) {
  * object 当前对象 vue
  * param 参数集合
 */
-export function SubjectList2(object,param) {
-    return new Promise((resolve, reject) => {
-      object.$axios({
-          url: "/PSubject/GetPSubjectList",
-          method: 'get',
-          params: param
-      }).then(res => {
-          resolve(res)
-      }).catch(error => {
-          //错误
-          reject(error);
-      });
+export function SubjectList2 (object, param) {
+  return new Promise((resolve, reject) => {
+    object.$axios({
+      url: "/PSubject/GetPSubjectList",
+      method: 'get',
+      params: param
+    }).then(res => {
+      resolve(res)
+    }).catch(error => {
+      //错误
+      reject(error);
     });
-  }
+  });
+}
 
 /**
  * 说明: 新增科目
  * object 当前对象 vue
  * param 参数集合
 */
-export function SubjectAdd(object,param) {
-    return new Promise((resolve, reject) => {
-      object.$axios({
-            url: '/PSubject/PostAdd',
-            method: "post",
-            data: param,
-        }).then(res => {
-            //正确
-            resolve(res);
-        }).catch(error => {
-            //错误
-            reject(error);
-        });
+export function SubjectAdd (object, param) {
+  return new Promise((resolve, reject) => {
+    object.$axios({
+      url: '/PSubject/PostAdd',
+      method: "post",
+      data: param,
+    }).then(res => {
+      //正确
+      resolve(res);
+    }).catch(error => {
+      //错误
+      reject(error);
     });
+  });
 }
 
 /**
@@ -66,20 +66,20 @@ export function SubjectAdd(object,param) {
  * object 当前对象 vue
  * param 参数集合
 */
-export function SubjectUpdate(object,param) {
-    return new Promise((resolve, reject) => {
-      object.$axios({
-            url: '/PSubject/PostUpdate',
-            method: "post",
-            data: param,
-        }).then(res => {
-            //正确
-            resolve(res);
-        }).catch(error => {
-            //错误
-            reject(error);
-        });
+export function SubjectUpdate (object, param) {
+  return new Promise((resolve, reject) => {
+    object.$axios({
+      url: '/PSubject/PostUpdate',
+      method: "post",
+      data: param,
+    }).then(res => {
+      //正确
+      resolve(res);
+    }).catch(error => {
+      //错误
+      reject(error);
     });
+  });
 }
 
 /**
@@ -87,19 +87,19 @@ export function SubjectUpdate(object,param) {
  * object 当前对象 vue
  * param 参数集合
 */
-export function SubjectDelete(object,param) {
-    return new Promise((resolve, reject) => {
-      object.$axios({
-            url: "/PSubject/PostDelete",
-            method: "post",
-            data: param,
-        }).then(res => {
-            //正确
-            resolve(res);
-        }).catch(error => {
-            //错误
-            reject(error);
-        });
+export function SubjectDelete (object, param) {
+  return new Promise((resolve, reject) => {
+    object.$axios({
+      url: "/PSubject/PostDelete",
+      method: "post",
+      data: param,
+    }).then(res => {
+      //正确
+      resolve(res);
+    }).catch(error => {
+      //错误
+      reject(error);
     });
-  }
+  });
+}
 

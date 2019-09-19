@@ -1,0 +1,563 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--By Supcan Report -->
+<Report>
+	<WorkSheet name="Sheet">
+		<Properties>
+			<BackGround bgColor="#FFFFFF"/>
+			<DefaultTD>
+				<TD fontIndex="0" textColor="#000000" transparent="true" leftBorder="1" topBorder="1" leftBorderColor="#C0C0C0" leftBorderStyle="solid" topBorderColor="#C0C0C0" topBorderStyle="solid" decimal="2" align="left" vAlign="middle" isProtected="false" isThousandSeparat="true" datatype="0" isRound="true" isPrint="true"/>
+			</DefaultTD>
+			<Other isShowZero="true" isRefOri="true" LineDistance="0" isRowHeightAutoExtendAble="true"/>
+		</Properties>
+		<Fonts>
+			<Font faceName="微软雅黑" charSet="134" height="-14" weight="400" pitchAndFamily="34" quality="1" outPrecision="3" clipPrecision="2"/>
+		</Fonts>
+		<Table>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="15"/>
+			<TR height="24" sequence="0">
+				<TD col="0" align="center">村集体经济总收入达到100万元以上的村</TD>
+				<TD col="3" align="center">村集体经营性收入达到100万元以上的村</TD>
+				<TD col="4" align="center"/>
+				<TD col="5" align="center"/>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="1">
+				<TD col="0">排名</TD>
+				<TD col="1">村名称</TD>
+				<TD col="2">总收入(万元)</TD>
+				<TD col="3">排名</TD>
+				<TD col="4">村名称</TD>
+				<TD col="5">总收入(万元)</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="2">
+				<TD col="0">1</TD>
+				<TD col="1">飞花社区村</TD>
+				<TD col="2">11081.46</TD>
+				<TD col="3">1</TD>
+				<TD col="4">泥塘社区</TD>
+				<TD col="5">6633.76</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="3">
+				<TD col="0">2</TD>
+				<TD col="1">阜东社区村</TD>
+				<TD col="2">1085.25</TD>
+				<TD col="3">2</TD>
+				<TD col="4">武家嘴社区</TD>
+				<TD col="5">5403.28</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="4">
+				<TD col="0">3</TD>
+				<TD col="1">东葛社区</TD>
+				<TD col="2">1083.51</TD>
+				<TD col="3">3</TD>
+				<TD col="4">白马社区</TD>
+				<TD col="5">4996.45</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="5">
+				<TD col="0">4</TD>
+				<TD col="1">索墅社区</TD>
+				<TD col="2">1077.23</TD>
+				<TD col="3">4</TD>
+				<TD col="4">上坊社区</TD>
+				<TD col="5">3922.06</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="6">
+				<TD col="0">5</TD>
+				<TD col="1">同心社区</TD>
+				<TD col="2">1065.85</TD>
+				<TD col="3">5</TD>
+				<TD col="4">章村社区</TD>
+				<TD col="5">3596.44</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="7">
+				<TD col="0">6</TD>
+				<TD col="1">青山社区</TD>
+				<TD col="2">1064.31</TD>
+				<TD col="3">6</TD>
+				<TD col="4">骆村社区</TD>
+				<TD col="5">2405.38</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="8">
+				<TD col="0">7</TD>
+				<TD col="1">汤山社区</TD>
+				<TD col="2">1062.83</TD>
+				<TD col="3">7</TD>
+				<TD col="4">牛首社区</TD>
+				<TD col="5">2203.36</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="9">
+				<TD col="0">8</TD>
+				<TD col="1">周郎社区</TD>
+				<TD col="2">1062.27</TD>
+				<TD col="3">8</TD>
+				<TD col="4">胜太社区</TD>
+				<TD col="5">1942.78</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="10">
+				<TD col="0">9</TD>
+				<TD col="1">铁心社区</TD>
+				<TD col="2">1058.34</TD>
+				<TD col="3">9</TD>
+				<TD col="4">周村社区</TD>
+				<TD col="5">1738.89</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="11">
+				<TD col="0">10</TD>
+				<TD col="1">龙尚社区</TD>
+				<TD col="2">1054.76</TD>
+				<TD col="3">10</TD>
+				<TD col="4">尹西社区</TD>
+				<TD col="5">1598.82</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="12">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="13">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="14">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="15">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="16">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="17">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="18">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="19">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="20">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="21">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="22">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="23">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="24">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="25">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="26">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="27">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="28">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="29">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="30">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="31">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="32">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="33">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="34">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="35">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="36">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="37">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="38">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="39">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="40">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="41">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="42">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="43">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="44">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="45">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="46">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="47">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="48">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="49">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="50">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="51">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="52">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="53">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="54">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="55">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="56">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="57">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="58">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="59">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="60">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="61">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="62">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="63">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="64">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="65">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="66">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="67">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="68">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="69">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="70">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="71">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="72">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="73">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="74">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="75">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="76">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="77">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="78">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="79">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="80">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="81">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="82">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="83">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="84">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="85">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="86">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="87">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="88">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="89">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="90">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="91">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="92">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="93">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="94">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="95">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="96">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="97">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="98">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="99">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="15" sequence="100">
+				<TD col="0" leftBorder="0"/>
+				<TD col="1" leftBorder="0"/>
+				<TD col="2" leftBorder="0"/>
+				<TD col="3" leftBorder="0"/>
+				<TD col="4" leftBorder="0"/>
+				<TD col="5" leftBorder="0"/>
+				<TD col="6" leftBorder="0"/>
+				<TD col="7" leftBorder="0"/>
+				<TD col="8" leftBorder="0"/>
+				<TD col="9" leftBorder="0"/>
+				<TD col="10" leftBorder="0"/>
+				<TD col="11" leftBorder="0"/>
+				<TD col="12" leftBorder="0"/>
+				<TD col="13" leftBorder="0"/>
+				<TD col="14" leftBorder="0"/>
+				<TD col="15" leftBorder="0"/>
+				<TD col="16" leftBorder="0"/>
+				<TD col="17" leftBorder="0"/>
+				<TD col="18" leftBorder="0"/>
+				<TD col="19" leftBorder="0"/>
+				<TD col="20" leftBorder="0" topBorder="0"/>
+			</TR>
+		</Table>
+		<Merges>
+			<Range row1="0" col1="0" row2="0" col2="2"/>
+			<Range row1="0" col1="3" row2="0" col2="5"/>
+		</Merges>
+		<GraphicObjects>
+			<Echart unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="bar3">
+				<Properties Exp="Type=3;IsRevert=1;Theme=macarons;DataExp1=3:12;DataExp2=C;Meaning1=2;Meaning2=B;MeaningPos=1;"/>
+				<Rect x1="17" y1="303" x2="817" y2="703"/>
+				<Option><![CData[
+option = {
+	backgroundColor: '#2E3341',
+                grid: {
+                    left: '3%',
+                    right: '10%',
+                    bottom: '5%',
+                    top: '5%',
+                    containLabel: true
+                },
+  	tooltip: {
+    	trigger: 'axis',
+    	axisPointer: {
+      		type: 'shadow'
+    	}
+  	},
+    calculable : false,
+    xAxis : [
+        {
+            type : 'value',
+            boundaryGap : [0, 0.01],
+           splitLine: { show: false }, //网格
+           axisLabel: {
+            	show: false,
+            	textStyle: {
+              		color: '#fff' //x轴 字体颜色
+            	}
+          	}
+        }
+    ],
+    yAxis : [
+        {
+            type : 'category',
+			splitLine: { show: false }, //网格
+         	 axisLabel: {
+           		 show: true,
+            	textStyle: {
+              		color: '#fff' //y轴 字体颜色
+           		 }
+          	},
+            data : ['飞花社区村','阜东社区村','东葛社区','索墅社区','同心社区','青山社区','汤山社区','周郎社区','铁心社区','龙尚社区']
+        }
+    ],
+    series : [
+        {
+            name:'总收入(万元)',
+            type:'bar',
+            data:[11081.46,1085.25,1083.51,1077.23,1065.85,1064.31,1062.83,1062.27,1058.34,1054.76],
+         	 label: {
+            normal: {
+              show: true,
+              position: 'right',
+              color: '#fff'
+            }
+          }
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+			<Echart unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="bar3">
+				<Properties Exp="Type=3;IsRevert=1;Theme=macarons;DataExp1=3:12;DataExp2=F;Meaning1=2;Meaning2=E;MeaningPos=1;"/>
+				<Rect x1="37" y1="724" x2="837" y2="1124"/>
+				<Option><![CData[
+option = {
+backgroundColor: '#2E3341',
+                grid: {
+                    left: '3%',
+                    right: '10%',
+                    bottom: '5%',
+                    top: '5%',
+                    containLabel: true
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                xAxis: {
+                    type: 'value',
+                    splitLine: { show: false }, //网格
+                    axisLabel: {
+                        show: false,
+                        textStyle: {
+                            color: '#fff' //x轴 字体颜色
+                        }
+                    }
+                },
+    yAxis : [
+        {
+            type : 'category',
+splitLine: { show: false }, //网格
+                    axisLabel: {
+                        show: true,
+                        textStyle: {
+                            color: '#fff' //y轴 字体颜色
+                        }
+                    },
+            data : ['泥塘社区','武家嘴社区','白马社区','上坊社区','章村社区','骆村社区','牛首社区','胜太社区','周村社区','尹西社区']
+        }
+    ],
+    series : [
+        {
+            name:'总收入(万元)',
+            type:'bar',
+            data:[6633.76,5403.28,4996.45,3922.06,3596.44,2405.38,2203.36,1942.78,1738.89,1598.82]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+		</GraphicObjects>
+		<PrintPage>
+			<Paper>
+				<Margin left="19" top="25" right="19" bottom="25"/>
+			</Paper>
+			<Page isIgnoreValidBorder="false">
+				<PageCode>
+					<Font faceName="微软雅黑" charSet="134" height="-14" weight="400"/>
+				</PageCode>
+			</Page>
+		</PrintPage>
+	</WorkSheet>
+</Report>

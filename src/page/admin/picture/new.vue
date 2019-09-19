@@ -1,20 +1,46 @@
 <template>
     <div class="sys-page new" style="background-color: #ffffff">
         <div class="container">
-            <div class="handle-box">
+            <div class="handle-box" style="padding-top:5px;">
                 <el-row>
                     <el-col :span="24">
-                        <div style="float: left;margin-right: 10px;width: 12%; height: 100%">
-                            <span style="float: left; text-align: center;width: 50%">发布状态：</span>
-                            <el-select v-model="state_mark" placeholder=""  style="margin-top: 0px;width: 50%; float:right">
-                                <el-option label="全部" value="0"></el-option>
+
+
+
+
+                        <el-button size="small" class="el-icon-refresh" style="float: right;padding:0;margin:0 0 0px 10px;background: #FFFFFF;border-color: #ffffff;"
+                                   @click="freshPage">
+                        </el-button>
+
+                        <el-button type="info"  size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageNotPublish">取消发布
+                        </el-button>
+                        <el-button type="info"  size="small" class="handle-del mr10" style="float: right"
+                                   @click="PagePublish">发布
+                        </el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageDelete">删除
+                        </el-button>
+                        <el-button type="info"  size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageEdit">修改
+                        </el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageAdd">新增
+                        </el-button>
+                        <el-button type="primary" style="float: right;margin:0;border-radius:0" @click="searchList" size="small">搜索</el-button>
+
+                        <el-input v-model="select_word" placeholder="标题" prefix-icon="el-icon-search" size="small" style="float: right;max-width: 200px"
+                                  class="handle-input mr10" ></el-input>
+                        <div style="float:left;margin-right: 10px;width: 150px; height: 100%" class="picNewState">
+                            <span style="float: left; text-align: center;line-height:30px">发布状态：</span>
+                            <el-select v-model="state_mark" placeholder=""  style="margin-top: 0px;width: 50%; float:right" align="center">
+                                <el-option label="全部" value="0" style="width: 100%"></el-option>
                                 <el-option label="未发布" value="1"></el-option>
                                 <el-option label="已发布" value="2"></el-option>
                             </el-select>
-
                         </div>
-                        <div style="float: left;margin-right: 10px;width: 25%; height: 100%">
-                            <span style="float: left; text-align: center;width: 25%">创建时间：</span>
+                        <div style="float: left;margin-right: 10px;width: 330px; height: 100%">
+                            <span style="float: left; text-align: center;width: 80px;line-height:30px;">创建时间：</span>
                             <el-date-picker
                                 v-model="state_time"
                                 type="daterange"
@@ -22,28 +48,9 @@
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期"
                                 size="small"
-                                style="width: 70%">
+                                style="width: 250px;">
                             </el-date-picker>
                         </div>
-
-                        <el-input v-model="select_word" placeholder="标题" prefix-icon="el-icon-search" size="small" style="max-width: 200px"
-                                  class="handle-input mr10"></el-input>
-                        <el-button type="primary" icon="el-icon-search" @click="searchList" size="small">搜索</el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PageNotPublish">取消发布
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PagePublish">发布
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PageDelete">删除
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PageEdit">修改
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PageAdd">新增
-                        </el-button>
                     </el-col>
                 </el-row>
             </div>
@@ -52,6 +59,7 @@
                 border
                 class="table"
                 v-loading="loading"
+                      style="font-size:18px"
                 ref="roleListTable"
                 highlight-current-row
                 :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
@@ -61,7 +69,7 @@
                 <el-table-column label="图片附件" align="center">
                     <template slot-scope="scope" >
                         <el-popover trigger="hover" v-if="scope.row.Picpath">
-                            <img :src="picUrl+scope.row.Picpath" style="height: 500px;width: 500px" />
+                            <img :src="picUrl+scope.row.Picpath" style="height: 300px;width: 500px" />
                             <img slot="reference" :src="picUrl+scope.row.Picpath" style="height: 30px;width: 30px"/>
                         </el-popover>
                     </template>
@@ -109,9 +117,9 @@
             </el-form>
 
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="EditBut">保 存</el-button>
+                <el-button @click="editVisible = false" style="color: #00B8EE; border-color: #00B8EE;">取 消</el-button>                
                 <el-button type="primary" @click="PublishBut">发 布</el-button>
-                <el-button  @click="editVisible = false">取 消</el-button>
+                <el-button type="primary" @click="EditBut">保 存</el-button>
             </span>
         </el-dialog>
     </div>
@@ -196,7 +204,7 @@
                 let formData = new FormData();
                 formData.append('id', this.form.PhId)
                 formData.append("file", fileObject);
-
+                console.log(formData);
                 this.uploadFile(formData).then(res => {
                     if (res.Status === 'error') {
                         this.$message.error(res.Msg);
@@ -219,6 +227,10 @@
             // 分页导航
             handleCurrentChange(val) {
                 this.pageIndex = val;
+                this.getData();
+            },
+            //刷新按钮
+            freshPage(){
                 this.getData();
             },
             //搜索按钮
@@ -295,6 +307,8 @@
             },
             //新增按钮
             PageAdd(){
+                this.form.Title = '';
+                this.form.Picpath = '';
                 this.dialogState = 'add';
                 this.editVisible = true;
             },
@@ -405,7 +419,7 @@
                             infoData: page
                         };
                     console.log(data);
-                    this.$confirm("此操作将发布该数据, 是否继续?", "删除提示", {
+                    this.$confirm("此操作将发布该数据, 是否继续?", "发布提示", {
                         confirmButtonText: "确定",
                         cancelButtonText: "取消",
                         type: "warning"
@@ -460,7 +474,7 @@
                         orgid: "0",
                         infoData: page
                     };
-                    this.$confirm("此操作将取消发布该数据, 是否继续?", "删除提示", {
+                    this.$confirm("此操作将取消发布该数据, 是否继续?", "取消发布提示", {
                         confirmButtonText: "确定",
                         cancelButtonText: "取消",
                         type: "warning"
@@ -505,7 +519,7 @@
                         'Author': this.username,
                         'NgRecordVer': this.NgRecordVer
                     };
-                    if(this.form.Title != '' && this.form.Title != null && this.form.Picpath != ''&& this.form.Picpath != null){
+                    if(this.form.Picpath != ''&& this.form.Picpath != null){
                         var data = {
                             uid: "0",
                             orgid: "0",
@@ -536,7 +550,7 @@
                     //     'Author': this.username,
                     //     'NgRecordVer': this.NgRecordVer
                     // };
-                    if(this.form.Title != '' && this.form.Title != null && this.form.Picpath != ''&& this.form.Picpath != null){
+                    if(this.form.Picpath != ''&& this.form.Picpath != null){
                         var data = {
                             uid: "0",
                             orgid: "0",
@@ -623,6 +637,7 @@
                 console.log(row);
                 console.log(this.singleSelection);
             },
+            //获取图片列表
             getData(){
                 // console.log(this.username);
                 this.loading = true;
@@ -656,6 +671,11 @@
 </script>
 
 <style scoped>
+    .el-icon-refresh:before {
+        /* content: "\E6D0"; */
+        font-size: 20px;
+        color: #00B8EE;
+    }
     .el-checkbox-role {
         width: 100%;
         float: left;
@@ -690,8 +710,19 @@
     .red {
         color: #ff0000;
     }
+    .el-icon-refresh:before {
+        /* content: "\E6D0"; */
+        font-size: 25px;
+        color: #00B8EE;
+    }
 </style>
 <style>
+    .picNewState .el-input--suffix .el-input__inner {
+        margin: 0px 7px 0px -7px;
+        padding-right: 0;
+        height: 30px;
+        line-height: 30px;
+    }
     .new .el-icon-plus:before {
         content: "\E62B";
         text-align: center;
@@ -736,5 +767,10 @@
         color: #fff;
         background-color: #00B8EE;
         border-color: #00B8EE;
+    }
+
+    .el-message-box__btns .el-button:nth-child(1) {
+        border-color: #00B8EE;
+        color: #00B8EE;
     }
 </style>

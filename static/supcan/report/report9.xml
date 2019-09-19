@@ -1,0 +1,615 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--By Supcan Report -->
+<Report>
+	<WorkSheet name="Sheet">
+		<Properties>
+			<BackGround bgColor="#FFFFFF"/>
+			<DefaultTD>
+				<TD fontIndex="0" textColor="#000000" transparent="true" leftBorder="1" topBorder="1" leftBorderColor="#C0C0C0" leftBorderStyle="solid" topBorderColor="#C0C0C0" topBorderStyle="solid" decimal="2" align="left" vAlign="middle" isProtected="false" isThousandSeparat="true" datatype="0" isRound="true" isPrint="true"/>
+			</DefaultTD>
+			<Other isShowZero="true" isRefOri="true" LineDistance="0" isRowHeightAutoExtendAble="true"/>
+		</Properties>
+		<Fonts>
+			<Font faceName="Microsoft YaHei UI" charSet="134" height="-14" weight="400" pitchAndFamily="34" quality="1" outPrecision="3" clipPrecision="2"/>
+		</Fonts>
+		<Table>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="156"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="15"/>
+			<TR height="24" sequence="0">
+				<TD col="0" align="center">2016、2017年对比表（月度）</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="1">
+				<TD col="2">总收入</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="2">
+				<TD col="2">1</TD>
+				<TD col="3">2</TD>
+				<TD col="4">3</TD>
+				<TD col="5">4</TD>
+				<TD col="6">5</TD>
+				<TD col="7">6</TD>
+				<TD col="8">7</TD>
+				<TD col="9">8</TD>
+				<TD col="10">9</TD>
+				<TD col="11">10</TD>
+				<TD col="12">11</TD>
+				<TD col="13">12</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="3">
+				<TD col="0">东山街道</TD>
+				<TD col="1">2016年</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="4">
+				<TD col="1">2017年</TD>
+				<TD col="2">104914462.99 </TD>
+				<TD col="3">67956468.57 </TD>
+				<TD col="4">14062524.15 </TD>
+				<TD col="5">17122623.20 </TD>
+				<TD col="6">24045623.37 </TD>
+				<TD col="7">26140271.11 </TD>
+				<TD col="8">28500263.23 </TD>
+				<TD col="9">29238589.23 </TD>
+				<TD col="10">38766671.39 </TD>
+				<TD col="11">40658812.90 </TD>
+				<TD col="12">45860193.55 </TD>
+				<TD col="13">351106081.11 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="5">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="6">
+				<TD col="0">章村社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="7">
+				<TD col="1">2017年</TD>
+				<TD col="2">6186867.79 </TD>
+				<TD col="3">7103387.89 </TD>
+				<TD col="4">10032021.33 </TD>
+				<TD col="5">13025027.38 </TD>
+				<TD col="6">19658718.53 </TD>
+				<TD col="7">20620240.81 </TD>
+				<TD col="8">22955277.93 </TD>
+				<TD col="9">23445277.93 </TD>
+				<TD col="10">32947312.58 </TD>
+				<TD col="11">34513710.09 </TD>
+				<TD col="12">39023369.74 </TD>
+				<TD col="13">41268257.18 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="8">
+				<TD col="1">增幅</TD>
+				<TD col="13"/>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="9">
+				<TD col="0">东山社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="10">
+				<TD col="1">2017年</TD>
+				<TD col="2">3294733.22 </TD>
+				<TD col="3">4004733.22 </TD>
+				<TD col="4">4030502.82 </TD>
+				<TD col="5">4097595.82 </TD>
+				<TD col="6">4386904.84 </TD>
+				<TD col="7">5520030.30 </TD>
+				<TD col="8">5544985.30 </TD>
+				<TD col="9">5793311.30 </TD>
+				<TD col="10">5819358.81 </TD>
+				<TD col="11">6145102.81 </TD>
+				<TD col="12">6836823.81 </TD>
+				<TD col="13">9493741.81 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="11">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="12">
+				<TD col="0">中前社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="13">
+				<TD col="1">2017年</TD>
+				<TD col="2">9460460.01 </TD>
+				<TD col="3">18332226.69 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="14">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="15">
+				<TD col="0">岔路社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="16">
+				<TD col="1">2017年</TD>
+				<TD col="2">842751.50 </TD>
+				<TD col="3">10248251.25 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="17">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="18">
+				<TD col="0">邵圣社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="19">
+				<TD col="1">2017年</TD>
+				<TD col="2">1581517.29 </TD>
+				<TD col="3">1814517.29 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="20">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="21">
+				<TD col="0">龙西社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="22">
+				<TD col="1">2017年</TD>
+				<TD col="2">2767045.65 </TD>
+				<TD col="3">516803.97 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="23">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="24">
+				<TD col="0">骆村社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="25">
+				<TD col="1">2017年</TD>
+				<TD col="2">10724480.49 </TD>
+				<TD col="3">12296868.49 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="26">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="27">
+				<TD col="0">外港社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="28">
+				<TD col="1">2017年</TD>
+				<TD col="2">7443976.32 </TD>
+				<TD col="3">1272256.35 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="29">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="30">
+				<TD col="0">晓里社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="31">
+				<TD col="1">2017年</TD>
+				<TD col="2">551660.18 </TD>
+				<TD col="3">1513470.18 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="32">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="33">
+				<TD col="0">上坊社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="34">
+				<TD col="1">2017年</TD>
+				<TD col="2">10007253.24 </TD>
+				<TD col="3">10853953.24 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="35">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="36">
+				<TD col="0">高桥社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="37">
+				<TD col="1">2017年</TD>
+				<TD col="2">4572999.21 </TD>
+				<TD col="3">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="38">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="39">
+				<TD col="0">佘村社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="40">
+				<TD col="1">2017年</TD>
+				<TD col="2">2101459.76 </TD>
+				<TD col="3">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="41">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="42">
+				<TD col="0">泥塘社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="43">
+				<TD col="1">2017年</TD>
+				<TD col="2">32403339.39 </TD>
+				<TD col="3">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="44">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="45">
+				<TD col="0">天云社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="46">
+				<TD col="1">2017年</TD>
+				<TD col="2">1071994.88 </TD>
+				<TD col="3">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="47">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="48">
+				<TD col="0">永安社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="49">
+				<TD col="1">2017年</TD>
+				<TD col="2">3929978.59 </TD>
+				<TD col="3">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="50">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="51">
+				<TD col="0">大里社区</TD>
+				<TD col="1">2016年</TD>
+				<TD col="2">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="52">
+				<TD col="1">2017年</TD>
+				<TD col="2">7973945.47 </TD>
+				<TD col="3">0.00 </TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="53">
+				<TD col="1">增幅</TD>
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="54">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="55">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="56">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="57">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="58">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="59">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="60">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="61">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="62">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="63">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="64">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="65">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="66">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="67">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="68">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="69">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="70">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="71">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="72">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="73">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="74">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="75">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="76">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="77">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="78">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="79">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="80">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="81">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="82">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="83">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="84">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="85">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="86">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="87">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="88">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="89">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="90">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="91">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="92">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="93">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="94">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="95">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="96">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="97">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="98">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="99">
+				<TD col="20" topBorder="0"/>
+			</TR>
+			<TR height="15" sequence="100">
+				<TD col="0" leftBorder="0"/>
+				<TD col="1" leftBorder="0"/>
+				<TD col="2" leftBorder="0"/>
+				<TD col="3" leftBorder="0"/>
+				<TD col="4" leftBorder="0"/>
+				<TD col="5" leftBorder="0"/>
+				<TD col="6" leftBorder="0"/>
+				<TD col="7" leftBorder="0"/>
+				<TD col="8" leftBorder="0"/>
+				<TD col="9" leftBorder="0"/>
+				<TD col="10" leftBorder="0"/>
+				<TD col="11" leftBorder="0"/>
+				<TD col="12" leftBorder="0"/>
+				<TD col="13" leftBorder="0"/>
+				<TD col="14" leftBorder="0"/>
+				<TD col="15" leftBorder="0"/>
+				<TD col="16" leftBorder="0"/>
+				<TD col="17" leftBorder="0"/>
+				<TD col="18" leftBorder="0"/>
+				<TD col="19" leftBorder="0"/>
+				<TD col="20" leftBorder="0" topBorder="0"/>
+			</TR>
+		</Table>
+		<Merges>
+			<Range row1="0" col1="0" row2="0" col2="13"/>
+			<Range row1="6" col1="0" row2="7" col2="0"/>
+			<Range row1="9" col1="0" row2="10" col2="0"/>
+			<Range row1="12" col1="0" row2="13" col2="0"/>
+		</Merges>
+		<GraphicObjects>
+			<Echart unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="bar1">
+				<Properties Exp="Type=3;Title=总收入月度分析;Theme=macarons;DataExp1=7,8,10,11;DataExp2=C:N;Meaning1=3;Meaning2=A;MeaningPos=1;"/>
+				<Rect x1="283" y1="287" x2="1083" y2="684"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '某地区蒸发量和降水量',
+        subtext: '纯属虚构'
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['蒸发量','降水量']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'category',
+            data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value'
+        }
+    ],
+    series : [
+        {
+            name:'蒸发量',
+            type:'bar',
+            data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name: '平均值'}
+                ]
+            }
+        },
+        {
+            name:'降水量',
+            type:'bar',
+            data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+            markPoint : {
+                data : [
+                    {name : '年最高', value : 182.2, xAxis: 7, yAxis: 183, symbolSize:18},
+                    {name : '年最低', value : 2.3, xAxis: 11, yAxis: 3}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name : '平均值'}
+                ]
+            }
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+		</GraphicObjects>
+		<PrintPage>
+			<Paper>
+				<Margin left="19" top="25" right="19" bottom="25"/>
+			</Paper>
+			<Page isIgnoreValidBorder="false">
+				<PageCode>
+					<Font faceName="Microsoft YaHei UI" charSet="134" height="-14" weight="400"/>
+				</PageCode>
+			</Page>
+		</PrintPage>
+	</WorkSheet>
+</Report>

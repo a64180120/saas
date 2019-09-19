@@ -47,13 +47,14 @@ export default {
     computed:{
         ...mapState({
             userid: state => state.user.userid,
-            orgid: state => state.user.orgid
+            orgid: state => state.user.orgid,
+            dbname:state=>state.user.dbname
         }),
         picUrl:function(){
           return httpConfig.baseurl;
         },
         headers:function(){
-          let config_header = httpConfig.getHeaderConfig();
+          let config_header = httpConfig.getHeaderConfig(this.$store.state.user.dbname);
 
           let new_header={
             'Content-Type': 'multipart/form-data',

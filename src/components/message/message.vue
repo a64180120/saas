@@ -1,12 +1,14 @@
 <template>
     <div v-show="visible" class="saasMsgCon" style="z-index:9999">
-        <div class="saasMsg">
-            <p class="title"><span>提示</span>
+
+        <div  class="saasMsg">
+            <p class="title">
+                <span>提示</span>
                 <i @click="close"></i>
             </p>
             <div>
                 <div class="imgCon"><img src="../../assets/images/message.png"></div>  
-                <span v-if="delay">{{message}} &nbsp;({{delayTime}}s) 后自动关闭</span>
+                <span style="float:right;width:290px" v-if="delay">{{message}} &nbsp;({{delayTime}}s) 后自动关闭</span>
             </div>
             <div>
                 <span @click="close" class="btn">立即关闭</span>
@@ -29,10 +31,13 @@ export default {
     //  vm.delayTime=parseInt(vm.delay/1000+1);
     //  console.log(vm.delayTime,vm.delay)
     //  vm.$nextTick(vm.oneTime(vm));
+
   },
   methods:{
       close(){
           this.$emit('update:visible',false);
+          this.callback();
+          this.$emit("close")
       },
       oneTime(vm){
           var vm=this;
@@ -40,9 +45,10 @@ export default {
             setTimeout(vm.oneTime,1000)
           }else{
               vm.close();
+			  vm.callback();
           }
         vm.delayTime--;
-      }
+      },
   },
   props:{
       delay:{
@@ -51,7 +57,13 @@ export default {
           
         },
       message:String,
-      visible:{type:Boolean}
+      visible:{type:Boolean},
+	  callback:{
+		  type:Function,
+		  default(){
+			  return function(){}
+		  }
+	  }
   },
   computed:{
       
@@ -64,6 +76,7 @@ export default {
             vm.oneTime(vm);
           }else{
              vm.delayTime=0; 
+			 
           }
          
       }
@@ -73,11 +86,15 @@ export default {
 
 <style lang="scss" scoped>
 .saasMsgCon{
+
     position:fixed;
+    position:-ms-page;
     left:0;
     top:0;
     right: 0;
     bottom:0;
+    width: 100%;
+    height:100%;
     z-index:9999;
     background:rgba(0,0,0,0.5);
     box-shadow: 0 0 10px 2px #d3e9f9;
@@ -106,7 +123,7 @@ export default {
             display: flex;
             align-items: center;
             &:first-of-type{
-                height:50%;
+                height:60%;
                 font-size:16px;
                 overflow-y: auto;
             }
@@ -115,9 +132,10 @@ export default {
                 justify-content: flex-end;
             }
             >.imgCon{
+                float:left;
                 width:60px;
                 height:55px;
-                margin-right:15px;
+
                 >img{
                     width:100%;
                     height:100%;
@@ -132,7 +150,6 @@ export default {
         display: flex;
         justify-content: space-between;
         width:100%;
-        font-family: Arial;
         font-size: 14.0pt;
         font-style: normal;
         font-weight: 700;

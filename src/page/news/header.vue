@@ -188,9 +188,12 @@ export default {
   margin: auto auto 0;
 }
 .logo_box {
-  width: 250px;
-  float: left;
-  height: 70px;
+    max-width: 750px;
+    float: left;
+    height: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .logo_box img {
   width: 100%;

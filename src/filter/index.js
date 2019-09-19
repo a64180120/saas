@@ -1,24 +1,35 @@
 import Vue from 'vue'
-import {formatDate} from '@/util/validate'; 
+import {formatDate} from '@/util/validate'
+import moment from 'moment'
 
 /**
  * 数字金额 千分位格式化
  */
 Vue.filter('NumFormat', function(value, decimals = 2, decPoint = '.', thousandsSep = ',') {
-    if(!value) return '0.00';
-
-    value = (value + '').replace(/[^0-9+-Ee.]/g, '')
-    
-    let n = !isFinite(+value) ? 0 : +value
-    let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-    let sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-    let dec = (typeof decPoint === 'undefined') ? '.' : decPoint
-    let s = ''
-    let toFixedFix = function (n, prec) {
-      let k = Math.pow(10, prec)
-      return '' + Math.ceil(n * k) / k
+    /*n = n > 0 && n < = 20 ? n : 2;
+    s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
+    var l = s.split(".")[0].split("").reverse(),
+        r = s.split(".")[1];
+    t = "";
+    for(i = 0; i < l.length; i ++ )
+    {
+        t += l[i] + ((i + 1) % 3 == 0 && (i + 1) != l.length ? "," : "");
     }
-    s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+    return t.split("").reverse().join("") + "." + r;*/
+
+
+    if(!value) return '0.00';
+    value = (value + '').replace(/[^0-9+-Ee.]/g, '')
+    let n = !isFinite(+value) ? 0 : +value;
+    let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
+    let sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep;
+    let dec = (typeof decPoint === 'undefined') ? '.' : decPoint;
+    let s = '';
+
+    let toFixedFix = function (n, prec) {
+      return '' + n.toFixed(2)
+    }
+    s = (prec ? toFixedFix(n, prec) : '' + n).split('.')
     let re = /(-?\d+)(\d{3})/
     while (re.test(s[0])) {
       s[0] = s[0].replace(re, '$1' + sep + '$2')
@@ -119,8 +130,9 @@ Vue.filter('NumtoCHN', function(value) {
   return chineseStr;
 });
 
-Vue.filter('formatDate', function(value,fmt='yyyy-MM-dd hh:mm') {
-  let date=new Date(value);
-
-  return formatDate(date,fmt)
+Vue.filter('formatDate', function(value,fmt='YYYY-MM-DD HH:mm') {
+  //let date=Date.parse(value.replace(/-/g,"/"));
+  return moment(value).format(fmt)
+  //let date=new Date(value);
+  //return formatDate(date,fmt)
 });

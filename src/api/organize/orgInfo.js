@@ -144,3 +144,24 @@ export function SysOrgUploadFile(object,param) {
     });
   });
 }
+
+/**
+ * 说明: 修改保存并保存记录
+ * object 当前对象 vue
+ * param 参数集合
+ */
+export function SysOrgUpdateAndRecord(object,param) {
+    return new Promise((resolve, reject) => {
+        object.$axios({
+            url: '/SysOrganize/PostUpdateAndRecord',
+            method: "post",
+            data: param,
+        }).then(res => {
+            //正确
+            resolve(res);
+        }).catch(error => {
+            //错误
+            reject(error);
+        });
+    });
+}

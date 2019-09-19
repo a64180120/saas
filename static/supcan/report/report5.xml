@@ -1,0 +1,970 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--By Supcan Report -->
+<Report>
+	<WorkSheet name="Sheet">
+		<Properties>
+			<BackGround bgColor="#FFFFFF"/>
+			<DefaultTD>
+				<TD fontIndex="0" textColor="#000000" transparent="true" leftBorder="1" topBorder="1" leftBorderColor="#C0C0C0" leftBorderStyle="solid" topBorderColor="#C0C0C0" topBorderStyle="solid" decimal="2" align="left" vAlign="middle" isProtected="false" isThousandSeparat="true" datatype="0" isRound="true" isPrint="true"/>
+			</DefaultTD>
+			<Other isShowZero="true" isRefOri="true" LineDistance="0" isRowHeightAutoExtendAble="true"/>
+		</Properties>
+		<Fonts>
+			<Font faceName="微软雅黑" charSet="134" height="-14" weight="400" pitchAndFamily="34" quality="1" outPrecision="3" clipPrecision="2"/>
+		</Fonts>
+		<Table>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="140"/>
+			<Col width="15"/>
+			<TR height="24" sequence="0">
+				<TD col="0" align="center"/>
+				<TD col="1" align="center"/>
+				<TD col="2" align="center"/>
+				<TD col="3" align="center"/>
+				<TD col="4" align="center"/>
+				<TD col="5" align="center"/>
+				<TD col="6" align="center"/>
+				<TD col="7" align="center"/>
+				<TD col="8" align="center"/>
+				<TD col="9" align="center"/>
+				<TD col="10" align="center"/>
+				<TD col="11" align="center"/>
+				<TD col="12" align="center"/>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="1">
+				<TD col="0" align="center">按月村集体经济总收入统计</TD>
+				<TD col="1" align="center">按月村集体经济总收入统计</TD>
+				<TD col="2" align="center"/>
+				<TD col="3" align="center"/>
+				<TD col="4" align="center"/>
+				<TD col="5" align="center"/>
+				<TD col="6" align="center"/>
+				<TD col="7" align="center"/>
+				<TD col="8" align="center"/>
+				<TD col="9" align="center"/>
+				<TD col="10" align="center"/>
+				<TD col="11" align="center"/>
+				<TD col="12" align="center"/>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="2">
+				<TD col="0" align="right">单位：亿元</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="3">
+				<TD col="0">年份</TD>
+				<TD col="1">1月</TD>
+				<TD col="2">2月</TD>
+				<TD col="3">3月</TD>
+				<TD col="4">4月</TD>
+				<TD col="5">5月</TD>
+				<TD col="6">6月</TD>
+				<TD col="7">7月</TD>
+				<TD col="8">8月</TD>
+				<TD col="9">9月</TD>
+				<TD col="10">10月</TD>
+				<TD col="11">11月</TD>
+				<TD col="12">12月</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="4">
+				<TD col="0">2017年</TD>
+				<TD col="1">13.54 </TD>
+				<TD col="2">19.12 </TD>
+				<TD col="3">21.23 </TD>
+				<TD col="4">22.63 </TD>
+				<TD col="5">24.14 </TD>
+				<TD col="6">25.53 </TD>
+				<TD col="7">27.93 </TD>
+				<TD col="8">29.54 </TD>
+				<TD col="9">31.21 </TD>
+				<TD col="10">30.15 </TD>
+				<TD col="11">32.17 </TD>
+				<TD col="12">23.18</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="5">
+				<TD col="0">2016年</TD>
+				<TD col="1">5.75 </TD>
+				<TD col="2">25.70 </TD>
+				<TD col="3">19.27 </TD>
+				<TD col="4">13.03 </TD>
+				<TD col="5">22.41 </TD>
+				<TD col="6">23.88 </TD>
+				<TD col="7">25.23 </TD>
+				<TD col="8">26.81 </TD>
+				<TD col="9">28.22 </TD>
+				<TD col="10">29.36 </TD>
+				<TD col="11">31.15 </TD>
+				<TD col="12">38.46</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="6">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="7">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="8">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="9">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="10">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="11">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="12">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="13">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="14">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="15">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="16">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="17">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="18">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="19">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="20">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="21">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="22">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="23">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="24">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="25">
+				<TD col="0" align="center">村集体经济总收入构成</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="26">
+				<TD col="0" align="right">单位：亿元</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="27">
+				<TD col="0">合计</TD>
+				<TD col="1" align="center">集体经营性收入</TD>
+				<TD col="6">补助收入</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="28">
+				<TD col="1">22.57</TD>
+				<TD col="2">经营收入</TD>
+				<TD col="3">发包及上交收入</TD>
+				<TD col="4">投资收益</TD>
+				<TD col="5">其他收入</TD>
+				<TD col="6">20</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="29">
+				<TD col="0">42.57</TD>
+				<TD col="1"/>
+				<TD col="2">9.24</TD>
+				<TD col="3">3.86</TD>
+				<TD col="4">1.68</TD>
+				<TD col="5">7.79</TD>
+				<TD col="6">20</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="30">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="31">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="32">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="33">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="34">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="35">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="36">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="37">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="38">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="39">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="40">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="41">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="42">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="43">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="44">
+				<TD col="0" align="center">村集体经济总收入达到100万元以上的村</TD>
+				<TD col="4" align="center">村集体经营性收入达到100万元以上的村</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="45">
+				<TD col="0">排名</TD>
+				<TD col="1">村名称</TD>
+				<TD col="2">总收入(万元)</TD>
+				<TD col="4">排名</TD>
+				<TD col="5">村名称</TD>
+				<TD col="6">总收入(万元)</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="46">
+				<TD col="0">1</TD>
+				<TD col="1">飞花社区</TD>
+				<TD col="2">11081.46</TD>
+				<TD col="4">1</TD>
+				<TD col="5">泥塘社区</TD>
+				<TD col="6">6633.76</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="47">
+				<TD col="0">2</TD>
+				<TD col="1">阜东社区</TD>
+				<TD col="2">1085.25</TD>
+				<TD col="4">2</TD>
+				<TD col="5">武家嘴社区</TD>
+				<TD col="6">5403.28</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="48">
+				<TD col="0">3</TD>
+				<TD col="1">东葛社区</TD>
+				<TD col="2">1083.51</TD>
+				<TD col="4">3</TD>
+				<TD col="5">白马社区</TD>
+				<TD col="6">4996.45</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="49">
+				<TD col="0">4</TD>
+				<TD col="1">索墅社区</TD>
+				<TD col="2">1077.23</TD>
+				<TD col="4">4</TD>
+				<TD col="5">上坊社区</TD>
+				<TD col="6">3922.06</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="50">
+				<TD col="0">5</TD>
+				<TD col="1">同心社区</TD>
+				<TD col="2">1065.85</TD>
+				<TD col="4">5</TD>
+				<TD col="5">章村社区</TD>
+				<TD col="6">3596.44</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="51">
+				<TD col="0">6</TD>
+				<TD col="1">青山社区</TD>
+				<TD col="2">1064.31</TD>
+				<TD col="4">6</TD>
+				<TD col="5">骆村社区</TD>
+				<TD col="6">2405.38</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="52">
+				<TD col="0">7</TD>
+				<TD col="1">汤山社区</TD>
+				<TD col="2">1062.83</TD>
+				<TD col="4">7</TD>
+				<TD col="5">牛首社区</TD>
+				<TD col="6">2203.36</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="53">
+				<TD col="0">8</TD>
+				<TD col="1">周郎社区</TD>
+				<TD col="2">1062.27</TD>
+				<TD col="4">8</TD>
+				<TD col="5">胜太社区</TD>
+				<TD col="6">1942.78</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="54">
+				<TD col="0">9</TD>
+				<TD col="1">铁心社区</TD>
+				<TD col="2">1058.34</TD>
+				<TD col="4">9</TD>
+				<TD col="5">周村社区</TD>
+				<TD col="6">1738.89</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="55">
+				<TD col="0">10</TD>
+				<TD col="1">龙尚社区</TD>
+				<TD col="2">1054.76</TD>
+				<TD col="4">10</TD>
+				<TD col="5">尹西社区</TD>
+				<TD col="6">1598.82</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="56">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="57">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="58">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="59">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="60">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="61">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="62">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="63">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="64">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="65">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="66">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="67">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="68">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="69">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="70">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="71">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="72">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="73">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="74">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="75">
+				<TD col="0" align="center">村集体经济总支出构成统计</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="76">
+				<TD col="0" align="right">单位：亿元</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="77">
+				<TD col="0">合计</TD>
+				<TD col="1">经营支出</TD>
+				<TD col="2" align="center">管理费用</TD>
+				<TD col="6">其他支出</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="78">
+				<TD col="2">小计</TD>
+				<TD col="3">干部报酬</TD>
+				<TD col="4">办公费用</TD>
+				<TD col="5">报刊费</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="79">
+				<TD col="0">28.44</TD>
+				<TD col="1">0.86</TD>
+				<TD col="2">11.54</TD>
+				<TD col="3">8.5</TD>
+				<TD col="4">0.62</TD>
+				<TD col="5">0.065</TD>
+				<TD col="6">16.03</TD>
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="80">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="81">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="82">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="83">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="84">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="85">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="86">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="87">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="88">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="89">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="90">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="91">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="92">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="93">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="94">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="95">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="96">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="97">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="98">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="99">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="24" sequence="100">
+				<TD col="19" topBorder="0"/>
+			</TR>
+			<TR height="15" sequence="101">
+				<TD col="0" leftBorder="0"/>
+				<TD col="1" leftBorder="0"/>
+				<TD col="2" leftBorder="0"/>
+				<TD col="3" leftBorder="0"/>
+				<TD col="4" leftBorder="0"/>
+				<TD col="5" leftBorder="0"/>
+				<TD col="6" leftBorder="0"/>
+				<TD col="7" leftBorder="0"/>
+				<TD col="8" leftBorder="0"/>
+				<TD col="9" leftBorder="0"/>
+				<TD col="10" leftBorder="0"/>
+				<TD col="11" leftBorder="0"/>
+				<TD col="12" leftBorder="0"/>
+				<TD col="13" leftBorder="0"/>
+				<TD col="14" leftBorder="0"/>
+				<TD col="15" leftBorder="0"/>
+				<TD col="16" leftBorder="0"/>
+				<TD col="17" leftBorder="0"/>
+				<TD col="18" leftBorder="0"/>
+				<TD col="19" leftBorder="0" topBorder="0"/>
+			</TR>
+		</Table>
+		<Merges>
+			<Range row1="1" col1="0" row2="1" col2="12"/>
+			<Range row1="2" col1="0" row2="2" col2="12"/>
+			<Range row1="44" col1="0" row2="44" col2="2"/>
+			<Range row1="44" col1="4" row2="44" col2="6"/>
+			<Range row1="27" col1="0" row2="28" col2="0"/>
+			<Range row1="27" col1="1" row2="27" col2="5"/>
+			<Range row1="28" col1="6" row2="29" col2="6"/>
+			<Range row1="28" col1="1" row2="29" col2="1"/>
+			<Range row1="25" col1="0" row2="25" col2="6"/>
+			<Range row1="26" col1="0" row2="26" col2="6"/>
+			<Range row1="75" col1="0" row2="75" col2="6"/>
+			<Range row1="76" col1="0" row2="76" col2="6"/>
+			<Range row1="77" col1="0" row2="78" col2="0"/>
+			<Range row1="77" col1="6" row2="78" col2="6"/>
+			<Range row1="77" col1="2" row2="77" col2="5"/>
+			<Range row1="77" col1="1" row2="78" col2="1"/>
+			<Range row1="0" col1="0" row2="0" col2="12"/>
+		</Merges>
+		<GraphicObjects>
+			<Echart name="echart1" unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="line3">
+				<Properties Exp="Type=3;Title=按月村集体经济总收入统计;Theme=macarons;DataExp1=4:5;DataExp2=B:M;Meaning1=3;Meaning2=A;MeaningPos=1;"/>
+				<Rect x1="4" y1="125" x2="804" y2="525"/>
+				<Option><![CData[
+option = {
+                backgroundColor: '#2E3341',
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['2017年','2016年'],
+                    x: 'center',
+                    textStyle: { color: '#fff' }   //样式
+                },
+                grid: {
+
+                },
+                calculable: true,
+                xAxis: [
+                    {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+                        splitLine: { show: true },  //网格
+                        axisLabel: {
+                            show: true,
+                            textStyle: {
+                                color: '#fff' //x轴 字体颜色
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#fff',
+                                width: 1,//突出显示
+                            }
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        splitLine: { show: true }, //网格
+                        axisLabel: {
+                            show: true,
+                            textStyle: {
+                                color: '#fff' //y轴 字体颜色
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#fff',
+                                width: 1,//突出显示
+                            }
+                        }
+
+                    }
+                ],
+                series: [
+        {
+                        name: '2017年',
+                        type: 'line',
+                        smooth: true,
+                        itemStyle: {
+                            normal: {
+                                color: '#6CB798', //折点颜色
+                                areaStyle: { type: 'default', color: '#6CB798' },//line 的样式 和颜色
+                                lineStyle: { color: '#6CB798' }  //线条颜色
+                            }
+                        },
+                        data: [13.54,19.12,21.23,22.63,24.14,25.53,27.93,29.54,31.21,30.15,32.17,43.18]
+                    },
+        {
+                        name: '2016年',
+                        type: 'line',
+                        smooth: true,
+                        itemStyle: {
+                            normal: {
+                                color: '#5293CD', //折点颜色
+                                areaStyle: { type: 'default', color: '#5293CD' },  //line 的样式 和颜色
+                                lineStyle: { color: '#5293CD' }  //线条颜色
+                            }
+                        },
+                        data: [5.75,5.7,19.27,21.03,22.41,23.88,25.23,26.81,28.22,29.36,31.15,38.46]
+                    }
+    ]
+            };
+]]></Option>
+			</Echart>
+			<Echart name="echart4" unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="bar3">
+				<Properties Exp="Type=2;Theme=macarons;DataRow=2;TitleRow=1;DataExp1=46:55;Meaning1=经济总收入达到100万元以上;MeaningPos=1;"/>
+				<Rect x1="9" y1="1329" x2="558" y2="1729"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '世界人口总量',
+        subtext: '数据来自网络'
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['2011年', '2012年']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'value',
+            boundaryGap : [0, 0.01]
+        }
+    ],
+    yAxis : [
+        {
+            type : 'category',
+            data : ['巴西','印尼','美国','印度','中国','世界人口(万)']
+        }
+    ],
+    series : [
+        {
+            name:'2011年',
+            type:'bar',
+            data:[18203, 23489, 29034, 104970, 131744, 630230]
+        },
+        {
+            name:'2012年',
+            type:'bar',
+            data:[19325, 23438, 31000, 121594, 134141, 681807]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+			<Echart name="echart5" unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="bar3">
+				<Properties Exp="Type=2;Theme=macarons;DataRow=6;TitleRow=5;DataExp1=46:55;Meaning1=经营性收入达到100万元以上;MeaningPos=1;"/>
+				<Rect x1="590" y1="1333" x2="1064" y2="1733"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '世界人口总量',
+        subtext: '数据来自网络'
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['2011年', '2012年']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'value',
+            boundaryGap : [0, 0.01]
+        }
+    ],
+    yAxis : [
+        {
+            type : 'category',
+            data : ['巴西','印尼','美国','印度','中国','世界人口(万)']
+        }
+    ],
+    series : [
+        {
+            name:'2011年',
+            type:'bar',
+            data:[18203, 23489, 29034, 104970, 131744, 630230]
+        },
+        {
+            name:'2012年',
+            type:'bar',
+            data:[19325, 23438, 31000, 121594, 134141, 681807]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+			<Echart name="echart2_1" unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="pie1">
+				<Properties Exp="Type=1;Theme=macarons;DataRow=27;TitleRow=26;DataExp1=B,G;Meaning1=A;MeaningPos=1;"/>
+				<Rect x1="8" y1="713" x2="434" y2="976"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '某站点用户访问来源',
+        subtext: '纯属虚构',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient : 'vertical',
+        x : 'left',
+        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true, 
+                type: ['pie', 'funnel'],
+                option: {
+                    funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'left',
+                        max: 1548
+                    }
+                }
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    series : [
+        {
+            name:'访问来源',
+            type:'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            data:[
+                {value:335, name:'直接访问'},
+                {value:310, name:'邮件营销'},
+                {value:234, name:'联盟广告'},
+                {value:135, name:'视频广告'},
+                {value:1548, name:'搜索引擎'}
+            ]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+			<Echart name="echart2_2" unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="pie4">
+				<Properties Exp="Type=1;Theme=macarons;DataRow=28;TitleRow=27;DataExp1=C,D,E,F;Meaning1=B;MeaningPos=1;"/>
+				<Rect x1="477" y1="716" x2="954" y2="969"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '南丁格尔玫瑰图',
+        subtext: '纯属虚构',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        x : 'center',
+        y : 'bottom',
+        data:['rose1','rose2','rose3','rose4','rose5','rose6','rose7','rose8']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true, 
+                type: ['pie', 'funnel']
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    series : [
+        {
+            name:'半径模式',
+            type:'pie',
+            radius : [20, 110],
+            center : ['25%', 200],
+            roseType : 'radius',
+            width: '40%',       // for funnel
+            max: 40,            // for funnel
+            itemStyle : {
+                normal : {
+                    label : {
+                        show : false
+                    },
+                    labelLine : {
+                        show : false
+                    }
+                },
+                emphasis : {
+                    label : {
+                        show : true
+                    },
+                    labelLine : {
+                        show : true
+                    }
+                }
+            },
+            data:[
+                {value:10, name:'rose1'},
+                {value:5, name:'rose2'},
+                {value:15, name:'rose3'},
+                {value:25, name:'rose4'},
+                {value:20, name:'rose5'},
+                {value:35, name:'rose6'},
+                {value:30, name:'rose7'},
+                {value:40, name:'rose8'}
+            ]
+        },
+        {
+            name:'面积模式',
+            type:'pie',
+            radius : [30, 110],
+            center : ['75%', 200],
+            roseType : 'area',
+            x: '50%',               // for funnel
+            max: 40,                // for funnel
+            sort : 'ascending',     // for funnel
+            data:[
+                {value:10, name:'rose1'},
+                {value:5, name:'rose2'},
+                {value:15, name:'rose3'},
+                {value:25, name:'rose4'},
+                {value:20, name:'rose5'},
+                {value:35, name:'rose6'},
+                {value:30, name:'rose7'},
+                {value:40, name:'rose8'}
+            ]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+			<Echart name="echart3" unDragAbleAtRuntime="1" borderThick="1" borderColor="#000000" SamplePage="pie1">
+				<Properties Exp="Type=1;Theme=macarons;DataRow=78;TitleRow=77;DataExp1=B,D,E,F,G;Meaning1=A;MeaningPos=1;"/>
+				<Rect x1="28" y1="1913" x2="501" y2="2170"/>
+				<Option><![CData[
+option = {
+    title : {
+        text: '某站点用户访问来源',
+        subtext: '纯属虚构',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient : 'vertical',
+        x : 'left',
+        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true, 
+                type: ['pie', 'funnel'],
+                option: {
+                    funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'left',
+                        max: 1548
+                    }
+                }
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    series : [
+        {
+            name:'访问来源',
+            type:'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            data:[
+                {value:335, name:'直接访问'},
+                {value:310, name:'邮件营销'},
+                {value:234, name:'联盟广告'},
+                {value:135, name:'视频广告'},
+                {value:1548, name:'搜索引擎'}
+            ]
+        }
+    ]
+};
+]]></Option>
+			</Echart>
+		</GraphicObjects>
+		<PrintPage>
+			<Paper>
+				<Margin left="19" top="25" right="19" bottom="25"/>
+			</Paper>
+			<Page isIgnoreValidBorder="false">
+				<PageCode>
+					<Font faceName="微软雅黑" charSet="134" height="-14" weight="400"/>
+				</PageCode>
+			</Page>
+		</PrintPage>
+	</WorkSheet>
+</Report>

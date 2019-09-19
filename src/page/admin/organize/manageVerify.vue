@@ -1,19 +1,49 @@
 <template>
     <div class="manage-verify6">
-        <div class="choose">
-            <ul class="flexPublic">
-                <li @click="addFinished(true)">保存</li>
-                <li @click="addFinished(false)">取消</li>
-            </ul>
-        </div>
+
         <div class="container">
-            <div class="handle-box">
+            <div class="handle-box" style="margin-left: 30px">
                 <el-row>
                     <el-col :span="50">
-                        <span style="font-size: 25px">审核状态</span>
+                        <span style="font-size: 25px;border-left: 5px solid rgb(136, 185, 39);padding-left: 10px;">组织信息</span>
+                    </el-col>
+
+                </el-row>
+                <el-row>
+                    <div style="margin: 20px">
+                        <el-form ref="form" :model="form" label-width="150px">
+                            <el-form-item label="工会名称">
+                                <el-input v-model="form.OrgName"></el-input>
+                            </el-form-item>
+                            <el-form-item label="统一社会信用代码">
+                                <el-input v-model="form.EnterpriseCode"></el-input>
+                            </el-form-item>
+                            <el-form-item label="单位地址">
+                                <el-input v-model="form.Address"></el-input>
+                            </el-form-item>
+                            <el-form-item label="联系电话">
+                                <el-input v-model="form.MobilePhone"></el-input>
+                            </el-form-item>
+                            <el-form-item label="隶属工会">
+                                <el-input v-model="form.ParentName"></el-input>
+                            </el-form-item>
+                            <el-form-item label="工会主席">
+                                <el-input v-model="form.Chairman"></el-input>
+                            </el-form-item>
+                            <el-form-item label="经审会主任">
+                                <el-input v-model="form.Director"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                </el-row>
+
+
+                <el-row>
+                    <el-col :span="50">
+                        <span style="font-size: 25px;border-left: 5px solid rgb(136, 185, 39);padding-left: 10px;">审核状态</span>
                     </el-col>
                 </el-row>
-                <el-row style="margin-top: 20px">
+                <el-row style="margin:10px 0 40px 40px">
                     <template>
                         <el-radio v-model="Verify" label="1">通过</el-radio>
                         <el-radio v-model="Verify" label="2">不通过</el-radio>
@@ -21,10 +51,10 @@
                 </el-row>
                 <el-row style="margin-top: 20px">
                     <el-col :span="50">
-                        <span style="font-size: 25px">审核意见</span>
+                        <span style="font-size: 25px;border-left: 5px solid rgb(136, 185, 39);padding-left: 10px;">审核意见</span>
                     </el-col>
                 </el-row>
-                <el-row style="margin-top: 20px">
+                <el-row style="margin:10px 0 40px 40px">
                     <el-input
                         placeholder="请输入内容"
                         v-model="VerifyOpinion"
@@ -33,30 +63,12 @@
                     </el-input>
                 </el-row>
             </div>
-            <div style="margin-top: 20px">
-                <el-form ref="form" :model="form" label-width="200px">
-                    <el-form-item label="工会名称">
-                        <el-input v-model="form.OrgName"></el-input>
-                    </el-form-item>
-                    <el-form-item label="统一社会信用代码">
-                        <el-input v-model="form.EnterpriseCode"></el-input>
-                    </el-form-item>
-                    <el-form-item label="单位地址">
-                        <el-input v-model="form.Address"></el-input>
-                    </el-form-item>
-                    <el-form-item label="联系电话">
-                        <el-input v-model="form.MobilePhone"></el-input>
-                    </el-form-item>
-                    <el-form-item label="隶属工会">
-                        <el-input v-model="form.ParentName"></el-input>
-                    </el-form-item>
-                    <el-form-item label="工会主席">
-                        <el-input v-model="form.Chairman"></el-input>
-                    </el-form-item>
-                    <el-form-item label="经审会主任">
-                        <el-input v-model="form.Director"></el-input>
-                    </el-form-item>
-                </el-form>
+            <div class="choose">
+                <ul>
+
+                    <li @click="addFinished(false)" style="color: #00B8EE; border-color: #00B8EE;background: #fff;">取消</li>
+                    <li @click="addFinished(true)">保存</li>
+                </ul>
             </div>
 
         </div>
@@ -91,6 +103,7 @@
             addFinished(bool) {//添加文件上传**************************
                 if (!bool) {
                     this.$store.commit("tagNav/removeTagNav", this.$route);
+                    //this.$store.commit("tagNav/upexcludeArr", ['lookUnion']);
                     this.$router.push({path: "/admin/orgin"});
                 } else {
                     console.log(this.form.PhId);
@@ -107,8 +120,9 @@
                             if (res.Status == 'success') {
                                 this.$message.success("审核成功");
                                 this.$store.commit("tagNav/removeTagNav", this.$route);
+                                //this.$store.commit("tagNav/upexcludeArr", ['lookUnion']);
                                 this.$router.push({path: "/admin/orgin"});
-
+                                //this.$store.commit("tagNav/upexcludeArr", ['lookUnion']);
                                 // this.$emit('LookUnion');
                                 //this.$router.push({path: '/'});
                             }else{
@@ -174,22 +188,40 @@
         font-size: 15px;
     }
     .choose > ul {
-        justify-content: flex-end;
+        text-align: center;
     }
 
     .choose > ul > li {
         margin-left: 15px;
-        padding: 2px 8px;
-        border: 1px solid #00B8EE;
+
         border-radius: 3px;
         cursor: pointer;
+
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        width: 100px;
+    }
+    .choose >ul > li:nth-of-type(1){
+        border: 1px solid #b7c2c5;
+        background: #b7c2c5;
+        color: #FFFFFF;
+    }
+    .choose >ul > li:nth-of-type(2){
+        border: 1px solid #00B8EE;
         background: #00B8EE;
         color: #FFFFFF;
     }
-
-    .choose > ul > li:hover {
+    .choose > ul > li:nth-of-type(1):hover {
+        background: #FFFFFF;
+        color: #b7c2c5;
+    }
+    .choose > ul > li:nth-of-type(2):hover {
         background: #FFFFFF;
         color: #00B8EE;
+    }
+    .container{
+        margin-bottom: 70px;
     }
 </style>
 <style>

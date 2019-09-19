@@ -2,15 +2,16 @@
     <div v-show="visible"  class="saasConfirm">
         <div class="saasMsg">
             <p class="title"><span>提示</span>
-                <i @click="noclose(false)"></i>
+                <i @click="noclose(type)"></i>
             </p>
             <div>
                 <div class="imgCon"><img src="../../assets/images/error.png"></div>  
-                <span >{{message}}</span>
+                <span style="float:right;width:290px">{{message}}</span>
             </div>
             <div>
-                <span @click="okclose(type)" class="btn">{{btn1}}</span>
-                <span @click="noclose(type)" class="btn">{{btn2}}</span>
+                
+                <span @click="noclose(type)"  class="btngrey">{{btn2}}</span>
+                <span @click="okclose(type)" style="margin-left:20px" class="btn">{{btn1}}</span>
             </div>    
         </div>
     </div>
@@ -32,16 +33,20 @@ export default {
   },
   methods:{
       okclose(type){
-          this.$emit('ok-click',type);
+          
+          this.$emit('ok-click',type,this.data);
       },
       noclose(type){
-            this.$emit('no-click',type);
+            this.$emit('no-click',type,this.data);
       },
-      close(){
-          this.$emit('update:visible',false);
-      },
+      // close(){
+      //     this.$emit('update:visible',false);
+      // },
   },
-  props:{    
+  props:{
+      data:{type:String,
+            default:''
+      },//参数
       message:String, //提示信息
       btn1:{   //按钮1
         type:String,
@@ -65,7 +70,9 @@ export default {
 
 <style lang="scss" scoped>
 .saasConfirm{
+
     position:fixed;
+    position:-ms-page;
     left:0;
     top:0;
     right:0;
@@ -98,7 +105,7 @@ export default {
             display: flex;
             align-items: center;
             &:first-of-type{
-                height:50%;
+                height:60%;
                 font-size:16px;
                 overflow-y: auto;
             }
@@ -107,9 +114,10 @@ export default {
                 justify-content: flex-end;
             }
             >.imgCon{
+                float:left;
                 width:60px;
                 height:55px;
-                margin-right:15px;
+
                 >img{
                     width:100%;
                     height:100%;
@@ -124,7 +132,6 @@ export default {
         display: flex;
         justify-content: space-between;
         width:100%;
-        font-family: Arial;
         font-size: 14.0pt;
         font-style: normal;
         font-weight: 700;
@@ -139,20 +146,20 @@ export default {
             }
         }
     }
-.btn{
-    cursor: pointer;
-    background: #00b7ee;
-    color:#fff;
-    text-align: center;
-    border:1px solid #00b7ee;
-    border-radius: 5px;
-    height:30px;
-    line-height: 30px;
-    width:90px;
-    margin-right:20px;
-}
-.btn:hover{
-    background: #fff;
-    color:#00b7ee;
-}
+// .btn{
+//     cursor: pointer;
+//     background: #00b7ee;
+//     color:#fff;
+//     text-align: center;
+//     border:1px solid #00b7ee;
+//     border-radius: 5px;
+//     height:30px;
+//     line-height: 30px;
+//     width:90px;
+//     margin-right:20px;
+// }
+// .btn:hover{
+//     background: #fff;
+//     color:#00b7ee;
+// }
 </style>

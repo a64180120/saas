@@ -4,52 +4,69 @@
             <div class="handle-box">
                 <el-row>
                     <el-col :span="24">
-                        <div style="float: left;margin-right: 10px;width: 8%">
-                            <el-select v-model="state_mark" placeholder="角色状态"  style="margin-top: 0px;width: 100%">
+
+                        <el-button type="info" size="small" class="handle-del mr10" style="margin-left:10px;float: right"
+                                   @click="PageDelete">
+                            删除
+                        </el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageNoPublish">
+                            取消发布
+                        </el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PagePublish">
+                            发布
+                        </el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageEdit">
+                            修改
+                        </el-button>
+                        <el-button type="info" size="small" class="handle-del mr10" style="float: right"
+                                   @click="PageAdd">
+                            新增
+                        </el-button>
+                        <el-button class="box-seach" type="primary" @click="search" size="small" >搜索</el-button>
+
+                        <el-input v-model="select_word" placeholder="角色编码/名称" prefix-icon="el-icon-search" style="float: right" size="small"
+                                 id="input" class="box-input handle-input mr10  borderRadius"></el-input>
+                        <div style="float:left;line-height: 32px;font-size: 15px;width:70px;">角色状态: </div>
+                        <div style="float: left;margin-right: 10px;height:32px">
+                            <el-select v-model="state_mark" placeholder="角色状态" style="height:32px;margin: 0px;width: 100%">
                                 <el-option label="全部" value=""></el-option>
                                 <el-option label="启用" value="0"></el-option>
                                 <el-option label="停用" value="1"></el-option>
                             </el-select>
                         </div>
-
-                        <el-input v-model="select_word" placeholder="角色编码/名称" prefix-icon="el-icon-search" size="small"
-                                  class="handle-input mr10"></el-input>
-                        <el-button type="primary" icon="el-icon-search" @click="search" size="small">搜索</el-button>
-
-                        <el-button type="info" icon="el-icon-lx-delete" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PageDelete">删除
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-edit" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PageEdit">修改
-                        </el-button>
-                        <el-button type="info" icon="el-icon-lx-add" size="small" class="handle-del mr10" style="float: right"
-                                   @click="PageAdd">新增
-                        </el-button>
                     </el-col>
                 </el-row>
             </div>
-            <el-table
-                :data="tableData"
-                border
-                class="table"
-                v-loading="loading"
-                ref="roleListTable"
-                highlight-current-row
-                :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
-                @row-click="handleClickRow">
+            <el-table :data="tableData"
+                      border
+                      class="table"
+                      v-loading="loading"
+                      ref="roleListTable"
+                      highlight-current-row
+                      :header-cell-style="{background:'#d3e9f9',color:'#000',textAlign:'center'}"
+                      @row-click="handleClickRow">
                 <el-table-column label="序号" type="index" width="50"></el-table-column>
-                <el-table-column prop="EnCode" label="角色编码" sortable width="120"></el-table-column>
-                <el-table-column prop="Name" label="角色名称" width="120"></el-table-column>
-                <el-table-column label="角色状态" width="100" align="center">
-                    <template slot-scope="scope" >
+                <el-table-column prop="EnCode" label="角色编码" sortable width="150"></el-table-column>
+                <el-table-column prop="Name" label="角色名称" width="150"></el-table-column>
+                <el-table-column label="角色状态" width="150" align="center">
+                    <template slot-scope="scope">
                         <el-button v-if="scope.row.EnabledMark===0" type="success" icon="el-icon-check" size="mini" circle style="text-align: center"></el-button>
                         <el-button v-else type="danger" icon="el-icon-close" size="mini" circle style="text-align: center"></el-button>
                     </template>
                     <!--<template slot-scope="scope">-->
-                        <!--<span v-if="scope.row.EnabledMark===0">启用</span>-->
-                        <!--<span v-else-if="scope.row.EnabledMark===1">停用</span>-->
-                        <!--<span v-else>啦啦</span>-->
+                    <!--<span v-if="scope.row.EnabledMark===0">启用</span>-->
+                    <!--<span v-else-if="scope.row.EnabledMark===1">停用</span>-->
+                    <!--<span v-else>啦啦</span>-->
                     <!--</template>-->
+                </el-table-column>
+                <el-table-column label="发布状态" width="150" align="center">
+                    <template slot-scope="scope">
+                        <el-button v-if="scope.row.Publish===1" type="success" icon="el-icon-check" size="mini" circle style="text-align: center"></el-button>
+                        <el-button v-else type="danger" icon="el-icon-close" size="mini" circle style="text-align: center"></el-button>
+                    </template>
                 </el-table-column>
                 <el-table-column prop="Description" label="备注" align="center"></el-table-column>
             </el-table>
@@ -62,8 +79,8 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="dialogState=='add'?'新增':'编辑'" :visible.sync="editVisible" width="40%" style="height: 800px">
-            <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right" v-if="showForm">
-                <el-form-item label="角色名称：" prop="Name">
+            <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="right" v-if="showForm" :disabled="qIsSystem">
+                <el-form-item label="角色名称：" prop="Name" >
                     <el-input v-model="form.Name" placeholder="8位汉字以内"></el-input>
                 </el-form-item>
                 <el-form-item label="角色编码：" prop="EnCode">
@@ -77,12 +94,12 @@
                 </el-form-item>
                 <el-form-item label="角色状态：" prop="EnabledMark">
                     <el-radio-group v-model="form.EnabledMark">
-                        <el-radio :label='0'>启用</el-radio>
-                        <el-radio :label='1'>停用</el-radio>
+                        <el-radio :label='0' value="0">启用</el-radio>
+                        <el-radio :label='1' value="1">停用</el-radio>
                     </el-radio-group>
                 </el-form-item>
             </el-form>
-            <el-form ref="form2" :model="form2" :rules="rules2" label-width="100px" label-position="right" v-if="showForm2" style="height: 400px; overflow-y: auto">
+            <el-form ref="form2" :model="form2" :rules="rules2" label-width="100px" label-position="right" v-if="showForm2" style="height: 300px; overflow-y: auto">
                 <el-form-item label="角色权限：">
                     <el-tree
                         :data="data2"
@@ -93,13 +110,12 @@
                         default-expand-all
                         :check-strictly="checkStrictly"
                         :default-checked-keys="CheckedList"
-                        :current-node-key="CheckedList2"
-                        :render-content="renderContent">
+                        :current-node-key="CheckedList2">
                     </el-tree>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer" v-if="showForm">
-                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button @click="editVisible = false" style="color: #00B8EE; border-color: #00B8EE;">取 消</el-button>
                 <el-button @click="nextStep()">下一步</el-button>
             </span>
             <span slot="footer" class="dialog-footer" v-if="showForm2">
@@ -114,6 +130,8 @@
         name: "AdminUserList",
         data() {
             return {
+                CheckedList2: "",
+                qIsSystem: false,
                 data2: [],
                 showForm : true,
                 showForm2: false,
@@ -139,7 +157,7 @@
                     EnCode: "",
                     SortCode: "",
                     Description: "",
-                    EnabledMark: '0'
+                    EnabledMark: 0
                 },
                 rules: {
                     Name: [
@@ -206,7 +224,7 @@
             },
             // 获取数据
             getData(query) {
-                this.loading = true;
+                let loading = this.$loading(true);
                 this.$axios.get("/SysRole/GetSysRoleList", {
                     params: {
                         PageIndex: this.pageIndex - 1,
@@ -217,22 +235,23 @@
                     }
                 }).then(
                     res => {
-                        this.loading = false;
                         this.checkStrictly = true;
                         console.log(res);
                         this.tableData = res.Record;
                         this.totalCount = Number(res.totalRows);
                         console.log(this.tableData);
+                        loading.close();
                     },
                     error => {
                         console.log(error);
-                        this.loading = false;
+                        loading.close()
                         this.$message({ showClose: true, message: '角色列表获取错误', type: 'error' });
                     }
                 );
             },
+            //点击树节点
             checkTree(){
-                this.checkStrictly = false;
+                this.checkStrictly = true;
             },
             search() {
                 // let queryfilter;
@@ -302,12 +321,13 @@
             PageAdd() {
                 this.form = {};
                 this.form.EnabledMark = 0;
-                this.singleSelection= [];
+                //this.singleSelection= [];
                 this.CheckedList = [];
                 this.showForm = true;
                 this.showForm2 = false;
                 this.dialogState = "add";
                 this.editVisible = true;
+                this.qIsSystem = false;
             },
             //编辑按钮
             PageEdit() {
@@ -318,6 +338,13 @@
                 let id = object.length > 0 ? object[0].PhId : 0;
                 console.log(id);
                 if (id != 0) {
+                    if(object[0].IsSystem == '1'){
+                        this.qIsSystem = true;
+                        //this.$message.error('该角色为内置角色，不能进行修改！');
+                        //return;
+                    }else{
+                        this.qIsSystem = false;
+                    }
                     this.$axios.get("/SysRole/GetSysRole", {
                         params: {
                             uid: "0",
@@ -332,7 +359,7 @@
                         this.dialogState = "edit";
                         this.editVisible = true;
 
-                        this.singleSelection = [];
+                        //this.singleSelection = [];
                         this.$forceUpdate();
                     });
                     this.$axios.get("/SysRole/GetAuthorizeListByRoleId", {
@@ -348,12 +375,120 @@
                         console.log(this.CheckedList);
                         this.dialogState = "edit";
                         this.editVisible = true;
-                        this.singleSelection = [];
+                        //this.singleSelection = [];
                     });
                     //this.$refs.tree.setCheckedKeys(list);
                     this.dialogState = "edit";
                     this.editVisible = true;
-                    this.singleSelection = [];
+                    //this.singleSelection = [];
+                } else {
+                    this.$message({
+                        message: "请选中列表的其中一行",
+                        type: "warning"
+                    });
+                }
+            },
+            //发布按钮
+            PagePublish(){
+                let length = this.singleSelection.length;
+                let object = this.singleSelection;
+                let id = object.length > 0 ? object[0].PhId : 0;
+                console.log(id);
+                if (length > 0) {
+                    if(object[0].Publish == "1"){
+                        this.$message.error('该角色已发布，无需再次发布！');
+                        return;
+                    }
+                    var page = [];
+                    page.push({
+                        'PhId': id,
+                        'Publish': '1',
+                    });
+                    var data = {
+                        uid: "0",
+                        orgid: "0",
+                        infoData: page
+                    };
+                    this.$confirm("此操作将发布该数据, 是否继续?", "发布提示", {
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        type: "warning"
+                    })
+                        .then(() => {
+                            this.$axios.post("/SysRole/PostUpdatePublish", data)
+                                .then(res => {
+                                    this.tableData.splice(this.idx, 1);
+                                    if(res.Status=='success'){
+                                        this.$message.success("发布成功");
+                                    }else{
+                                        this.$message.error('发布失败,请重试!');
+                                    }
+                                    //this.$message.success("删除成功");
+                                    this.singleSelection = [];
+                                    this.getData('');
+                                });
+                        })
+                        .catch(() => {
+                            this.$message({
+                                type: "info",
+                                message: "已取消发布"
+                            });
+                        });
+                    this.getData('');
+                } else {
+                    this.$message({
+                        message: "请选中列表的其中一行",
+                        type: "warning"
+                    });
+                }
+            },
+            //取消发布按钮
+            PageNoPublish(){
+                let length = this.singleSelection.length;
+                let object = this.singleSelection;
+                let id = object.length > 0 ? object[0].PhId : 0;
+                console.log(id);
+                if (length > 0) {
+                    if(object[0].Publish == "0"){
+                        this.$message.error('该角色还未发布，无需再次取消发布！');
+                        return;
+                    }
+                    var page = [];
+                    page.push({
+                        'PhId': id,
+                        'Publish': '0',
+                    });
+                    var data = {
+                        uid: "0",
+                        orgid: "0",
+                        infoData: page
+                    };
+                    this.$confirm("此操作将取消发布该数据, 是否继续?", "发布提示", {
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        type: "warning"
+                    })
+                        .then(() => {
+                            this.$axios.post("/SysRole/PostUpdatePublish", data)
+                                .then(res => {
+                                    this.tableData.splice(this.idx, 1);
+                                    if(res.Status=='success'){
+                                        this.$message.success("取消发布成功");
+                                    }else{
+                                        this.$message.error('取消发布失败,请重试!');
+                                    }
+                                    //this.$message.success("删除成功");
+                                    this.singleSelection = [];
+                                    this.getData('');
+                                });
+                        })
+                        .catch(() => {
+                            this.$message({
+                                type: "info",
+                                message: "已取消取消发布"
+                            });
+                        });
+                    this.getData('');
                 } else {
                     this.$message({
                         message: "请选中列表的其中一行",
@@ -368,6 +503,10 @@
                 let id = object.length > 0 ? object[0].PhId : 0;
                 console.log(id);
                 if (length > 0) {
+                    if(object[0].IsSystem == '1'){
+                        this.$message.error('该角色为内置角色，不能进行删除！');
+                        return;
+                    }
                     var data = {
                         uid: "0",
                         orgid: "0",
@@ -423,6 +562,7 @@
             nextStep(){
                 this.showForm = false;
                 this.showForm2 = true;
+                this.checkStrictly = true;
             },
             backStep(){
                 this.showForm = true;
@@ -439,6 +579,7 @@
                 for(let i = 0; i< this.$refs.tree.getHalfCheckedNodes().length; i++){
                     roleAuthorizeLists[ll+i] = this.$refs.tree.getHalfCheckedNodes()[i];
                 }
+                let loading=this.$loading(true);
                 this.$refs[formName].validate(valid => {
                     if (valid) {
                         var data = {
@@ -458,33 +599,50 @@
                                     if(res.Status=='success'){
                                         this.editVisible = false;
                                         this.$message.success("新增成功");
+                                        loading.close();
                                     }else{
-                                        this.$message.error('新增失败,请重试!');
+                                        if(res.Msg != ""){
+                                            this.$message.error(res.Msg);
+                                        }else{
+                                            this.$message.error('新增失败,请重试!');
+                                        }
+                                        loading.close();
+                                        //this.$message.error('新增失败,请重试!');
                                     }
                                     this.singleSelection = [];
                                     this.getData('');
                                 });
+                            
                         } else {
                             this.$axios
                                 .post("/SysRole/PostUpdate", data)
                                 .then(res => {
-                                    console.log(this.form);
+                                    console.log(res);
                                     let resultData = res;
                                     this.tableData.splice(this.idx, 1);
                                     if(res.Status=='success'){
                                         this.editVisible = false;
                                         this.$message.success("修改成功");
+                                        loading.close();
                                     }else{
-                                        this.$message.error('修改失败,请重试!');
+                                        if(res.Msg != ""){
+                                            this.$message.error(res.Msg);
+                                        }else{
+                                            this.$message.error('修改失败,请重试!');
+                                        }
+                                        loading.close();
                                     }
                                     this.singleSelection = [];
                                     this.getData('');
                                 });
+                            
                         }
-                        this.getData('');
-                        this.singleSelection = [];
+                        //this.getData('');
+                        //this.singleSelection = [];
+                        
                     } else {
                         console.log("error submit!!");
+                        loading.close();
                         return false;
                     }
                 });
@@ -494,6 +652,36 @@
 </script>
 <!--style标签上添加scoped属性 表示它的样式作用于当下的模块-->
 <style scoped>
+    /*统一样式风格*/
+    .handle-del{
+        font-size: 14px;
+        padding: 7px 15px;
+    }
+    .handle-del:hover{
+        border-color: #00b7ee;
+    }
+    .box-input >>> .el-input__inner{
+        border-radius: 4px 0 0 4px;
+        height: 30px;
+        line-height: 30px;
+    }
+    .box-input >>> .el-input__inner:focus{
+       border-color: #ccc;
+    }
+    .box-seach{
+        float:right;
+        border-radius:0 4px 4px 0;
+        margin:0;
+        font-size: 18px;
+        padding-top: 5px;
+        padding-bottom:5px ;
+        position:relative;
+    }
+    .box-seach:hover{
+        background: #FFFFFF;
+        color: #00b7ee;
+    }
+
     .el-checkbox-role {
         width: 100%;
         float: left;
@@ -541,5 +729,15 @@
         color: #fff;
         background-color: #00B8EE;
         border-color: #00B8EE;
+    }
+    .handle-box .el-input__inner{
+        height:32px;
+        line-height:32px;
+    }
+    .borderRadius .el-input__inner {
+        border-radius:15px 0 0 15px;
+    }
+    .el-table{
+        font-size:18px;
     }
 </style>

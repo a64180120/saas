@@ -14,8 +14,12 @@ const authToken = {
     TokenKey:'token',
     //菜单权限
     menuKey:'menus',
-
+    //账务基础配置
     zwcnfig:'zwcnfig',
+    //账号对应数据库
+    dbbase:'NG-dbbase',
+    //缓存ID
+    sessionId:'sessionId',
 
     getCookies:function(key){
         let item=Cookies.get(key);
@@ -38,6 +42,24 @@ const authToken = {
             let item = JSON.stringify(data)
             Cookies.set(key, item, { expires: maxAge })
         }
+    },
+
+    /*******************sessionId localStorage************************** */
+    // 获取sessionId
+    getSession: function() {
+        return  getStore({ name: this.sessionId })
+    },
+
+    // 设置sessionId
+    setSession: function(data){
+
+        if(data){ removeStore({ name: this.sessionId });}
+        setStore({ name: this.sessionId,content: data})
+    },
+
+    // 移除sessionId
+    removeSession: function(){
+        removeStore({ name: this.sessionId })
     },
 
     /*******************Token************************** */
@@ -127,22 +149,19 @@ const authToken = {
         removeStore({ name: this.zwcnfig })
     },
 
-    /*******************webapi url************************** */
+    /*******************账号对应数据库信息************************** */
     // 获取本地的url，缓存到session中
-    getBaseUrl: function(){
-        //return this.getCookies('web_baseurl')
-        return  getStore({ name: 'web_baseurl' })
+    getDBBase: function(){
+        return  getStore({ name: this.dbbase ,type: 'session' })
     },
-    //
-    setBaseUrl: function(data){
-        //this.setCookies('web_baseurl',data);
-        if(data){ removeStore({ name: 'web_baseurl' });}
-        setStore({ name: 'web_baseurl', content: data})
+    //设置缓存
+    setDBBase: function(data){
+        if(data){ removeStore({ name: this.dbbase });}
+        setStore({ name: this.dbbase, content: data, type:'session'})
     },
-    //
-    removeBaseUrl: function(){
-        //Cookies.remove('web_baseurl')
-        removeStore({ name: 'web_baseurl'})
+    //删除缓存
+    removeDBBase: function(){
+        removeStore({ name: this.dbbase })
     }
 
 }
