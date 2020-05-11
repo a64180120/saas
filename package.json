@@ -28,7 +28,7 @@
     "moment": "^2.24.0",
     "nprogress": "^0.2.0",
     "print-js": "^1.0.54",
-    "tinymce": "^4.9.2",
+    "tinymce": "^4.9.10",
     "vue": "^2.5.16",
     "vue-i18n": "^7.3.2",
     "vue-img-inputer": "^2.1.0",
