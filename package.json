@@ -63,7 +63,7 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.4.0",
     "eventsource-polyfill": "^0.9.6",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "generate-asset-webpack-plugin": "^0.3.0",
